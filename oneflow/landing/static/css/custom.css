@@ -11,7 +11,7 @@
 /*************************************************************
                          google font
 **************************************************************/
-@import url(http://fonts.googleapis.com/css?family=Lato:100,300,400,700);
+@import url(http://fonts.googleapis.com/css?family=Lato:100,300,400,700&subset=latin);
 
 /*************************************************************
                     reset some defaults styles
@@ -443,19 +443,20 @@ p.thankyou {
   font-size: 150%;
 }
 
+.subemail input, .subemail button {
+  font-family: lato;
+  font-size: 16px;
+  line-height: 20px;
+  cursor: pointer;
+}
+
 .subemail input.custom {
-  /*display: inline-block;*/
   padding: 15px 32px 13px;
   margin-bottom: 0;
-  font-size: 14px;
-  line-height: 20px;
   color: #fff;
-  /*text-align: center;*/
   vertical-align: middle;
-  cursor: pointer;
-  border: 2px solid rgb(219, 82, 47);
   color: black;
-  /*background: rgb(219, 82, 47);*/
+  border: 2px solid rgb(219, 82, 47);
 
   -webkit-border-top-left-radius: 5px;
   -webkit-border-bottom-left-radius: 5px;
@@ -472,17 +473,13 @@ p.thankyou {
 }
 
 .subemail button.custom {
-  /*display: inline-block;*/
   padding: 15px 32px 13px;
   margin-bottom: 0;
-  font-size: 14px;
-  line-height: 20px;
-  color: #fff;
   text-align: center;
   vertical-align: middle;
-  cursor: pointer;
-  border: 2px solid rgb(219, 82, 47);
+  color: #fff;
   background: rgb(219, 82, 47);
+  border: 2px solid rgb(219, 82, 47);
 
   -webkit-border-top-right-radius: 5px;
   -webkit-border-bottom-right-radius: 5px;
