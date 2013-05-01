@@ -4,7 +4,7 @@ import os
 # Use this in case paramiko seems to go crazy. Trust me, it can do, especially
 # when using the multiprocessing module.
 #
-#import logging
+# import logging
 # logging.basicConfig(format=
 #                     '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
 #                     level=logging.DEBUG)
@@ -19,9 +19,14 @@ from oneflow import settings as oneflow_settings
 # Make the main deployment tasks immediately accessible
 runable, deploy, fast_deploy = sdf.runable, sdf.deploy, sdf.fast_deploy
 
-env.project     = '1flow'
+# The name of the Django project
+env.project     = 'oneflow'
+
 env.virtualenv  = '1flow'
+
+# The local Django settings.
 env.settings    = oneflow_settings
+
 env.root        = '/home/1flow/www/src'
 env.host_string = 'obi.1flow.net'
 env.environment = 'test'
@@ -52,7 +57,7 @@ def test():
 @task
 def testapp():
     """ Install the 1flowapp.com django app on test. """
-    env.project          = '1flowapp'
+
     env.environment_vars = 'SPARKS_DJANGO_SETTINGS=obi_1flowapp_com'
 
 
@@ -66,5 +71,4 @@ def production():
 def prodapp():
     env.host_string      = '1flow.net'
     env.environment      = 'production'
-    env.project          = '1flowapp'
     env.environment_vars = 'SPARKS_DJANGO_SETTINGS=1flowapp_com'
