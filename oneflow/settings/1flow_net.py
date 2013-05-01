@@ -1,23 +1,17 @@
 # -*- coding: utf-8 -*-
-# Settings for 1flow.net
+# Settings for 1flowapp.com
 
-from .common import * # NOQA
+import os
+from sparks.django.settings import include_snippets
 
-SITE_ID = 2
-
-DEBUG = False
-TEMPLATE_DEBUG = False
-
-# ADMINS += (('Matthieu Chaignot', 'mc@1flow.net'), )
-
-RAVEN_CONFIG = {
-    'dsn': 'http://2854b21004cf4ea88eadb87383c0aff5'
-            ':a2b8498b97b24ae0b854515d0339d0cb@dev.1flow.net/5',
-}
-
-ALLOWED_HOSTS += [
-    '1flow.net',
-    'www.1flow.net',
-    'app.1flow.net',
-    'api.1flow.net',
-]
+include_snippets(
+    os.path.dirname(__file__), (
+        '00_production',
+        '1flow-net',
+        'common',
+        'mail_production',
+        'raven_production',
+        'common_production',
+    ),
+    globals()
+)
