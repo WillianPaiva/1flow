@@ -9,6 +9,8 @@ include_snippets(
         '00_production',
         '1flow-net',
         'common',
+        'db_common',
+        'db_production',
         'mail_production',
         'raven_production',
         'common_production',

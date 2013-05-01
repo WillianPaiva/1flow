@@ -15,17 +15,6 @@ BASE_ROOT    = os.path.dirname(PROJECT_ROOT)
 ADMINS   = (('Olivier Cortès', 'oc@1flow.net'), )
 MANAGERS = ADMINS
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'oneflow',
-        'USER': 'oneflow',
-        'PASSWORD': '8jxcWaAfPJT3mV',
-        'HOST': '',
-        'PORT': '',
-    }
-}
-
 REDIS_DB = 0
 
 GRAPPELLI_ADMIN_TITLE = '1flow administration'

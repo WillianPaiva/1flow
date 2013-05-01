@@ -9,6 +9,8 @@ include_snippets(
         '00_development',
         '1flow-net',
         'common',
+        'db_common',
+        'db_test',
         'mail_production',
         'raven_test',
         'common_test',
