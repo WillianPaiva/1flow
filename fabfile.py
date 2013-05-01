@@ -22,13 +22,15 @@ runable, deploy, fast_deploy = sdf.runable, sdf.deploy, sdf.fast_deploy
 env.project     = '1flow'
 env.virtualenv  = '1flow'
 env.settings    = oneflow_settings
-env.root        = '/home/1flow/www'
+env.root        = '/home/1flow/www/src'
 env.host_string = 'obi.1flow.net'
 env.environment = 'test'
 
 
 @task
 def duncan():
+    """ As of 20130501, this is not used yet. """
+
     env.host_string = 'duncan'
     env.environment = 'hoster'
 
@@ -42,9 +44,16 @@ def local():
 
 @task
 def test():
-    """ This is the default config, we don't need to set anything here. """
+    """ This is the default config, we don't need to set anything more. """
 
     pass
+
+
+@task
+def testapp():
+    """ Install the 1flowapp.com django app on test. """
+    env.project          = '1flowapp'
+    env.environment_vars = 'SPARKS_DJANGO_SETTINGS=obi_1flowapp_com'
 
 
 @task(alias='prod')
@@ -54,7 +63,8 @@ def production():
 
 
 @task
-def oneflowapp():
+def prodapp():
     env.host_string      = '1flow.net'
     env.environment      = 'production'
-    env.environment_vars = 'SPARKS_DJANGO_SETTINGS=oneflowapp'
+    env.project          = '1flowapp'
+    env.environment_vars = 'SPARKS_DJANGO_SETTINGS=1flowapp_com'
