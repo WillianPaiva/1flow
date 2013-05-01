@@ -12,5 +12,6 @@ include_snippets(
         'mail_production',
         'raven_production',
         'common_production',
-    )
+    ),
+    globals()
 )

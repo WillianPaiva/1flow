@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Settings for 1flowapp.com
+# Settings for 1flow.net (production)
 
 import os
 from sparks.django.settings import include_snippets

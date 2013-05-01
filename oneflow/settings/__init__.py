@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Django settings for oneflow project, handled via sparks dynamic settings.
+# Django settings for oneflow project, via sparks dynamic/modular settings.
 
 from sparks.django.settings import find_settings
 
