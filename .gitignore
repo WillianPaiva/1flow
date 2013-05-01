@@ -1,8 +1,8 @@
 # Django's collectstatic
-static
+/static
 
 # PIP local installs
-src
+/src
 
 *.pyc
 *.pyo
