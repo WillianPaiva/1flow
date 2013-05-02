@@ -36,18 +36,22 @@ def local():
     env.environment = 'test'
     env.user        = pwd.getpwuid(os.getuid()).pw_name
     env.root        = os.path.expanduser('~/sources/1flow')
+    env.env_was_set = True
 
 
 @task
 def test():
     """ This is the default config, we don't need to set anything more. """
-
-    pass
+    env.env_was_set = True
 
 
 @task
 def oneflowapp():
     """ 1flowapp.com parameters; must be used with test or production. """
+
+    if not hasattr(env, 'env_was_set'):
+        # Without this, settings can be messed up.
+        raise RuntimeError('Type `oneflowapp` *AFTER* test|production|local !')
 
     if env.environment == 'production':
         env.sparks_djsettings = '1flowapp_com'
@@ -66,3 +70,4 @@ def oneflowapp():
 def production():
     env.host_string = '1flow.net'
     env.environment = 'production'
+    env.env_was_set = True
