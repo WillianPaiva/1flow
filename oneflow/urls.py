@@ -12,8 +12,8 @@ if settings.SITE_ID == 1:
         '',
 
         # NEVER use r'^$', this won't work as expected. Use r''.
+        url(r'', include('oneflow.base.urls')),
         url(r'', include('oneflow.landing.urls')),
-
     )
 
 else:
@@ -21,10 +21,8 @@ else:
         '',
 
         # NEVER use r'^$', this won't work as expected. Use r''.
+        url(r'', include('oneflow.base.urls')),
         #url(r'', include('oneflow.core.urls')),
-
-        # url(r'^api/', include('oneflow.api.urls')),
-
     )
 
 urlpatterns += patterns(
