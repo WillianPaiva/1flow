@@ -7,7 +7,7 @@ import os
 # import logging
 # logging.basicConfig(format=
 #                     '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-#                     level=logging.DEBUG)
+#                     level=logging.INFO)
 
 
 from fabric.api import env, task
@@ -20,20 +20,13 @@ runable, deploy, fast_deploy = sdf.runable, sdf.deploy, sdf.fast_deploy
 # The Django project name
 env.project        = 'oneflow'
 env.virtualenv     = '1flow'
+env.user           = '1flow'
 # Where is the django project located
 env.root           = '/home/1flow/www/src'
 env.host_string    = 'obi.1flow.net'
 env.environment    = 'test'
 env.pg_superuser   = 'oneflow_admin'
 env.pg_superpass   = 'ZQmeDuNF7b2GMC'
-
-
-@task
-def duncan():
-    """ As of 20130501, this is not used yet. """
-
-    env.host_string = 'duncan'
-    env.environment = 'hoster'
 
 
 @task
@@ -53,8 +46,8 @@ def test():
 @task
 def testapp():
     """ Install the 1flowapp.com django app on test. """
-
-    env.environment_vars = 'SPARKS_DJANGO_SETTINGS=obi_1flowapp_com'
+    test()
+    env.sparks_djsettings = '1flowapp_com'
 
 
 @task(alias='prod')
@@ -65,6 +58,5 @@ def production():
 
 @task
 def prodapp():
-    env.host_string      = '1flow.net'
-    env.environment      = 'production'
-    env.environment_vars = 'SPARKS_DJANGO_SETTINGS=1flowapp_com'
+    production()
+    env.sparks_djsettings = '1flowapp_com'
