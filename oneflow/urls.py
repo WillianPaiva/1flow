@@ -21,7 +21,7 @@ else:
         '',
 
         # NEVER use r'^$', this won't work as expected. Use r''.
-        url(r'', include('oneflow.core.urls')),
+        #url(r'', include('oneflow.core.urls')),
 
         # url(r'^api/', include('oneflow.api.urls')),
 
