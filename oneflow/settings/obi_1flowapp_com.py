@@ -7,7 +7,7 @@ from sparks.django.settings import include_snippets
 include_snippets(
     os.path.dirname(__file__), (
         '00_development',
-        '1flowapp-com',
+        '1flowapp_com',
         'common',
         'db_common',
         'db_test',
@@ -18,3 +18,6 @@ include_snippets(
     ),
     globals()
 )
+
+# Override `1flow_net` for tests
+SITE_DOMAIN = 'obi.1flowapp.com'
