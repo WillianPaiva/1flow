@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import pwd
 
 # Use this in case paramiko seems to go crazy. Trust me, it can do, especially
 # when using the multiprocessing module.
@@ -33,6 +34,7 @@ env.pg_superpass   = 'ZQmeDuNF7b2GMC'
 def local():
     env.host_string = 'localhost'
     env.environment = 'test'
+    env.user        = pwd.getpwuid(os.getuid()).pw_name
     env.root        = os.path.expanduser('~/sources/1flow')
 
 
