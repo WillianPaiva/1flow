@@ -14,22 +14,18 @@ from fabric.api import env, task
 
 import sparks.django.fabfile as sdf
 
-from oneflow import settings as oneflow_settings
-
 # Make the main deployment tasks immediately accessible
 runable, deploy, fast_deploy = sdf.runable, sdf.deploy, sdf.fast_deploy
 
-# The name of the Django project
-env.project     = 'oneflow'
-
-env.virtualenv  = '1flow'
-
-# The local Django settings.
-env.settings    = oneflow_settings
-
-env.root        = '/home/1flow/www/src'
-env.host_string = 'obi.1flow.net'
-env.environment = 'test'
+# The Django project name
+env.project        = 'oneflow'
+env.virtualenv     = '1flow'
+# Where is the django project located
+env.root           = '/home/1flow/www/src'
+env.host_string    = 'obi.1flow.net'
+env.environment    = 'test'
+env.pg_superuser   = 'oneflow_admin'
+env.pg_superpass   = 'ZQmeDuNF7b2GMC'
 
 
 @task
