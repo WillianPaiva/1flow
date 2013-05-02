@@ -17,6 +17,6 @@ class LandingPageForm(forms.ModelForm):
 
         if email.strip() == u'':
             raise forms.ValidationError(
-                _(u"L'adresse email ne doit pas être vide."))
+                _(u'E-mail address cannot be empty.'))
 
         return email
