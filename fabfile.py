@@ -44,19 +44,23 @@ def test():
 
 
 @task
-def testapp():
-    """ Install the 1flowapp.com django app on test. """
-    test()
-    env.sparks_djsettings = '1flowapp_com'
+def oneflowapp():
+    """ 1flowapp.com parameters; must be used with test or production. """
+
+    if env.environment == 'production':
+        env.sparks_djsettings = '1flowapp_com'
+
+    elif env.environment == 'test':
+        if env.host_string == 'localhost':
+            env.sparks_djsettings = 'chani_app'
+        else:
+            env.sparks_djsettings = 'obi_1flowapp_com'
+
+    else:
+        raise RuntimeError('environment not supported')
 
 
 @task(alias='prod')
 def production():
     env.host_string = '1flow.net'
     env.environment = 'production'
-
-
-@task
-def prodapp():
-    production()
-    env.sparks_djsettings = '1flowapp_com'
