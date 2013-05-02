@@ -1,0 +1,2 @@
+SERVER_EMAIL = 'dev@dev.1flow.net'
+DEFAULT_FROM_EMAIL = SERVER_EMAIL

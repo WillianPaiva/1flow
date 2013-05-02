@@ -1,0 +1,9 @@
+# Django's collectstatic
+/static
+
+# PIP local installs
+/src
+
+*.pyc
+*.pyo
+*.pye
