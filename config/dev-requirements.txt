@@ -1,4 +1,4 @@
--e git+file:///Users/olive/sources/sparks#egg=sparks-dev
+-e git+https://github.com/Karmak23/sparks#egg=sparks-dev
 Fabric==1.6.0
 ipython==0.13.2
 flake8==2.0

@@ -1,4 +1,4 @@
--e git+file:///Users/olive/sources/sparks#egg=sparks-dev
+-e git+https://github.com/Karmak23/sparks#egg=sparks-dev
 django-debug-toolbar==0.9.4
 django-grappelli==2.4.4
 django-memcache-status==1.1
