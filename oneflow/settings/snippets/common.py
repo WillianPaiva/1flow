@@ -83,8 +83,8 @@ INSTALLED_APPS = (
     'redisboard',
     'memcache_status',
     'widget_tweaks',
-    'oneflow.core',
     'oneflow.landing',
+    #'oneflow.core',
 )
 
 CACHES = {
