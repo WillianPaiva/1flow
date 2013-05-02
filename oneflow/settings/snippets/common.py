@@ -127,6 +127,7 @@ LOGGING = {
             'level': 'WARNING',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler',
+            'include_html': True,
         },
         # critical errors are logged to sentry
         'sentry': {
@@ -136,6 +137,12 @@ LOGGING = {
         },
     },
     'loggers': {
+        # Don't log SQL queries, this bothers me.
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+
         # This is the "catch all" logger
         '': {
             'handlers': ['console', 'mail_admins', 'sentry'],  # 'syslog',
