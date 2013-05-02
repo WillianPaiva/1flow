@@ -1,0 +1,14 @@
+distribute
+httplib2
+mccabe
+oauth2
+paramiko
+pep8
+pycrypto
+pyflakes
+python-openid
+stevedore
+verlib
+virtualenv-clone
+virtualenv
+virtualenvwrapper
