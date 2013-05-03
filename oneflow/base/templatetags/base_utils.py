@@ -17,8 +17,6 @@ class FirstOfAsNode(Node):
             value = var.resolve(context, True)
 
             if value:
-                print('FOUND %s: %s' % (self.variable_name, value))
-
                 if self.variable_name:
                     context[self.variable_name] = value
                     break
