@@ -12,6 +12,17 @@ from models import LandingContent
 LOGGER = logging.getLogger(__name__)
 
 
+def get_db_translations():
+
+    # if 'fr_FR', get only 'fr'
+    lang = get_language().split('_', 1)[0]
+
+    # Load all translated fields from database.
+    # We need to explicitely define the _lang because
+    # Transmeta fields don't play well with values_list().
+    return LandingContent.objects.values_list('name', 'content_' + lang)
+
+
 def home(request):
 
     context = {}
@@ -38,10 +49,7 @@ def home(request):
 
     context['form'] = form
 
-    lang = get_language().split('_', 1)[0]
-
-    contents = LandingContent.objects.values_list('name', 'content_' + lang)
-    context.update(contents)
+    context.update(get_db_translations())
 
     return render(request, 'landing_index.html', context)
 
@@ -50,5 +58,7 @@ def thanks(request, **kwargs):
 
     context = dict(already_registered=bool(
         kwargs.pop('already_registered', False)))
+
+    context.update(get_db_translations())
 
     return render(request, 'landing_thanks.html', context)
