@@ -13,7 +13,7 @@
 
         {% endif %}
         <br/>
-        {% if invites_left == 0 or debug %}
+        {% if beta_invites_left == 0 or debug %}
             {% firstof no_invite_left_notice_content 'no_invite_left_notice_content' %}
             {% if debug %}<br /> — because debug is True —{% endif %}
         {% endif %}

@@ -1,0 +1,18 @@
+{% load i18n %}
+{% load base_utils %}
+
+<h3 class="beta_invites_left">
+    {% if beta_invites_left > 0 %}
+        {% blocktrans count beta_invites_left as counter %}
+           {{ counter }} invite left.
+
+        {% plural %}
+           {{ counter }} invites left.
+
+        {% endblocktrans %}
+
+    {% else %}
+        {% trans "No invite left!" %}
+
+    {% endif %}
+</h3>

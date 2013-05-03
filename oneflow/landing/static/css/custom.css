@@ -499,6 +499,23 @@ p.thankyou {
   background: transparent;
 }
 
+h3 .timer {
+  color: #fff;
+  font-size: 65%;
+}
+
+h3 .timer .number {
+  font-size: 300%;
+  margin-left: 10px;
+}
+
+h3.beta_invites_left {
+    color: #fff;
+}
+h3.beta_invites_left .number {
+  font-size: 300%;
+}
+
 /*************************************************************
                         section#subscribe
 **************************************************************/
