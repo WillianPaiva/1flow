@@ -25,9 +25,9 @@ LANGUAGE_CODE = 'en'
 ugettext = lambda s: s
 
 LANGUAGES = (
-    ('en', ugettext('English')),
-    ('fr', ugettext('Français')),
-    ('es', ugettext('Español')),
+    ('en', ugettext(u'English')),
+    ('fr', ugettext(u'Français')),
+    ('es', ugettext(u'Español')),
 )
 
 USE_I18N = True
