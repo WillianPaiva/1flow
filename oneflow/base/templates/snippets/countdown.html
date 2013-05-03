@@ -22,22 +22,22 @@
 
             if (days > 1)
                 x += '<span class="number days">' + days + "</span>"
-                    + '<span class="unit">{{ units.days }}</span>';
+                    + '<span class="unit">{{ unit_sep }}{{ units.days }}</span>';
 
             else if (days > 0)
                 x += '<span class="number days">' + days + "</span>"
-                    + '<span class="unit">{{ units.day }}</span>';
+                    + '<span class="unit">{{ unit_sep }}{{ units.day }}</span>';
 
             if (days > 0 && (hours > 0 || minutes > 0 || seconds > 0))
                 x += "{{ separator }}";
 
             if (hours > 1)
                 x += '<span class="number hours">' + hours + "</span>"
-                    + '<span class="unit">{{ units.hours }}</span>';
+                    + '<span class="unit">{{ unit_sep }}{{ units.hours }}</span>';
 
             else if (hours > 0)
                 x += '<span class="number hours">' + hours + "</span>"
-                    + '<span class="unit">{{ units.hour }}</span>';
+                    + '<span class="unit">{{ unit_sep }}{{ units.hour }}</span>';
 
             if (hours > 0 && (minutes > 0
                 {% if show_seconds %} || seconds > 0 {% endif %}))
@@ -45,11 +45,11 @@
 
             if (minutes > 1)
                 x += '<span class="number minutes">' + minutes + "</span>"
-                    + '<span class="unit">{{ units.minutes }}</span>';
+                    + '<span class="unit">{{ unit_sep }}{{ units.minutes }}</span>';
 
             else if (minutes > 0)
                 x += '<span class="number minutes">' + minutes + "</span>"
-                    + '<span class="unit">{{ units.minute }}</span>';
+                    + '<span class="unit">{{ unit_sep }}{{ units.minute }}</span>';
 
             {% if show_seconds %}
 
@@ -58,11 +58,11 @@
 
                 if (seconds > 1)
                     x += '<span class="number seconds">' + seconds + "</span>"
-                    + '<span class="unit">{{ units.seconds }}</span>';
+                    + '<span class="unit">{{ unit_sep }}{{ units.seconds }}</span>';
 
                 else if (seconds > 0)
                     x += '<span class="number seconds">' + seconds + "</span>"
-                    + '<span class="unit">{{ units.second }}</span>';
+                    + '<span class="unit">{{ unit_sep }}{{ units.second }}</span>';
 
             {% endif %}
 
