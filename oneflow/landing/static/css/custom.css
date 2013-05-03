@@ -89,6 +89,9 @@ width: 100%;
   margin-top: 34px;
 }
 
+.site-title .badge-beta {
+  vertical-align: middle;
+}
 /* user login / register */
 .user {
   margin-top: 34px;
@@ -499,21 +502,19 @@ p.thankyou {
   background: transparent;
 }
 
-h3 .timer {
+h3#beta_data {
+  margin-top: -20px;
   color: #fff;
-  font-size: 65%;
+  font-size: 60%;
 }
 
-h3 .timer .number {
-  font-size: 300%;
+h3#beta_data .timer .number {
   margin-left: 10px;
 }
 
-h3.beta_invites_left {
-    color: #fff;
-}
-h3.beta_invites_left .number {
-  font-size: 300%;
+h3#beta_data .timer .number,
+h3#beta_data #beta_invites_left .number {
+  font-size: 500%;
 }
 
 /*************************************************************

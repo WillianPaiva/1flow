@@ -5,7 +5,7 @@
 {% load base_utils %}
 {% block landing_content %}
 
-  <form method='POST' class="subemail">
+  <form method='POST' class="subemail span5 offset3">
     {% csrf_token %}
 
     <div class="input-append control-group {% if form.errors %}error{% endif %}">

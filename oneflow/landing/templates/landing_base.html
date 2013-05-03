@@ -34,7 +34,7 @@
         <div class="container">
           <div class="row-fluid">
             <div class="span12">
-              <h1><a class="site-title pull-left" href="/">{% firstof main_title '<i class="icon-gift"></i> 1flow' %}</a> <span class="label label-warning">BETA</span></h1>
+              <h1><a class="site-title pull-left" href="/">{% firstof main_title '<i class="icon-gift"></i> 1flow' %} <span class="badge badge-warning badge-beta">BETA</span></a></h1>
               <div class="user text-right">
                 <a class="user-login" href="http://blog.1flow.net/">Blog</a>
               </div>
@@ -50,8 +50,13 @@
               <h2>{% firstof big_catcher_title 'big_catcher_title' %}</h2>
               {% block landing_content %}
               {% endblock landing_content %}
-              <h3 class="beta_timer">{% countdown beta_time_left short=False %}</h3>
-              {% include 'snippets/beta_invites_left.html' %}
+              <h3 id="beta_data" class="span5 offset3">
+                <span id="beta_timer" class="pull-left">
+                {% countdown beta_time_left format='abbr' spacer='' %}
+                </span>
+                <span id="beta_invites_left" class="pull-right">
+                  {% include 'snippets/beta_invites_left.html' %}
+                </span></h3>
 
             </div><!-- /header-description -->
 
@@ -149,7 +154,7 @@
       <div class="container">
         <div class="row-fluid">
           <div class="span12">
-            <h1 class="footer-title pull-left"><a href="#">{% firstof footer_title '<i class="icon-gift"></i> 1flow' %} <span class="label label-warning">BETA</span></h1>
+            <h1 class="footer-title pull-left"><a href="#">{% firstof footer_title '<i class="icon-gift"></i> 1flow' %} <span class="badge badge-warning">BETA</span></a></h1>
 
             <p class="pull-right copyright">{% firstof footer_copyright 'footer_copyright' %}</p>
           </div>
