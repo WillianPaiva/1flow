@@ -15,8 +15,6 @@ BASE_ROOT    = os.path.dirname(PROJECT_ROOT)
 ADMINS   = (('Olivier Cortès', 'oc@1flow.net'), )
 MANAGERS = ADMINS
 
-REDIS_DB = 0
-
 GRAPPELLI_ADMIN_TITLE = '1flow administration'
 
 ALLOWED_HOSTS = []
@@ -33,6 +31,12 @@ MEDIA_URL  = '/media/'
 STATIC_ROOT = os.path.join(BASE_ROOT, 'static')
 STATIC_URL  = '/static/'
 
+SECRET_KEY = '1!ps20!7iya1ptgluj@2u50)r!fvl*%+6qbxar2jn9y$@=eme!'
+
+ROOT_URLCONF = 'oneflow.urls'
+
+WSGI_APPLICATION = 'oneflow.wsgi.application'
+
 STATICFILES_DIRS = (
 )
 
@@ -40,8 +44,6 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
-
-SECRET_KEY = '1!ps20!7iya1ptgluj@2u50)r!fvl*%+6qbxar2jn9y$@=eme!'
 
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
@@ -58,10 +60,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
-
-ROOT_URLCONF = 'oneflow.urls'
-
-WSGI_APPLICATION = 'oneflow.wsgi.application'
 
 TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT, 'templates')
@@ -87,13 +85,6 @@ INSTALLED_APPS = (
     'oneflow.landing',
     #'oneflow.core',
 )
-
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
-        'LOCATION': '127.0.0.1:11211',
-    }
-}
 
 LOGGING = {
     'version': 1,

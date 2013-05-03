@@ -11,6 +11,8 @@ include_snippets(
         'common',
         'db_common',
         'db_test',
+        'cache_common',
+        'cache_development',
         'mail_production',
         'raven_test',
         'common_test',
