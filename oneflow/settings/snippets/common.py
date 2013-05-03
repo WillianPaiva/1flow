@@ -19,7 +19,7 @@ GRAPPELLI_ADMIN_TITLE = '1flow administration'
 
 ALLOWED_HOSTS = []
 TIME_ZONE     = 'Europe/Paris'
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
 
 # dummy ugettext function, as django's docs say
 ugettext = lambda s: s
