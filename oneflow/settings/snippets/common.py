@@ -49,8 +49,8 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'raven.contrib.django.raven_compat.middleware.'
-    'SentryResponseErrorIdMiddleware',
+    ('raven.contrib.django.raven_compat.middleware.'
+        'SentryResponseErrorIdMiddleware'),
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
