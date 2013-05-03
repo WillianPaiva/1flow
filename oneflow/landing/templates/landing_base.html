@@ -53,11 +53,19 @@
             <div class="header-features">
               <div class="row-fluid">
                 <div class="span6 header-feature">
-                  <h3>{% firstof promise_left_title 'promise_left_title' %}</h3>
+                  <h3>{% if promise_left_icon %}
+                    <i class="icon-{{ promise_left_icon }}"></i>&nbsp;
+                    {% else %}
+                    promise_left_icon (short name only)
+                  {% endif %}{% firstof promise_left_title 'promise_left_title' %}</h3>
                   <p>{% firstof promise_left_content 'promise_left_content' %}</p>
                 </div>
                 <div class="span6 header-feature">
-                  <h3>{% firstof promise_right_title 'promise_right_title' %}</h3>
+                  <h3>{% if promise_right_icon %}
+                    <i class="icon-{{ promise_right_icon }}"></i>&nbsp;
+                    {% else %}
+                    promise_right_icon (short name only)
+                  {% endif %}{% firstof promise_right_title 'promise_right_title' %}</h3>
                   <p>{% firstof promise_right_content 'promise_right_content' %}</p>
                 </div>
               </div>
@@ -74,7 +82,13 @@
 
           <div class="span3">
             <div class="feature">
-              <i class="icon-globe icon-2x pull-left"></i>
+              {% if feature_1_icon %}
+                <i class="icon-{% firstof feature_1_icon 'globe' %} icon-2x pull-left"></i>
+
+              {% else %}
+                feature_1_icon (short name only)
+
+              {% endif %}
               <h4>{% firstof feature_1_title 'feature_1_title' %}</h4>
               <p>{% firstof feature_1_content 'feature_1_content' %}</p>
             </div>
@@ -82,7 +96,13 @@
 
           <div class="span3">
             <div class="feature">
-              <i class="icon-wrench icon-2x pull-left"></i>
+              {% if feature_2_icon %}
+                <i class="icon-{% firstof feature_2_icon 'wrench' %} icon-2x pull-left"></i>
+
+              {% else %}
+                feature_2_icon (short name only)
+
+              {% endif %}
               <h4>{% firstof feature_2_title 'feature_2_title' %}</h4>
               <p>{% firstof feature_2_content 'feature_2_content' %}</p>
             </div>
@@ -90,7 +110,13 @@
 
           <div class="span3">
             <div class="feature">
-              <i class="icon-desktop icon-2x pull-left"></i>
+              {% if feature_3_icon %}
+                <i class="icon-{% firstof feature_3_icon 'desktop' %} icon-2x pull-left"></i>
+
+              {% else %}
+                feature_3_icon (short name only)
+
+              {% endif %}
               <h4>{% firstof feature_3_title 'feature_3_title' %}</h4>
               <p>{% firstof feature_3_content 'feature_3_content' %}</p>
             </div>
@@ -98,7 +124,13 @@
 
           <div class="span3">
             <div class="feature">
-              <i class="icon-thumbs-up icon-2x pull-left"></i>
+              {% if feature_4_icon %}
+                <i class="icon-{% firstof feature_4_icon 'thumbs-up' %} icon-2x pull-left"></i>
+
+              {% else %}
+                feature_4_icon (short name only)
+
+              {% endif %}
               <h4>{% firstof feature_4_title 'feature_4_title' %}</h4>
               <p>{% firstof feature_4_content 'feature_4_content' %}</p>
             </div>
