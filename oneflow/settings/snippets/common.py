@@ -21,6 +21,15 @@ ALLOWED_HOSTS = []
 TIME_ZONE     = 'Europe/Paris'
 LANGUAGE_CODE = 'en-us'
 
+# dummy ugettext function, as django's docs say
+ugettext = lambda s: s
+
+LANGUAGES = (
+    ('en', ugettext('English')),
+    ('fr', ugettext('Français')),
+    ('es', ugettext('Español')),
+)
+
 USE_I18N = True
 USE_L10N = True
 USE_TZ   = True
