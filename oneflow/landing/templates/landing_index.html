@@ -9,7 +9,10 @@
     {% csrf_token %}
 
     <div class="input-append control-group {% if form.errors %}error{% endif %}">
-      {% render_field form.email|attr:'autofocus' placeholder='email@…'  class+="input-large custom" %}
+      {% firstofas email_placeholder_text 'email_placeholder_text' as email_placeholder_translated %}
+      {% with email_placeholder='placeholder:'|add:email_placeholder_translated %}
+      {% render_field form.email|attr:'autofocus'|attr:email_placeholder class+="input-large custom" %}
+      {% endwith %}
       <button type="submit" class="custom">{% firstof invitation_button_label 'invitation_button_label' %}</button>
     </div>
 
