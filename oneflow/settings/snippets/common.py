@@ -87,6 +87,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     'south',
+    'transmeta',
     'redisboard',
     'memcache_status',
     'widget_tweaks',
