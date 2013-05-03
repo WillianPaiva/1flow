@@ -2,15 +2,16 @@
 
 {% load i18n %}
 {% load widget_tweaks %}
-
+{% load base_utils %}
 {% block landing_content %}
 
   <form method='POST' class="subemail">
     {% csrf_token %}
 
     <div class="input-append control-group {% if form.errors %}error{% endif %}">
-     {% render_field form.email|attr:'autofocus' placeholder="Your email here…"  class+="input-large custom" %}
-      <button type="submit" class="custom">{% trans "Subscribe" %}</button>
+      {% firstofas mail_placeholder 'mail_placeholder' as placeholder_text %}
+        {% render_field form.email|attr:'autofocus' placeholder=placeholder_text  class+="input-large custom" %}
+      <button type="submit" class="custom">{% firstof invitation_button_label 'invitation_button_label' %}</button>
     </div>
 
     <div class=" control-group {% if form.errors %}error{% endif %}">

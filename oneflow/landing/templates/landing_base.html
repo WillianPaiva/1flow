@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>1flow landing page</title>
+    <title>{{ landing_title }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="Shy Design">
@@ -31,7 +31,7 @@
         <div class="container">
           <div class="row-fluid">
             <div class="span12">
-              <h1><a class="site-title pull-left" href="/"><i class="icon-gift"></i> 1flow</a></h1>
+              <h1><a class="site-title pull-left" href="/">{% firstof main_title '<i class="icon-gift"></i> 1flow' %}</a></h1>
               <div class="user text-right">
                 <a class="user-login" href="http://blog.1flow.net/">Blog</a>
               </div>
@@ -44,7 +44,7 @@
           <div class="span12">
 
             <div class="header-description">
-              <h2>Catch my fucking eyes!</h2>
+              <h2>{% firstof big_catcher_title 'big_catcher_title' %}</h2>
 
               {% block landing_content %}
               {% endblock landing_content %}
@@ -53,12 +53,12 @@
             <div class="header-features">
               <div class="row-fluid">
                 <div class="span6 header-feature">
-                  <h3><i class="icon-random"></i> &nbsp; The promise</h3>
-                  <p>Proin ut iaculis nisl. Nulla dignissim neque magna, id hendrerit metus. Mauris non turpis eu arcu volutpat cursus. Etiam hendrerit erat ac eros auctor at eleifend lacus tincidunt. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eu dignissim risus.</p>
+                  <h3>{% firstof promise_left_title 'promise_left_title' %}</h3>
+                  <p>{% firstof promise_left_content 'promise_left_content' %}</p>
                 </div>
                 <div class="span6 header-feature">
-                  <h3> <i class="icon-group"></i> &nbsp; Google Reader</h3>
-                  <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. In hac habitasse platea dictumst. Nulla et porta nunc. Duis volutpat tristique nisl ac adipiscing. Sed eget nibh sit amet enim faucibus porta.</p>
+                  <h3>{% firstof promise_right_title 'promise_right_title' %}</h3>
+                  <p>{% firstof promise_right_content 'promise_right_content' %}</p>
                 </div>
               </div>
             </div><!-- /header-features -->
@@ -75,32 +75,32 @@
           <div class="span3">
             <div class="feature">
               <i class="icon-globe icon-2x pull-left"></i>
-              <h4>Used by Millions</h4>
-              <p>Curabitur fringilla, elit pulvinar auctor tincidunt, arcu nibh adipiscing velit, at tincidunt libero nisl sit amet nisl.</p>
+              <h4>{% firstof feature_1_title 'feature_1_title' %}</h4>
+              <p>{% firstof feature_1_content 'feature_1_content' %}</p>
             </div>
           </div><!-- /span3 -->
 
           <div class="span3">
             <div class="feature">
               <i class="icon-wrench icon-2x pull-left"></i>
-              <h4>Developers Friendly</h4>
-              <p>Nullam ac magna sit amet Justo eu vulputate fermentum.</p>
+              <h4>{% firstof feature_2_title 'feature_2_title' %}</h4>
+              <p>{% firstof feature_2_content 'feature_2_content' %}</p>
             </div>
           </div><!-- /span3 -->
 
           <div class="span3">
             <div class="feature">
               <i class="icon-desktop icon-2x pull-left"></i>
-              <h4>Responsive</h4>
-              <p>From desktop tto mobile. Dignissim et dolor. Proin facilisis nulla vitae dui luctus ac pulvinar magna tincidunt.</p>
+              <h4>{% firstof feature_3_title 'feature_3_title' %}</h4>
+              <p>{% firstof feature_3_content 'feature_3_content' %}</p>
             </div>
           </div><!-- /span3 -->
 
           <div class="span3">
             <div class="feature">
               <i class="icon-thumbs-up icon-2x pull-left"></i>
-              <h4>Flat Design</h4>
-              <p>keeping up with trends, can impact your success. Integer.</p>
+              <h4>{% firstof feature_4_title 'feature_4_title' %}</h4>
+              <p>{% firstof feature_4_content 'feature_4_content' %}</p>
             </div>
           </div><!-- /span3 -->
 
@@ -112,11 +112,9 @@
       <div class="container">
         <div class="row-fluid">
           <div class="span12">
-            <h1 class="footer-title pull-left"><a href="#"><i class="icon-gift"></i> 1flow</a></h1>
+            <h1 class="footer-title pull-left"><a href="#">{% firstof footer_title '<i class="icon-gift"></i> 1flow' %}</h1>
 
-            <p class="pull-right copyright">
-              &copy 2013 the <strong>1flow team</strong>, all rights reserved.
-            </p>
+            <p class="pull-right copyright">{% firstof footer_copyright 'footer_copyright' %}</p>
           </div>
         </div>
       </div>

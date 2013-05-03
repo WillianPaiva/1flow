@@ -6,13 +6,11 @@
 
     <p class="thankyou">
         {% if already_registered %}
-            {% blocktrans %}
-              You were already registered. We note that you care a lot about us.
-            {% endblocktrans %}
+            {% firstof already_registered_thanks_content 'already_registered_thanks_content' %}
+
         {% else %}
-            {% blocktrans %}
-              Thanks for your interest, we'll keep you in touch!
-            {% endblocktrans %}
+            {% firstof successful_thanks_content 'successful_thanks_content' %}
+
         {% endif %}
     </p>
 
