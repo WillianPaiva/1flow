@@ -8,8 +8,8 @@ register = template.Library()
 
 
 class FirstOfAsNode(Node):
-    def __init__(self, vars, variable_name=None):
-        self.vars = vars
+    def __init__(self, args, variable_name=None):
+        self.vars = args
         self.variable_name = variable_name
 
     def render(self, context):
@@ -17,6 +17,8 @@ class FirstOfAsNode(Node):
             value = var.resolve(context, True)
 
             if value:
+                print('FOUND %s: %s' % (self.variable_name, value))
+
                 if self.variable_name:
                     context[self.variable_name] = value
                     break
@@ -24,11 +26,11 @@ class FirstOfAsNode(Node):
                 else:
                     return smart_text(value)
 
-            return ''
+        return ''
 
 
-@register.tag(name="firstofas")
-def do_firstofas(parser, token):
+@register.tag
+def firstofas(parser, token):
     """ Original idea: https://code.djangoproject.com/ticket/12199 """
 
     bits = token.split_contents()[1:]
