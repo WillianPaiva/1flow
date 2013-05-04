@@ -92,6 +92,7 @@ INSTALLED_APPS = (
     'south',
     'transmeta',
     'redisboard',
+    'markdown_deux',
     'memcache_status',
     'widget_tweaks',
     'oneflow.base',
@@ -99,6 +100,16 @@ INSTALLED_APPS = (
     #'oneflow.core',
 )
 
+MARKDOWN_DEUX_STYLES = {
+    'default': {
+        'extras': {
+            'code-friendly': None,
+            'cuddled-lists': None,
+
+        },
+        'safe_mode': 'escape',
+    }
+}
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
