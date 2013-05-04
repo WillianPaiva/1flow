@@ -9,8 +9,8 @@ from django.db import models
 class LandingContent(models.Model):
     __metaclass__ = TransMeta
 
-    name    = models.CharField(max_length=128)
-    content = models.TextField()
+    name    = models.CharField(_('Name'), max_length=128)
+    content = models.TextField(_('Content'))
 
     def __unicode__(self):
         return _(u'{field_name}: {truncated_field_value}').format(
@@ -19,3 +19,5 @@ class LandingContent(models.Model):
 
     class Meta:
         translate = ('content', )
+        verbose_name = _(u'Landing page content')
+        verbose_name_plural = _(u'Landing page contents')
