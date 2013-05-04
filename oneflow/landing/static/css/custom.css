@@ -159,6 +159,10 @@ width: 100%;
   padding: 50px;
 }
 
+/* Markdown always add a <p></p>, even if there is only one line… */
+.header-feature h3 p {
+  display: inline;
+}
 
 /*************************************************************
                         section#slider
@@ -194,6 +198,9 @@ width: 100%;
   padding: 20px 10px;
 }
 
+.feature h4 p {
+  display: inline;
+}
 
 /*************************************************************
                         section#testimonials
