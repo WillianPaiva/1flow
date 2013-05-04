@@ -1,6 +1,7 @@
 -e git+https://github.com/Karmak23/sparks#egg=sparks-dev
 django-debug-toolbar==0.9.4
 django-grappelli==2.4.4
+django-markdown-deux==1.0.4
 django-memcache-status==1.1
 django-redisboard==0.2.5
 django-social-auth==0.7.23
