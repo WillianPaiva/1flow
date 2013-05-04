@@ -2,15 +2,6 @@
 import os
 import pwd
 
-# Use this in case paramiko seems to go crazy. Trust me, it can do, especially
-# when using the multiprocessing module.
-#
-# import logging
-# logging.basicConfig(format=
-#                     '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-#                     level=logging.INFO)
-
-
 from fabric.api import env, task
 
 import sparks.django.fabfile as sdf
