@@ -7,9 +7,11 @@
 
 import os
 
-# We need to go down 3 times because we start from
-# `oneflow/settings/snippets/common.py` instead of plain `oneflow/settings.py`.
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+# We need to go down 2 times because the starting point of these settings is
+# `project/settings/__init__.py`, instead of good old `project/settings.py`.
+# NOTE: the `execfile()` on snippets doesn't add depth: even if the current
+# file is `project/settings/snippets/common.py`, this doesn't count.
+PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
 BASE_ROOT    = os.path.dirname(PROJECT_ROOT)
 
 ADMINS   = (('Olivier Cortès', 'oc@1flow.net'), )
