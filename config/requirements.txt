@@ -11,6 +11,7 @@ docutils==0.10
 gunicorn==0.17.4
 hiredis==0.1.1
 jsonfield==0.9.15
+markdown2==2.1.0
 Pillow==2.0.0
 psycopg2==2.5
 pylibmc==1.2.3
