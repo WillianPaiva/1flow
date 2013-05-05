@@ -198,6 +198,7 @@ width: 100%;
   padding: 20px 10px;
 }
 
+/* Markdown always add a <p></p>, even if there is only one line… */
 .feature h4 p {
   display: inline;
 }
