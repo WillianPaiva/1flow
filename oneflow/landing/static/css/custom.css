@@ -193,8 +193,8 @@ width: 100%;
 }
 
 .feature {
-  border-right: 1px solid rgba(255, 255, 255, 0.3);
-  border-left: 1px solid rgba(255, 255, 255, 0.3);
+  /*border-right: 1px solid rgba(255, 255, 255, 0.3);
+  border-left: 1px solid rgba(255, 255, 255, 0.3);*/
   padding: 20px 10px;
 }
 
