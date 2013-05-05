@@ -1,22 +1,28 @@
 {% extends "landing_base.html" %}
 
 {% load i18n %}
+{% load markdown_deux_tags %}
 
 {% block landing_content %}
 
-    <p class="thankyou">
-        {% if already_registered %}
-            {% firstof already_registered_thanks_content 'already_registered_thanks_content' %}
+    <p class="thankyou span8 offset2">
+        {% filter markdown %}
+            {% if already_registered %}
+                {% firstof already_registered_thanks_content 'already_registered_thanks_content' %}
 
-        {% else %}
-            {% firstof successful_thanks_content 'successful_thanks_content' %}
+            {% else %}
+                {% firstof successful_thanks_content 'successful_thanks_content' %}
 
-        {% endif %}
+            {% endif %}
+        {% endfilter %}
+            <br/>
+        {% filter markdown %}
+            {% if beta_invites_left == 0 or debug %}
+                {% firstof no_invite_left_notice_content 'no_invite_left_notice_content' %}
+                {% if debug %}<br /> — you see this text because debug is `True` —{% endif %}
+            {% endif %}
+        {% endfilter %}
         <br/>
-        {% if beta_invites_left == 0 or debug %}
-            {% firstof no_invite_left_notice_content 'no_invite_left_notice_content' %}
-            {% if debug %}<br /> — because debug is True —{% endif %}
-        {% endif %}
     </p>
 
 {% endblock landing_content %}
