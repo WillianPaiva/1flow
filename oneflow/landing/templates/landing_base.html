@@ -157,7 +157,7 @@
           <div class="span12">
             <h1 class="footer-title pull-left"><a href="#">{% firstof footer_title '<i class="icon-gift"></i> 1flow' %} <span class="badge badge-warning">BETA</span></a></h1>
 
-            <p class="pull-right copyright">{% firstof footer_copyright 'footer_copyright' %}</p>
+            <p class="pull-right copyright">{% filter markdown %}{% firstof footer_copyright 'footer_copyright' %}{% endfilter %}</p>
           </div>
         </div>
       </div>
