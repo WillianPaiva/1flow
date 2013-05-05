@@ -30,6 +30,7 @@ LANGUAGES = (
     ('en', ugettext(u'English')),
     ('fr', ugettext(u'Français')),
     ('es', ugettext(u'Español')),
+    ('nt', ugettext(u'Notes — variants')),
 )
 
 USE_I18N = True
