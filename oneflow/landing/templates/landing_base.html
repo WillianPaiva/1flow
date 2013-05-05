@@ -49,16 +49,15 @@
 
             <div class="header-description">
               <h2>{% firstof big_catcher_title 'big_catcher_title' %}</h2>
-              {% block landing_content %}
-              {% endblock landing_content %}
               <h3 id="beta_data" class="span7 offset2">
-                <span id="beta_timer" class="pull-left">
-                {% countdown beta_time_left format='abbr' spacer='' %}
+                <span id="beta_timer">
+                <strong>1flow</strong> opens in {% countdown beta_time_left format='abbr' %}.
                 </span>
-                <span id="beta_invites_left" class="pull-right">
+                <span id="beta_invites_left">
                   {% include 'snippets/beta_invites_left.html' %}
                 </span></h3>
-
+              {% block landing_content %}
+              {% endblock landing_content %}
             </div><!-- /header-description -->
 
             <div class="header-features">

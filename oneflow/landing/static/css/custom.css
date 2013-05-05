@@ -150,12 +150,13 @@ width: 100%;
 
 /* header features */
 .header-features {
-  margin: -50px 110px 0 110px;
+  margin: 0 110px 0 110px;
   color: #fff;
   display: block;
 }
 .header-feature{
   padding: 50px;
+  padding-top: 20px;
 }
 
 /* Markdown always add a <p></p>, even if there is only one line… */
@@ -512,16 +513,16 @@ p.thankyou {
 h3#beta_data {
   margin-top: -20px;
   color: #fff;
-  font-size: 60%;
+  font-size: 80%;
 }
 
 h3#beta_data .timer .number {
-  margin-left: 10px;
+  margin-left: 0.3.em;
 }
 
 h3#beta_data .timer .number,
 h3#beta_data #beta_invites_left .number {
-  font-size: 500%;
+  font-size: 300%;
 }
 
 /*************************************************************

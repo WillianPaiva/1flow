@@ -2,14 +2,22 @@
 {% load base_utils %}
 
 {% if beta_invites_left > 0 %}
-    {% blocktrans count beta_invites_left as counter %}
-       <span class="number">{{ counter }}</span> invite left
+    {% if beta_invites_left > 1000 %}
+        {% blocktrans  %}
 
-    {% plural %}
-       <span class="number">{{ counter }}</span> invites left
+           There are <span class="number">{{ beta_invites_left }}</span> invites left.
+        {% endblocktrans %}
 
-    {% endblocktrans %}
+    {% else %}
+        {% blocktrans count beta_invites_left as counter %}
+           Hurry, there's only <span class="number">{{ counter }}</span> invite left.
 
+        {% plural %}
+           There are only <span class="number">{{ counter }}</span> invites left.
+
+        {% endblocktrans %}
+
+    {% endif %}
 {% else %}
     {% trans "No invite left!" %}
 
