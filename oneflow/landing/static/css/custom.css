@@ -449,7 +449,7 @@ ul.social li:nth-child(6):before{
                         section#subscribe
 **************************************************************/
 
-p.thankyou {
+#thanks h4 {
   color: white;
   font-size: 150%;
 }

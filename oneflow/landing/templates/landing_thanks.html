@@ -5,24 +5,22 @@
 
 {% block landing_content %}
 
-    <p class="thankyou span8 offset2">
-        {% filter markdown %}
+    <div class="span8 offset2" id="thanks">
+        <h4>
             {% if already_registered %}
-                {% firstof already_registered_thanks_content 'already_registered_thanks_content' %}
-
+                {% filter markdown %}{% firstof already_registered_thanks_content 'already_registered_thanks_content' %}{% endfilter %}
             {% else %}
-                {% firstof successful_thanks_content 'successful_thanks_content' %}
+                {% filter markdown %}{% firstof successful_thanks_content 'successful_thanks_content' %}{% endfilter %}
 
             {% endif %}
-        {% endfilter %}
             <br/>
-        {% filter markdown %}
             {% if beta_invites_left == 0 or debug %}
-                {% firstof no_invite_left_notice_content 'no_invite_left_notice_content' %}
-                {% if debug %}<br /> — you see this text because debug is `True` —{% endif %}
+                        {% filter markdown %}{% firstof no_invite_left_notice_content 'no_invite_left_notice_content' %}{% endfilter %}
+                        {% if debug %}<span class="label label-info">(translator, you see this text because debug is enabled)</span>{% endif %}
+
             {% endif %}
-        {% endfilter %}
-        <br/>
-    </p>
+            <br/>
+        </h4>
+    </div>
 
 {% endblock landing_content %}
