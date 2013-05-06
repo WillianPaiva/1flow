@@ -2,7 +2,7 @@
 # Please include this snippet after the `cache`-related ones.
 
 if DEBUG:
-    INSTALLED_APPS += ('rosetta', )
+    INSTALLED_APPS += ('rosetta-grappelli', 'rosetta', )
 
     if 'dummycache' in CACHES['default']['BACKEND'].lower():
         CACHES['rosetta'] = {
