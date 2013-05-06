@@ -17,6 +17,7 @@ include_snippets(
         'mail_development',
         'raven_development',
         'common_development',
+        'rosetta',
         'djdt',
     ),
     globals()

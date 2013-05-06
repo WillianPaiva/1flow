@@ -16,6 +16,7 @@ include_snippets(
         'mail_production',
         'raven_test',
         'common_test',
+        'rosetta',
         'djdt',
     ),
     globals()
