@@ -26,12 +26,16 @@ LANGUAGE_CODE = 'en'
 # dummy ugettext function, as django's docs say
 ugettext = lambda s: s
 
+# Please update ../Makefile if you add/del a language.
 LANGUAGES = (
     ('en', ugettext(u'English')),
     ('fr', ugettext(u'Français')),
     ('es', ugettext(u'Español')),
-    ('nt', ugettext(u'Notes — variants')),
 )
+
+# This fake language is used by translators to keep
+# variants and translations notes handy in the admin interface.
+TRANSMETA_LANGUAGES = LANGUAGES + (('nt', ugettext(u'Notes — variants')), )
 
 USE_I18N = True
 USE_L10N = True
