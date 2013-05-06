@@ -17,9 +17,12 @@ shell:
 shellapp:
 	SPARKS_DJANGO_SETTINGS=chani_app ./manage.py shell
 
-
 messages:
 	fab local sdf.makemessages
 
 compilemessages:
 	fab local sdf.compilemessages
+
+
+update-requirements:
+	(cd config && pip-dump)
