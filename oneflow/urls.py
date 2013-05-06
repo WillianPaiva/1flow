@@ -1,27 +1,32 @@
 
 from django.conf import settings
 from django.conf.urls import patterns, include, url
+from django.conf.urls.i18n import i18n_patterns
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
 
 admin.autodiscover()
 
+# urlpatterns = patterns('',
+#     url(r'^sitemap\.xml$', 'sitemap.view', name='sitemap_xml'),
+# )
+
+urlpatterns = patterns(
+    '',
+    # NEVER use r'^$', this won't work as expected. Use r''.
+    url(r'', include('oneflow.base.urls')),
+)
+
 
 if settings.SITE_ID == 1:
-    urlpatterns = patterns(
+    urlpatterns += i18n_patterns(
         '',
-
-        # NEVER use r'^$', this won't work as expected. Use r''.
-        url(r'', include('oneflow.base.urls')),
         url(r'', include('oneflow.landing.urls')),
     )
 
 else:
-    urlpatterns = patterns(
+    urlpatterns += i18n_patterns(
         '',
-
-        # NEVER use r'^$', this won't work as expected. Use r''.
-        url(r'', include('oneflow.base.urls')),
         #url(r'', include('oneflow.core.urls')),
     )
 

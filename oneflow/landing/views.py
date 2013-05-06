@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponseBadRequest
 from django.contrib.auth.models import User
 from django.shortcuts import render
-from django.utils.translation import get_language
+from django.utils.translation import get_language, ugettext_lazy as _
 from django.views.decorators.cache import cache_page
 
 
@@ -70,7 +70,7 @@ def home(request):
             else:
                 return HttpResponseRedirect(reverse('landing_thanks',
                                             kwargs={'already_registered':
-                                            'again'}))
+                                            _('again')}))
 
     else:
         form = LandingPageForm()
