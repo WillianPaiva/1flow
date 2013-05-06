@@ -29,8 +29,12 @@ ugettext = lambda s: s
 # Please update ../Makefile if you add/del a language.
 LANGUAGES = (
     ('en', ugettext(u'English')),
+    ('en-us', ugettext(u'English (US)')),
+    ('en-gb', ugettext(u'English (UK)')),
     ('fr', ugettext(u'Français')),
+#    ('fr-fr', ugettext(u'Français (FR)')),
     ('es', ugettext(u'Español')),
+#    ('es-es', ugettext(u'Español (ES)')),
 )
 
 # This fake language is used by translators to keep
@@ -40,6 +44,9 @@ TRANSMETA_LANGUAGES = LANGUAGES + (('nt', ugettext(u'Notes — variants')), )
 USE_I18N = True
 USE_L10N = True
 USE_TZ   = True
+
+# Activate if bandwidth is limited, at some CPU cost.
+#USE_ETAGS = True
 
 MEDIA_ROOT = os.path.join(BASE_ROOT, 'media')
 MEDIA_URL  = '/media/'
@@ -67,6 +74,7 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    #'ConditionalGetMiddleware',
     ('raven.contrib.django.raven_compat.middleware.'
         'SentryResponseErrorIdMiddleware'),
     'django.middleware.common.CommonMiddleware',
@@ -76,6 +84,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    #'GZipMiddleware',
 )
 
 TEMPLATE_DIRS = (
