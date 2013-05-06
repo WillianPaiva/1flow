@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-06 21:32+0200\n"
+"POT-Creation-Date: 2013-05-06 22:01+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -40,6 +40,14 @@ msgstr ""
 
 #: models.py:23
 msgid "Landing page contents"
+msgstr ""
+
+#: urls.py:10
+msgid "^thanks/(?P<already_registered>\\w+)?$"
+msgstr ""
+
+#: views.py:73
+msgid "again"
 msgstr ""
 
 #: templates/landing_base.html:55
