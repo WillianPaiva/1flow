@@ -25,6 +25,14 @@ else:
         #url(r'', include('oneflow.core.urls')),
     )
 
+# WARNING: when sites are spread across different machines, rosetta
+# must be migrated to run on only one dedicated, to avoid messing
+# with partially translated .PO files on many 1flow servers.
+if 'rosetta' in settings.INSTALLED_APPS:
+    urlpatterns += patterns(
+        '', url(r'^translate/', include('rosetta.urls')),
+    )
+
 urlpatterns += patterns(
     '',
     url(r'^grappelli/', include('grappelli.urls')),
