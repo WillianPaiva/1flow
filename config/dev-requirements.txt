@@ -1,7 +1,6 @@
 -e git+https://github.com/Karmak23/sparks#egg=sparks-dev
--e git+https://github.com/mbi/django-rosetta#egg=django-rosetta-dev
+-e git+https://github.com/mbi/django-rosetta@b56350aa2da8d6a9ac8c7ff74d0f64e9d84ca096#egg=django_rosetta-dev
 Fabric==1.6.0
-ipython==0.13.2
 flake8==2.0
+ipython==0.13.2
 pip-tools==0.3.1
-
