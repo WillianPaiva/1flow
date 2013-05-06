@@ -51,9 +51,10 @@
               <h2>{% firstof big_catcher_title 'big_catcher_title' %}</h2>
               <h3 id="beta_data" class="span8 offset2">
                 <span id="beta_timer">
-                  {% blocktrans with countdown beta_time_left format='abbr' as countdown %}
-                    <strong>1flow</strong> opens in {{ countdown }}.
-                  {% endblocktrans %}
+                  {% captureas timer %}{% countdown beta_time_left format='abbr' %}{% endcaptureas %}
+                    {% blocktrans %}
+                      <strong>1flow</strong> opens in {{ timer }}.
+                    {% endblocktrans %}
                 </span>
                 <span id="beta_invites_left">
                   {% include 'snippets/beta_invites_left.html' %}
