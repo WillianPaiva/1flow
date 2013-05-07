@@ -112,7 +112,6 @@ width: 100%;
   color: rgb(219, 82, 47);
 }
 
-
 /* header-description */
 .header-description {
   margin: 130px 0 80px;
@@ -169,6 +168,15 @@ width: 100%;
   transition: all 300ms ease;
   border-bottom: 1px dotted white;
 }
+
+/*
+.feature p,
+.header-feature p,
+.feature ul li,
+.header-feature ul li {
+  text-align: justify;
+}
+*/
 
 .feature a:hover,
 .feature a:focus,

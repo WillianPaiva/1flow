@@ -29,11 +29,12 @@ ugettext = lambda s: s
 # Please update ../Makefile if you add/del a language.
 LANGUAGES = (
     ('en', ugettext(u'English')),
-    ('en-us', ugettext(u'English (US)')),
     ('en-gb', ugettext(u'English (UK)')),
-    ('fr', ugettext(u'Français')),
-#    ('fr-fr', ugettext(u'Français (FR)')),
     ('es', ugettext(u'Español')),
+    ('fr', ugettext(u'Français')),
+# Activate these later when we need them.
+#    ('en-us', ugettext(u'English (US)')),
+#    ('fr-fr', ugettext(u'Français (FR)')),
 #    ('es-es', ugettext(u'Español (ES)')),
 )
 
