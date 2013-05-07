@@ -106,6 +106,7 @@ INSTALLED_APPS = (
     'grappelli',
     'django.contrib.admin',
     'django.contrib.admindocs',
+    'django_reset',
     'south',
     'transmeta',
     'redisboard',
