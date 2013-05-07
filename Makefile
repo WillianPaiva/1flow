@@ -26,3 +26,15 @@ compilemessages:
 
 update-requirements:
 	(cd config && pip-dump)
+
+
+requirements:
+	fab local sdf.requirements
+
+syncdb:
+	fab local sdf.syncdb
+	fab local sdf.migrate
+
+restart:
+	fab test sdf.restart_services
+
