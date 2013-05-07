@@ -91,6 +91,9 @@ TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT, 'templates')
 )
 
+# Not any yet.
+#TEMPLATE_CONTEXT_PROCESSORS += ('oneflow.base.context.…', )
+
 INSTALLED_APPS = (
     'raven.contrib.django.raven_compat',
     'django.contrib.auth',
@@ -122,8 +125,17 @@ MARKDOWN_DEUX_STYLES = {
 
         },
         'safe_mode': 'escape',
+    },
+    'raw': {
+        'extras': {
+            'code-friendly': None,
+            'cuddled-lists': None,
+
+        },
+        'safe_mode': False,
     }
 }
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
