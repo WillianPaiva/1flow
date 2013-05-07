@@ -13,10 +13,8 @@
                 {% filter markdown %}{% firstof successful_thanks_content 'successful_thanks_content' %}{% endfilter %}
 
             {% endif %}
-            <br/>
             {% if beta_invites_left == 0 or debug %}
                         {% filter markdown %}{% firstof no_invite_left_notice_content 'no_invite_left_notice_content' %}{% endfilter %}
-                        {% if debug %}<span class="label label-info">(translator, you see this text because debug is enabled)</span>{% endif %}
 
             {% endif %}
             <br/>
