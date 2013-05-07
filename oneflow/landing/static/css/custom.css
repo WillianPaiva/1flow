@@ -154,9 +154,42 @@ width: 100%;
   color: #fff;
   display: block;
 }
-.header-feature{
+.header-feature {
   padding: 50px;
   padding-top: 20px;
+}
+
+.feature a,
+.header-feature a {
+  color: white;
+  -webkit-transition: all 300ms ease;
+  -moz-transition: all 300ms ease;
+  -ms-transition: all 300ms ease;
+  -o-transition: all 300ms ease;
+  transition: all 300ms ease;
+  border-bottom: 1px dotted white;
+}
+
+.feature a:hover,
+.feature a:focus,
+.header-feature a:hover,
+.header-feature a:focus {
+  color: white;
+  text-decoration: none;
+  border-bottom: 1px solid white;
+
+}
+
+.feature code,
+.header-feature code {
+  padding:2px 4px;
+  color: rgba(255, 255, 255, 0.8);
+  /*rgba(221, 17, 68, 0.8);*/
+  background-color: rgba(247,247,249, 0.25);
+  border: 1px solid rgba(225,225,232, 0.25);
+  -webkit-border-radius:3px;
+  -moz-border-radius:3px;
+  border-radius:3px
 }
 
 /* Markdown always add a <p></p>, even if there is only one line… */
