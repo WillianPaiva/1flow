@@ -1,4 +1,5 @@
 -e git+https://github.com/Karmak23/sparks#egg=sparks-dev
+-e git+https://github.com/gregmuellegger/django-reset.git@4f859d9319a7bfc41484f302e96e1f880aaa67db#egg=django_reset-dev
 django-debug-toolbar==0.9.4
 django-grappelli==2.4.4
 django-markdown-deux==1.0.4
