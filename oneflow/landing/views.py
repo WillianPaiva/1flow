@@ -42,13 +42,12 @@ def get_beta_time_left():
 
 def get_translations():
 
-    # if lang is'fr_FR', we want to get only 'fr'
-    lang = get_language().split('_', 1)[0]
-
-    # Load all translated fields from database.
-    # We need to explicitely define the _lang because
-    # Transmeta fields don't play well with values_list().
-    return tuple(LandingContent.objects.values_list('name', 'content_' + lang))
+    # We can't speed up this thing with .values_list() because
+    # Transmeta's way of doing thing isn't compatible with it:
+    # it would need to specify the *_lang field name, which
+    # would avoid the ability to fallback to default lang if
+    # the field has no translation.
+    return tuple((x.name, x.content) for x in LandingContent.objects.all())
 
 
 def home(request):
