@@ -16,6 +16,7 @@ urlpatterns = patterns(
     '',
     # NEVER use r'^$', this won't work as expected. Use r''.
     url(r'', include('oneflow.base.urls')),
+    (r'^i18n/', include('django.conf.urls.i18n')),
 )
 
 

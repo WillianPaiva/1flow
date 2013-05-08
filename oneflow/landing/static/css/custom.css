@@ -78,6 +78,11 @@ a.carousel-control:hover {
 width: 100%;
 }
 
+.container #lang-flags {
+  text-align: center;
+  margin-bottom: -20px;
+}
+
 /* logo - icon is from fontawesome font */
 .site-title {
   margin-top: 5px;
