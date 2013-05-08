@@ -1,8 +1,9 @@
 {% load i18n %}
 {% load base_utils %}
 {% load markdown_deux_tags %}
+{% get_current_language as current_lang_code %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ current_lang_code }}">
   <head>
     <meta charset="utf-8">
     <title>{{ landing_title }}</title>
@@ -33,11 +34,43 @@
 
     <header id="header" class="site-header">
         <div class="container">
+          <div class="row-fluid" id="lang-flags">
+            {% get_available_languages as languages %}
+            {% for lang_code, lang_name in languages %}
+              {% if lang_code != current_lang_code %}
+                {% language lang_code %}
+
+                  {% captureas switch_to_trans %}{% blocktrans %}Switch to {{ lang_name }}{% endblocktrans %}{% endcaptureas %}
+
+                  <form action="{% url 'set_language' %}" method="post" style="display: inline">
+                  {% csrf_token %}
+                  <input type="hidden" name="next" value="/" />
+                  <input type="hidden" name="language" value="{{ lang_code }}">
+                  <input type="image" src="{{ STATIC_URL }}img/flags/{% if '-' in lang_code %}{{ lang_code|slice:'3:'|lower }}{% else %}{{ lang_code }}{% endif %}.png"
+                    alt="{{ switch_to_trans }}" data-toggle="tooltip"
+                    title="{{ switch_to_trans }}" width='16' height='11' />
+                  </form>
+                {% endlanguage %}
+              {% endif %}
+            {% endfor %}
+          </div>
           <div class="row-fluid">
             <div class="span12">
-              <h1><a class="site-title pull-left" href="/">{% firstof main_title '<i class="icon-gift"></i> 1flow' %} <span class="badge badge-warning badge-beta">BETA</span></a></h1>
+              <h1><a class="site-title pull-left" href="/">
+                {% firstof main_title '<i class="icon-gift"></i> 1flow' %}
+                <span class="badge badge-warning badge-beta">BETA</span></a>
+              </h1>
+
               <div class="user text-right">
-                <a class="user-login" href="http://blog.1flow.net/">Blog</a>
+                <a class="user-login" id="twitter-page"
+                  href="https://twitter.com/1flowapp"
+                  data-toggle="tooltip" target="_blank"
+                  title="{% trans "Follow us on twitter!" %}"><i
+                  class="icon-twitter"></i></a>
+                <!--
+                <a class="user-login" href="http://blog.1flow.net/"
+                  data-toggle="tooltip" title=""><i class="icon-bullhorn"></i></a>
+                -->
               </div>
             </div><!-- /span12 -->
           </div><!-- /row-fluid -->

@@ -78,6 +78,11 @@ a.carousel-control:hover {
 width: 100%;
 }
 
+.container #lang-flags {
+  text-align: center;
+  margin-bottom: -20px;
+}
+
 /* logo - icon is from fontawesome font */
 .site-title {
   margin-top: 5px;
@@ -495,6 +500,10 @@ ul.social li:nth-child(6):before{
   font-size: 150%;
 }
 
+#thanks h4 p {
+  font-weight: normal;
+}
+
 .subemail input, .subemail button {
   font-family: lato;
   font-size: 16px;
@@ -553,6 +562,7 @@ ul.social li:nth-child(6):before{
 
 h3#beta_data {
   margin-top: -20px;
+  margin-bottom: -10px;
   color: #fff;
   font-size: 80%;
 }
@@ -563,7 +573,7 @@ h3#beta_data .timer .number {
 
 h3#beta_data .timer .number,
 h3#beta_data #beta_invites_left .number {
-  font-size: 300%;
+  font-size: 150%;
 }
 
 /*************************************************************
