@@ -8,13 +8,13 @@
     <div class="span8 offset2" id="thanks">
         <h4>
             {% if already_registered %}
-                {% filter markdown %}{% firstof already_registered_thanks_content 'already_registered_thanks_content' %}{% endfilter %}
+                {% filter markdown %}{{ already_registered_thanks_content }}{% endfilter %}
             {% else %}
-                {% filter markdown %}{% firstof successful_thanks_content 'successful_thanks_content' %}{% endfilter %}
+                {% filter markdown %}{{ successful_thanks_content }}{% endfilter %}
 
             {% endif %}
             {% if beta_invites_left == 0 or debug %}
-                        {% filter markdown %}{% firstof no_invite_left_notice_content 'no_invite_left_notice_content' %}{% endfilter %}
+                        {% filter markdown %}{{ no_invite_left_notice_content }}{% endfilter %}
 
             {% endif %}
             <br/>

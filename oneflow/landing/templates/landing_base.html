@@ -1,7 +1,6 @@
 {% load i18n %}
 {% load base_utils %}
 {% load markdown_deux_tags %}
-{% get_current_language as current_lang_code %}
 <!DOCTYPE html>
 <html lang="{{ current_lang_code }}">
   <head>
@@ -34,30 +33,13 @@
 
     <header id="header" class="site-header">
         <div class="container">
-          <div class="row-fluid" id="lang-flags">
-            {% get_available_languages as languages %}
-            {% for lang_code, lang_name in languages %}
-              {% if lang_code != current_lang_code %}
-                {% language lang_code %}
 
-                  {% captureas switch_to_trans %}{% blocktrans %}Switch to {{ lang_name }}{% endblocktrans %}{% endcaptureas %}
+          {% include 'snippets/lang-switcher.html' %}
 
-                  <form action="{% url 'set_language' %}" method="post" style="display: inline">
-                  {% csrf_token %}
-                  <input type="hidden" name="next" value="/" />
-                  <input type="hidden" name="language" value="{{ lang_code }}">
-                  <input type="image" src="{{ STATIC_URL }}img/flags/{% if '-' in lang_code %}{{ lang_code|slice:'3:'|lower }}{% else %}{{ lang_code }}{% endif %}.png"
-                    alt="{{ switch_to_trans }}" data-toggle="tooltip"
-                    title="{{ switch_to_trans }}" width='16' height='11' />
-                  </form>
-                {% endlanguage %}
-              {% endif %}
-            {% endfor %}
-          </div>
           <div class="row-fluid">
             <div class="span12">
               <h1><a class="site-title pull-left" href="/">
-                {% firstof main_title '<i class="icon-gift"></i> 1flow' %}
+                <i class="icon-gift"></i> 1flow
                 <span class="badge badge-warning badge-beta">BETA</span></a>
               </h1>
 
@@ -81,7 +63,7 @@
           <div class="span12">
 
             <div class="header-description">
-              <h2>{% firstof big_catcher_title 'big_catcher_title' %}</h2>
+              <h2>{{ big_catcher_title }}</h2>
               <h3 id="beta_data" class="span8 offset2">
                 <span id="beta_timer">
                   {% captureas timer %}{% countdown beta_time_left format='abbr' %}{% endcaptureas %}
@@ -103,16 +85,16 @@
                     <i class="icon-{{ promise_left_icon }}"></i>&nbsp;
                     {% else %}
                     promise_left_icon (short name only)
-                  {% endif %}{% filter markdown %}{% firstof promise_left_title 'promise_left_title' %}{% endfilter %}</h3>
-                  <p>{% filter markdown %}{% firstof promise_left_content 'promise_left_content' %}{% endfilter %}</p>
+                  {% endif %}{% filter markdown %}{{ promise_left_title }}{% endfilter %}</h3>
+                  <p>{% filter markdown %}{{ promise_left_content }}{% endfilter %}</p>
                 </div>
                 <div class="span6 header-feature">
                   <h3>{% if promise_right_icon %}
                     <i class="icon-{{ promise_right_icon }}"></i>&nbsp;
                     {% else %}
                     promise_right_icon (short name only)
-                  {% endif %}{% filter markdown %}{% firstof promise_right_title 'promise_right_title' %}{% endfilter %}</h3>
-                  <p>{% filter markdown %}{% firstof promise_right_content 'promise_right_content' %}{% endfilter %}</p>
+                  {% endif %}{% filter markdown %}{{ promise_right_title }}{% endfilter %}</h3>
+                  <p>{% filter markdown %}{{ promise_right_content }}{% endfilter %}</p>
                 </div>
               </div>
             </div><!-- /header-features -->
@@ -129,56 +111,56 @@
           <div class="span3">
             <div class="feature">
               {% if feature_1_icon %}
-                <i class="icon-{% firstof feature_1_icon 'globe' %} icon-2x pull-left"></i>
+                <i class="icon-{{ feature_1_icon }} icon-2x pull-left"></i>
 
               {% else %}
                 feature_1_icon (short name only)
 
               {% endif %}
-              <h4>{% filter markdown %}{% firstof feature_1_title 'feature_1_title' %}{% endfilter %}</h4>
-              <p>{% filter markdown %}{% firstof feature_1_content 'feature_1_content' %}{% endfilter %}</p>
+              <h4>{% filter markdown %}{{ feature_1_title }}{% endfilter %}</h4>
+              <p>{% filter markdown %}{{ feature_1_content }}{% endfilter %}</p>
             </div>
           </div><!-- /span3 -->
 
           <div class="span3">
             <div class="feature">
               {% if feature_2_icon %}
-                <i class="icon-{% firstof feature_2_icon 'wrench' %} icon-2x pull-left"></i>
+                <i class="icon-{{ feature_2_icon }} icon-2x pull-left"></i>
 
               {% else %}
                 feature_2_icon (short name only)
 
               {% endif %}
-              <h4>{% filter markdown %}{% firstof feature_2_title 'feature_2_title' %}{% endfilter %}</h4>
-              <p>{% filter markdown %}{% firstof feature_2_content 'feature_2_content' %}{% endfilter %}</p>
+              <h4>{% filter markdown %}{{ feature_2_title }}{% endfilter %}</h4>
+              <p>{% filter markdown %}{{ feature_2_content }}{% endfilter %}</p>
             </div>
           </div><!-- /span3 -->
 
           <div class="span3">
             <div class="feature">
               {% if feature_3_icon %}
-                <i class="icon-{% firstof feature_3_icon 'desktop' %} icon-2x pull-left"></i>
+                <i class="icon-{{ feature_3_icon }} icon-2x pull-left"></i>
 
               {% else %}
                 feature_3_icon (short name only)
 
               {% endif %}
-              <h4>{% filter markdown %}{% firstof feature_3_title 'feature_3_title' %}{% endfilter %}</h4>
-              <p>{% filter markdown %}{% firstof feature_3_content 'feature_3_content' %}{% endfilter %}</p>
+              <h4>{% filter markdown %}{{ feature_3_title }}{% endfilter %}</h4>
+              <p>{% filter markdown %}{{ feature_3_content }}{% endfilter %}</p>
             </div>
           </div><!-- /span3 -->
 
           <div class="span3">
             <div class="feature">
               {% if feature_4_icon %}
-                <i class="icon-{% firstof feature_4_icon 'thumbs-up' %} icon-2x pull-left"></i>
+                <i class="icon-{{ feature_4_icon }} icon-2x pull-left"></i>
 
               {% else %}
                 feature_4_icon (short name only)
 
               {% endif %}
-              <h4>{% filter markdown %}{% firstof feature_4_title 'feature_4_title' %}{% endfilter %}</h4>
-              <p>{% filter markdown %}{% firstof feature_4_content 'feature_4_content' %}{% endfilter %}</p>
+              <h4>{% filter markdown %}{{ feature_4_title }}{% endfilter %}</h4>
+              <p>{% filter markdown %}{{ feature_4_content }}{% endfilter %}</p>
             </div>
           </div><!-- /span3 -->
 
@@ -190,9 +172,10 @@
       <div class="container">
         <div class="row-fluid">
           <div class="span12">
-            <h1 class="footer-title pull-left"><a href="#">{% firstof footer_title '<i class="icon-gift"></i> 1flow' %} <span class="badge badge-warning">BETA</span></a></h1>
+            <h1 class="footer-title pull-left"><a href="/"><i class="icon-gift"></i> 1flow
+ <span class="badge badge-warning">BETA</span></a></h1>
 
-            <div class="pull-right copyright">{% filter markdown %}{% firstof footer_copyright 'footer_copyright' %}{% endfilter %}</div>
+            <div class="pull-right copyright">{% filter markdown %}{{ footer_copyright }}{% endfilter %}</div>
           </div>
         </div>
       </div>
