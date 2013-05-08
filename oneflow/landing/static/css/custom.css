@@ -66,7 +66,6 @@ a.carousel-control:hover {
   padding: 20px 0;
 }
 
-
 /*************************************************************
                              header
 **************************************************************/
@@ -79,6 +78,11 @@ a.carousel-control:hover {
 width: 100%;
 }
 
+.container #lang-flags {
+  text-align: center;
+  margin-bottom: -20px;
+}
+
 /* logo - icon is from fontawesome font */
 .site-title {
   margin-top: 5px;
@@ -89,6 +93,9 @@ width: 100%;
   margin-top: 34px;
 }
 
+.site-title .badge-beta {
+  vertical-align: middle;
+}
 /* user login / register */
 .user {
   margin-top: 34px;
@@ -109,7 +116,6 @@ width: 100%;
   background: #fff;
   color: rgb(219, 82, 47);
 }
-
 
 /* header-description */
 .header-description {
@@ -148,14 +154,61 @@ width: 100%;
 
 /* header features */
 .header-features {
-  margin: -50px 110px 0 110px;
+  margin: 0 110px 0 110px;
   color: #fff;
   display: block;
 }
-.header-feature{
+.header-feature {
   padding: 50px;
+  padding-top: 20px;
 }
 
+.feature a,
+.header-feature a {
+  color: white;
+  -webkit-transition: all 300ms ease;
+  -moz-transition: all 300ms ease;
+  -ms-transition: all 300ms ease;
+  -o-transition: all 300ms ease;
+  transition: all 300ms ease;
+  border-bottom: 1px dotted white;
+}
+
+/*
+.feature p,
+.header-feature p,
+.feature ul li,
+.header-feature ul li {
+  text-align: justify;
+}
+*/
+
+.feature a:hover,
+.feature a:focus,
+.header-feature a:hover,
+.header-feature a:focus {
+  color: white;
+  text-decoration: none;
+  border-bottom: 1px solid white;
+
+}
+
+.feature code,
+.header-feature code {
+  padding:2px 4px;
+  color: rgba(255, 255, 255, 0.8);
+  /*rgba(221, 17, 68, 0.8);*/
+  background-color: rgba(247,247,249, 0.25);
+  border: 1px solid rgba(225,225,232, 0.25);
+  -webkit-border-radius:3px;
+  -moz-border-radius:3px;
+  border-radius:3px
+}
+
+/* Markdown always add a <p></p>, even if there is only one line… */
+.header-feature h3 p {
+  display: inline;
+}
 
 /*************************************************************
                         section#slider
@@ -186,11 +239,15 @@ width: 100%;
 }
 
 .feature {
-  border-right: 1px solid rgba(255, 255, 255, 0.3);
-  border-left: 1px solid rgba(255, 255, 255, 0.3);
+  /*border-right: 1px solid rgba(255, 255, 255, 0.3);
+  border-left: 1px solid rgba(255, 255, 255, 0.3);*/
   padding: 20px 10px;
 }
 
+/* Markdown always add a <p></p>, even if there is only one line… */
+.feature h4 p {
+  display: inline;
+}
 
 /*************************************************************
                         section#testimonials
@@ -438,9 +495,13 @@ ul.social li:nth-child(6):before{
                         section#subscribe
 **************************************************************/
 
-p.thankyou {
+#thanks h4 {
   color: white;
   font-size: 150%;
+}
+
+#thanks h4 p {
+  font-weight: normal;
 }
 
 .subemail input, .subemail button {
@@ -497,6 +558,22 @@ p.thankyou {
 
 .subemail button.custom:hover {
   background: transparent;
+}
+
+h3#beta_data {
+  margin-top: -20px;
+  margin-bottom: -10px;
+  color: #fff;
+  font-size: 80%;
+}
+
+h3#beta_data .timer .number {
+  margin-left: 0.1em;
+}
+
+h3#beta_data .timer .number,
+h3#beta_data #beta_invites_left .number {
+  font-size: 150%;
 }
 
 /*************************************************************
@@ -570,6 +647,11 @@ p.thankyou {
 }
 .copyright {
   margin-top: 22px;
+}
+
+/* Markdown always add a <p></p>, even if there is only one line… */
+.footer .copyright p {
+  display: inline;
 }
 
 /*************************************************************

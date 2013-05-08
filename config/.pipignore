@@ -7,8 +7,10 @@ pep8
 pycrypto
 pyflakes
 python-openid
+six
 stevedore
 verlib
 virtualenv-clone
 virtualenv
 virtualenvwrapper
+yolk

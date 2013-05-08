@@ -7,31 +7,59 @@
 
 import os
 
-# We need to go down 3 times because we start from
-# `oneflow/settings/snippets/common.py` instead of plain `oneflow/settings.py`.
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+# We need to go down 2 times because the starting point of these settings is
+# `project/settings/__init__.py`, instead of good old `project/settings.py`.
+# NOTE: the `execfile()` on snippets doesn't add depth: even if the current
+# file is `project/settings/snippets/common.py`, this doesn't count.
+PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
 BASE_ROOT    = os.path.dirname(PROJECT_ROOT)
 
 ADMINS   = (('Olivier Cortès', 'oc@1flow.net'), )
 MANAGERS = ADMINS
 
-REDIS_DB = 0
-
 GRAPPELLI_ADMIN_TITLE = '1flow administration'
 
 ALLOWED_HOSTS = []
 TIME_ZONE     = 'Europe/Paris'
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
+
+# dummy ugettext function, as django's docs say
+ugettext = lambda s: s
+
+# Please update ../Makefile if you add/del a language.
+LANGUAGES = (
+    ('en', ugettext(u'English')),
+    ('en-gb', ugettext(u'English (UK)')),
+    ('fr', ugettext(u'Français')),
+# Activate these later when we need them.
+#    ('es', ugettext(u'Español')),
+#    ('en-us', ugettext(u'English (US)')),
+#    ('fr-fr', ugettext(u'Français (FR)')),
+#    ('es-es', ugettext(u'Español (ES)')),
+)
+
+# This fake language is used by translators to keep
+# variants and translations notes handy in the admin interface.
+TRANSMETA_LANGUAGES = LANGUAGES + (('nt', ugettext(u'Notes — variants')), )
 
 USE_I18N = True
 USE_L10N = True
 USE_TZ   = True
+
+# Activate if bandwidth is limited, at some CPU cost.
+#USE_ETAGS = True
 
 MEDIA_ROOT = os.path.join(BASE_ROOT, 'media')
 MEDIA_URL  = '/media/'
 
 STATIC_ROOT = os.path.join(BASE_ROOT, 'static')
 STATIC_URL  = '/static/'
+
+SECRET_KEY = '1!ps20!7iya1ptgluj@2u50)r!fvl*%+6qbxar2jn9y$@=eme!'
+
+ROOT_URLCONF = 'oneflow.urls'
+
+WSGI_APPLICATION = 'oneflow.wsgi.application'
 
 STATICFILES_DIRS = (
 )
@@ -41,31 +69,31 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
 
-SECRET_KEY = '1!ps20!7iya1ptgluj@2u50)r!fvl*%+6qbxar2jn9y$@=eme!'
-
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
-    'raven.contrib.django.raven_compat.middleware.'
-    'SentryResponseErrorIdMiddleware',
-    'django.middleware.common.CommonMiddleware',
+    #'ConditionalGetMiddleware',
+    ('raven.contrib.django.raven_compat.middleware.'
+        'SentryResponseErrorIdMiddleware'),
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    #'GZipMiddleware',
 )
-
-ROOT_URLCONF = 'oneflow.urls'
-
-WSGI_APPLICATION = 'oneflow.wsgi.application'
 
 TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT, 'templates')
 )
+
+# Not any yet.
+#TEMPLATE_CONTEXT_PROCESSORS += ('oneflow.base.context.…', )
 
 INSTALLED_APPS = (
     'raven.contrib.django.raven_compat',
@@ -79,18 +107,34 @@ INSTALLED_APPS = (
     'grappelli',
     'django.contrib.admin',
     'django.contrib.admindocs',
+    'django_reset',
     'south',
+    'transmeta',
     'redisboard',
+    'markdown_deux',
     'memcache_status',
     'widget_tweaks',
+    'oneflow.base',
     'oneflow.landing',
     #'oneflow.core',
 )
 
-CACHES = {
+MARKDOWN_DEUX_STYLES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
-        'LOCATION': '127.0.0.1:11211',
+        'extras': {
+            'code-friendly': None,
+            'cuddled-lists': None,
+
+        },
+        'safe_mode': 'escape',
+    },
+    'raw': {
+        'extras': {
+            'code-friendly': None,
+            'cuddled-lists': None,
+
+        },
+        'safe_mode': False,
     }
 }
 
@@ -126,6 +170,7 @@ LOGGING = {
             'level': 'WARNING',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler',
+            'include_html': True,
         },
         # critical errors are logged to sentry
         'sentry': {
@@ -135,6 +180,12 @@ LOGGING = {
         },
     },
     'loggers': {
+        # Don't log SQL queries, this bothers me.
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+
         # This is the "catch all" logger
         '': {
             'handlers': ['console', 'mail_admins', 'sentry'],  # 'syslog',

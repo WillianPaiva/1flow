@@ -1,19 +1,25 @@
 {% extends "landing_base.html" %}
 
 {% load i18n %}
+{% load markdown_deux_tags %}
 
 {% block landing_content %}
 
-    <p class="thankyou">
-        {% if already_registered %}
-            {% blocktrans %}
-              You were already registered. We note that you care a lot about us.
-            {% endblocktrans %}
-        {% else %}
-            {% blocktrans %}
-              Thanks for your interest, we'll keep you in touch!
-            {% endblocktrans %}
-        {% endif %}
-    </p>
+    <div class="span8 offset2" id="thanks">
+        <h4>
+            {% if already_registered %}
+                {{ already_registered_thanks_content|markdown }}
+
+            {% else %}
+                {% if beta_invites_left == 0 %}
+                    {{ no_invite_left_notice_content|markdown }}
+
+                {% else %}
+                        {{ successful_thanks_content|markdown }}
+
+                {% endif %}
+            {% endif %}
+        </h4>
+    </div>
 
 {% endblock landing_content %}

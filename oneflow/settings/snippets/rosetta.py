@@ -1,0 +1,15 @@
+# https://github.com/mbi/django-rosetta
+# Please include this snippet after the `cache`-related ones.
+
+if DEBUG:
+    INSTALLED_APPS += ('rosetta-grappelli', 'rosetta', )
+
+    if 'dummycache' in CACHES['default']['BACKEND'].lower():
+        CACHES['rosetta'] = {
+            'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
+            'LOCATION': '127.0.0.1:11211'
+        }
+
+    ROSETTA_MESSAGES_PER_PAGE = 25
+    ROSETTA_ENABLE_TRANSLATION_SUGGESTIONS = True
+    BING_APP_ID = 'aJZPiXVxOgwX95F/BR3bFrMql2z/Q8DIevtBVbKdvZI'

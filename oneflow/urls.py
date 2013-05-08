@@ -1,35 +1,51 @@
+# -*- coding: utf-8 -*-
 
 from django.conf import settings
 from django.conf.urls import patterns, include, url
+from django.conf.urls.i18n import i18n_patterns
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.contrib import admin
+
+admin.autodiscover()
+
+# urlpatterns = patterns('',
+#     url(r'^sitemap\.xml$', 'sitemap.view', name='sitemap_xml'),
+# )
+
+urlpatterns = patterns(
+    '',
+    # NEVER use r'^$', this won't work as expected. Use r''.
+    url(r'', include('oneflow.base.urls')),
+    (r'^i18n/', include('django.conf.urls.i18n')),
+)
+
 
 if settings.SITE_ID == 1:
-    urlpatterns = patterns(
+    urlpatterns += i18n_patterns(
         '',
-
-        # NEVER use r'^$', this won't work as expected. Use r''.
         url(r'', include('oneflow.landing.urls')),
-
-        # No admin on the landing page site.
     )
 
 else:
-    from django.contrib import admin
-    admin.autodiscover()
-
-    urlpatterns = patterns(
+    urlpatterns += i18n_patterns(
         '',
-
-        # NEVER use r'^$', this won't work as expected. Use r''.
-        url(r'', include('oneflow.core.urls')),
-
-        # url(r'^api/', include('oneflow.api.urls')),
-
-        url(r'^grappelli/', include('grappelli.urls')),
-        url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-        url(r'^admin/', include(admin.site.urls)),
-
+        #url(r'', include('oneflow.core.urls')),
     )
+
+# WARNING: when sites are spread across different machines, rosetta
+# must be migrated to run on only one dedicated, to avoid messing
+# with partially translated .PO files on many 1flow servers.
+if 'rosetta' in settings.INSTALLED_APPS:
+    urlpatterns += patterns(
+        '', url(r'^translate/', include('rosetta.urls')),
+    )
+
+urlpatterns += patterns(
+    '',
+    url(r'^grappelli/', include('grappelli.urls')),
+    url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    url(r'^admin/', include(admin.site.urls)),
+)
 
 # This will add urls only when DEBUG=True
 # cf. https://docs.djangoproject.com/en/1.5/ref/contrib/staticfiles/

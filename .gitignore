@@ -4,6 +4,7 @@
 # PIP local installs
 /src
 
+*.mo
 *.pyc
 *.pyo
 *.pye
