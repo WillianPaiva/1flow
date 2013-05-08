@@ -39,19 +39,19 @@
           <div class="row-fluid">
             <div class="span12">
               <h1><a class="site-title pull-left" href="/">
-                <i class="icon-gift"></i> 1flow
-                <span class="badge badge-warning badge-beta">BETA</span></a>
+                <i class="icon-gift"></i> 1flow <span
+                  class="badge badge-warning badge-beta">BETA</span></a>
               </h1>
 
               <div class="user text-right">
-                <a class="user-login" id="twitter-page"
+                <a class="user-login link-tooltip"
                   href="https://twitter.com/1flowapp"
-                  data-toggle="tooltip" target="_blank"
+                  target="_blank"
                   title="{% trans "Follow us on twitter!" %}"><i
                   class="icon-twitter"></i></a>
                 <!--
                 <a class="user-login" href="http://blog.1flow.net/"
-                  data-toggle="tooltip" title=""><i class="icon-bullhorn"></i></a>
+                  title=""><i class="icon-bullhorn"></i></a>
                 -->
               </div>
             </div><!-- /span12 -->
@@ -81,20 +81,14 @@
             <div class="header-features">
               <div class="row-fluid">
                 <div class="span6 header-feature">
-                  <h3>{% if promise_left_icon %}
-                    <i class="icon-{{ promise_left_icon }}"></i>&nbsp;
-                    {% else %}
-                    promise_left_icon (short name only)
-                  {% endif %}{% filter markdown %}{{ promise_left_title }}{% endfilter %}</h3>
-                  <p>{% filter markdown %}{{ promise_left_content }}{% endfilter %}</p>
+                  <h3><i class="icon-{{ promise_left_icon }}">
+                    </i>&nbsp;{{ promise_left_title|markdown }}</h3>
+                  <p>{{ promise_left_content|markdown }}</p>
                 </div>
                 <div class="span6 header-feature">
-                  <h3>{% if promise_right_icon %}
-                    <i class="icon-{{ promise_right_icon }}"></i>&nbsp;
-                    {% else %}
-                    promise_right_icon (short name only)
-                  {% endif %}{% filter markdown %}{{ promise_right_title }}{% endfilter %}</h3>
-                  <p>{% filter markdown %}{{ promise_right_content }}{% endfilter %}</p>
+                  <h3><i class="icon-{{ promise_right_icon }}">
+                    </i>&nbsp;{{ promise_right_title|markdown }}</h3>
+                  <p>{{ promise_right_content|markdown }}</p>
                 </div>
               </div>
             </div><!-- /header-features -->
@@ -110,57 +104,33 @@
 
           <div class="span3">
             <div class="feature">
-              {% if feature_1_icon %}
                 <i class="icon-{{ feature_1_icon }} icon-2x pull-left"></i>
-
-              {% else %}
-                feature_1_icon (short name only)
-
-              {% endif %}
-              <h4>{% filter markdown %}{{ feature_1_title }}{% endfilter %}</h4>
-              <p>{% filter markdown %}{{ feature_1_content }}{% endfilter %}</p>
+                <h4>{{ feature_1_title|markdown }}</h4>
+              <p>{{ feature_1_content|markdown }}</p>
             </div>
           </div><!-- /span3 -->
 
           <div class="span3">
             <div class="feature">
-              {% if feature_2_icon %}
                 <i class="icon-{{ feature_2_icon }} icon-2x pull-left"></i>
-
-              {% else %}
-                feature_2_icon (short name only)
-
-              {% endif %}
-              <h4>{% filter markdown %}{{ feature_2_title }}{% endfilter %}</h4>
-              <p>{% filter markdown %}{{ feature_2_content }}{% endfilter %}</p>
+                <h4>{{ feature_2_title|markdown }}</h4>
+              <p>{{ feature_2_content|markdown }}</p>
             </div>
           </div><!-- /span3 -->
 
           <div class="span3">
             <div class="feature">
-              {% if feature_3_icon %}
                 <i class="icon-{{ feature_3_icon }} icon-2x pull-left"></i>
-
-              {% else %}
-                feature_3_icon (short name only)
-
-              {% endif %}
-              <h4>{% filter markdown %}{{ feature_3_title }}{% endfilter %}</h4>
-              <p>{% filter markdown %}{{ feature_3_content }}{% endfilter %}</p>
+                <h4>{{ feature_3_title|markdown }}</h4>
+              <p>{{ feature_3_content|markdown }}</p>
             </div>
           </div><!-- /span3 -->
 
           <div class="span3">
             <div class="feature">
-              {% if feature_4_icon %}
                 <i class="icon-{{ feature_4_icon }} icon-2x pull-left"></i>
-
-              {% else %}
-                feature_4_icon (short name only)
-
-              {% endif %}
-              <h4>{% filter markdown %}{{ feature_4_title }}{% endfilter %}</h4>
-              <p>{% filter markdown %}{{ feature_4_content }}{% endfilter %}</p>
+                <h4>{{ feature_4_title|markdown }}</h4>
+              <p>{{ feature_4_content|markdown }}</p>
             </div>
           </div><!-- /span3 -->
 
@@ -172,10 +142,9 @@
       <div class="container">
         <div class="row-fluid">
           <div class="span12">
-            <h1 class="footer-title pull-left"><a href="/"><i class="icon-gift"></i> 1flow
- <span class="badge badge-warning">BETA</span></a></h1>
-
-            <div class="pull-right copyright">{% filter markdown %}{{ footer_copyright }}{% endfilter %}</div>
+            <h1 class="footer-title pull-left"><a href="/"><i class="icon-gift">
+            </i> 1flow <span class="badge badge-warning">BETA</span></a></h1>
+            <div class="pull-right copyright">{{ footer_copyright|markdown }}</div>
           </div>
         </div>
       </div>

@@ -8,16 +8,17 @@
     <div class="span8 offset2" id="thanks">
         <h4>
             {% if already_registered %}
-                {% filter markdown %}{{ already_registered_thanks_content }}{% endfilter %}
+                {{ already_registered_thanks_content|markdown }}
+
             {% else %}
-                {% filter markdown %}{{ successful_thanks_content }}{% endfilter %}
+                {% if beta_invites_left == 0 %}
+                    {{ no_invite_left_notice_content|markdown }}
 
-            {% endif %}
-            {% if beta_invites_left == 0 or debug %}
-                        {% filter markdown %}{{ no_invite_left_notice_content }}{% endfilter %}
+                {% else %}
+                        {{ successful_thanks_content|markdown }}
 
+                {% endif %}
             {% endif %}
-            <br/>
         </h4>
     </div>
 
