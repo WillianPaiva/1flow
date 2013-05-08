@@ -4,6 +4,7 @@ import pwd
 
 from fabric.api import env, task
 
+from sparks.fabric import with_remote_configuration
 import sparks.django.fabfile as sdf
 
 # Make the main deployment tasks immediately accessible
@@ -62,3 +63,14 @@ def production():
     env.host_string = '1flow.net'
     env.environment = 'production'
     env.env_was_set = True
+
+
+@task
+@with_remote_configuration
+def testapps(remote_configuration):
+
+    project_apps = (app.split('.', 1)[1] for app
+                    in remote_configuration.django_settings.INSTALLED_APPS
+                    if app.startswith('{0}.'.format(env.project)))
+
+    print(str(list(project_apps)))
