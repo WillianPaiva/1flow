@@ -89,7 +89,6 @@ width: 100%;
   font-weight: 300;
   font-size: 30px;
   display: inline-block;
-  margin-top: 34px;
 }
 
 .site-title .badge-beta {
@@ -105,7 +104,6 @@ width: 100%;
 
 /* user login / register */
 .user {
-  margin-top: 34px;
 }
 .user a{
   margin-top: 10px;
