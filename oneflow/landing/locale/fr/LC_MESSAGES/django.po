@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-09 15:12+0200\n"
-"PO-Revision-Date: 2013-05-09 15:12+0200\n"
+"PO-Revision-Date: 2013-05-09 15:31+0200\n"
 "Last-Translator:   <admin@1flow.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -57,7 +57,7 @@ msgstr "plateforme de curation universelle"
 
 #: templates/landing_base.html:52
 msgid "Follow us on twitter!"
-msgstr ""
+msgstr "Suivez-nous sur Twitter !"
 
 #: templates/landing_base.html:72
 #, python-format
@@ -78,7 +78,7 @@ msgid ""
 "        "
 msgstr ""
 "\n"
-"Il reste <span class=\"number\">%(beta_invites_left)s</span> invitations disponibles."
+"Encore <span class=\"number\">%(beta_invites_left)s</span> invitations disponibles."
 
 #: templates/snippets/beta_invites_left.html:12
 #, python-format
@@ -94,10 +94,10 @@ msgid_plural ""
 "        "
 msgstr[0] ""
 "\n"
-"Il ne reste que <span class=\"number\">%(counter)s</span> invitations disponibles."
+"Plus que <span class=\"number\">%(counter)s</span> invitations disponibles."
 msgstr[1] ""
 "\n"
-"Hâtez-vous, il ne reste plus qu'une <span class=\"number\">%(counter)s</span> invitation."
+"Hâtez-vous, plus qu'une invitation disponible !"
 
 #: templates/snippets/beta_invites_left.html:22
 msgid "No invite left!"
@@ -106,4 +106,4 @@ msgstr "Inscrivez vous sur liste d'attente !"
 #: templates/snippets/lang-switcher.html:11
 #, python-format
 msgid "Switch to %(lang_name)s"
-msgstr ""
+msgstr "Basculer en %(lang_name)s"
