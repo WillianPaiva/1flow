@@ -1,4 +1,24 @@
 # -*- coding: utf-8 -*-
+"""
+    1flow fabfile, which relies on sparks.
+
+    Example calls:
+
+        # migrate() must have the *named* `args` argument,
+        # else it will conflicts with the implicit `remote_configuration`.
+        fab local oneflowapp sdf.migrate:args='redisboard --fake'
+
+        # Thus, this won't work:
+        fab local oneflowapp sdf.migrate:'redisboard --fake'
+
+        # copy model data from a DB to another:
+        fab test oneflowapp sdf.getdata:landing
+        fab local oneflowapp sdf.putdata
+
+        # and then to production:
+        fab production oneflowapp sdf.putdata
+
+"""
 import os
 import pwd
 
