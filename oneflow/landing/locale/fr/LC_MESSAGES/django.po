@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-09 15:12+0200\n"
-"PO-Revision-Date: 2013-05-09 15:31+0200\n"
+"POT-Creation-Date: 2013-05-09 18:04+0200\n"
+"PO-Revision-Date: 2013-05-09 18:05+0200\n"
 "Last-Translator:   <admin@1flow.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -24,22 +24,22 @@ msgid "E-mail address cannot be empty."
 msgstr "L'adresse e-mail ne doit pas être vide."
 
 #: models.py:12
-msgid "Name"
-msgstr "Nom"
+msgid "Template variable name"
+msgstr "Nom de variable de template"
 
-#: models.py:13
-msgid "Content"
-msgstr "Contenu"
+#: models.py:14
+msgid "Template variable content"
+msgstr "Contenu de variable de template"
 
-#: models.py:16
+#: models.py:17
 msgid "{field_name}: {truncated_field_value}"
 msgstr "{field_name} : {truncated_field_value}"
 
-#: models.py:22
+#: models.py:23
 msgid "Landing page content"
 msgstr "Contenu de landing page"
 
-#: models.py:23
+#: models.py:24
 msgid "Landing page contents"
 msgstr "Contenus de landing page"
 
@@ -103,7 +103,13 @@ msgstr[1] ""
 msgid "No invite left!"
 msgstr "Inscrivez vous sur liste d'attente !"
 
-#: templates/snippets/lang-switcher.html:11
+#: templates/snippets/lang-switcher.html:12
 #, python-format
 msgid "Switch to %(lang_name)s"
 msgstr "Basculer en %(lang_name)s"
+
+#~ msgid "Name"
+#~ msgstr "Nom"
+
+#~ msgid "Content"
+#~ msgstr "Contenu"
