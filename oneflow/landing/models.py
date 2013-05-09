@@ -9,8 +9,9 @@ from django.db import models
 class LandingContent(models.Model):
     __metaclass__ = TransMeta
 
-    name    = models.CharField(_('Name'), max_length=128)
-    content = models.TextField(_('Content'))
+    name    = models.CharField(_('Template variable name'),
+                               max_length=128, unique=True)
+    content = models.TextField(_('Template variable content'))
 
     def __unicode__(self):
         return _(u'{field_name}: {truncated_field_value}').format(
