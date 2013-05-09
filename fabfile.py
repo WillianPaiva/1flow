@@ -22,7 +22,8 @@
 import os
 import pwd
 
-from fabric.api import env, task
+from fabric.api import env, task, run
+from fabric.context_managers import cd
 
 from sparks.fabric import with_remote_configuration
 import sparks.django.fabfile as sdf
@@ -83,6 +84,20 @@ def production():
     env.host_string = '1flow.net'
     env.environment = 'production'
     env.env_was_set = True
+
+
+@task
+def command(cmd):
+    with sdf.activate_venv():
+        with cd(env.root):
+            run(cmd)
+
+
+@task
+def out(cmd):
+    with sdf.activate_venv():
+        with cd(env.root):
+            print(run(cmd) != '')
 
 
 @task
