@@ -85,7 +85,6 @@ width: 100%;
 
 /* logo - icon is from fontawesome font */
 .site-title {
-  margin-top: 5px;
   color: #fff;
   font-weight: 300;
   font-size: 30px;
@@ -96,6 +95,14 @@ width: 100%;
 .site-title .badge-beta {
   vertical-align: middle;
 }
+
+.site-subtitle {
+  margin-top: -20px;
+  color: white;
+  font-weight: 100;
+  font-size: 20px;
+}
+
 /* user login / register */
 .user {
   margin-top: 34px;
