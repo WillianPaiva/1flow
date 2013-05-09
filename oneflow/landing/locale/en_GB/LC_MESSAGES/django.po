@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-06 22:01+0200\n"
+"POT-Creation-Date: 2013-05-09 15:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -42,15 +42,23 @@ msgstr ""
 msgid "Landing page contents"
 msgstr ""
 
-#: urls.py:10
+#: urls.py:8
 msgid "^thanks/(?P<already_registered>\\w+)?$"
 msgstr ""
 
-#: views.py:73
+#: views.py:91
 msgid "again"
 msgstr ""
 
-#: templates/landing_base.html:55
+#: templates/landing_base.html:46
+msgid "universal curation platform"
+msgstr ""
+
+#: templates/landing_base.html:52
+msgid "Follow us on twitter!"
+msgstr ""
+
+#: templates/landing_base.html:72
 #, python-format
 msgid ""
 "\n"
@@ -87,4 +95,9 @@ msgstr[1] ""
 
 #: templates/snippets/beta_invites_left.html:22
 msgid "No invite left!"
+msgstr ""
+
+#: templates/snippets/lang-switcher.html:11
+#, python-format
+msgid "Switch to %(lang_name)s"
 msgstr ""

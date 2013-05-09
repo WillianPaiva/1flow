@@ -2,23 +2,24 @@
 {% load base_utils %}
 {% get_current_language as current_lang_code %}
 
-          <div class="row-fluid" id="lang-flags">
+        <div class="row-fluid">
+          <div id="lang-flags" class="pull-right">
             {% get_available_languages as languages %}
             {% for lang_code, lang_name in languages %}
               {% if lang_code != current_lang_code %}
                 {% language lang_code %}
 
                   {% captureas switch_to_trans %}{% blocktrans %}Switch to {{ lang_name }}{% endblocktrans %}{% endcaptureas %}
-
-                  <form action="{% url 'set_language' %}" method="post" style="display: inline">
-                  {% csrf_token %}
-                  <input type="hidden" name="next" value="/" />
-                  <input type="hidden" name="language" value="{{ lang_code }}">
-                  <input type="image" src="{{ STATIC_URL }}img/flags/{% if '-' in lang_code %}{{ lang_code|slice:'3:'|lower }}{% else %}{{ lang_code }}{% endif %}.png"
-                    alt="{{ switch_to_trans }}" data-toggle="tooltip"
-                    title="{{ switch_to_trans }}" width='16' height='11' />
-                  </form>
+                    <form action="{% url 'set_language' %}" method="post" style="display: inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="/" />
+                    <input type="hidden" name="language" value="{{ lang_code }}">
+                    <input type="image" src="{{ STATIC_URL }}img/flags/{% if '-' in lang_code %}{{ lang_code|slice:'3:'|lower }}{% else %}{{ lang_code }}{% endif %}.png"
+                      alt="{{ switch_to_trans }}" data-toggle="tooltip"
+                      title="{{ switch_to_trans }}" width='16' height='11' />
+                    </form>
                 {% endlanguage %}
               {% endif %}
             {% endfor %}
           </div>
+        </div>
