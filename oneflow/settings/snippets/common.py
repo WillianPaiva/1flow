@@ -33,9 +33,8 @@ LANGUAGES = (
     ('fr', ugettext(u'Français')),
 # Activate these later when we need them.
 #    ('es', ugettext(u'Español')),
-#    ('en-us', ugettext(u'English (US)')),
-#    ('fr-fr', ugettext(u'Français (FR)')),
-#    ('es-es', ugettext(u'Español (ES)')),
+#    ('fr-CA', ugettext(u'Français (FR)')),
+#    ('es-XX', ugettext(u'Español (ES)')),
 )
 
 # This fake language is used by translators to keep

@@ -1,8 +1,29 @@
 # -*- coding: utf-8 -*-
+"""
+    1flow fabfile, which relies on sparks.
+
+    Example calls:
+
+        # migrate() must have the *named* `args` argument,
+        # else it will conflicts with the implicit `remote_configuration`.
+        fab local oneflowapp sdf.migrate:args='redisboard --fake'
+
+        # Thus, this won't work:
+        fab local oneflowapp sdf.migrate:'redisboard --fake'
+
+        # copy model data from a DB to another:
+        fab test oneflowapp sdf.getdata:landing
+        fab local oneflowapp sdf.putdata
+
+        # and then to production:
+        fab production oneflowapp sdf.putdata
+
+"""
 import os
 import pwd
 
-from fabric.api import env, task
+from fabric.api import env, task, run
+from fabric.context_managers import cd
 
 from sparks.fabric import with_remote_configuration
 import sparks.django.fabfile as sdf
@@ -63,6 +84,20 @@ def production():
     env.host_string = '1flow.net'
     env.environment = 'production'
     env.env_was_set = True
+
+
+@task
+def command(cmd):
+    with sdf.activate_venv():
+        with cd(env.root):
+            run(cmd)
+
+
+@task
+def out(cmd):
+    with sdf.activate_venv():
+        with cd(env.root):
+            print(run(cmd) != '')
 
 
 @task
