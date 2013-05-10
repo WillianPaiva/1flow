@@ -37,7 +37,7 @@ env.virtualenv   = '1flow'
 env.user         = '1flow'
 # Where is the django project located
 env.root         = '/home/1flow/www/src'
-env.host_string  = 'obi.1flow.net'
+env.host_string  = 'obi.1flow.io'
 env.environment  = 'test'
 env.pg_superuser = 'oneflow_admin'
 env.pg_superpass = 'ZQmeDuNF7b2GMC'
@@ -54,7 +54,18 @@ def local():
 
 @task
 def test():
-    """ This is the default config, we don't need to set anything more. """
+    """ This is the default config, we don't need to set anything more.
+
+        To create a new test environment:
+
+        adapt .ssh/config
+        ssh duncan
+        lxc-clone
+        in the LXC rootfs, clean /etc/supervisor/conf.d/*
+        edit /etc/rc.local
+        start LXC
+
+    """
     env.env_was_set = True
 
 
