@@ -3,8 +3,6 @@
 #
 
 ALLOWED_HOSTS += [
+    'obi.1flow.io',
     'obi.1flow.net',
-    'test.1flow.net',
-    'beta.1flow.net',
-    'preview.1flow.net',
 ]

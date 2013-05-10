@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-10 08:53+0200\n"
+"POT-Creation-Date: 2013-05-10 09:16+0200\n"
 "PO-Revision-Date: 2013-05-06 11:46+0200\n"
 "Last-Translator:   <admin@1flow.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,10 +19,34 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Translated-Using: django-rosetta 0.7.2\n"
 
-#: admin.py:115
+#: admin.py:117
 #, python-format
 msgid "Export selected %(verbose_name_plural)s to CSV"
 msgstr "Exporter les %(verbose_name_plural)s sélectionnés en CSV"
+
+#: models.py:13
+msgid "Register data"
+msgstr ""
+
+#: models.py:15
+msgid "Select whole paragraph on click"
+msgstr ""
+
+#: models.py:17
+msgid "Grows public by default"
+msgstr ""
+
+#: models.py:19
+msgid "Last modified"
+msgstr ""
+
+#: models.py:22
+msgid "User profile"
+msgstr ""
+
+#: models.py:23
+msgid "User profiles"
+msgstr ""
 
 #: templatetags/base_utils.py:105 templatetags/base_utils.py:119
 msgid "day"

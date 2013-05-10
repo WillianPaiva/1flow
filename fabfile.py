@@ -6,17 +6,17 @@
 
         # migrate() must have the *named* `args` argument,
         # else it will conflicts with the implicit `remote_configuration`.
-        fab local oneflowapp sdf.migrate:args='redisboard --fake'
+        fab local sdf.migrate:args='redisboard --fake'
 
         # Thus, this won't work:
-        fab local oneflowapp sdf.migrate:'redisboard --fake'
+        fab local sdf.migrate:'redisboard --fake'
 
         # copy model data from a DB to another:
-        fab test oneflowapp sdf.getdata:landing
-        fab local oneflowapp sdf.putdata
+        fab test sdf.getdata:landing
+        fab local sdf.putdata
 
         # and then to production:
-        fab production oneflowapp sdf.putdata
+        fab production sdf.putdata
 
 """
 import os
@@ -32,15 +32,15 @@ import sparks.django.fabfile as sdf
 runable, deploy, fast_deploy = sdf.runable, sdf.deploy, sdf.fast_deploy
 
 # The Django project name
-env.project        = 'oneflow'
-env.virtualenv     = '1flow'
-env.user           = '1flow'
+env.project      = 'oneflow'
+env.virtualenv   = '1flow'
+env.user         = '1flow'
 # Where is the django project located
-env.root           = '/home/1flow/www/src'
-env.host_string    = 'obi.1flow.net'
-env.environment    = 'test'
-env.pg_superuser   = 'oneflow_admin'
-env.pg_superpass   = 'ZQmeDuNF7b2GMC'
+env.root         = '/home/1flow/www/src'
+env.host_string  = 'obi.1flow.io'
+env.environment  = 'test'
+env.pg_superuser = 'oneflow_admin'
+env.pg_superpass = 'ZQmeDuNF7b2GMC'
 
 
 @task
@@ -54,13 +54,27 @@ def local():
 
 @task
 def test():
-    """ This is the default config, we don't need to set anything more. """
+    """ This is the default config, we don't need to set anything more.
+
+        To create a new test environment:
+
+        adapt .ssh/config
+        ssh duncan
+        lxc-clone
+        in the LXC rootfs, clean /etc/supervisor/conf.d/*
+        edit /etc/rc.local
+        start LXC
+
+    """
     env.env_was_set = True
 
 
 @task
 def oneflowapp():
     """ 1flowapp.com parameters; must be used with test or production. """
+
+    raise RuntimeError('As of 20130510, this environment '
+                       'should not be used anymore.')
 
     if not hasattr(env, 'env_was_set'):
         # Without this, settings can be messed up.

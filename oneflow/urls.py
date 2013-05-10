@@ -14,23 +14,16 @@ admin.autodiscover()
 
 urlpatterns = patterns(
     '',
-    # NEVER use r'^$', this won't work as expected. Use r''.
     url(r'', include('oneflow.base.urls')),
     (r'^i18n/', include('django.conf.urls.i18n')),
 )
 
-
-if settings.SITE_ID == 1:
-    urlpatterns += i18n_patterns(
-        '',
-        url(r'', include('oneflow.landing.urls')),
-    )
-
-else:
-    urlpatterns += i18n_patterns(
-        '',
-        #url(r'', include('oneflow.core.urls')),
-    )
+urlpatterns += i18n_patterns(
+    '',
+    # NEVER use r'^$', this won't work as expected. Use r''.
+    url(r'', include('oneflow.landing.urls')),
+    #url(r'', include('oneflow.core.urls')),
+)
 
 # WARNING: when sites are spread across different machines, rosetta
 # must be migrated to run on only one dedicated, to avoid messing
