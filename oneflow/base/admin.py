@@ -7,6 +7,8 @@ from django.contrib import admin
 from django.contrib.admin.util import flatten_fieldsets
 from django.utils.translation import ugettext_lazy as _
 
+from .models import UserProfile
+
 
 class NearlyReadOnlyAdmin(admin.ModelAdmin):
     """ borrowed from https://code.djangoproject.com/ticket/17295
@@ -114,3 +116,12 @@ class CSVAdminMixin(admin.ModelAdmin):
     csv_export.short_description = _(
         u'Export selected %(verbose_name_plural)s to CSV'
     )
+
+
+class UserProfileAdmin(CSVAdminMixin):
+    ordering = ('-last_modified', )
+    date_hierarchy = 'last_modified'
+    list_filter = ('select_paragraph', 'default_public', 'last_modified', )
+
+
+admin.site.register(UserProfile, UserProfileAdmin)
