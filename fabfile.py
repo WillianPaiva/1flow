@@ -95,7 +95,7 @@ def oneflowapp():
 
 @task(alias='prod')
 def production():
-    env.host_string = '1flow.net'
+    env.host_string = '1flow.io'
     env.environment = 'production'
     env.env_was_set = True
 
