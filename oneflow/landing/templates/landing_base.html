@@ -1,6 +1,7 @@
 {% load i18n %}
 {% load base_utils %}
 {% load markdown_deux_tags %}
+{% get_current_language as current_lang_code %}
 <!DOCTYPE html>
 <html lang="{{ current_lang_code }}">
   <head>
@@ -43,7 +44,7 @@
                   1flow <span
                     class="badge badge-warning badge-beta">BETA</span></a>
                 </h1>
-                <h2 class="site-subtitle">{% trans "the universal curation platform" %}</h2>
+                <h2 class="site-subtitle">{{ baseline_site_subtitle }}</h2>
               </div>
               <div class="user text-right">
                 <a class="user-login link-tooltip"
@@ -145,7 +146,7 @@
         <div class="row-fluid">
           <div class="span12">
             <h1 class="footer-title pull-left"><a href="/">1flow <span
-              class="badge badge-warning">BETA</span></a></h1>
+              class="badge badge-warning badge-beta">BETA</span></a> <small class="footer-title">{{ baseline_site_subtitle }}</small></h1>
             <div class="pull-right copyright">{{ footer_copyright|markdown }}</div>
           </div>
         </div>
