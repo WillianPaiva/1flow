@@ -8,9 +8,9 @@
               {% get_available_languages as languages %}
               {% for lang_code, lang_name in languages %}
                 {% if lang_code != current_lang_code %}
+                  {% get_language_info for lang_code as lang_choice %}
                   {% language lang_code %}
-
-                    {% captureas switch_to_trans %}{% blocktrans %}Switch to {{ lang_name }}{% endblocktrans %}{% endcaptureas %}
+                    {% captureas switch_to_trans %}{% blocktrans with name_local=lang_choice.name_local %}Switch to {{ name_local }}{% endblocktrans %}{% endcaptureas %}
                       <form action="{% url 'set_language' %}" method="post" style="display: inline">
                       {% csrf_token %}
                       <input type="hidden" name="next" value="/" />
