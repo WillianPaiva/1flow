@@ -20,8 +20,8 @@ def error_handler(request, *args, **kwargs):
         http://agopian.info/blog/django-et-le-handler500-retourner-une-erreur-503.html # NOQA
     """
 
-    if kwargs.get('raise_exception', True):
-        LOGGER.exception('Error while processing request')
+    #if kwargs.get('raise_exception', True):
+    #    LOGGER.exception('Error while processing request')
 
     return HttpResponseTemporaryServerError(render_to_string('500.html',
                                             RequestContext(request)))
