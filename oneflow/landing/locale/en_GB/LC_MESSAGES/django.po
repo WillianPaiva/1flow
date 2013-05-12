@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-10 09:16+0200\n"
+"POT-Creation-Date: 2013-05-12 13:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,24 +46,24 @@ msgstr ""
 msgid "^thanks/(?P<already_registered>\\w+)?$"
 msgstr ""
 
-#: views.py:91
+#: views.py:73
 msgid "again"
 msgstr ""
 
-#: templates/landing_base.html:46
-msgid "the universal curation platform"
-msgstr ""
-
-#: templates/landing_base.html:52
+#: templates/landing_base.html:55
 msgid "Follow us on twitter!"
 msgstr ""
 
-#: templates/landing_base.html:72
+#: templates/landing_base.html:77
 #, python-format
 msgid ""
 "\n"
-"                      <strong>1flow</strong> opens in %(timer)s.\n"
-"                    "
+"                          <strong>1flow</strong> opens in %(timer)s.\n"
+"                        "
+msgstr ""
+
+#: templates/landing_base.html:162
+msgid "©2013, all right reserved | <strong>1flow</strong> team"
 msgstr ""
 
 #: templates/snippets/beta_invites_left.html:6
@@ -99,5 +99,5 @@ msgstr ""
 
 #: templates/snippets/lang-switcher.html:13
 #, python-format
-msgid "Switch to %(lang_name)s"
+msgid "Switch to %(name_local)s"
 msgstr ""
