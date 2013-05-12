@@ -7,6 +7,8 @@ from sparks.django.settings import include_snippets
 include_snippets(
     os.path.dirname(__file__), (
         '00_development',
+        # Activate this to test 404/500…
+        #'00_production',
         '1flow_io',
         'common',
         'db_common',

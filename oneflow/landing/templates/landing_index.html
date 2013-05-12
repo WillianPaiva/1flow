@@ -4,6 +4,10 @@
 {% load widget_tweaks %}
 {% load base_utils %}
 
+{% block landing_title %}
+  {% firstof landing_page_title 'landing_page_title' %}
+{% endblock landing_title %}
+
 {% block landing_content %}
 
   <form method='POST' class="subemail span8 offset2">

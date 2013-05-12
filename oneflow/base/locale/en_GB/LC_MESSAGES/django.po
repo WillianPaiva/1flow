@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-10 09:16+0200\n"
+"POT-Creation-Date: 2013-05-12 22:13+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,33 +18,74 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: admin.py:117
+#: admin.py:115
 #, python-format
 msgid "Export selected %(verbose_name_plural)s to CSV"
 msgstr ""
 
-#: models.py:13
-msgid "Register data"
+#: templates/404.html:5
+msgid "Resource not found"
 msgstr ""
 
-#: models.py:15
-msgid "Select whole paragraph on click"
+#: templates/404.html:16
+msgid "Not found."
 msgstr ""
 
-#: models.py:17
-msgid "Grows public by default"
+#: templates/404.html:17
+msgid "The page or resource you requested is unknown to us:"
 msgstr ""
 
-#: models.py:19
-msgid "Last modified"
+#: templates/404.html:19
+msgid ""
+"In fact, we asked Google and Bing and they do not know anything about it "
+"either. Perhaps you should ask a greek Oracle®?"
 msgstr ""
 
-#: models.py:22
-msgid "User profile"
+#: templates/404.html:20
+msgid ""
+"Just joking. They won't know more than the others. Just go back <a "
+"href='/'>Home</a>."
 msgstr ""
 
-#: models.py:23
-msgid "User profiles"
+#: templates/404.html:35
+#, python-format
+msgid ""
+"\n"
+"                            If you need assistance, you may reference this "
+"error as <strong>%(sentry_id)s</strong>.\n"
+"                        "
+msgstr ""
+
+#: templates/500.html:5
+msgid "That's a bad catch!"
+msgstr ""
+
+#: templates/500.html:16
+msgid "Oh my!"
+msgstr ""
+
+#: templates/500.html:17
+msgid "The server encountered an error and couldn't recover."
+msgstr ""
+
+#: templates/500.html:18
+msgid ""
+"We apologize for this situation. Developers have been automatically alerted "
+"about this problem."
+msgstr ""
+
+#: templates/500.html:19
+msgid ""
+"Please try again a little later, or navigate to <a href=\"/\">elsewhere</a>."
+msgstr ""
+
+#: templates/500.html:34
+#, python-format
+msgid ""
+"\n"
+"                            If you need assistance, you may reference this "
+"error as <code>%(sentry_id)s</code>.\n"
+"                        "
 msgstr ""
 
 #: templatetags/base_utils.py:105 templatetags/base_utils.py:119

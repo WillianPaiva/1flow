@@ -3,6 +3,11 @@
 {% load i18n %}
 {% load markdown_deux_tags %}
 
+{% block landing_title %}
+  {% firstof landing_thanks_title 'landing_thanks_title' %}
+{% endblock landing_title %}
+
+
 {% block landing_content %}
 
     <div class="span8 offset2" id="thanks">
