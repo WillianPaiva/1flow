@@ -6,7 +6,7 @@
 <html lang="{{ current_lang_code }}">
   <head>
     <meta charset="utf-8">
-    <title>{{ landing_title }}</title>
+    <title>1flow – {% block landing_title %}{% firstof landing_title 'landing_title' %}{% endblock landing_title %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="Shy Design">
@@ -35,7 +35,9 @@
     <header id="header" class="site-header">
         <div class="container">
 
-          {% include 'snippets/lang-switcher.html' %}
+          {% block lang_switcher %}
+            {% include 'snippets/lang-switcher.html' %}
+          {% endblock lang_switcher %}
 
           <div class="row-fluid">
             <div class="span12">
@@ -62,83 +64,93 @@
         </div><!-- /container -->
 
       <div class="container">
-        <div class="row-fluid">
-          <div class="span12">
 
-            <div class="header-description">
-              <h2>{{ big_catcher_title }}</h2>
-              <h3 id="beta_data" class="span8 offset2">
-                <span id="beta_timer">
-                  {% captureas timer %}{% countdown beta_time_left format='abbr' %}{% endcaptureas %}
-                    {% blocktrans %}
-                      <strong>1flow</strong> opens in {{ timer }}.
-                    {% endblocktrans %}
-                </span>
-                <span id="beta_invites_left">
-                  {% include 'snippets/beta_invites_left.html' %}
-                </span></h3>
-              {% block landing_content %}
-              {% endblock landing_content %}
-            </div><!-- /header-description -->
+        {% block full_content %}
 
-            <div class="header-features">
-              <div class="row-fluid">
-                <div class="span6 header-feature">
-                  <h3><i class="icon-{{ promise_left_icon }}">
-                    </i>&nbsp;{{ promise_left_title|markdown }}</h3>
-                  <p>{{ promise_left_content|markdown }}</p>
-                </div>
-                <div class="span6 header-feature">
-                  <h3><i class="icon-{{ promise_right_icon }}">
-                    </i>&nbsp;{{ promise_right_title|markdown }}</h3>
-                  <p>{{ promise_right_content|markdown }}</p>
-                </div>
-              </div>
-            </div><!-- /header-features -->
+          <div class="row-fluid">
+            <div class="span12">
+                <div class="header-description">
+                  <h2>{{ big_catcher_title }}</h2>
+                  <h3 id="beta_data" class="span8 offset2">
+                    <span id="beta_timer">
+                      {% captureas timer %}{% countdown beta_time_left format='abbr' %}{% endcaptureas %}
+                        {% blocktrans %}
+                          <strong>1flow</strong> opens in {{ timer }}.
+                        {% endblocktrans %}
+                    </span>
+                    <span id="beta_invites_left">
+                      {% include 'snippets/beta_invites_left.html' %}
+                    </span></h3>
+                  {% block landing_content %}
+                  {% endblock landing_content %}
+                </div><!-- /header-description -->
 
-          </div><!-- /span12 -->
-        </div><!-- /row-fluid -->
+                <div class="header-features">
+                  <div class="row-fluid">
+                    <div class="span6 header-feature">
+                      <h3><i class="icon-{{ promise_left_icon }}">
+                        </i>&nbsp;{{ promise_left_title|markdown }}</h3>
+                      <p>{{ promise_left_content|markdown }}</p>
+                    </div>
+                    <div class="span6 header-feature">
+                      <h3><i class="icon-{{ promise_right_icon }}">
+                        </i>&nbsp;{{ promise_right_title|markdown }}</h3>
+                      <p>{{ promise_right_content|markdown }}</p>
+                    </div>
+                  </div>
+                </div><!-- /header-features -->
+            </div><!-- /span12 -->
+          </div><!-- /row-fluid -->
+
+        {% endblock full_content %}
+
       </div><!-- /container -->
     </header>
 
     <section id="features" class="features">
-      <div class="container">
-        <div class="row-fluid">
 
-          <div class="span3">
-            <div class="feature">
-                <i class="icon-{{ feature_1_icon }} icon-2x pull-left"></i>
-                <h4>{{ feature_1_title|markdown }}</h4>
-              <p>{{ feature_1_content|markdown }}</p>
-            </div>
-          </div><!-- /span3 -->
+      {% block landing_features %}
 
-          <div class="span3">
-            <div class="feature">
-                <i class="icon-{{ feature_2_icon }} icon-2x pull-left"></i>
-                <h4>{{ feature_2_title|markdown }}</h4>
-              <p>{{ feature_2_content|markdown }}</p>
-            </div>
-          </div><!-- /span3 -->
+        <div class="container">
+          <div class="row-fluid">
 
-          <div class="span3">
-            <div class="feature">
-                <i class="icon-{{ feature_3_icon }} icon-2x pull-left"></i>
-                <h4>{{ feature_3_title|markdown }}</h4>
-              <p>{{ feature_3_content|markdown }}</p>
-            </div>
-          </div><!-- /span3 -->
+            <div class="span3">
+              <div class="feature">
+                  <i class="icon-{{ feature_1_icon }} icon-2x pull-left"></i>
+                  <h4>{{ feature_1_title|markdown }}</h4>
+                <p>{{ feature_1_content|markdown }}</p>
+              </div>
+            </div><!-- /span3 -->
 
-          <div class="span3">
-            <div class="feature">
-                <i class="icon-{{ feature_4_icon }} icon-2x pull-left"></i>
-                <h4>{{ feature_4_title|markdown }}</h4>
-              <p>{{ feature_4_content|markdown }}</p>
-            </div>
-          </div><!-- /span3 -->
+            <div class="span3">
+              <div class="feature">
+                  <i class="icon-{{ feature_2_icon }} icon-2x pull-left"></i>
+                  <h4>{{ feature_2_title|markdown }}</h4>
+                <p>{{ feature_2_content|markdown }}</p>
+              </div>
+            </div><!-- /span3 -->
 
-        </div><!-- /row-fluid -->
-      </div><!-- /container -->
+            <div class="span3">
+              <div class="feature">
+                  <i class="icon-{{ feature_3_icon }} icon-2x pull-left"></i>
+                  <h4>{{ feature_3_title|markdown }}</h4>
+                <p>{{ feature_3_content|markdown }}</p>
+              </div>
+            </div><!-- /span3 -->
+
+            <div class="span3">
+              <div class="feature">
+                  <i class="icon-{{ feature_4_icon }} icon-2x pull-left"></i>
+                  <h4>{{ feature_4_title|markdown }}</h4>
+                <p>{{ feature_4_content|markdown }}</p>
+              </div>
+            </div><!-- /span3 -->
+
+          </div><!-- /row-fluid -->
+        </div><!-- /container -->
+
+      {% endblock landing_features %}
+
     </section>
 
     <footer id="footer" class="footer">
@@ -147,7 +159,7 @@
           <div class="span12">
             <h1 class="footer-title pull-left"><a href="/">1flow <span
               class="badge badge-warning badge-beta">BETA</span></a> <small class="footer-title">{{ baseline_site_subtitle }}</small></h1>
-            <div class="pull-right copyright">{{ footer_copyright|markdown }}</div>
+            <div class="pull-right copyright">{% if footer_copyright %}{{ footer_copyright|markdown }}{% else %}{% trans "©2013, all right reserved | <strong>1flow</strong> team" %}{% endif %}</div>
           </div>
         </div>
       </div>
@@ -158,6 +170,36 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script type="text/javascript" src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/script.js"></script>
+
+
+    <script type='text/javascript'>
+    var _ues = {
+    host:'1flow.userecho.com',
+    forum:'19803',
+    lang:'{{ current_lang_code }}',
+    tab_corner_radius:5,
+    tab_font_size:20,
+    {% if current_lang_code == 'fr' %}
+    tab_image_hash:'YXNzaXN0YW5jZQ%3D%3D',
+    tab_chat_hash:'Y2xhdmFyZGFnZQ%3D%3D',
+    {% else %}
+    tab_image_hash:'ZmVlZGJhY2s%3D',
+    tab_chat_hash:'Y2hhdA%3D%3D',
+    {% endif %}
+    tab_alignment:'right',
+    tab_text_color:'#FFFFFF',
+    tab_text_shadow_color:'#00000055',
+    tab_bg_color:'#FD8759',
+    tab_hover_color:'#db522f'
+    };
+
+    (function() {
+        var _ue = document.createElement('script'); _ue.type = 'text/javascript'; _ue.async = true;
+        _ue.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'cdn.userecho.com/js/widget-1.4.gz.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(_ue, s);
+      })();
+
+    </script>
 
     {% if user.is_anonymous or not user.is_staff or not user.is_superuser %}
       <script type="text/javascript">

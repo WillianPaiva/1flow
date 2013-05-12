@@ -77,6 +77,7 @@ MIDDLEWARE_CLASSES = (
     #'ConditionalGetMiddleware',
     ('raven.contrib.django.raven_compat.middleware.'
         'SentryResponseErrorIdMiddleware'),
+    'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -91,7 +92,16 @@ TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT, 'templates')
 )
 
-# Not any yet.
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.static',
+    'django.core.context_processors.tz',
+    'django.core.context_processors.request',
+    'django.contrib.auth.context_processors.auth',
+    'django.contrib.messages.context_processors.messages',
+)
+
 #TEMPLATE_CONTEXT_PROCESSORS += ('oneflow.base.context.…', )
 
 INSTALLED_APPS = (

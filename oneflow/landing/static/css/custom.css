@@ -231,7 +231,10 @@ width: 100%;
   display: inline-block;
 }
 
+.error500 {
+  background-color:rgba(240, 240, 240, 0.75);
 
+}
 
 /*************************************************************
                         section#features

@@ -52,8 +52,8 @@ def local():
     env.env_was_set = True
 
 
-@task
-def test():
+@task(alias='test')
+def preview():
     """ This is the default config, we don't need to set anything more.
 
         To create a new test environment:
