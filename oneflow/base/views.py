@@ -6,6 +6,7 @@ import logging
 from django.http import HttpResponseNotFound
 from django.template import RequestContext
 from django.template.loader import render_to_string
+
 from sparks.django.utils import HttpResponseTemporaryServerError
 
 LOGGER = logging.getLogger(__name__)
@@ -23,7 +24,8 @@ def error_handler(request, *args, **kwargs):
     """
 
     return HttpResponseTemporaryServerError(render_to_string('500.html',
-                                            RequestContext(request)))
+                                            context_instance=RequestContext(
+                                            request)))
 
 
 def not_found_handler(request, *args, **kwargs):
@@ -37,7 +39,7 @@ def not_found_handler(request, *args, **kwargs):
     """
 
     return HttpResponseNotFound(render_to_string('404.html',
-                                RequestContext(request)))
+                                context_instance=RequestContext(request)))
 
 
 def crash(request, **kwargs):
