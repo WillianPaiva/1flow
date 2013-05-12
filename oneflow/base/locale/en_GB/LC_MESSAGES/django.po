@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-12 21:18+0200\n"
+"POT-Creation-Date: 2013-05-12 22:13+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,8 +23,8 @@ msgstr ""
 msgid "Export selected %(verbose_name_plural)s to CSV"
 msgstr ""
 
-#: templates/404.html:5 templates/500.html:5
-msgid "That's a bad catch!"
+#: templates/404.html:5
+msgid "Resource not found"
 msgstr ""
 
 #: templates/404.html:16
@@ -38,26 +38,26 @@ msgstr ""
 #: templates/404.html:19
 msgid ""
 "In fact, we asked Google and Bing and they do not know anything about it "
-"either."
+"either. Perhaps you should ask a greek Oracle®?"
 msgstr ""
 
 #: templates/404.html:20
-msgid "Perhaps you could ask an Oracle®?"
-msgstr ""
-
-#: templates/404.html:21
 msgid ""
 "Just joking. They won't know more than the others. Just go back <a "
 "href='/'>Home</a>."
 msgstr ""
 
-#: templates/404.html:36 templates/500.html:34
+#: templates/404.html:35
 #, python-format
 msgid ""
 "\n"
 "                            If you need assistance, you may reference this "
 "error as <strong>%(sentry_id)s</strong>.\n"
 "                        "
+msgstr ""
+
+#: templates/500.html:5
+msgid "That's a bad catch!"
 msgstr ""
 
 #: templates/500.html:16
@@ -77,6 +77,15 @@ msgstr ""
 #: templates/500.html:19
 msgid ""
 "Please try again a little later, or navigate to <a href=\"/\">elsewhere</a>."
+msgstr ""
+
+#: templates/500.html:34
+#, python-format
+msgid ""
+"\n"
+"                            If you need assistance, you may reference this "
+"error as <code>%(sentry_id)s</code>.\n"
+"                        "
 msgstr ""
 
 #: templatetags/base_utils.py:105 templatetags/base_utils.py:119

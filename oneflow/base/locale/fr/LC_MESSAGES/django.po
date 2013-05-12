@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-12 21:18+0200\n"
-"PO-Revision-Date: 2013-05-12 21:21+0200\n"
+"POT-Creation-Date: 2013-05-12 22:13+0200\n"
+"PO-Revision-Date: 2013-05-12 22:18+0200\n"
 "Last-Translator:   <admin@1flow.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -24,9 +24,9 @@ msgstr ""
 msgid "Export selected %(verbose_name_plural)s to CSV"
 msgstr "Exporter les %(verbose_name_plural)s sélectionnés en CSV"
 
-#: templates/404.html:5 templates/500.html:5
-msgid "That's a bad catch!"
-msgstr "Vraiment pas cool !"
+#: templates/404.html:5
+msgid "Resource not found"
+msgstr "Ressource introuvable"
 
 #: templates/404.html:16
 msgid "Not found."
@@ -39,16 +39,12 @@ msgstr "La page ou ressource que vous avez demandée nous est inconnue :"
 #: templates/404.html:19
 msgid ""
 "In fact, we asked Google and Bing and they do not know anything about it "
-"either."
+"either. Perhaps you should ask a greek Oracle®?"
 msgstr ""
-"En fait, nous avons même demandé à Google et Bing et aucun d'eux ne la "
-"connait."
+"En fait, nous avons même demandé à Google et Bing mais aucun d'eux ne la "
+"connait. Peut-être devriez-vous interroger un Oracle® grec ? "
 
 #: templates/404.html:20
-msgid "Perhaps you could ask an Oracle®?"
-msgstr "Peut-être devriez-vous interroger un Oracle® ?"
-
-#: templates/404.html:21
 msgid ""
 "Just joking. They won't know more than the others. Just go back <a "
 "href='/'>Home</a>."
@@ -56,7 +52,7 @@ msgstr ""
 "Désolé, c'est une blague de geek. Oracle® n'en saura pas plus que les "
 "autres. Retournez simplement <a href=\"/\">à l'accueil</a>."
 
-#: templates/404.html:36 templates/500.html:34
+#: templates/404.html:35
 #, python-format
 msgid ""
 "\n"
@@ -65,6 +61,10 @@ msgid ""
 msgstr ""
 "\n"
 "Si vous avez besoin d'assistance, vous pouvez vous référer à ce plantage sous le numéro <strong>%(sentry_id)s</strong>."
+
+#: templates/500.html:5
+msgid "That's a bad catch!"
+msgstr "Vraiment pas cool !"
 
 #: templates/500.html:16
 msgid "Oh my!"
@@ -79,8 +79,8 @@ msgid ""
 "We apologize for this situation. Developers have been automatically alerted "
 "about this problem."
 msgstr ""
-"Nous en sommes désolés. Les développeurs ont déjà été alertés "
-"automatiquement de ce problème."
+"Nous en sommes désolés. Les développeurs ont été automatiquement alertés de "
+"ce problème."
 
 #: templates/500.html:19
 msgid ""
@@ -88,6 +88,16 @@ msgid ""
 msgstr ""
 "Merci de ré-essayer dans un moment, ou de naviguer sur <a href=\"/\">une "
 "autre partie du site</a>."
+
+#: templates/500.html:34
+#, python-format
+msgid ""
+"\n"
+"                            If you need assistance, you may reference this error as <code>%(sentry_id)s</code>.\n"
+"                        "
+msgstr ""
+"\n"
+"Si vous avez besoin d'assistance, la référence de ce plantage est la <code>%(sentry_id)s</code>."
 
 #: templatetags/base_utils.py:105 templatetags/base_utils.py:119
 msgid "day"
@@ -152,3 +162,6 @@ msgstr "m"
 #: templatetags/base_utils.py:138 templatetags/base_utils.py:139
 msgid "s"
 msgstr "s"
+
+#~ msgid "Perhaps you could ask an Oracle®?"
+#~ msgstr "Peut-être devriez-vous interroger un Oracle® ?"
