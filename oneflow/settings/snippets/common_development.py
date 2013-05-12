@@ -8,6 +8,11 @@
 #
 # If you connect via http://localhost:8000/, everything is already OK.
 
+TEMPLATE_CONTEXT_PROCESSORS += (
+    'django.core.context_processors.debug',
+)
+
+
 ALLOWED_HOSTS += [
     'localhost',
     'chani.licorn.org',
