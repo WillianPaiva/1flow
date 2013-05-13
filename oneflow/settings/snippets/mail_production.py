@@ -1,4 +1,3 @@
-from sparks import platform
 
-SERVER_EMAIL       = '1flow <app@{0}>'.format(platform.hostname)
+SERVER_EMAIL       = '1flow (do-no-reply) <no-reply@{0}>'.format(platform.hostname)
 DEFAULT_FROM_EMAIL = SERVER_EMAIL
