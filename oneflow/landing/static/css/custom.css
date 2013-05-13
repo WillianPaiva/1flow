@@ -231,9 +231,8 @@ width: 100%;
   display: inline-block;
 }
 
-.error500 {
+.only-me {
   background-color:rgba(240, 240, 240, 0.75);
-
 }
 
 /*************************************************************

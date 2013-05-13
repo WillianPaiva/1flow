@@ -3,31 +3,96 @@
 {% load i18n %}
 {% load widget_tweaks %}
 {% load base_utils %}
+{% load markdown_deux_tags %}
 
-{% block landing_title %}
-  {% firstof landing_page_title 'landing_page_title' %}
-{% endblock landing_title %}
+{% block landing_title %}{% firstof landing_page_title 'landing_page_title' %}{% endblock landing_title %}
 
-{% block landing_content %}
+{% block full_content %}
+          <div class="row-fluid">
+            <div class="span12">
+                <div class="header-description">
+                  <h2>{{ big_catcher_title }}</h2>
+                  <h3 id="beta_data" class="span8 offset2">
+                    <span id="beta_timer">
+                      {% captureas timer %}{% countdown beta_time_left format='abbr' %}{% endcaptureas %}
+                        {% blocktrans %}
+                          <strong>1flow</strong> opens in {{ timer }}.
+                        {% endblocktrans %}
+                    </span>
+                    <span id="beta_invites_left">
+                      {% include 'snippets/beta_invites_left.html' %}
+                    </span>
+                  </h3>
 
-  <form method='POST' class="subemail span8 offset2">
-    {% csrf_token %}
+                  <form method='POST' class="subemail span8 offset2">
+                    {% csrf_token %}
 
-    <div class="input-append control-group {% if form.errors %}error{% endif %}">
-      {% with email_placeholder='placeholder:'|add:email_placeholder_text %}
-      {% render_field form.email|attr:'autofocus'|attr:email_placeholder class+="input-xlarge custom" %}
-      {% endwith %}
-      <button type="submit" class="custom">{{ invitation_button_label }}</button>
-    </div>
+                    <div class="input-append control-group {% if form.errors %}error{% endif %}">
+                      {% with email_placeholder='placeholder:'|add:email_placeholder_text %}
+                      {% render_field form.email|attr:'autofocus'|attr:email_placeholder class+="input-xlarge custom" %}
+                      {% endwith %}
+                      <button type="submit" class="custom">{{ invitation_button_label }}</button>
+                    </div>
 
-    <div class=" control-group {% if form.errors %}error{% endif %}">
-     {% if form.email.errors %}
-         <span class="label label-warning">{% for error in form.email.errors %}
-             {{ error }}
-         {% endfor %}</span>
-     {% endif %}
+                    <div class=" control-group {% if form.errors %}error{% endif %}">
+                     {% if form.email.errors %}
+                         <span class="label label-warning">{% for error in form.email.errors %}
+                             {{ error }}
+                         {% endfor %}</span>
+                     {% endif %}
 
-    </div>
-  </form>
+                    </div>
+                  </form>
+                </div><!-- /header-description -->
 
-{% endblock landing_content %}
+                <div class="header-features">
+                  <div class="row-fluid">
+                    <div class="span6 header-feature">
+                      <h3><i class="icon-{{ promise_left_icon }}">
+                        </i>&nbsp;{{ promise_left_title|markdown }}</h3>
+                      <p>{{ promise_left_content|markdown }}</p>
+                    </div>
+                    <div class="span6 header-feature">
+                      <h3><i class="icon-{{ promise_right_icon }}">
+                        </i>&nbsp;{{ promise_right_title|markdown }}</h3>
+                      <p>{{ promise_right_content|markdown }}</p>
+                    </div>
+                  </div>
+                </div><!-- /header-features -->
+            </div><!-- /span12 -->
+          </div><!-- /row-fluid -->
+{% endblock full_content %}
+
+{% block landing_features %}
+            <div class="span3">
+              <div class="feature">
+                  <i class="icon-{{ feature_1_icon }} icon-2x pull-left"></i>
+                  <h4>{{ feature_1_title|markdown }}</h4>
+                <p>{{ feature_1_content|markdown }}</p>
+              </div>
+            </div><!-- /span3 -->
+
+            <div class="span3">
+              <div class="feature">
+                  <i class="icon-{{ feature_2_icon }} icon-2x pull-left"></i>
+                  <h4>{{ feature_2_title|markdown }}</h4>
+                <p>{{ feature_2_content|markdown }}</p>
+              </div>
+            </div><!-- /span3 -->
+
+            <div class="span3">
+              <div class="feature">
+                  <i class="icon-{{ feature_3_icon }} icon-2x pull-left"></i>
+                  <h4>{{ feature_3_title|markdown }}</h4>
+                <p>{{ feature_3_content|markdown }}</p>
+              </div>
+            </div><!-- /span3 -->
+
+            <div class="span3">
+              <div class="feature">
+                  <i class="icon-{{ feature_4_icon }} icon-2x pull-left"></i>
+                  <h4>{{ feature_4_title|markdown }}</h4>
+                <p>{{ feature_4_content|markdown }}</p>
+              </div>
+            </div><!-- /span3 -->
+{% endblock landing_features %}
