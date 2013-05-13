@@ -16,6 +16,9 @@ include_snippets(
         'mail_production',
         'raven_production',
         'common_production',
+        #NOTE: *NEVER* 'rosetta' here. We can't get the new translations
+        #   back from production to the git repo, due to to git-flow
+        #   design. Which makes perfect sense, anyway.
     ),
     globals()
 )
