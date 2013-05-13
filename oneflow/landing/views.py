@@ -9,7 +9,7 @@ from django.http import HttpResponseRedirect, HttpResponseBadRequest
 from django.contrib.auth.models import User
 from django.shortcuts import render
 from django.utils.translation import ugettext_lazy as _
-from django.views.decorators.cache import cache_page
+from django.views.decorators.cache import cache_page, never_cache
 
 
 from forms import LandingPageForm
@@ -82,6 +82,8 @@ def home(request):
     return render(request, 'landing_index.html', context)
 
 
+# never cache allows to update the counter for the newly registered user.
+@never_cache
 def thanks(request, **kwargs):
 
     context = dict(already_registered=bool(
@@ -90,15 +92,3 @@ def thanks(request, **kwargs):
     context.update(get_all_beta_data())
 
     return render(request, 'landing_thanks.html', context)
-
-
-@cache_page(60)
-def invites(request):
-    """ """
-
-    if not request.is_ajax():
-        return HttpResponseBadRequest('Must be called via Ajax')
-
-    context = dict(get_beta_invites_left())
-
-    return render(request, 'snippets/beta_invites_left.html', context)
