@@ -1,44 +1,13 @@
-{% extends 'landing_base.html' %}
+{% extends 'error_base.html' %}
 
 {% load i18n %}
 
 {% block landing_title %}{% trans "Resource not found" %}{% endblock landing_title %}
 
-{% block lang_switcher %}{# intentionaly empty #}{% endblock lang_switcher %}
-
-{% block full_content %}
-
-    <div class="row-fluid">
-        <div class="span6 offset3">
-            <p>&nbsp;</p>
-            <p>&nbsp;</p>
-            <div class="hero-unit error500">
-                <h1>{{ _('Not found.') }}</h1>
-                <h2>{{ _("The page or resource you requested is unknown to us:") }}</h2>
-                <p><code>{{ request.path }}</code></p>
-                <p>{{ _('In fact, we asked Google and Bing and they do not know anything about it either. Perhaps you should ask a greek Oracle®?')}}</p>
-                <p>{{ _("Just joking. They won't know more than the others. Just go back <a href='/'>Home</a>.") }}</p>
-            </div>
-            <p>&nbsp;</p>
-            <p>&nbsp;</p>
-        </div>
-    </div>
-
-{% endblock full_content %}
-
-{% block landing_features %}
-        <div class="container">
-          <div class="row-fluid">
-                <div class="span8 offset2 text-center">
-                    {% if request.sentry.id %}
-                        <p>
-                        {% blocktrans with sentry_id=request.sentry.id %}
-                            If you need assistance, you may reference this error as <code>{{ sentry_id }}</code>.
-                        {% endblocktrans %}
-                        </p>
-                    {% endif %}
-                </div>
-          </div><!-- /row-fluid -->
-        </div><!-- /container -->
-
-{% endblock landing_features %}
+{% block onlyme_content %}
+    <h1>{{ _('Not found.') }}</h1>
+    <h2>{{ _("The page or resource you requested is unknown to us:") }}</h2>
+    <p><code>{{ request.path }}</code></p>
+    <p>{{ _('In fact, we asked Google and Bing and they do not know anything about it either. Perhaps you should ask a greek Oracle®?')}}</p>
+    <p>{{ _("Just joking. They won't know more than the others. Just go back <a href='/'>Home</a>.") }}</p>
+{% endblock onlyme_content %}
