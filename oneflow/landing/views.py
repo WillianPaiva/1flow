@@ -76,7 +76,7 @@ def home(request):
                                            'landing_thanks'
                                            if has_invites_left
                                            else 'landing_waiting_list',
-                                           user)
+                                           new_user=user)
 
                 return HttpResponseRedirect(reverse('landing_thanks'))
 

@@ -11,7 +11,12 @@ from models import EmailContent
 LOGGER = logging.getLogger(__name__)
 
 
-def send_email_with_db_content(request, email_template_name, user, **kwargs):
+def send_email_with_db_content(request, email_template_name, **kwargs):
+    """
+
+        :param kwargs: can contain ``new_user`` in case of a new user
+            registration.
+    """
 
     def post_send(user, email_template_name):
         # TODO: implement me for real!
@@ -23,8 +28,12 @@ def send_email_with_db_content(request, email_template_name, user, **kwargs):
 
         return post_send_log_mail_sent
 
+    # If there is no new user, it's not a registration, we
+    # just get the request user, to fill email fields.
+    user = kwargs.pop('new_user', request.user)
+
     # Prepare for the first rendering pass (Django)
-    request_context = RequestContext(request)
+    request_context = RequestContext(request, {'new_user': user})
     email_data      = EmailContent.objects.get(name=email_template_name)
 
     # Pre-render templates for the mail HTML content.
