@@ -2,20 +2,20 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-13 15:20+0200\n"
+"POT-Creation-Date: 2013-05-14 13:34+0200\n"
 "PO-Revision-Date: 2013-05-13 15:21+0200\n"
 "Last-Translator:   <admin@1flow.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Translated-Using: django-rosetta 0.7.2\n"
 
@@ -47,7 +47,7 @@ msgstr "Contenus de landing page"
 msgid "^thanks/(?P<already_registered>\\w+)?$"
 msgstr "^merci/(?P<already_registered>\\w+)?$"
 
-#: views.py:73
+#: views.py:86
 msgid "again"
 msgstr "encore"
 
@@ -69,58 +69,31 @@ msgstr ""
 "\n"
 "<strong>1flow</strong> ouvre dans %(timer)s."
 
-#: templates/emails/email_landing_thanks.html:9
-msgid ""
-"\n"
-"                    Thanks for requesting an invite!\n"
-"                "
-msgstr ""
-"\n"
-"Merci d'avoir demandé une invitation !"
-
-#: templates/emails/email_landing_thanks.html:16
-msgid ""
-"\n"
-"                    We are very pleased to count you as a passenger of the 1flow adventure.\n"
-"                "
-msgstr ""
-
-#: templates/emails/email_landing_thanks.html:23
-msgid ""
-"\n"
-"                    Warmup for the beta opening!\n"
-"                "
-msgstr ""
-"\n"
-"Tenez-vous prêt(e) pour l'ouverture de la beta !"
-
-#: templates/emails/email_landing_thanks.txt:1
-msgid ""
-"\n"
-"\n"
-msgstr ""
-
 #: templates/snippets/beta_invites_left.html:6
 #, python-format
 msgid ""
 "\n"
 "\n"
-"           There are <span class=\"number\">%(beta_invites_left)s</span> invites left.\n"
+"           There are <span class=\"number\">%(beta_invites_left)s</span> "
+"invites left.\n"
 "        "
 msgstr ""
 "\n"
-"Encore <span class=\"number\">%(beta_invites_left)s</span> invitations disponibles."
+"Encore <span class=\"number\">%(beta_invites_left)s</span> invitations "
+"disponibles."
 
 #: templates/snippets/beta_invites_left.html:12
 #, python-format
 msgid ""
 "\n"
-"           Hurry, there's only <span class=\"number\">%(counter)s</span> invite left.\n"
+"           Hurry, there's only <span class=\"number\">%(counter)s</span> "
+"invite left.\n"
 "\n"
 "        "
 msgid_plural ""
 "\n"
-"           There are only <span class=\"number\">%(counter)s</span> invites left.\n"
+"           There are only <span class=\"number\">%(counter)s</span> invites "
+"left.\n"
 "\n"
 "        "
 msgstr[0] ""
@@ -138,6 +111,22 @@ msgstr "Inscrivez vous sur liste d'attente !"
 #, python-format
 msgid "Switch to %(name_local)s"
 msgstr "Basculer en %(lang_name)s"
+
+#~ msgid ""
+#~ "\n"
+#~ "                    Thanks for requesting an invite!\n"
+#~ "                "
+#~ msgstr ""
+#~ "\n"
+#~ "Merci d'avoir demandé une invitation !"
+
+#~ msgid ""
+#~ "\n"
+#~ "                    Warmup for the beta opening!\n"
+#~ "                "
+#~ msgstr ""
+#~ "\n"
+#~ "Tenez-vous prêt(e) pour l'ouverture de la beta !"
 
 #~ msgid "the universal curation platform"
 #~ msgstr "la plateforme de curation universelle"

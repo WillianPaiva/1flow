@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-13 15:20+0200\n"
-"PO-Revision-Date: 2013-05-13 15:22+0200\n"
+"POT-Creation-Date: 2013-05-14 13:34+0200\n"
+"PO-Revision-Date: 2013-05-14 13:35+0200\n"
 "Last-Translator:   <admin@1flow.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -19,10 +19,34 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Translated-Using: django-rosetta 0.7.2\n"
 
-#: admin.py:115
+#: admin.py:123
 #, python-format
 msgid "Export selected %(verbose_name_plural)s to CSV"
 msgstr "Exporter les %(verbose_name_plural)s sélectionnés en CSV"
+
+#: models.py:12
+msgid "Email name"
+msgstr "Nom du mail"
+
+#: models.py:14
+msgid "Email subject"
+msgstr "Sujet du mail"
+
+#: models.py:15
+msgid "Email body"
+msgstr "Corps du mail"
+
+#: models.py:18
+msgid "{field_name}: {truncated_field_value}"
+msgstr "{field_name} : {truncated_field_value}"
+
+#: models.py:24
+msgid "Email content"
+msgstr "Contenu d'email"
+
+#: models.py:25
+msgid "Emails contents"
+msgstr "Contenus d'emails"
 
 #: templates/404.html:5
 msgid "Resource not found"

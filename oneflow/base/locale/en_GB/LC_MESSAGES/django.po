@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-13 15:20+0200\n"
+"POT-Creation-Date: 2013-05-14 13:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,9 +18,33 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: admin.py:115
+#: admin.py:123
 #, python-format
 msgid "Export selected %(verbose_name_plural)s to CSV"
+msgstr ""
+
+#: models.py:12
+msgid "Email name"
+msgstr ""
+
+#: models.py:14
+msgid "Email subject"
+msgstr ""
+
+#: models.py:15
+msgid "Email body"
+msgstr ""
+
+#: models.py:18
+msgid "{field_name}: {truncated_field_value}"
+msgstr ""
+
+#: models.py:24
+msgid "Email content"
+msgstr ""
+
+#: models.py:25
+msgid "Emails contents"
 msgstr ""
 
 #: templates/404.html:5
