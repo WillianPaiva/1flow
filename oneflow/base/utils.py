@@ -33,8 +33,12 @@ def send_email_with_db_content(request, email_template_name, **kwargs):
     user = kwargs.pop('new_user', request.user)
 
     # Prepare for the first rendering pass (Django)
-    request_context = RequestContext(request, {'new_user': user})
+    request_context = RequestContext(request, {
+                                     'new_user': user,
+                                     'unsubscribe_url':
+                                     user.profile.unsubscribe_url()})
     email_data      = EmailContent.objects.get(name=email_template_name)
+    email_footer    = EmailContent.objects.get(name='email_footer')
 
     # Pre-render templates for the mail HTML content.
     # email subject is mapped to <title> and <h1>.
@@ -42,10 +46,13 @@ def send_email_with_db_content(request, email_template_name, **kwargs):
     email_subject = stemplate.render(request_context)
     btemplate     = Template(email_data.body)
     email_body    = btemplate.render(request_context)
+    ftemplate     = Template(email_footer.body)
+    email_footer  = ftemplate.render(request_context)
 
     # Update for the second rendering pass (Markdown in Django)
     request_context.update({'email_subject': email_subject,
-                           'email_body': email_body, })
+                           'email_body': email_body,
+                           'email_footer': email_footer})
 
     mail.send_mail_html_from_template(
         'emails/email_with_db_content.html',

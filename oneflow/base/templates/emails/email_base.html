@@ -37,7 +37,7 @@
                             </div>
                             <br>
                             <font face="Lucida Grande, sans serif" color="#000000" style="font-size:13px"><div class="body-content" id="body-content" style="line-height:1.25;">
-                                <span style="display:block;width:525px">{% block email_content %}{% endblock email_content %}</span>
+                                <span style="display:block;width:525px">{% block email_content %}{% endblock email_content %}<br />{{ email_footer|markdown }}</span>
                             </div></font>
                         </td>
                         <td width="48" class="right-gutter-spacing" style="font-size:1px">&nbsp;</td>
