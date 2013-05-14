@@ -1,0 +1,32 @@
+[
+{
+    "pk": 1, 
+    "model": "base.emailcontent", 
+    "fields": {
+        "body_en-gb": "", 
+        "subject_en": "Your boarding card for the 1flow flight", 
+        "name": "landing_thanks", 
+        "body_fr": "Merci d'avoir r\u00e9serv\u00e9 une place sur le premier vol de **[1flow][]**, la plateforme de gestion de l'inframation. \r\nVeuillez trouver ci-dessous les d\u00e9tails de votre voyage:\r\n\r\n- Votre r\u00e9f\u00e9rence personnelle\u00a0: **{{ new_user.email }}**\r\n- Date\u00a0: **15 juin 2013**\r\n- D\u00e9part\u00a0: votre navigateur web, n'importe o\u00f9 sur Terre\r\n- Arriv\u00e9e\u00a0: **[1flow][]**, loin dans le cyber-espace\r\n- Classe\u00a0: **Premi\u00e8re Classe**\r\n- Heure de d\u00e9part\u00a0: 15h30\r\n- Dur\u00e9e du voyage\u00a0: aussi longtemps qu'il vous plaira\r\n\r\nVous recevrez vos identifiant et mot de passe par e-mail avant le d\u00e9part.\r\nSi vous \u00eates un utilisateur de Google Reader, vous pourrez migrer vos donn\u00e9es\r\nen un clic entre le 15 et le 30 juin.\r\n\r\nN'h\u00e9sitez pas \u00e0 inviter des passagers suppl\u00e9mentaires en partageant **[1flow.io][1flow]**.\r\nNous serons ravis d'avoir de vos nouvelles sur notre [forum de support][feedback]\u00a0!\r\nPour suivre les pr\u00e9paratifs avant le d\u00e9collage, accrochez-vous \u00e0 notre [flux twitter][twitter].\r\n\r\nSinc\u00e8res salutations de votre \u00e9quipage\u00a0!\r\n\r\n--  \r\nOlivier Cort\u00e8s & Matthieu Chaignot  \r\nCo-fondateurs de **1flow** et chasseurs d'inframation\r\n\r\n  [1flow]: http://1flow.io/\r\n  [feedback]: http://1flow.userecho.com/\r\n  [twitter]: https://twitter.com/1flow_io", 
+        "subject_fr": "Votre carte d'embarquement pour le vol 1flow", 
+        "body_nt": "Available variables in template:\r\n{{ new_user.email }}: the newly registered user email.", 
+        "subject_en-gb": "", 
+        "body_en": "Many thanks for registering aboard **1flow**, the inframation management platform. \r\nPlease find below your travel details:\r\n\r\n- Your personal reference: **{{ new_user.email }}**\r\n- Date: **15th of june 2013**\r\n- Departure: your web browser, anywhere on Earth\r\n- Arrival: [1flow][], high in the cyber-space\r\n- Class: **First Class**\r\n- Boarding Time: 6:30 AM PST\r\n- Flight duration: as long as you wish\r\n\r\n\r\nWe'll send you your credentials by e-mail before boarding start. \r\nIf you are a Google Reader user, you will be able to migrate all your data in \r\none click between June 15th and June 30th.\r\n\r\nYou are definitely welcome to invite extra passengers by sharing [1flow.io][1flow].\r\nWe want to hear from you on our [feedback forum][feedback]! To follow our\r\nfinal preparations before take-off, follow [@1flow_io][twitter] on twitter.\r\n\r\nRegards from your flight crew!\r\n\r\n--  \r\nOlivier Cort\u00e8s & Matthieu Chaignot  \r\n**1flow** co-founders and inframation hunters\r\n\r\n  [1flow]: http://1flow.io/\r\n  [feedback]: http://1flow.userecho.com/\r\n  [twitter]: https://twitter.com/1flow_io", 
+        "subject_nt": ""
+    }
+},
+{
+    "pk": 2, 
+    "model": "base.emailcontent", 
+    "fields": {
+        "body_en-gb": "", 
+        "subject_en": "Your booking request on 1flow flight", 
+        "name": "landing_waiting_list", 
+        "body_fr": "Merci d'avoir r\u00e9serv\u00e9 une place sur le premier vol de **[1flow][]**, la plateforme de gestion de l'inframation. \r\nNous vous informons avec regret qu'il n'y a plus de places disponibles pour le premier vol. Mais pas d'inqui\u00e9tude, vous serez pr\u00e9venu d\u00e8s la programmation du prochain. En attendant, veuillez trouver ci-dessous les d\u00e9tails de votre futur voyage:\r\n\r\n- Votre r\u00e9f\u00e9rence personnelle\u00a0: **{{ new_user.email }}**\r\n- Date\u00a0: **\u00e0 planifier**\r\n- D\u00e9part\u00a0: votre navigateur web, n'importe o\u00f9 sur Terre\r\n- Arriv\u00e9e\u00a0: **[1flow][]**, loin dans le cyber-espace\r\n- Classe\u00a0: **Premi\u00e8re Classe**\r\n- Heure de d\u00e9part\u00a0: \u00e0 planifier\r\n- Dur\u00e9e du voyage\u00a0: aussi longtemps qu'il vous plaira\r\n\r\nVous recevrez vos identifiant et mot de passe par e-mail avant le d\u00e9part.\r\n\r\nN'h\u00e9sitez pas \u00e0 inviter des passagers suppl\u00e9mentaires en partageant **[1flow.io][1flow]**.\r\nNous serons ravis d'avoir de vos nouvelles sur notre [forum de support][feedback]\u00a0!\r\nPour suivre les pr\u00e9paratifs avant le d\u00e9collage, accrochez-vous \u00e0 notre [flux twitter][twitter].\r\n\r\nSinc\u00e8res salutations de votre \u00e9quipage\u00a0!\r\n\r\n--  \r\nOlivier Cortes & Matthieu Chaignot  \r\nCo-fondateurs de **1flow** et chasseurs d'inframations\r\n\r\n  [1flow]: http://1flow.io/\r\n  [feedback]: http://1flow.userecho.com/\r\n  [twitter]: https://twitter.com/1flow_io", 
+        "subject_fr": "Votre demande de r\u00e9servation sur le vol 1flow", 
+        "body_nt": "Available variables in template: see `landing_thanks`.", 
+        "subject_en-gb": "", 
+        "body_en": "Many thanks for registering aboard **1flow**, the inframation management platform. \r\nThere are currently no invites left, but you will be informed as soon as a new flight is planned. \r\nPlease find below your future travel details:\r\n\r\n- Your personal reference: **{{ new_user.email }}**\r\n- Date: **to be planned**\r\n- From: your web browser, anywhere on Earth\r\n- To: **[1flow][]**, high in the cyber-space\r\n- Class: **First Class**\r\n- Boarding Time: **unknown yet**\r\n\r\nBefore boarding starts, we'll send you your credentials by e-mail.\r\n\r\nYou are definitely welcome to invite extra passengers by sharing [1flow.io][1flow].\r\nWe want to hear from you on our [feedback forum][feedback]! To follow our\r\nfinal preparations before take-off, follow [@1flow_io][twitter] on twitter.\r\n\r\nRegards from your flight crew!\r\n\r\n--  \r\nOlivier Cortes & Matthieu Chaignot  \r\n1flow co-founders, inframation hunters\r\n\r\n  [1flow]: http://1flow.io/\r\n  [feedback]: http://1flow.userecho.com/\r\n  [twitter]: https://twitter.com/1flow_io\r\n", 
+        "subject_nt": ""
+    }
+}
+]
