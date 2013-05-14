@@ -5,20 +5,16 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.template.defaultfilters import slugify
 from django.contrib import admin
-from django.contrib.auth.models import User  # , Group
 #from django.contrib.sites.models import Site
 from django.contrib.admin.util import flatten_fieldsets
-from django.contrib.auth.admin import UserAdmin as AuthUserAdmin
 from django.utils.translation import ugettext_lazy as _
 
-from .models import UserProfile
 from .models import EmailContent
 
 from sparks.django.admin import truncate_field
 
 
 # •••••••••••••••••••••••••••••••••••••••••••••••• Helpers and abstract classes
-
 
 
 class NearlyReadOnlyAdmin(admin.ModelAdmin):
@@ -129,42 +125,7 @@ class CSVAdminMixin(admin.ModelAdmin):
     )
 
 
-class UserProfileAdmin(CSVAdminMixin):
-    ordering = ('-last_modified', )
-    date_hierarchy = 'last_modified'
-    list_filter = ('select_paragraph', 'default_public', 'last_modified', )
-
-
-admin.site.register(UserProfile, UserProfileAdmin)
-
 # ••••••••••••••••••••••••••••••••••••••••••••••• Base Django App admin classes
-
-class UserAdmin(NearlyReadOnlyAdmin, CSVAdminMixin, AuthUserAdmin):
-
-    list_display = ('id', 'email', 'full_name_display',
-                    'date_joined', 'last_login',  'is_active',
-                    'is_staff', 'is_superuser', 'groups_display', )
-    list_display_links = ('email', 'full_name_display', )
-    ordering = ('-date_joined',)
-    date_hierarchy = 'date_joined'
-    search_fields = ('email', 'first_name', 'last_name', )
-    change_list_template = "admin/change_list_filter_sidebar.html"
-    change_list_filter_template = "admin/filter_listing.html"
-
-    def groups_display(self, obj):
-        return u', '.join([g.name for g in obj.groups.all()]
-                          ) if obj.groups.count() else u'—'
-
-    groups_display.short_description = _(u'Groups')
-
-    def full_name_display(self, obj):
-        return obj.get_full_name()
-
-    full_name_display.short_description = _(u'Full name')
-
-
-admin.site.unregister(User)
-admin.site.register(User, UserAdmin)
 
 
 if settings.FULL_ADMIN:
