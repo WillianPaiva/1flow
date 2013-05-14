@@ -5,12 +5,13 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.template.defaultfilters import slugify
 from django.contrib import admin
+#from django.contrib.sites.models import Site
 from django.contrib.admin.util import flatten_fieldsets
 from django.utils.translation import ugettext_lazy as _
 
-from sparks.django.admin import truncate_field
-
 from .models import EmailContent
+
+from sparks.django.admin import truncate_field
 
 
 # •••••••••••••••••••••••••••••••••••••••••••••••• Helpers and abstract classes
@@ -125,6 +126,7 @@ class CSVAdminMixin(admin.ModelAdmin):
 
 
 # ••••••••••••••••••••••••••••••••••••••••••••••• Base Django App admin classes
+
 
 if settings.FULL_ADMIN:
     subject_fields_names = tuple(('subject_' + code)

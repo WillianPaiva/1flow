@@ -2,6 +2,7 @@
 
 import logging
 import datetime
+import simplejson as json
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -76,7 +77,21 @@ def home(request):
                                            'landing_thanks'
                                            if has_invites_left
                                            else 'landing_waiting_list',
-                                           user)
+                                           new_user=user)
+
+                request_data = {
+                    'language': request.META.get('HTTP_ACCEPT_LANGUAGE', ''),
+                    'user_agent': request.META.get('HTTP_USER_AGENT', ''),
+                    'encoding': request.META.get('HTTP_ACCEPT_ENCODING', ''),
+                    'remote_addr': request.META.get('REMOTE_ADDR', ''),
+                    'remote_host': request.META.get('REMOTE_HOST', ''),
+                    'referer': request.session.get('INITIAL_REFERER', ''),
+                }
+
+                user.profile.register_request_data = json.dumps(request_data)
+                user.profile.save()
+
+                del request.session['INITIAL_REFERER']
 
                 return HttpResponseRedirect(reverse('landing_thanks'))
 
@@ -87,6 +102,10 @@ def home(request):
 
     else:
         form = LandingPageForm()
+
+        # make market-man smile :-)
+        request.session.setdefault('INITIAL_REFERER',
+                                   request.META.get('HTTP_REFERER', ''))
 
     context['form'] = form
 

@@ -2,8 +2,8 @@
 
 from transmeta import TransMeta
 
-from django.utils.translation import ugettext_lazy as _
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 
 class EmailContent(models.Model):

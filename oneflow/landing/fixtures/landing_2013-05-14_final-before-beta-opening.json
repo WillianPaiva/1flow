@@ -25,29 +25,29 @@
     "pk": 3, 
     "model": "landing.landingcontent", 
     "fields": {
-        "content_fr": "Cultivez vos contenus\u00a0!", 
+        "content_fr": "Au-del\u00e0 de l'information\u00a0!", 
         "content_en-gb": "", 
         "name": "big_catcher_title", 
         "content_nt": "", 
-        "content_en": "Grow your contents!"
+        "content_en": "Beyond information!"
     }
 },
 {
     "pk": 4, 
     "model": "landing.landingcontent", 
     "fields": {
-        "content_fr": "\u00c7a vous dit quelque-chose\u00a0?", 
+        "content_fr": "Vous avez dit *inframation*\u00a0?", 
         "content_en-gb": "", 
         "name": "promise_left_title", 
-        "content_nt": "", 
-        "content_en": "Sounds *familiar*\u00a0?"
+        "content_nt": "inframation, sounds *familiar*\u00a0?\r\nl'inframation, \u00e7a vous parle\u00a0?", 
+        "content_en": "Did you say *inframation*?"
     }
 },
 {
     "pk": 5, 
     "model": "landing.landingcontent", 
     "fields": {
-        "content_fr": "umbrella", 
+        "content_fr": "quote-left", 
         "content_en-gb": "", 
         "name": "promise_left_icon", 
         "content_nt": "bolt\r\numbrella\r\nthumbs-down\r\neject\r\nquote-left", 
@@ -69,22 +69,22 @@
     "pk": 7, 
     "model": "landing.landingcontent", 
     "fields": {
-        "content_fr": "**1flow** est un espace priv\u00e9 o\u00f9 vous pouvez agr\u00e9ger, lire, d\u00e9couvrir, archiver, \u00e9diter, co-curer et discuter de toute l'information en ligne que vous collectez.\r\n\r\nC'est une plateforme gratuite et globale de [curation][curation] \u00e0 usage individuel ou en \u00e9quipe. Elle inclut notamment le meilleur d'un lecteur de flux RSS, ainsi que des fonctionnalit\u00e9s de cr\u00e9ation de contenu compl\u00e9t\u00e9es par un puissant syst\u00e8me d'archivage et de recherche.\r\n\r\nVous y faites rentrer *ce qui vous importe r\u00e9ellement* pour nourrir vos id\u00e9es, cr\u00e9ations, projets et d\u00e9cisions, \u00e0 la fois professionnels et personnels. \r\n\r\nTout ceci au m\u00eame endroit (NDT\u00a0: \u00ab\u00a0*all in one flow*\u00a0\u00bb).\r\n\r\n  [curation]: #\r\n    \"S\u00e9lection, \u00e9dition et partage des contenus les plus pertinents pour un sujet donn\u00e9.\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u2014 source Wikip\u00e9dia\"", 
+        "content_fr": "**1flow** est une plateforme gratuite  de *gestion de l'inframation*, \u00e0 usage individuel ou en \u00e9quipe. C'est un espace priv\u00e9 o\u00f9 vous pouvez agr\u00e9ger, lire, d\u00e9couvrir, archiver, \u00e9diter, partager et discuter de toute l'information en ligne que vous collectez. \r\n\r\nLa combinaison de ces outils vous permet de lib\u00e9rer le temps n\u00e9cessaire et d'enrichir suffisamment le contexte pour acc\u00e9der \u00e0 l'inframation.\r\n\r\n**1flow** inclut donc le meilleur d'un lecteur de flux RSS et permet la cr\u00e9ation imm\u00e9diate de contenu\u00a0; tout cela compl\u00e9t\u00e9 par un puissant syst\u00e8me d'archivage et de recherche.\r\n\r\nVous y faites rentrer *ce qui vous importe r\u00e9ellement* pour nourrir vos id\u00e9es, cr\u00e9ations, projets et d\u00e9cisions, \u00e0 la fois professionnels et personnels. \r\n\r\nTout ceci au m\u00eame endroit (NDT\u00a0: \u00ab\u00a0*all in one flow*\u00a0\u00bb).\r\n\r\n  [curation]: #\r\n    \"S\u00e9lection, \u00e9dition et partage des contenus les plus pertinents pour un sujet donn\u00e9.\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u2014 source Wikip\u00e9dia\"", 
         "content_en-gb": "", 
         "name": "promise_right_content", 
-        "content_nt": "**1flow** est un espace priv\u00e9 o\u00f9 vous pouvez agr\u00e9ger, lire, d\u00e9couvrir, archiver, \u00e9diter, co-curer et discuter de toute l'information en ligne que vous collectez.\r\n\r\nC'est une application gratuite de [curation d'informations][curation] \u00e0 usage individuel ou en \u00e9quipe. Elle inclut notamment le meilleur d'un lecteur de flux RSS, ainsi que des fonctionnalit\u00e9s de cr\u00e9ation de contenu compl\u00e9t\u00e9es par un puissant syst\u00e8me d'archivage et de recherche.\r\n\r\nVous y faites rentrer *ce qui vous importe r\u00e9ellement* pour nourrir vos id\u00e9es, cr\u00e9ations, projets et d\u00e9cisions, \u00e0 la fois professionnels et personnels. \r\n\r\nTout ceci au m\u00eame endroit (NDT\u00a0: \u00ab\u00a0*all in one flow*\u00a0\u00bb).\r\n\r\n  [curation]: #\r\n    \"S\u00e9lection, \u00e9dition et partage des contenus les plus pertinents pour un sujet donn\u00e9.\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u2014 source Wikip\u00e9dia\"", 
-        "content_en": "**1flow** is a private space where you can aggregate, read, discover, archive, edit, co-curate and discuss all the online information you collect.\r\n\r\nIt's a free universal [curation][curation] platform, for individuals or work-teams.  It will also provide the best of an RSS reader, bundled with content creation features and a powerful archive & search system.\r\n\r\nYou will bring in *what really matters* to feed your ideas, creations, projects and decisions, both professionnal and personal.  *All in one flow*.\r\n\r\n**1flow** beta is opening on the 15th of june 2013.\r\n\r\n  [curation]: #\r\n    \"Select, edit and share most relevant contents for a given subject.\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u2014 source: Wikipedia\""
+        "content_nt": "**1flow** is a private space where you can aggregate, read, discover, archive, edit, share and discuss all the online information you collect.\r\n\r\nIt's a free application dedicated to [information curation][curation], for individuals or work-teams.  It will also provide the best of an RSS reader, bundled with content creation features and a powerful archive & search system.\r\n\r\nYou will bring in *what really matters* to feed your ideas, creations, projects and decisions, both professionnal and personal.  *All in one flow*.\r\n\r\n**1flow** beta is opening on the 15th of june 2013.\r\n\r\n  [curation]: #\r\n    \"Select, edit and share most relevant contents for a given subject.\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u2014 source: Wikipedia\"", 
+        "content_en": "**1flow** is a free inframation management platform, for individual or work-teams. It's a private space where you can aggregate, read, discover, archive, edit, share and discuss all the online information you collect.\r\n\r\nThe combination of these tools enables you to save the required time and to enrich the context enough to get access to inframation.\r\n\r\n**1flow** provides you the best of an RSS reader, bundled with content creation features and a powerful archive & search system.\r\n\r\nYou will bring in *what really matters* to feed your ideas, creations, projects and decisions, both professionnal and personal.  *All in one flow*.\r\n\r\n**1flow** beta is opening on the 15th of june 2013.\r\n\r\n  [curation]: #\r\n    \"Select, edit and share most relevant contents for a given subject.\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u2014 source: Wikipedia\""
     }
 },
 {
     "pk": 8, 
     "model": "landing.landingcontent", 
     "fields": {
-        "content_fr": "- C'est s\u00fbr, cette *information vitale* est dans l'un des 300 articles r\u00e9cents que vous avez lus. Mais lequel\u00a0?\r\n- Pour compiler et synth\u00e9tiser plusieurs contenus, vous utilisez encore ce bon vieux copier-coller.\r\n- Vous avez des centaines d'articles favoris dans Google Reader, mais vous n'en faites jamais rien.\r\n- Vous adorez Twitter et les flux RSS, mais beaucoup moins cliquer sur des URLs raccourcies ou des liens `lire la suite\u00a0\u00bb` avant d'acc\u00e9der au contenu.\r\n- Vous avez tellement de nouvelles informations \u00e0 lire chaque jour que vous ne savez pas par o\u00f9 commencer\u00a0!\r\n\r\nCes probl\u00e8mes sont familiers\u00a0? **1flow** est pour vous\u00a0!", 
+        "content_fr": "L'*[inframation][]* est l'ensemble des informations pertinentes qui vous \u00e9chappe par manque d'outils, de temps ou de r\u00e9f\u00e9rence contextuelle. Quelques situations communes pour illustrer ce sujet\u00a0:\r\n- C'est s\u00fbr, cette *information vitale* est dans l'un des 300 articles r\u00e9cents que vous avez lus. Mais lequel\u00a0?\r\n- Pour synth\u00e9tiser plusieurs contenus, votre pens\u00e9e est toujours limit\u00e9e par ce bon vieux copier-coller?\r\n- Vous avez des centaines d'articles favoris dans Google Reader, mais vous n'en faites jamais rien.\r\n- Vous adorez Twitter et les flux RSS, mais manquez de temps pour cliquer sur toutes ces URLs raccourcies et ces liens `lire la suite\u00a0\u00bb`.\r\n- Comment savoir si l'auteur de cet article n'est pas de parti pris\u00a0?\r\n- Vous avez tellement d'informations \u00e0 lire chaque jour que vous ne savez pas par o\u00f9 commencer\u00a0!\r\n\r\nCes probl\u00e8mes sont familiers\u00a0? **1flow** est pour vous\u00a0!\r\n\r\n  [inframation]: #\r\n    \"N\u00e9ologisme, contraction de \u00ab\u00a0infra-information\u00a0\u00bb : celle qui est sous-tendue ou sous-jacente \u00e0 la donn\u00e9e \u00e0 laquelle vous avez imm\u00e9diatement acc\u00e8s.\"", 
         "content_en-gb": "", 
         "name": "promise_left_content", 
-        "content_nt": "(VARIANTE MATTHIEU 1)\r\n- C'est s\u00fbr, cette *information vitale* est dans l'un des 300 articles r\u00e9cents que vous avez lus. Mais lequel\u00a0?\r\n- Pour compiler et synth\u00e9tiser plusieurs contenus, vous utilisez encore ce bon vieux copier-coller.\r\n- Vous avez des centaines d'articles favoris dans Google Reader, mais vous n'en faites jamais rien.\r\n- Vous adorez Twitter et les flux RSS, mais beaucoup moins cliquer sur des URLs raccourcies ou des liens `lire la suite\u00a0\u00bb` avant d'acc\u00e9der au contenu.\r\n- Vous avez tellement de nouvelles informations \u00e0 lire chaque jour que vous ne savez pas par o\u00f9 commencer\u00a0!\r\n\r\nC'est ce que nous (et d'autres) appelons l'*infob\u00e9sit\u00e9*.\r\n\r\n\r\n(VARIANTE MATTHIEU 2)\r\n- C'est s\u00fbr, cette *information vitale* se trouve dans l'un des 300 articles que vous avez r\u00e9cemment lus. Mais lequel\u00a0?\r\n- Pour compiler et synth\u00e9tiser plusieurs contenus, vous utilisez encore ce bon vieux copier-coller.\r\n- Vous avez des centaines d'articles favoris dans Google Reader, mais vous n'en faites jamais rien.\r\n- Vous adorez Twitter et les flux RSS, mais beaucoup moins cliquer sur des URLs raccourcies ou des liens `lire la suite\u00a0\u00bb` avant d'acc\u00e9der au contenu.\r\n- Vous avez tellement de nouvelles informations \u00e0 lire chaque jour que vous ne savez pas par quoi commencer\u00a0!\r\n\r\nC'est ce que nous (et d'autres) appelons l'*infob\u00e9sit\u00e9*.\r\n\r\n\r\n(VERSION ACTUELLE VALIDEE AVEC OLIVIER)\r\n\r\n- C'est s\u00fbr, cette *information vitale* est dans les 300 articles r\u00e9cents que vous avez lu. Mais lequel\u00a0?\r\n- Pour compiler et synth\u00e9tiser plusieurs contenus, vous utilisez encore ce bon vieux copier-coller.\r\n- Vous avez des centaines d'articles favoris dans Google Reader, mais vous n'en faites jamais rien.\r\n- Vous adorez Twitter et les flux RSS, mais beaucoup moins cliquer sur des URLs raccourcies ou des liens `lire la suite\u00a0\u00bb` avant d'acc\u00e9der au contenu.\r\n- Vous avez tellement de nouvelles informations \u00e0 lire chaque jour que vous ne savez pas par quoi commencer\u00a0!\r\n\r\nC'est ce que nous (et d'autres) appelons l'*infob\u00e9sit\u00e9*.\r\n", 
-        "content_en": "- For sure, this *key information* is in one of the 300 articles you've read recently. But which one is it?\r\n- To compile and synthetize multiple articles, you're still using good old copy'n paste.\r\n- You have hundreds of valuable articles starred in Google Reader, but you never do anything with them.\r\n- You enjoy Twitter and RSS readers, but definitely not clicking on shortened URLs and `read more \u00bb` links before reading full articles!\r\n- You have so much information to read everyday, and you just don't know where to start?\r\n\r\nThose problems sound familiar? **1flow** is for you!"
+        "content_nt": "Sauvegarde\r\n\r\nL'*[inframation][]* est l'ensemble des informations pertinentes qui vous \u00e9chappe par manque d'outils, de temps ou de r\u00e9f\u00e9rence contextuelle. Quelques situations communes pour illustrer ce manque\u00a0:\r\n- C'est s\u00fbr, cette *information vitale* est dans l'un des 300 articles r\u00e9cents que vous avez lus. Mais lequel\u00a0?\r\n- Pour synth\u00e9tiser plusieurs contenus, votre pens\u00e9e est limit\u00e9e par ce bon vieux copier-coller.\r\n- Vous avez des centaines d'articles favoris dans Google Reader, mais vous n'en faites jamais rien.\r\n- Vous adorez Twitter et les flux RSS, mais manquez de temps pour cliquer sur  toutes ces URLs raccourcies et ces liens `lire la suite\u00a0\u00bb`.\r\n- Comment savoir si l'auteur de cet article n'est pas de parti pris\u00a0?\r\n- Vous avez tellement d'informations \u00e0 lire chaque jour que vous ne savez pas par o\u00f9 commencer\u00a0!\r\n\r\nCes probl\u00e8mes sont familiers\u00a0? **1flow** est pour vous\u00a0!\r\n\r\n  [inframation]: #\r\n    \"N\u00e9ologisme, contraction de \u00ab\u00a0infra-information\u00a0\u00bb : celle qui est sous-tendue ou sous-jacente \u00e0 la donn\u00e9e \u00e0 laquelle vous avez acc\u00e8s imm\u00e9diat.\"\r\n\r\n\r\n\r\n*[inframation][]* is the set of relevant information that you miss by a lack of tools, time or contextual references. Here are a few common situations to illustrate this shortage\u00a0:\r\n- For sure, this *key information* is in one of the 300 articles you've read recently. But which one is it?\r\n- To synthetize multiple articles, your  thought is limited by this good old copy'n paste.\r\n- You have hundreds of valuable articles starred in Google Reader, but you never do anything with them.\r\n- You enjoy Twitter and RSS readers, but definitely not clicking on shortened URLs and `read more \u00bb` links before reading full articles!\r\n- You have so much information to read everyday, and you just don't know where to start?\r\n\r\nThose problems sound familiar? **1flow** is for you!", 
+        "content_en": "*[inframation][]* is the set of relevant information that you miss because of a lack of tools, time or contextual references. Here are a few common situations to illustrate this issue\u00a0:\r\n- For sure, this *key information* is in one of the 300 articles you've read recently. But which one is it?\r\n- To synthetize multiple articles, your  thought is still limited by this good old copy'n paste?\r\n- You have hundreds of valuable articles starred in Google Reader, but you never do anything with them.\r\n- You enjoy Twitter and RSS readers, but you don't have the time to click all those shortened URLs and `read more \u00bb` links!\r\n- How do you know if the author of this article is not biased?\r\n- You have so much information to read everyday, and you just don't know where to start?\r\n\r\nThose problems sound familiar? **1flow** is for you!\r\n\r\n [inframation]: #\r\n    \"Neologism, short for \u00ab\u00a0infra-information\u00a0\u00bb : the one which is underpinned or underlying the data that you have immediate access to.\""
     }
 },
 {
@@ -245,33 +245,33 @@
     "pk": 23, 
     "model": "landing.landingcontent", 
     "fields": {
-        "content_fr": "# Merci\u00a0!\r\n\r\n## Et bienvenue \u00e0 bord de 1flow\u00a0! \r\n\r\nNous sommes honor\u00e9s de vous compter parmis nos premiers passagers. En attendant le d\u00e9collage, n'h\u00e9sitez pas \u00e0 inviter des passagers suppl\u00e9mentaires en partageant [1flow](http://1flow.io).\r\n\r\n\u00c0 tr\u00e8s bient\u00f4t\u00a0!\r\n\r\n\u2014\u2014  \r\nOlivier Cort\u00e8s & Matthieu Chaignot  \r\nCo-fondateurs de **1flow**", 
+        "content_fr": "# Merci\u00a0!\r\n\r\n## Bienvenue \u00e0 bord de 1flow.\r\n\r\nNous sommes tr\u00e8s heureux de vous compter parmi nos premiers passagers. En attendant le d\u00e9collage, n'h\u00e9sitez pas \u00e0 inviter des voyageurs suppl\u00e9mentaires en partageant l'adresse [1flow.io](http://1flow.io) autour de vous.\r\n\r\n\u00c0 tr\u00e8s vite\u00a0!\r\n\r\n--\r\nOlivier Cortes & Matthieu Chaignot  \r\nCo-fondateurs de **1flow** et chasseurs d'inframation", 
         "content_en-gb": "", 
         "name": "successful_thanks_content", 
-        "content_nt": "Welcome aboard of 1flow! We are very honored to count you as one of our first passengers. Waiting for the take off do not hesitate to invite extra travellers by sharing *1flowapp.com*. See you!\r\n\r\nBienvenue \u00e0 bord de **1flow**\u00a0! Nous sommes tr\u00e8s heureux de vous compter parmis nos premiers passagers. En attendant le d\u00e9collage n'h\u00e9sitez pas \u00e0 inviter d'autres voyageurs en partageant *1flowapp.com*.  \u00c0 tr\u00e8s vite\u00a0!", 
-        "content_en": "# Thanks!\r\n\r\n## Welcome aboard of 1flow! \r\n\r\nWe are very honored to count you as one of our first passengers. Waiting for the take off, do not hesitate to invite extra travellers by sharing [1flow](http://1flow.io). \r\n\r\nSee you soon!\r\n\r\n\u2014\u2014  \r\nOlivier Cort\u00e8s & Matthieu Chaignot  \r\n**1flow** co-founders"
+        "content_nt": "", 
+        "content_en": "# Thanks!\r\n\r\n## Welcome aboard 1flow.\r\n\r\nWe are very honored to count you as one of our first passengers. Waiting for the take off, do not hesitate to invite extra travellers by sharing [1flow.io](http://1flow.io) around you. \r\n\r\nSee you soon!\r\n\r\n--  \r\nOlivier Cortes & Matthieu Chaignot  \r\n**1flow** co-founders, inframation hunters\r\n"
     }
 },
 {
     "pk": 24, 
     "model": "landing.landingcontent", 
     "fields": {
-        "content_fr": "\r\n# Re-merci\u00a0!\r\n\r\n## Vous \u00e9tiez d\u00e9j\u00e0 inscrit pour recevoir une invitation.\r\n\r\nNous ne vous avons pas oubli\u00e9, vous \u00eates bien sur la liste\u00a0:-) \r\n\r\nA tr\u00e8s vite\u00a0!\r\n\r\n\u2014\u2014  \r\nOlivier Cort\u00e8s & Matthieu Chaignot  \r\nCo-fondateurs de **1flow**", 
+        "content_fr": "# Merci\u00a0!\r\n\r\n## Ravis de vous revoir\u00a0!\r\n\r\nVous \u00e9tiez d\u00e9j\u00e0 inscrit(e) pour recevoir une invitation. Nous ne vous avons pas oubli\u00e9(e), vous \u00eates bien sur la liste\u00a0:-D\r\n\r\n\u00c0 tr\u00e8s vite\u00a0!\r\n\r\n--\r\nOlivier Cortes & Matthieu Chaignot  \r\nCo-fondateurs de **1flow** et chasseurs d'inframation", 
         "content_en-gb": "", 
         "name": "already_registered_thanks_content", 
         "content_nt": "", 
-        "content_en": "# Re-thanks!\r\n\r\n## You were already registered to get an invite.\r\n\r\nWe didn't forget you, your are definitely on the list :-) \r\n\r\nSee you soon!\r\n\r\n\u2014\u2014  \r\nOlivier Cort\u00e8s & Matthieu Chaignot  \r\n**1flow** co-founders"
+        "content_en": "# Thanks!\r\n\r\n## Welcome back! \r\n\r\nYou were already registered to get an invite to the beta. We haven't forgotten you, your are definitely on the list :-D\r\n\r\nSee you soon!\r\n\r\n--\r\nOlivier Cortes & Matthieu Chaignot  \r\n**1flow** co-founders, inframation hunters"
     }
 },
 {
     "pk": 25, 
     "model": "landing.landingcontent", 
     "fields": {
-        "content_fr": "# Merci\u00a0!\r\n\r\n## Merci de votre int\u00e9r\u00eat pour **1flow**\u00a0! \r\n\r\nToutes les invitations pour le jour du lancement ont d\u00e9j\u00e0 \u00e9t\u00e9 attribu\u00e9es. Mais pas d'inqui\u00e9tude, vous \u00eates d\u00e9sormais enregistr\u00e9(e) en bonne place sur notre liste d'attente et vous recevrez tr\u00e8s prochainement votre billet. \r\n\r\n\u00c0 tr\u00e8s bient\u00f4t\u00a0\u00a0!\r\n\r\n\u2014\u2014  \r\nOlivier Cort\u00e8s & Matthieu Chaignot  \r\nCo-fondateurs de **1flow**", 
+        "content_fr": "# Merci\u00a0!\r\n\r\n## Vous \u00eates sur liste d'attente\r\n\r\nMerci de votre int\u00e9r\u00eat pour 1flow ! Toutes les invitations pour le vol inaugural ont d\u00e9j\u00e0 \u00e9t\u00e9 attribu\u00e9es. Mais pas d'inqui\u00e9tude, vous \u00eates d\u00e9sormais enregistr\u00e9(e) en bonne place sur notre liste d'attente et vous recevrez tr\u00e8s prochainement votre billet. \r\n\r\nA tr\u00e8s vite !\r\n\r\n--\r\nOlivier Cortes & Matthieu Chaignot  \r\nCo-fondateurs de **1flow** et chasseurs d'inframations", 
         "content_en-gb": "", 
         "name": "no_invite_left_notice_content", 
         "content_nt": "", 
-        "content_en": "# Thanks!\r\n\r\n## Thank you for your interest in **1flow**.\r\n\r\nAll the invitations for the launch day have been already assigned. But don't worry, your are now registered in a very good position on our waiting list. You will receive your invitation very soon. \r\n\r\nSee you soon!\r\n\r\n\u2014\u2014  \r\nOlivier Cort\u00e8s & Matthieu Chaignot  \r\n**1flow** co-founders"
+        "content_en": "# Thanks!\r\n\r\n## You are on the waiting list\r\n\r\nThank you for your interest in 1flow! All the invitations for the first flight have been already assigned. But don't worry, your are now registered in a very good position on our waiting list. So you will receive your invitation very soon. \r\n\r\nSee you soon!\r\n\r\n--  \r\nOlivier Cortes & Matthieu Chaignot  \r\n1flow co-founders, inframation hunters"
     }
 },
 {
@@ -282,7 +282,7 @@
         "content_en-gb": "", 
         "name": "baseline_site_subtitle", 
         "content_nt": "", 
-        "content_en": "intense curation"
+        "content_en": "unveil inframation"
     }
 },
 {

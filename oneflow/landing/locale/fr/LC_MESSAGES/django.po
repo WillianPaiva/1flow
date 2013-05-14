@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-14 13:34+0200\n"
+"POT-Creation-Date: 2013-05-15 00:20+0200\n"
 "PO-Revision-Date: 2013-05-13 15:21+0200\n"
 "Last-Translator:   <admin@1flow.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,7 +47,7 @@ msgstr "Contenus de landing page"
 msgid "^thanks/(?P<already_registered>\\w+)?$"
 msgstr "^merci/(?P<already_registered>\\w+)?$"
 
-#: views.py:86
+#: views.py:104
 msgid "again"
 msgstr "encore"
 

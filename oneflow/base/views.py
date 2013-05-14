@@ -9,6 +9,7 @@ from django.template.loader import render_to_string
 
 from sparks.django.utils import HttpResponseTemporaryServerError
 
+
 LOGGER = logging.getLogger(__name__)
 
 

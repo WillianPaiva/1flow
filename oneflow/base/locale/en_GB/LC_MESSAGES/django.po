@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-14 13:34+0200\n"
+"POT-Creation-Date: 2013-05-15 00:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: admin.py:123
+#: admin.py:124
 #, python-format
 msgid "Export selected %(verbose_name_plural)s to CSV"
 msgstr ""
@@ -92,27 +92,6 @@ msgstr ""
 #: templates/500.html:11
 msgid ""
 "Please try again a little later, or navigate to <a href=\"/\">elsewhere</a>."
-msgstr ""
-
-#: templates/email_unsubscribe.html:6
-msgid "Successfully unsubscribed!"
-msgstr ""
-
-#: templates/email_unsubscribe.html:10
-msgid ""
-"\n"
-"\n"
-"# Unsubscribed!\n"
-"\n"
-"## You will not receive anything more from us.\n"
-"\n"
-"We are sad to see you jump without any parachute during the flight.\n"
-"\n"
-"If you change your mind, you don't need to call *Iron Man*: just float "
-"gentely back to [Home][home] and register again.\n"
-"\n"
-"  [home]: /\n"
-"\n"
 msgstr ""
 
 #: templates/error_base.html:13

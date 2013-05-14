@@ -11,7 +11,12 @@ from models import EmailContent
 LOGGER = logging.getLogger(__name__)
 
 
-def send_email_with_db_content(request, email_template_name, user, **kwargs):
+def send_email_with_db_content(request, email_template_name, **kwargs):
+    """
+
+        :param kwargs: can contain ``new_user`` in case of a new user
+            registration.
+    """
 
     def post_send(user, email_template_name):
         # TODO: implement me for real!
@@ -23,9 +28,17 @@ def send_email_with_db_content(request, email_template_name, user, **kwargs):
 
         return post_send_log_mail_sent
 
+    # If there is no new user, it's not a registration, we
+    # just get the request user, to fill email fields.
+    user = kwargs.pop('new_user', request.user)
+
     # Prepare for the first rendering pass (Django)
-    request_context = RequestContext(request)
+    request_context = RequestContext(request, {
+                                     'new_user': user,
+                                     'unsubscribe_url':
+                                     user.profile.unsubscribe_url()})
     email_data      = EmailContent.objects.get(name=email_template_name)
+    email_footer    = EmailContent.objects.get(name='email_footer')
 
     # Pre-render templates for the mail HTML content.
     # email subject is mapped to <title> and <h1>.
@@ -33,10 +46,13 @@ def send_email_with_db_content(request, email_template_name, user, **kwargs):
     email_subject = stemplate.render(request_context)
     btemplate     = Template(email_data.body)
     email_body    = btemplate.render(request_context)
+    ftemplate     = Template(email_footer.body)
+    email_footer  = ftemplate.render(request_context)
 
     # Update for the second rendering pass (Markdown in Django)
     request_context.update({'email_subject': email_subject,
-                           'email_body': email_body, })
+                           'email_body': email_body,
+                           'email_footer': email_footer})
 
     mail.send_mail_html_from_template(
         'emails/email_with_db_content.html',

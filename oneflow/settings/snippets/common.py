@@ -131,6 +131,7 @@ INSTALLED_APPS = (
     'memcache_status',
     'widget_tweaks',
     'oneflow.base',
+    'oneflow.profiles',
     'oneflow.landing',
     #'oneflow.core',
 )
