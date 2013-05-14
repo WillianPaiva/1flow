@@ -25,4 +25,8 @@ include_snippets(
 )
 
 # Override `1flow_net` for local development
-SITE_DOMAIN = 'localhost'
+SITE_DOMAIN = 'localhost:8000'
+
+EMAIL_HOST = 'gurney'
+#EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+#EMAIL_FILE_PATH = '/tmp/1flow.mail'
