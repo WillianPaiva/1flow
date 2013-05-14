@@ -6,19 +6,19 @@
 {% block landing_title %}{% trans "Successfully unsubscribed!" %}{% endblock landing_title %}
 
 {% block onlyme_content %}
-    {% filter markdown %}
+{% filter markdown %}
 {% blocktrans %}
 
 # Unsubscribed!
 
-## You will not receive anything more from us.
+## You will not receive anything more from us at your email address {{ email }}.
 
 We are sad to see you jump without any parachute during the flight.
 
-If you change your mind, you don't need to call *Iron Man*: just float gentely back to [Home][home] and register again.
+If you change your mind, you don't need to call *Iron Man*: just float gently back to [Home][] and register again.
 
-  [home]: /
+  [Home]: /
 
 {% endblocktrans %}
-    {% endfilter %}
+{% endfilter %}
 {% endblock onlyme_content %}
