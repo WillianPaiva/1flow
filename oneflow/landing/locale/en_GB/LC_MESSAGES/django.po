@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-12 22:13+0200\n"
+"POT-Creation-Date: 2013-05-14 13:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,7 +46,7 @@ msgstr ""
 msgid "^thanks/(?P<already_registered>\\w+)?$"
 msgstr ""
 
-#: views.py:73
+#: views.py:86
 msgid "again"
 msgstr ""
 
@@ -54,16 +54,16 @@ msgstr ""
 msgid "Follow us on twitter!"
 msgstr ""
 
-#: templates/landing_base.html:77
+#: templates/landing_base.html:89
+msgid "©2013, all right reserved | <strong>1flow</strong> team"
+msgstr ""
+
+#: templates/landing_index.html:18
 #, python-format
 msgid ""
 "\n"
 "                          <strong>1flow</strong> opens in %(timer)s.\n"
 "                        "
-msgstr ""
-
-#: templates/landing_base.html:162
-msgid "©2013, all right reserved | <strong>1flow</strong> team"
 msgstr ""
 
 #: templates/snippets/beta_invites_left.html:6

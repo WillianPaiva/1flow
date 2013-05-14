@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-12 22:13+0200\n"
-"PO-Revision-Date: 2013-05-12 22:18+0200\n"
+"POT-Creation-Date: 2013-05-14 13:34+0200\n"
+"PO-Revision-Date: 2013-05-14 13:35+0200\n"
 "Last-Translator:   <admin@1flow.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -19,24 +19,48 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Translated-Using: django-rosetta 0.7.2\n"
 
-#: admin.py:115
+#: admin.py:123
 #, python-format
 msgid "Export selected %(verbose_name_plural)s to CSV"
 msgstr "Exporter les %(verbose_name_plural)s sélectionnés en CSV"
+
+#: models.py:12
+msgid "Email name"
+msgstr "Nom du mail"
+
+#: models.py:14
+msgid "Email subject"
+msgstr "Sujet du mail"
+
+#: models.py:15
+msgid "Email body"
+msgstr "Corps du mail"
+
+#: models.py:18
+msgid "{field_name}: {truncated_field_value}"
+msgstr "{field_name} : {truncated_field_value}"
+
+#: models.py:24
+msgid "Email content"
+msgstr "Contenu d'email"
+
+#: models.py:25
+msgid "Emails contents"
+msgstr "Contenus d'emails"
 
 #: templates/404.html:5
 msgid "Resource not found"
 msgstr "Ressource introuvable"
 
-#: templates/404.html:16
+#: templates/404.html:8
 msgid "Not found."
 msgstr "Introuvable."
 
-#: templates/404.html:17
+#: templates/404.html:9
 msgid "The page or resource you requested is unknown to us:"
 msgstr "La page ou ressource que vous avez demandée nous est inconnue :"
 
-#: templates/404.html:19
+#: templates/404.html:11
 msgid ""
 "In fact, we asked Google and Bing and they do not know anything about it "
 "either. Perhaps you should ask a greek Oracle®?"
@@ -44,7 +68,7 @@ msgstr ""
 "En fait, nous avons même demandé à Google et Bing mais aucun d'eux ne la "
 "connait. Peut-être devriez-vous interroger un Oracle® grec ? "
 
-#: templates/404.html:20
+#: templates/404.html:12
 msgid ""
 "Just joking. They won't know more than the others. Just go back <a "
 "href='/'>Home</a>."
@@ -52,29 +76,19 @@ msgstr ""
 "Désolé, c'est une blague de geek. Oracle® n'en saura pas plus que les "
 "autres. Retournez simplement <a href=\"/\">à l'accueil</a>."
 
-#: templates/404.html:35
-#, python-format
-msgid ""
-"\n"
-"                            If you need assistance, you may reference this error as <strong>%(sentry_id)s</strong>.\n"
-"                        "
-msgstr ""
-"\n"
-"Si vous avez besoin d'assistance, vous pouvez vous référer à ce plantage sous le numéro <strong>%(sentry_id)s</strong>."
-
 #: templates/500.html:5
 msgid "That's a bad catch!"
 msgstr "Vraiment pas cool !"
 
-#: templates/500.html:16
+#: templates/500.html:8
 msgid "Oh my!"
 msgstr "Outch !"
 
-#: templates/500.html:17
+#: templates/500.html:9
 msgid "The server encountered an error and couldn't recover."
 msgstr "Le serveur a rencontré une erreur et ne s'en est pas remis."
 
-#: templates/500.html:18
+#: templates/500.html:10
 msgid ""
 "We apologize for this situation. Developers have been automatically alerted "
 "about this problem."
@@ -82,14 +96,44 @@ msgstr ""
 "Nous en sommes désolés. Les développeurs ont été automatiquement alertés de "
 "ce problème."
 
-#: templates/500.html:19
+#: templates/500.html:11
 msgid ""
 "Please try again a little later, or navigate to <a href=\"/\">elsewhere</a>."
 msgstr ""
 "Merci de ré-essayer dans un moment, ou de naviguer sur <a href=\"/\">une "
 "autre partie du site</a>."
 
-#: templates/500.html:34
+#: templates/email_unsubscribe.html:6
+msgid "Successfully unsubscribed!"
+msgstr "Désinscrit(e) avec succès !"
+
+#: templates/email_unsubscribe.html:10
+msgid ""
+"\n"
+"\n"
+"# Unsubscribed!\n"
+"\n"
+"## You will not receive anything more from us.\n"
+"\n"
+"We are sad to see you jump without any parachute during the flight.\n"
+"\n"
+"If you change your mind, you don't need to call *Iron Man*: just float gentely back to [Home][home] and register again.\n"
+"\n"
+"  [home]: /\n"
+"\n"
+msgstr ""
+"\n"
+"# Désinscrit(e) !\n"
+"\n"
+"## Vous ne recevrez plus rien de notre part.\n"
+"\n"
+"Nous sommes attristés de vous voir sauter sans parachute pendant le vol de [1flow][home].\n"
+"\n"
+"Si vous changez d'avis, vous n'avez pas besoin d'appeler *IronMan* : laissez-vous simplement flotter jusqu'à la [Home][home] et ré-enregistrez-vous.\n"
+"\n"
+"  [home]: /\n"
+
+#: templates/error_base.html:13
 #, python-format
 msgid ""
 "\n"
@@ -162,6 +206,14 @@ msgstr "m"
 #: templatetags/base_utils.py:138 templatetags/base_utils.py:139
 msgid "s"
 msgstr "s"
+
+#~ msgid ""
+#~ "\n"
+#~ "                            If you need assistance, you may reference this error as <strong>%(sentry_id)s</strong>.\n"
+#~ "                        "
+#~ msgstr ""
+#~ "\n"
+#~ "Si vous avez besoin d'assistance, vous pouvez vous référer à ce plantage sous le numéro <strong>%(sentry_id)s</strong>."
 
 #~ msgid "Perhaps you could ask an Oracle®?"
 #~ msgstr "Peut-être devriez-vous interroger un Oracle® ?"

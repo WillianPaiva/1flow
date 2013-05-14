@@ -76,11 +76,14 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.app_directories.Loader',
 )
 
+# We always include the *Cache* middlewares. In development &
+# pre-production it's a dummy cache, allowing to keep them here.
 MIDDLEWARE_CLASSES = (
     #'ConditionalGetMiddleware',
     ('raven.contrib.django.raven_compat.middleware.'
         'SentryResponseErrorIdMiddleware'),
     'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -89,6 +92,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     #'GZipMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
 )
 
 TEMPLATE_DIRS = (

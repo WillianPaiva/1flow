@@ -6,12 +6,13 @@ import simplejson as json
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, HttpResponseBadRequest
+from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.shortcuts import render
 from django.utils.translation import ugettext_lazy as _
-from django.views.decorators.cache import cache_page
+from django.views.decorators.cache import never_cache
 
+from ..base.utils import send_email_with_db_content
 
 from forms import LandingPageForm
 from models import LandingContent
@@ -29,10 +30,14 @@ def get_all_beta_data():
     return get_translations() + get_beta_invites_left() + get_beta_time_left()
 
 
-def get_beta_invites_left():
+def get_beta_invites_left(only_number=False):
 
-    return (('beta_invites_left',
-            settings.LANDING_BETA_INVITES - User.objects.count()), )
+    beta_invites_left = settings.LANDING_BETA_INVITES - User.objects.count()
+
+    if only_number:
+        return beta_invites_left
+
+    return (('beta_invites_left', beta_invites_left), )
 
 
 def get_beta_time_left():
@@ -66,6 +71,14 @@ def home(request):
                                                        email=email)
 
             if created:
+                has_invites_left = get_beta_invites_left(True) > 0
+
+                send_email_with_db_content(request,
+                                           'landing_thanks'
+                                           if has_invites_left
+                                           else 'landing_waiting_list',
+                                           new_user=user)
+
                 request_data = {
                     'language': request.META.get('HTTP_ACCEPT_LANGUAGE', ''),
                     'user_agent': request.META.get('HTTP_USER_AGENT', ''),
@@ -93,10 +106,6 @@ def home(request):
     else:
         form = LandingPageForm()
 
-        # make market-man smile :-)
-        request.session.setdefault('INITIAL_REFERER',
-                                   request.META.get('HTTP_REFERER', ''))
-
     context['form'] = form
 
     context.update(get_all_beta_data())
@@ -104,6 +113,8 @@ def home(request):
     return render(request, 'landing_index.html', context)
 
 
+# never cache allows to update the counter for the newly registered user.
+@never_cache
 def thanks(request, **kwargs):
 
     context = dict(already_registered=bool(
@@ -112,15 +123,3 @@ def thanks(request, **kwargs):
     context.update(get_all_beta_data())
 
     return render(request, 'landing_thanks.html', context)
-
-
-@cache_page(60)
-def invites(request):
-    """ """
-
-    if not request.is_ajax():
-        return HttpResponseBadRequest('Must be called via Ajax')
-
-    context = dict(get_beta_invites_left())
-
-    return render(request, 'snippets/beta_invites_left.html', context)

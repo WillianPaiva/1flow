@@ -1,0 +1,63 @@
+{% load i18n %}
+{% load base_utils %}
+{% load markdown_deux_tags %}
+{% get_current_language as current_lang_code %}
+<html>
+<head>
+    <title>{{ email_subject }}</title>
+</head>
+<body style="background:url({{ STATIC_URL }}img/emails/airmail/bg_pattern.jpg) 50% 0;margin:0;padding:0">
+<div style="background:url({{ STATIC_URL }}img/emails/airmail/bg_pattern.jpg) 50% 0;">
+    <table id="main-table" width="677" cellpadding="0" cellspacing="0" align="center"
+        background="{{ STATIC_URL }}img/emails/airmail/bg_pattern.jpg">
+        <tr>
+            <td id="tbg" colspan="3"><img src="{{ STATIC_URL }}img/emails/airmail/tbg.jpg" width="677" height="28" alt="" style="display:block"></td>
+        </tr>
+        <tr>
+            <td id="left-back" rowspan="4" width="27"
+                background="{{ STATIC_URL }}img/emails/airmail/lbg.jpg">&nbsp;</td>
+            <td id="head"><img src="{{ STATIC_URL }}img/emails/airmail/top.jpg" width="622" height="27" alt="" style="display:block"></td>
+            <td id="right-back" rowspan="4" width="29" background="{{ STATIC_URL }}img/emails/airmail/rbg.jpg">&nbsp;</td>
+        </tr>
+        <tr>
+            <td id="body-center" width="621" style="line-height:2;"
+                    background="{{ STATIC_URL }}img/emails/airmail/letter_bg.jpg">
+                <table cellspacing="0" cellpadding="0"
+                        class="spacing-table-for-ie5-and-hotmail">
+                    <tr>
+                        <td class="top-spacing" colspan="3" height="13" style="font-size:1px">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td width="48" class="left-gutter-spacing" style="font-size:1px">&nbsp;</td>
+                        <td class="content-holder" valign="top" height="362">
+                            <div class="body-title" id="body-title">
+                                <font face="Lucida Grande, sans serif" color="#e53b19" style="font-size:20px">
+                                    <span style="display:block; width:525px; line-height: 22px">{% block email_title %}{% endblock email_title %}</span>
+                                </font>
+                            </div>
+                            <br>
+                            <font face="Lucida Grande, sans serif" color="#000000" style="font-size:13px"><div class="body-content" id="body-content" style="line-height:1.25;">
+                                <span style="display:block;width:525px">{% block email_content %}{% endblock email_content %}</span>
+                            </div></font>
+                        </td>
+                        <td width="48" class="right-gutter-spacing" style="font-size:1px">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td class="bottom-spacing" colspan="3" height="15" style="font-size:1px">&nbsp;</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td id="foot" class="foot"><img src="{{ STATIC_URL }}img/emails/airmail/bottom.jpg" width="622" height="27" alt="" style="display:block"></td>
+        </tr>
+        <tr>
+            <td id="bg" class="bbg"><img src="{{ STATIC_URL }}img/emails/airmail/bbg.jpg" width="622" height="25" alt="" style="display:block"></td>
+        </tr>
+        <tr>
+            <td class="tbg" colspan="3"><img src="{{ STATIC_URL }}img/emails/airmail/tbg.jpg" width="677" height="28" alt="" style="display:block"></td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

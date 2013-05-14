@@ -19,3 +19,8 @@ ALLOWED_HOSTS += [
     'leto.licorn.org',
     'gurney.licorn.org'
 ]
+
+INSTALLED_APPS += ('django_nose', )
+
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+

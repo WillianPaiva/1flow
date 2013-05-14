@@ -1,30 +1,21 @@
-{% extends "landing_base.html" %}
+{% extends "onlyme_base.html" %}
 
 {% load i18n %}
 {% load markdown_deux_tags %}
 
-{% block landing_title %}
-  {% firstof landing_thanks_title 'landing_thanks_title' %}
-{% endblock landing_title %}
+{% block landing_title %}{% firstof landing_thanks_title 'landing_thanks_title' %}{% endblock landing_title %}
 
+{% block onlyme_content %}
+    {% if already_registered %}
+        {{ already_registered_thanks_content|markdown }}
 
-{% block landing_content %}
+    {% else %}
+        {% if beta_invites_left == 0 %}
+            {{ no_invite_left_notice_content|markdown }}
 
-    <div class="span8 offset2" id="thanks">
-        <h4>
-            {% if already_registered %}
-                {{ already_registered_thanks_content|markdown }}
+        {% else %}
+                {{ successful_thanks_content|markdown }}
 
-            {% else %}
-                {% if beta_invites_left == 0 %}
-                    {{ no_invite_left_notice_content|markdown }}
-
-                {% else %}
-                        {{ successful_thanks_content|markdown }}
-
-                {% endif %}
-            {% endif %}
-        </h4>
-    </div>
-
-{% endblock landing_content %}
+        {% endif %}
+    {% endif %}
+{% endblock onlyme_content %}

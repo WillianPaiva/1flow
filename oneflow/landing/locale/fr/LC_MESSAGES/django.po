@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-12 22:13+0200\n"
-"PO-Revision-Date: 2013-05-12 20:38+0200\n"
+"POT-Creation-Date: 2013-05-14 13:34+0200\n"
+"PO-Revision-Date: 2013-05-13 15:21+0200\n"
 "Last-Translator:   <admin@1flow.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -47,7 +47,7 @@ msgstr "Contenus de landing page"
 msgid "^thanks/(?P<already_registered>\\w+)?$"
 msgstr "^merci/(?P<already_registered>\\w+)?$"
 
-#: views.py:73
+#: views.py:86
 msgid "again"
 msgstr "encore"
 
@@ -55,7 +55,11 @@ msgstr "encore"
 msgid "Follow us on twitter!"
 msgstr "Suivez-nous sur Twitter !"
 
-#: templates/landing_base.html:77
+#: templates/landing_base.html:89
+msgid "©2013, all right reserved | <strong>1flow</strong> team"
+msgstr "©2013, tous droits réservés | équipe <strong>1flow</strong>"
+
+#: templates/landing_index.html:18
 #, python-format
 msgid ""
 "\n"
@@ -64,10 +68,6 @@ msgid ""
 msgstr ""
 "\n"
 "<strong>1flow</strong> ouvre dans %(timer)s."
-
-#: templates/landing_base.html:162
-msgid "©2013, all right reserved | <strong>1flow</strong> team"
-msgstr "©2013, tous droits réservés | équipe <strong>1flow</strong>"
 
 #: templates/snippets/beta_invites_left.html:6
 #, python-format
@@ -111,6 +111,22 @@ msgstr "Inscrivez vous sur liste d'attente !"
 #, python-format
 msgid "Switch to %(name_local)s"
 msgstr "Basculer en %(lang_name)s"
+
+#~ msgid ""
+#~ "\n"
+#~ "                    Thanks for requesting an invite!\n"
+#~ "                "
+#~ msgstr ""
+#~ "\n"
+#~ "Merci d'avoir demandé une invitation !"
+
+#~ msgid ""
+#~ "\n"
+#~ "                    Warmup for the beta opening!\n"
+#~ "                "
+#~ msgstr ""
+#~ "\n"
+#~ "Tenez-vous prêt(e) pour l'ouverture de la beta !"
 
 #~ msgid "the universal curation platform"
 #~ msgstr "la plateforme de curation universelle"
