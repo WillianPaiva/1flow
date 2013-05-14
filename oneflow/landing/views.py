@@ -106,6 +106,10 @@ def home(request):
     else:
         form = LandingPageForm()
 
+        # make market-man smile :-)
+        request.session.setdefault('INITIAL_REFERER',
+                                   request.META.get('HTTP_REFERER', ''))
+
     context['form'] = form
 
     context.update(get_all_beta_data())
