@@ -13,14 +13,9 @@ content_fields_displays = tuple((field + '_display')
 
 
 class LandingContentAdmin(admin.ModelAdmin):
-    #
-    #list_display_links = ('name')
-    #list_filter = (HasTranslationFilter(lang)
-    #               for lang, lang_name in settings.LANGUAGES)
-    #
-    list_display = ('name', ) + content_fields_displays
-    ordering = ('name',)
+    list_display  = ('name', ) + content_fields_displays
     search_fields = ('name', ) + content_fields_names
+    ordering      = ('name', )
 
 
 for attr, attr_name in zip(content_fields_names,
