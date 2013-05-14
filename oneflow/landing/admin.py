@@ -18,6 +18,8 @@ if settings.FULL_ADMIN:
         list_display  = ('name', ) + content_fields_displays
         search_fields = ('name', ) + content_fields_names
         ordering      = ('name', )
+        #change_list_template = "admin/change_list_filter_sidebar.html"
+        #change_list_filter_template = "admin/filter_listing.html"
 
     for attr, attr_name in zip(content_fields_names,
                                content_fields_displays):
