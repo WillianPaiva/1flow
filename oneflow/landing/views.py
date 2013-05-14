@@ -87,12 +87,9 @@ def home(request):
                     'remote_host': request.META.get('REMOTE_HOST', ''),
                     'referer': request.session.get('INITIAL_REFERER', ''),
                 }
-                LOGGER.debug('REQ %s', request_data)
 
-                LOGGER.debug('PRO %s', user.profile.register_request_data)
                 user.profile.register_request_data = json.dumps(request_data)
                 user.profile.save()
-                LOGGER.debug('PRO %s', user.profile.register_request_data)
 
                 del request.session['INITIAL_REFERER']
 
