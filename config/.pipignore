@@ -1,6 +1,7 @@
 distribute
 httplib2
 mccabe
+nose
 oauth2
 paramiko
 pep8

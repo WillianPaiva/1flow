@@ -5,12 +5,13 @@ import datetime
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, HttpResponseBadRequest
+from django.http import HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.shortcuts import render
 from django.utils.translation import ugettext_lazy as _
-from django.views.decorators.cache import cache_page, never_cache
+from django.views.decorators.cache import never_cache
 
+from ..base.utils import send_email_with_db_content
 
 from forms import LandingPageForm
 from models import LandingContent
@@ -28,10 +29,14 @@ def get_all_beta_data():
     return get_translations() + get_beta_invites_left() + get_beta_time_left()
 
 
-def get_beta_invites_left():
+def get_beta_invites_left(only_number=False):
 
-    return (('beta_invites_left',
-            settings.LANDING_BETA_INVITES - User.objects.count()), )
+    beta_invites_left = settings.LANDING_BETA_INVITES - User.objects.count()
+
+    if only_number:
+        return beta_invites_left
+
+    return (('beta_invites_left', beta_invites_left), )
 
 
 def get_beta_time_left():
@@ -65,6 +70,14 @@ def home(request):
                                                        email=email)
 
             if created:
+                has_invites_left = get_beta_invites_left(True) > 0
+
+                send_email_with_db_content(request,
+                                           'landing_thanks'
+                                           if has_invites_left
+                                           else 'landing_waiting_list',
+                                           user)
+
                 return HttpResponseRedirect(reverse('landing_thanks'))
 
             else:

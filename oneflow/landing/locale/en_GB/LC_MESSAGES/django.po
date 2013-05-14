@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-13 15:20+0200\n"
+"POT-Creation-Date: 2013-05-14 13:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,7 +46,7 @@ msgstr ""
 msgid "^thanks/(?P<already_registered>\\w+)?$"
 msgstr ""
 
-#: views.py:73
+#: views.py:86
 msgid "again"
 msgstr ""
 
@@ -64,34 +64,6 @@ msgid ""
 "\n"
 "                          <strong>1flow</strong> opens in %(timer)s.\n"
 "                        "
-msgstr ""
-
-#: templates/emails/email_landing_thanks.html:9
-msgid ""
-"\n"
-"                    Thanks for requesting an invite!\n"
-"                "
-msgstr ""
-
-#: templates/emails/email_landing_thanks.html:16
-msgid ""
-"\n"
-"                    We are very pleased to count you as a passenger of the "
-"1flow adventure.\n"
-"                "
-msgstr ""
-
-#: templates/emails/email_landing_thanks.html:23
-msgid ""
-"\n"
-"                    Warmup for the beta opening!\n"
-"                "
-msgstr ""
-
-#: templates/emails/email_landing_thanks.txt:1
-msgid ""
-"\n"
-"\n"
 msgstr ""
 
 #: templates/snippets/beta_invites_left.html:6
