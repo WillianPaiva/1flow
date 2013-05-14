@@ -1,11 +1,19 @@
 # -*- coding: utf-8 -*-
 
 import csv
+from django.conf import settings
 from django.http import HttpResponse
 from django.template.defaultfilters import slugify
 from django.contrib import admin
 from django.contrib.admin.util import flatten_fieldsets
 from django.utils.translation import ugettext_lazy as _
+
+from sparks.django.admin import truncate_field
+
+from .models import EmailContent
+
+
+# •••••••••••••••••••••••••••••••••••••••••••••••• Helpers and abstract classes
 
 
 class NearlyReadOnlyAdmin(admin.ModelAdmin):
@@ -114,3 +122,28 @@ class CSVAdminMixin(admin.ModelAdmin):
     csv_export.short_description = _(
         u'Export selected %(verbose_name_plural)s to CSV'
     )
+
+
+# ••••••••••••••••••••••••••••••••••••••••••••••• Base Django App admin classes
+
+subject_fields_names = tuple(('subject_' + code)
+                             for code, lang
+                             in settings.LANGUAGES)
+subject_fields_displays = tuple((field + '_display')
+                                for field in subject_fields_names)
+
+
+class EmailContentAdmin(admin.ModelAdmin):
+    list_display  = ('name', ) + subject_fields_displays
+    search_fields = ('name', ) + subject_fields_names
+    ordering      = ('name', )
+    save_as       = True
+
+
+for attr, attr_name in zip(subject_fields_names,
+                           subject_fields_displays):
+    setattr(EmailContentAdmin, attr_name,
+            truncate_field(EmailContent, attr))
+
+
+admin.site.register(EmailContent, EmailContentAdmin)
