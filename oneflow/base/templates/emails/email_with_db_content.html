@@ -1,0 +1,9 @@
+{% extends "emails/email_base.html" %}
+{% load markdown_deux_tags %}
+
+{% block email_title %}{{ email_subject }}{% endblock email_title %}
+
+{% block email_content %}
+        {{ email_body|markdown }}
+{% endblock email_content %}
+
