@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from django.template import RequestContext
+from django.template import RequestContext, Template
 
 from sparks.django import mail
 
@@ -19,14 +19,28 @@ def send_email_with_db_content(request, email_template_name, user, **kwargs):
 
         return post_send_log_mail_sent
 
-    email_data = EmailContent.objects.filter(name=email_template_name)
+    # Prepare for the first rendering pass (Django)
+    request_context = RequestContext(request)
+    email_data      = EmailContent.objects.get(name=email_template_name)
+
+    # Pre-render templates for the mail HTML content.
+    # email subject is mapped to <title> and <h1>.
+    stemplate     = Template(email_data.subject)
+    email_subject = stemplate.render(request_context)
+    btemplate     = Template(email_data.body)
+    email_body    = btemplate.render(request_context)
+
+    # Update for the second rendering pass (Markdown in Django)
+    request_context.update({'email_subject': email_subject,
+                           'email_body': email_body, })
 
     mail.send_mail_html_from_template(
         'emails/email_with_db_content.html',
+        # We intentionaly pass the unrendered subject string,
+        # because it will be rendered independantly in the
+        # send_mail… function (cf. there for details).
         subject=email_data.subject,
         recipients=[user.email],
-        context=RequestContext(request, {
-                               'email_subject': email_data.subject,
-                               'email_body': email_data.body}),
+        context=request_context,
         #post_send=post_send(user)
         **kwargs)
