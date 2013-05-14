@@ -3,16 +3,4 @@
 
 {% block email_content %}{% endblock email_content %}
 
-{% block email_footer %}
-———————————————————————————————————————————————————————————————————————————————
-1flow – intense curation                                       http://1flow.io/
-Twitter: https://twitter.com/1flow_io       Support: http://1flow.userecho.com/
-
-———————————————————————————————————————————————————————————————————————————————
-
-P.S. If you prefer not to hear from us, unsubscribe
-and we’ll take you off our list. No hard feelings.
-
-{{ unsubscribe_url }}
-
-{% endblock email_footer %}
+{% block email_footer %}{{ email_footer }}{% endblock email_footer %}
