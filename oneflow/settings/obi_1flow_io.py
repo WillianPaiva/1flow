@@ -28,3 +28,8 @@ include_snippets(
 
 # Override `1flow_io` for preview/test environment.
 SITE_DOMAIN = 'obi.1flow.io'
+
+# OBI is the master for translations and content creation / modifications,
+# cf. https://trello.com/c/dJoV4xZy . Final production is synchronized
+# via deployment tools.
+FULL_ADMIN = True

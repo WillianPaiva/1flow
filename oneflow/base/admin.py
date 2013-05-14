@@ -126,24 +126,22 @@ class CSVAdminMixin(admin.ModelAdmin):
 
 # ••••••••••••••••••••••••••••••••••••••••••••••• Base Django App admin classes
 
-subject_fields_names = tuple(('subject_' + code)
-                             for code, lang
-                             in settings.LANGUAGES)
-subject_fields_displays = tuple((field + '_display')
-                                for field in subject_fields_names)
+if settings.FULL_ADMIN:
+    subject_fields_names = tuple(('subject_' + code)
+                                 for code, lang
+                                 in settings.LANGUAGES)
+    subject_fields_displays = tuple((field + '_display')
+                                    for field in subject_fields_names)
 
+    class EmailContentAdmin(admin.ModelAdmin):
+        list_display  = ('name', ) + subject_fields_displays
+        search_fields = ('name', ) + subject_fields_names
+        ordering      = ('name', )
+        save_as       = True
 
-class EmailContentAdmin(admin.ModelAdmin):
-    list_display  = ('name', ) + subject_fields_displays
-    search_fields = ('name', ) + subject_fields_names
-    ordering      = ('name', )
-    save_as       = True
+    for attr, attr_name in zip(subject_fields_names,
+                               subject_fields_displays):
+        setattr(EmailContentAdmin, attr_name,
+                truncate_field(EmailContent, attr))
 
-
-for attr, attr_name in zip(subject_fields_names,
-                           subject_fields_displays):
-    setattr(EmailContentAdmin, attr_name,
-            truncate_field(EmailContent, attr))
-
-
-admin.site.register(EmailContent, EmailContentAdmin)
+    admin.site.register(EmailContent, EmailContentAdmin)
