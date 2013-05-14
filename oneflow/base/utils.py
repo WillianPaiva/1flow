@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 
+import logging
+
 from django.template import RequestContext, Template
 
 from sparks.django import mail
 
 from models import EmailContent
+
+LOGGER = logging.getLogger(__name__)
 
 
 def send_email_with_db_content(request, email_template_name, user, **kwargs):
@@ -44,3 +48,6 @@ def send_email_with_db_content(request, email_template_name, user, **kwargs):
         context=request_context,
         #post_send=post_send(user)
         **kwargs)
+
+    LOGGER.info('Batched %s mail to send to %s.',
+                email_template_name, user.email)
