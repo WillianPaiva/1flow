@@ -28,5 +28,20 @@
         "body_en": "Many thanks for registering aboard **1flow**, the inframation management platform. \r\nThere are currently no invites left, but you will be informed as soon as a new flight is planned. \r\nPlease find below your future travel details:\r\n\r\n- Your personal reference: **{{ new_user.email }}**\r\n- Date: **to be planned**\r\n- From: your web browser, anywhere on Earth\r\n- To: **[1flow][]**, high in the cyber-space\r\n- Class: **First Class**\r\n- Boarding Time: **unknown yet**\r\n\r\nBefore boarding starts, we'll send you your credentials by e-mail.\r\n\r\nYou are definitely welcome to invite extra passengers by sharing [1flow.io][1flow].\r\nWe want to hear from you on our [feedback forum][feedback]! To follow our\r\nfinal preparations before take-off, follow [@1flow_io][twitter] on twitter.\r\n\r\nRegards from your flight crew!\r\n\r\n--  \r\nOlivier Cortes & Matthieu Chaignot  \r\n1flow co-founders, inframation hunters\r\n\r\n  [1flow]: http://1flow.io/\r\n  [feedback]: http://1flow.userecho.com/\r\n  [twitter]: https://twitter.com/1flow_io\r\n", 
         "subject_nt": ""
     }
+},
+{
+    "pk": 3, 
+    "model": "base.emailcontent", 
+    "fields": {
+        "body_en-gb": "", 
+        "subject_en": "\u2014 unused field", 
+        "name": "email_footer", 
+        "body_fr": "\r\nSi vous ne souhaitez plus recevoir nos annonces, \r\nd\u00e9sinscrivez-vous en un clic\u00a0:\r\n\r\n{{ unsubscribe_url }}\r\n", 
+        "subject_fr": "\u2014 champ inutilis\u00e9", 
+        "body_nt": "", 
+        "subject_en-gb": "", 
+        "body_en": "\r\nIf you prefer not to hear from us, unsubscribe\r\nand we\u2019ll take you off our list. No hard feelings.\r\n\r\n{{ unsubscribe_url }}\r\n", 
+        "subject_nt": "\u2014 Cet enregistrement \"email_footer\" est sp\u00e9cial, il est utilis\u00e9 en pied de page de *TOUS* les mails HTML/txt."
+    }
 }
 ]
