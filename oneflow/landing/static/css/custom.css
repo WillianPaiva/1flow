@@ -63,6 +63,13 @@ a.carousel-control:hover {
   max-width: 680px;
 }
 
+#promise_left a:after {
+  content: ' (?)';
+  /* mimic superscript */
+  font-size: x-small;
+  vertical-align: top;
+}
+
 #promise_left .popover-title {
   color: #555;
 }
