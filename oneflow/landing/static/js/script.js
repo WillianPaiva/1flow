@@ -18,7 +18,7 @@ $(document).ready(function() {
         + '<div class="popover-inner popover-presentation">'
         + '<h3 class="popover-title"></h3><div class="popover-content">'
         + '<iframe src="https://docs.google.com/presentation/d/1qzrhcuhIfYaVxJmYTFaKANFCJdvZ4zLqcVLiIDk63qw/embed?start=true&loop=false&delayms=3000" '
-        + 'frameborder="0" width="655" height="420" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>'
+        + 'frameborder="0" width="652" height="420" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>'
         + '</div></div></div>',
     });
 });
