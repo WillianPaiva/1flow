@@ -29,7 +29,7 @@
 
                     <div class="input-append control-group {% if form.errors %}error{% endif %}">
                       {% with email_placeholder='placeholder:'|add:email_placeholder_text %}
-                      {% render_field form.email|attr:'autofocus'|attr:email_placeholder class+="input-xlarge custom" %}
+                      {% render_field form.email|attr:'autofocus'|attr:email_placeholder|attr:'autocorrect:off'|attr:'autocapitalize:off' class+="input-xlarge custom" %}
                       {% endwith %}
                       <button type="submit" class="custom">{{ invitation_button_label }}</button>
                     </div>
