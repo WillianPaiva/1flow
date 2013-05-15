@@ -23,12 +23,13 @@ class UserProfileInline(admin.StackedInline):
 class UserAdmin(NearlyReadOnlyAdmin, CSVAdminMixin, AuthUserAdmin):
 
     list_display = ('id', 'email', 'full_name_display',
-                    'date_joined', 'last_login', 'is_active',
+                    'date_joined', 'last_login',
                     'profile_email_announcements_display',
-                    'is_staff', 'is_superuser',
+                    'is_active', 'is_staff', 'is_superuser',
                     'groups_display', )
     list_display_links = ('email', 'full_name_display', )
-    #list_filter = ('profile__email_announcements', )
+    list_filter = ('profile__email_announcements',
+                   'is_active', 'is_staff', 'is_superuser', )
     ordering = ('-date_joined',)
     date_hierarchy = 'date_joined'
     search_fields = ('email', 'first_name', 'last_name', )
