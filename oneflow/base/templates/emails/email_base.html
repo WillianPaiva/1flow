@@ -36,8 +36,11 @@
                                 </font>
                             </div>
                             <br>
-                            <font face="Lucida Grande, sans serif" color="#000000" style="font-size:13px"><div class="body-content" id="body-content" style="line-height:1.25;">
-                                <span style="display:block;width:525px">{% block email_content %}{% endblock email_content %}<br />{{ email_footer|markdown }}</span>
+                            <font face="Lucida Grande, sans serif" color="#000000" style="font-size:13px"><div class="body-content" id="body-content" style="line-height:1.25em;">
+                                <span style="display:block;width:525px">{% block email_content %}{% endblock email_content %}</span>
+                            </div></font>
+                            <font face="Lucida Grande, sans serif" color="#777777" style="font-size:10px"><div class="body-content" id="body-content" style="line-height:1em;">
+                                <span style="display:block;width:525px">{{ email_footer|markdown }}</span>
                             </div></font>
                         </td>
                         <td width="48" class="right-gutter-spacing" style="font-size:1px">&nbsp;</td>
