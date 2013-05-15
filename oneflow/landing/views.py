@@ -91,7 +91,10 @@ def home(request):
                 user.profile.register_request_data = json.dumps(request_data)
                 user.profile.save()
 
-                del request.session['INITIAL_REFERER']
+                try:
+                    del request.session['INITIAL_REFERER']
+                except KeyError:
+                    pass
 
                 return HttpResponseRedirect(reverse('landing_thanks'))
 
