@@ -141,7 +141,13 @@
       </script>
     {% endif %}
 
-    <span id="inframation_slides" style="display: none">{{ inframation_slides|safe }}</span>
+    <span id="inframation_slides" style="display: none">
+      <iframe src="{{ inframation_slides|safe }}"
+        frameborder="0" width="652" height="420"
+        allowfullscreen="true" mozallowfullscreen="true"
+        webkitallowfullscreen="true"></iframe>
+    </span>
+
     <script type="text/javascript">
 
     $('.feature a').tooltip();
