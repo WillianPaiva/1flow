@@ -96,7 +96,6 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script type="text/javascript" src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/script.js"></script>
 
     <script type='text/javascript'>
     var _ues = {
@@ -142,5 +141,32 @@
       </script>
     {% endif %}
 
+    <span id="inframation_slides" style="display: none">
+      <iframe src="{{ inframation_slides|safe }}"
+        frameborder="0" width="652" height="420"
+        allowfullscreen="true" mozallowfullscreen="true"
+        webkitallowfullscreen="true"></iframe>
+    </span>
+
+    <script type="text/javascript">
+
+    $('.feature a').tooltip();
+    $('#promise_right a').tooltip();
+    $('a.link-tooltip').tooltip();
+
+    try {
+        $("#lang-flags input[type=image]").tooltip({placement: 'bottom'});
+    } catch(err) {};
+
+
+    $('#promise_left a').popover({
+        trigger: 'hover',
+        template: '<div class="popover"><div class="arrow"></div>'
+        + '<div class="popover-inner popover-presentation">'
+        + '<h3 class="popover-title"></h3><div class="popover-content">'
+        + $("#inframation_slides").html()
+        + '</div></div></div>',
+    });
+    </script>
   </body>
 </html>

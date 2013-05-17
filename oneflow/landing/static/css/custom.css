@@ -57,6 +57,22 @@ a.carousel-control:hover {
   color: rgb(219, 82, 47);
 }
 
+/* http://stackoverflow.com/a/15776624/654755
+  (the answer on google groups doesn't work) */
+#promise_left .popover {
+  max-width: 680px;
+}
+
+#promise_left a:after {
+  content: ' (?)';
+  /* mimic superscript */
+  font-size: x-small;
+  vertical-align: top;
+}
+
+#promise_left .popover-title {
+  color: #555;
+}
 
 /*************************************************************
                              layout
@@ -282,7 +298,7 @@ blockquote small {
 }
 .testimonials i {
   display: inline-block;
-  color: rgb(220, 220,220);
+  color: rgb(220, 220, 220);
   font-size: 200px;
   border-radius: 100px;
   padding: 20px 22px;
