@@ -1,9 +1,12 @@
 {% extends 'base.html' %}
-{% load i18n %}
-{% load base_utils %}
-{% load markdown_deux_tags %}
+{% load js i18n base_utils markdown_deux_tags %}
 
 {% block title %}{% firstof landing_title 'landing_title' %}{% endblock title %}
+
+{% block extrajs_header %}
+      {% js 'js/jquery.min.js' %}
+      {% css 'css/custom.css' %}
+{% endblock extrajs_header %}
 
 {% block body %}
       <header id="header" class="site-header">

@@ -134,6 +134,7 @@ INSTALLED_APPS = (
     'django_reset',
     'south',
     'transmeta',
+    'overextends',
     'redisboard',
     'memcache_status',
     'markdown_deux',
