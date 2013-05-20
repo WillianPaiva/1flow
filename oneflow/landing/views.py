@@ -67,7 +67,8 @@ def home(request):
         if form.is_valid():
             email = form.cleaned_data['email']
 
-            user, created = User.objects.get_or_create(username=email,
+            user, created = User.objects.get_or_create(username=(email[:29]
+                                                       + (email[29:] and u'…')),
                                                        email=email)
 
             if created:
