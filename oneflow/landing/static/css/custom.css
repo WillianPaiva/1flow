@@ -6,6 +6,11 @@
  * Credits:
  * * http://twitter.github.com/bootstrap/
  * * http://fortawesome.github.com/Font-Awesome/
+
+ light orange: rgb(255, 135, 89);
+ dark orange:  rgb(219, 82, 47);
+
+
  **/
 
 /*************************************************************
@@ -140,15 +145,21 @@ width: 100%;
 
 /* header-description */
 .header-description {
-  margin: 130px 0 80px;
+  margin: 50px 0 80px;
   text-align: center;
 }
 .header-description h2 {
-  font-weight: 100;
-  font-size: 93px;
+  /*font-weight: 100;*/
+  font-size: 80px;
+  line-height: 70px;
   color: rgb(255, 255, 255);
   text-shadow: 0 0px 12px rgba(36, 36, 36, 0.55);
   padding: 0px 0 40px 0;
+  margin: 0px 0 40px;
+}
+/* Markdown always add a <p></p>, even if there is only one line… */
+.header-description h2 p {
+  display: inline;
 }
 
 /* header button - call to action button */
@@ -580,7 +591,8 @@ ul.social li:nth-child(6):before{
 }
 
 .subemail button.custom:hover {
-  background: transparent;
+  border: 2px solid rgb(255, 135, 89);
+  background: rgb(255, 135, 89);
 }
 
 h3#beta_data {
