@@ -6,7 +6,7 @@ from django.conf.urls.i18n import i18n_patterns
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
 
-#admin.autodiscover()
+admin.autodiscover()
 
 handler500 = 'oneflow.base.views.error_handler'
 handler404 = 'oneflow.base.views.not_found_handler'
