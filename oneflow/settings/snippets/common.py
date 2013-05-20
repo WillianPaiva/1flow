@@ -71,6 +71,8 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
 
+STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
+
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
@@ -91,7 +93,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    #'GZipMiddleware',
+    #'django.middleware.gzip.GZipMiddleware',
+    #'pipeline.middleware.MinifyHTMLMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
 )
 
@@ -99,12 +102,17 @@ TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT, 'templates')
 )
 
+
+# cf. https://docs.djangoproject.com/en/1.5/ref/settings/#template-context-processors # NOQA
+
 TEMPLATE_CONTEXT_PROCESSORS = (
+    # NOTE: ….debug is added only if DEBUG=True, later in another snippet.
     'django.core.context_processors.i18n',
     'django.core.context_processors.media',
     'django.core.context_processors.static',
     'django.core.context_processors.tz',
     'django.core.context_processors.request',
+    'absolute.context_processors.absolute',
     'django.contrib.auth.context_processors.auth',
     'django.contrib.messages.context_processors.messages',
 )
@@ -127,13 +135,17 @@ INSTALLED_APPS = (
     'south',
     'transmeta',
     'redisboard',
-    'markdown_deux',
     'memcache_status',
+    'markdown_deux',
+    'djangojs',
+    'pipeline',
+    'absolute',
+    'ember',
     'widget_tweaks',
     'oneflow.base',
     'oneflow.profiles',
     'oneflow.landing',
-    #'oneflow.core',
+    'oneflow.core',
 )
 
 MARKDOWN_DEUX_STYLES = {

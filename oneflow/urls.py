@@ -18,7 +18,8 @@ handler404 = 'oneflow.base.views.not_found_handler'
 urlpatterns = patterns(
     '',
     url(r'', include('oneflow.base.urls')),
-    (r'^i18n/', include('django.conf.urls.i18n')),
+    url(r'^i18n/', include('django.conf.urls.i18n')),
+    url(r'^djangojs/', include('djangojs.urls')),
 )
 
 urlpatterns += i18n_patterns(
@@ -26,7 +27,7 @@ urlpatterns += i18n_patterns(
     # NEVER use r'^$', this won't work as expected. Use r''.
     url(r'', include('oneflow.landing.urls')),
     url(r'', include('oneflow.profiles.urls')),
-    #url(r'', include('oneflow.core.urls')),
+    url(r'', include('oneflow.core.urls')),
 )
 
 # WARNING: when sites are spread across different machines, rosetta

@@ -59,7 +59,8 @@ def get_translations():
 
 def home(request):
 
-    context = {}
+    if request.user.is_authenticated():
+        return HttpResponseRedirect(reverse('home'))
 
     if request.POST:
         form = LandingPageForm(request.POST)
@@ -111,8 +112,7 @@ def home(request):
         request.session.setdefault('INITIAL_REFERER',
                                    request.META.get('HTTP_REFERER', ''))
 
-    context['form'] = form
-
+    context = {'form': form}
     context.update(get_all_beta_data())
 
     return render(request, 'landing_index.html', context)
