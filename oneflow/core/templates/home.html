@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% load js compressed %}
+
+{% block title %}{% trans 'Home' %}{% endblock title %}
+
+{% block body %}
+{% include 'ember/main.html' %}
+{% include 'ember/views/index.html' %}
+{% include 'ember/views/teams.html' %}
+{% include 'ember/views/notimpl.html' %}
+{% include 'ember/views/help.html' %}
+{% endblock body %}
+
+{% block extrajs_footer %}
+    {# ember-data, showdown… #}
+
+    {% ember_full_js %}
+    {% js 'js/bootstrap.min.js' %}
+    {% js 'js/moment.js' %}
+    {% js 'js/core.js' %}
+
+    <script type="text/javascript">
+        moment.lang('{{ LANGUAGE_CODE }}');
+    </script>
+{% endblock extrajs_footer %}
