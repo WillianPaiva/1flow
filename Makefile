@@ -46,3 +46,7 @@ test-restart:
 
 prod-restart:
 	fab prod sdf.restart_services
+
+
+fixtures:
+	@find . -name '*.json' -path '*/fixtures/*'
