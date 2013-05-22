@@ -22,7 +22,7 @@
 import os
 import pwd
 
-from fabric.api import env, task, run
+from fabric.api import env, task, run, local as fablocal
 from fabric.context_managers import cd
 
 from sparks.fabric import with_remote_configuration
@@ -53,7 +53,7 @@ def local():
 
 
 @task(alias='test')
-def preview():
+def preview(current_branch=False):
     """ This is the default config, we don't need to set anything more.
 
         To create a new test environment:
@@ -66,6 +66,9 @@ def preview():
         start LXC
 
     """
+    if current_branch is not None:
+        env.branch = fablocal('git rev-parse --abbrev-ref HEAD')
+
     env.env_was_set = True
 
 
