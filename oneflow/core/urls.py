@@ -4,5 +4,5 @@ from django.utils.translation import ugettext_lazy as _
 
 urlpatterns = patterns(
     'oneflow.core.views',
-    url(_(r'^home/?$'), 'home', name='home'),
+    url(_(r'^home/$'), 'home', name='home'),
 )
