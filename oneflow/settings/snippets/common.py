@@ -45,7 +45,6 @@ ugettext = lambda s: s
 #       they access other languages.
 LANGUAGES = (
     ('en', ugettext(u'English')),
-    ('en-us', ugettext(u'English')),
     ('en-gb', ugettext(u'British')),
     ('fr', ugettext(u'Français')),
 
