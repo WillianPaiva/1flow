@@ -3,7 +3,7 @@
 import redis
 
 from django.db import models
-from mongoengine import Document, fields
+from mongoengine import EmbeddedDocument, fields
 from django.conf import settings
 from django.contrib.auth.models import User
 #from django.utils.translation import ugettext as _
@@ -130,7 +130,7 @@ class RelationalFeedback(models.Model):
         abstract = True
 
 
-class FeedbackDocument(Document, RedisFeedbackMixin):
+class FeedbackDocument(EmbeddedDocument, RedisFeedbackMixin):
     """ Adds the feedback abilitily to any MongoEngine Document. """
 
     stored_feedback_score     = fields.IntField(default=0)
