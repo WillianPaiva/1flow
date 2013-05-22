@@ -21,10 +21,6 @@ class UserProfile(models.Model):
                                               default=True, blank=True)
     register_request_data = JSONField(_('Register data'),
                                       default='{}', blank=True)
-    select_paragraph = models.BooleanField(_('Select whole paragraph on click'),
-                                           default=False, blank=True)
-    default_public = models.BooleanField(_('Grows public by default'),
-                                         default=True, blank=True)
     last_modified = models.DateTimeField(_('Last modified'), auto_now_add=True)
     hash_code = models.CharField(_(u'Current validation code'), max_length=32,
                                  default=lambda: uuid.uuid4().hex)

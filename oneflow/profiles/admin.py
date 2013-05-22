@@ -12,7 +12,7 @@ from .models import UserProfile
 class UserProfileAdmin(CSVAdminMixin):
     ordering = ('-last_modified', )
     date_hierarchy = 'last_modified'
-    list_filter = ('select_paragraph', 'default_public', 'last_modified', )
+    list_filter = ('last_modified', )
 
 
 class UserProfileInline(admin.StackedInline):
