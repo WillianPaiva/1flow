@@ -11,7 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from .models import EmailContent
 
-from sparks.django.admin import truncate_field
+from sparks.django.admin import languages, truncate_field
 
 
 # •••••••••••••••••••••••••••••••••••••••••••••••• Helpers and abstract classes
@@ -128,13 +128,8 @@ class CSVAdminMixin(admin.ModelAdmin):
 # ••••••••••••••••••••••••••••••••••••••••••••••• Base Django App admin classes
 
 if settings.FULL_ADMIN:
-
-    LANGS = settings.TRANSMETA_LANGUAGES \
-        if hasattr(settings, 'TRANSMETA_LANGUAGES') \
-        else settings.LANGUAGES
-
     subject_fields_names = tuple(('subject_' + code)
-                                 for code, lang in LANGS)
+                                 for code, lang in languages)
     subject_fields_displays = tuple((field + '_display')
                                     for field in subject_fields_names)
 

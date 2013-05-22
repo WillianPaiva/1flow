@@ -30,17 +30,19 @@ LANGUAGE_CODE = 'en'
 ugettext = lambda s: s
 
 # Translation workflows:
-# - in the DB: all languages variants are accessible and empty by default
-#   (even 'en'), thus we remove 'en-us' because it will just make do the
-#   work twice and confuse translators.
+# - in the DB: all languages variants are accessible and empty by default.
+#      'en' takes precedence on 'en-US'. As translators have access to all
+#       translations, this is a bit awkward, but we don't have the choice
+#       because we must match the Django application languages. We could
+#       manually hide the 'en-us' to avoid confusion, but this would imply
+#       dirty hacking in all admin modules and I don't find it worth.
 # - in the webapp: 'en' is *always* defined because the developers create
-#   english strings. For translators to be able to override them without
-#   needing commit access, we use the 'en-us' language, which takes
-#   precedence. This is not perfect, because other 'en-*' variants users
-#   will get the 'bare' strings which can have errors, but at least our
-#   translators have access to en-US strings the same way they access
-#   other languages.
-
+#       english strings. For translators to be able to override them
+#       without needing commit access, we use the 'en-us' language, which
+#       takes precedence. This is not perfect, because other 'en-*'
+#       users will get the 'bare' strings which can have errors, but at
+#       least our translators have access to en-US strings the same way
+#       they access other languages.
 LANGUAGES = (
     ('en', ugettext(u'English')),
     ('en-us', ugettext(u'English')),
@@ -53,15 +55,7 @@ LANGUAGES = (
 #    ('es-XX', ugettext(u'Español (ES)')),
 )
 
-TRANSMETA_LANGUAGES = (
-    ('en', ugettext(u'English')),
-
-    # This one is intentionaly removed (see above).
-    #('en-us', ugettext(u'English')),
-
-    ('en-gb', ugettext(u'British')),
-    ('fr', ugettext(u'Français')),
-
+TRANSMETA_LANGUAGES = LANGUAGES + (
     # The 'nt' fake language is used by translators to keep
     # variants and translations notes handy in the admin interface.
     ('nt', ugettext(u'Notes — variants'))
