@@ -13,12 +13,12 @@
 {% endblock body %}
 
 {% block extrajs_footer %}
-    {# ember-data, showdown… #}
+    {# showdown… #}
 
-    {% ember_full_js %}
-    {% compressed_js 'js/bootstrap.js' %}
-    {% compressed_js 'js/moment.js' %}
-    {% compressed_js 'js/core.js' %}
+    {% emberpie_js %}
+    {% js 'js/bootstrap.js' %}
+    {% js 'js/moment.js' %}
+    {% js 'js/core.js' %}
 
     <script type="text/javascript">
         moment.lang('{{ LANGUAGE_CODE }}');
