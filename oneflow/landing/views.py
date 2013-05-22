@@ -59,8 +59,8 @@ def get_translations():
 
 def home(request):
 
-    if request.user.is_authenticated():
-        return HttpResponseRedirect(reverse('home'))
+    #if request.user.is_authenticated():
+    #    return HttpResponseRedirect(reverse('home'))
 
     if request.POST:
         form = LandingPageForm(request.POST)
