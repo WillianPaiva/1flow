@@ -53,7 +53,7 @@ def local():
 
 
 @task(alias='test')
-def preview(current_branch=False):
+def preview(branch=None):
     """ This is the default config, we don't need to set anything more.
 
         To create a new test environment:
@@ -66,8 +66,11 @@ def preview(current_branch=False):
         start LXC
 
     """
-    if current_branch is not None:
+    if branch is None:
         env.branch = fablocal('git rev-parse --abbrev-ref HEAD')
+
+    # implicit: else: branch will be 'develop',
+    # set directly from the sparks defaults.
 
     env.env_was_set = True
 
