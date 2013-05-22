@@ -2,6 +2,10 @@ App = Ember.Application.create({
     LOG_TRANSITIONS: true
 });
 
+App.Store = DS.Store.extend({
+  revision: 12
+});
+
 App.Router.map(function(){
     this.resource('teams');
     this.resource('notimpl');
