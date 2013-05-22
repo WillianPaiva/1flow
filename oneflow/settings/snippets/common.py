@@ -58,7 +58,7 @@ LANGUAGES = (
 TRANSMETA_LANGUAGES = LANGUAGES + (
     # The 'nt' fake language is used by translators to keep
     # variants and translations notes handy in the admin interface.
-    ('nt', ugettext(u'Notes — variants'))
+    ('nt', ugettext(u'Notes — variants')),
 )
 
 USE_I18N = True
