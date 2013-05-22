@@ -127,11 +127,15 @@ class CSVAdminMixin(admin.ModelAdmin):
 
 # ••••••••••••••••••••••••••••••••••••••••••••••• Base Django App admin classes
 
-
 if settings.FULL_ADMIN:
+
+    LANGS = settings.TRANSMETA_LANGUAGES \
+        if hasattr(settings, 'TRANSMETA_LANGUAGES') \
+        else settings.LANGUAGES
+
     subject_fields_names = tuple(('subject_' + code)
                                  for code, lang
-                                 in settings.LANGUAGES)
+                                 in LANGS)
     subject_fields_displays = tuple((field + '_display')
                                     for field in subject_fields_names)
 

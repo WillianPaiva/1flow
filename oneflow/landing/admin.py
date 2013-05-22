@@ -8,6 +8,10 @@ from sparks.django.admin import truncate_field
 
 if settings.FULL_ADMIN:
 
+    LANGS = settings.TRANSMETA_LANGUAGES \
+        if hasattr(settings, 'TRANSMETA_LANGUAGES') \
+        else settings.LANGUAGES
+
     content_fields_names = tuple(('content_' + code)
                                  for code, lang
                                  in settings.LANGUAGES)
