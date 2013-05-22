@@ -13,8 +13,7 @@ if settings.FULL_ADMIN:
         else settings.LANGUAGES
 
     content_fields_names = tuple(('content_' + code)
-                                 for code, lang
-                                 in settings.LANGUAGES)
+                                 for code, lang in LANGS)
     content_fields_displays = tuple((field + '_display')
                                     for field in content_fields_names)
 

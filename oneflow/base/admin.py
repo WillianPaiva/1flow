@@ -134,8 +134,7 @@ if settings.FULL_ADMIN:
         else settings.LANGUAGES
 
     subject_fields_names = tuple(('subject_' + code)
-                                 for code, lang
-                                 in LANGS)
+                                 for code, lang in LANGS)
     subject_fields_displays = tuple((field + '_display')
                                     for field in subject_fields_names)
 
