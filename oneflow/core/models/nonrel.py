@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import datetime
+import logging
+
 from mongoengine import Document
 from mongoengine.fields import (IntField, FloatField, BooleanField,
                                 DateTimeField,
@@ -10,14 +13,13 @@ from mongoengine.fields import (IntField, FloatField, BooleanField,
 
 from django.utils.translation import ugettext_lazy as _
 
-import datetime
-import logging
+from .keyval import FeedbackDocument
 
 LOGGER = logging.getLogger(__name__)
 
 
 class Source(Document):
-    # is this a feed ??
+    # what difference with a feed ??
     url = URLField()
     name = StringField()
     slug = StringField()
@@ -38,6 +40,13 @@ class Subscription(Document):
 
     # these are kind of 'folders', but can be more dynamic.
     tags = ListField(StringField())
+
+
+class Group(Document):
+    creator = ReferenceField('User')
+    administrators = ListField(ReferenceField('User'))
+    members = ListField(ReferenceField('User'))
+    guests = ListField(ReferenceField('User'))
 
 
 class Article(Document):
@@ -87,15 +96,26 @@ class Comment(Document):
     TYPE_INSIGHT = 10
     TYPE_ANALYSIS = 20
     TYPE_SYNTHESIS = 30
+
+    VISIBILITY_PUBLIC = 1
+    VISIBILITY_GROUP = 10
+    VISIBILITY_PRIVATE = 20
+
     nature = IntField(default=TYPE_COMMENT)
+    visibility = IntField(default=VISIBILITY_PUBLIC)
+
     is_synthesis = BooleanField()
     is_analysis = BooleanField()
-    read = ReferenceField('Read')
     content = StringField()
 
-    # already in the Read:
-    #article = ReferenceField('Article')
-    #user = ReferenceField('User')
+    feedback = EmbeddedDocumentField(FeedbackDocument)
+
+    # We don't comment reads. We comment articles.
+    #read = ReferenceField('Read')
+    article = ReferenceField('Article')
+
+    # Thus, we must store
+    user = ReferenceField('User')
 
     in_reply_to = ReferenceField('Comment')  # , null=True)
 
