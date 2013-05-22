@@ -123,6 +123,13 @@ width: 100%;
   font-size: 20px;
 }
 
+/* Markdown always add a <p></p>, even if there is only one line… */
+h2.site-subtitle p {
+  font-size: 85%;
+  margin-top: 15px;
+  line-height: 1em;
+}
+
 /* user login / register */
 .user {
 }
