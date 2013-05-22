@@ -25,22 +25,22 @@
     "pk": 3, 
     "model": "landing.landingcontent", 
     "fields": {
-        "content_fr": "r\u00e9v\u00e9lez l'*inframation*\u00a0:\r\nl'information qui compte  \r\nvraiment pour **vous**\u00a0!", 
+        "content_fr": "identifiez et utilisez  \r\nl'information qui compte!", 
         "content_en-gb": "", 
         "name": "big_catcher_title", 
-        "content_nt": "", 
-        "content_en": "unveil *inframation*:  \r\ninformation that really  \r\nmatters to **you**!"
+        "content_nt": "unveil *inframation*:  \r\ninformation that really  \r\nmatters to **you**!\r\n\r\nr\u00e9v\u00e9lez l'*inframation*\u00a0:\r\nl'information qui compte  \r\nvraiment pour **vous**\u00a0!", 
+        "content_en": "highlight and use  \r\ninformation that matters!"
     }
 },
 {
     "pk": 4, 
     "model": "landing.landingcontent", 
     "fields": {
-        "content_fr": "Vous avez dit *inframation*\u00a0?", 
+        "content_fr": "\u00c7a vous dit quelque chose\u00a0?", 
         "content_en-gb": "", 
         "name": "promise_left_title", 
         "content_nt": "inframation, sounds *familiar*\u00a0?\r\nl'inframation, \u00e7a vous parle\u00a0?", 
-        "content_en": "Did you say *inframation*?"
+        "content_en": "Sounds familiar?"
     }
 },
 {
@@ -69,22 +69,22 @@
     "pk": 7, 
     "model": "landing.landingcontent", 
     "fields": {
-        "content_fr": "**1flow** est une plateforme gratuite  de *gestion de l'inframation*, \u00e0 usage individuel ou en \u00e9quipe. C'est un espace priv\u00e9 o\u00f9 vous pouvez agr\u00e9ger, lire, d\u00e9couvrir, archiver, \u00e9diter, partager et discuter de toute l'information en ligne que vous collectez. \r\n\r\nLa combinaison de ces outils vous permet de lib\u00e9rer le temps n\u00e9cessaire et d'enrichir suffisamment le contexte pour acc\u00e9der \u00e0 l'inframation.\r\n\r\n**1flow** inclut donc le meilleur d'un lecteur de flux RSS et permet la cr\u00e9ation imm\u00e9diate de contenu\u00a0; tout cela compl\u00e9t\u00e9 par un puissant syst\u00e8me d'archivage et de recherche.\r\n\r\nVous y faites rentrer *ce qui vous importe r\u00e9ellement* pour nourrir vos id\u00e9es, cr\u00e9ations, projets et d\u00e9cisions, \u00e0 la fois professionnels et personnels. \r\n\r\nTout ceci au m\u00eame endroit (NDT\u00a0: \u00ab\u00a0*all in one flow*\u00a0\u00bb).\r\n\r\n  [curation]: #\r\n    \"S\u00e9lection, \u00e9dition et partage des contenus les plus pertinents pour un sujet donn\u00e9.\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u2014 source Wikip\u00e9dia\"", 
+        "content_fr": "**1flow** est un espace gratuit de gestion de news et d'information, \u00e0 usage individuel ou en \u00e9quipe. **1flow** vous aide \u00e0 lutter contre l'[infob\u00e9sit\u00e9](# \"surcharge d'informations qui vous emp\u00eache de prendre une d\u00e9cision\") en identifiant l'information qui compte vraiment pour vous. Dans **1flow** vous pouvez agr\u00e9ger, lire, d\u00e9couvrir, archiver, \u00e9diter, partager et discuter de toute l'information en ligne.\r\n\r\n**1flow** inclut donc le meilleur d'un lecteur d'abonnement (comme Google Reader) et permet la cr\u00e9ation imm\u00e9diate de contenu\u00a0; tout cela compl\u00e9t\u00e9 par un puissant syst\u00e8me d'archivage et de recherche.\r\n\r\nVous y faites rentrer *ce qui vous importe r\u00e9ellement* pour nourrir vos id\u00e9es, cr\u00e9ations, projets et d\u00e9cisions, \u00e0 la fois professionnels et personnels. \r\n\r\nTout ceci au m\u00eame endroit (NDT\u00a0: \u00ab\u00a0*all in one flow*\u00a0\u00bb).", 
         "content_en-gb": "", 
         "name": "promise_right_content", 
-        "content_nt": "**1flow** is a private space where you can aggregate, read, discover, archive, edit, share and discuss all the online information you collect.\r\n\r\nIt's a free application dedicated to [information curation][curation], for individuals or work-teams.  It will also provide the best of an RSS reader, bundled with content creation features and a powerful archive & search system.\r\n\r\nYou will bring in *what really matters* to feed your ideas, creations, projects and decisions, both professionnal and personal.  *All in one flow*.\r\n\r\n**1flow** beta is opening on the 15th of june 2013.\r\n\r\n  [curation]: #\r\n    \"Select, edit and share most relevant contents for a given subject.\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u2014 source: Wikipedia\"", 
-        "content_en": "**1flow** is a free inframation management platform, for individuals and teams. It's a private space where you can aggregate, read, discover, archive, edit, share and discuss all the online information you collect.\r\n\r\nThe combination of these tools enables you to save the required time and to enrich the context enough to get access to inframation.\r\n\r\n**1flow** provides you the best of an RSS reader, bundled with content creation features and a powerful archive & search system.\r\n\r\nYou will bring in *what really matters* to feed your ideas, creations, projects and decisions, both professionnal and personal.  *All in one flow*.\r\n\r\n**1flow** beta is opening on the 15th of june 2013.\r\n\r\n  [curation]: #\r\n    \"Select, edit and share most relevant contents for a given subject.\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u2014 source: Wikipedia\""
+        "content_nt": "**1flow** is a free information management platform, for individuals and teams. It's a private space where you can aggregate, read, discover, archive, edit, share and discuss all the online information you collect.\r\n\r\nThe combination of these tools enables you to save the required time and to enrich the context enough to get access to inframation.\r\n\r\n**1flow** provides you the best of an RSS reader, bundled with content creation features and a powerful archive & search system.\r\n\r\nYou will bring in *what really matters* to feed your ideas, creations, projects and decisions, both professionnal and personal.  *All in one flow*.\r\n\r\n**1flow** beta is opening on the 15th of june 2013.\r\n\r\n  [curation]: #\r\n    \"Select, edit and share most relevant contents for a given subject.\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u2014 source: Wikipedia\"", 
+        "content_en": "**1flow** is a free news & information management space, for individuals and teams. **1flow** helps you to fight [infobesity](# \"information overload that prevents you to take decision\") by highlighting and using information that really matters to you. In **1flow **you can aggregate, read, discover, archive, edit, share and discuss all the online news & information you collect everyday. \r\n\r\n**1flow** provides you the best of a subscriptions reader (like Google Reader), bundled with content creation features and a powerful archive & search system.\r\n\r\nYou will bring in and highlight *what really matters* to feed your ideas, creations, projects and decisions, both professionnal and personal.  *All in one flow*.\r\n\r\n**1flow** beta is opening on the 15th of june 2013."
     }
 },
 {
     "pk": 8, 
     "model": "landing.landingcontent", 
     "fields": {
-        "content_fr": "L'*[inframation][]* est l'information qui compte vraiment pour vous. Elle est souvent difficile \u00e0 r\u00e9v\u00e9ler et \u00e0 exploiter, par manque d'outils, de temps ou de r\u00e9f\u00e9rence contextuelle. Quelques situations communes pour illustrer ce sujet\u00a0:\r\n- C'est s\u00fbr, cette *information vitale* est dans l'un des 300 articles r\u00e9cents que vous avez lus. Mais lequel\u00a0?\r\n- Pour synth\u00e9tiser plusieurs contenus, votre pens\u00e9e est toujours limit\u00e9e par ce bon vieux copier-coller?\r\n- Vous avez des centaines d'articles favoris dans Google Reader, mais vous n'en faites jamais rien.\r\n- Vous adorez Twitter et les flux RSS, mais manquez de temps pour cliquer sur toutes ces URLs raccourcies et ces liens `lire la suite\u00a0\u00bb`.\r\n- Comment savoir si l'auteur de cet article n'est pas de parti pris\u00a0?\r\n- Vous avez tellement d'informations \u00e0 lire chaque jour que vous ne savez pas par o\u00f9 commencer\u00a0!\r\n\r\nCes probl\u00e8mes sont familiers\u00a0? **1flow** est pour vous\u00a0!\r\n\r\n  [inframation]: #\r\n    \"N\u00e9ologisme, contraction de \u00ab\u00a0infra-information\u00a0\u00bb\u00a0: celle qui est importante pour VOUS.\"", 
+        "content_fr": "- Vous avez tellement d'informations \u00e0 lire chaque jour que vous ne savez pas par o\u00f9 commencer\u00a0?\r\n- Vous adorez Twitter et votre lecteur RSS, mais manquez de temps pour cliquer sur toutes ces URLs raccourcies et ces liens\u00a0\u00ab\u00a0*lire la suite*\u00a0\u00bb\u00a0?\r\n- Vous avez des centaines d'articles favoris dans Google Reader, mais vous n'en faites jamais rien\u00a0?\r\n- C'est s\u00fbr, cette *information vitale* est dans l'un des 300 articles r\u00e9cents que vous avez lus. Mais lequel\u00a0?\r\n- Il est difficile d'utiliser efficacement les informations que vous collectez pour vos d\u00e9cisions et vos projets\u00a0?\r\n- Pour synth\u00e9tiser plusieurs articles, votre outil le plus puissant reste ce bon vieux copier-coller\u00a0?\r\n\r\nCes probl\u00e8mes sont familiers\u00a0? **1flow** est pour vous\u00a0!", 
         "content_en-gb": "", 
         "name": "promise_left_content", 
         "content_nt": "Sauvegarde\r\n\r\nL'*[inframation][]* est l'ensemble des informations pertinentes qui vous \u00e9chappe par manque d'outils, de temps ou de r\u00e9f\u00e9rence contextuelle. Quelques situations communes pour illustrer ce manque\u00a0:\r\n- C'est s\u00fbr, cette *information vitale* est dans l'un des 300 articles r\u00e9cents que vous avez lus. Mais lequel\u00a0?\r\n- Pour synth\u00e9tiser plusieurs contenus, votre pens\u00e9e est limit\u00e9e par ce bon vieux copier-coller.\r\n- Vous avez des centaines d'articles favoris dans Google Reader, mais vous n'en faites jamais rien.\r\n- Vous adorez Twitter et les flux RSS, mais manquez de temps pour cliquer sur  toutes ces URLs raccourcies et ces liens `lire la suite\u00a0\u00bb`.\r\n- Comment savoir si l'auteur de cet article n'est pas de parti pris\u00a0?\r\n- Vous avez tellement d'informations \u00e0 lire chaque jour que vous ne savez pas par o\u00f9 commencer\u00a0!\r\n\r\nCes probl\u00e8mes sont familiers\u00a0? **1flow** est pour vous\u00a0!\r\n\r\n  [inframation]: #\r\n    \"N\u00e9ologisme, contraction de \u00ab\u00a0infra-information\u00a0\u00bb : celle qui est sous-tendue ou sous-jacente \u00e0 la donn\u00e9e \u00e0 laquelle vous avez acc\u00e8s imm\u00e9diat.\"\r\n\r\n [inframation]: #\r\n    \"Neologism, short for \u00ab\u00a0infra-information\u00a0\u00bb : the one which is underpinned or underlying the data that you have immediate access to.\"\r\n\r\n*[inframation][]* is the set of relevant information that you miss by a lack of tools, time or contextual references. Here are a few common situations to illustrate this shortage\u00a0:\r\n- For sure, this *key information* is in one of the 300 articles you've read recently. But which one is it?\r\n- To synthetize multiple articles, your  thought is limited by this good old copy'n paste.\r\n- You have hundreds of valuable articles starred in Google Reader, but you never do anything with them.\r\n- You enjoy Twitter and RSS readers, but definitely not clicking on shortened URLs and `read more \u00bb` links before reading full articles!\r\n- You have so much information to read everyday, and you just don't know where to start?\r\n\r\nThose problems sound familiar? **1flow** is for you!", 
-        "content_en": "*[inframation][]* is the information that really matters to you. It's often difficult to unveil it and use it, because of a lack of tools, time or contextual references. Here are a few common situations to illustrate this issue\u00a0:\r\n- For sure, this *key information* is in one of the 300 articles you've read recently. But which one is it?\r\n- To synthetize multiple articles, your  thought is still limited by this good old copy'n paste?\r\n- You have hundreds of valuable articles starred in Google Reader, but you never do anything with them.\r\n- You enjoy Twitter and RSS readers, but you don't have the time to click all those shortened URLs and `read more \u00bb` links!\r\n- How do you know if the author of this article is not biased?\r\n- You have so much information to read everyday, and you just don't know where to start?\r\n\r\nThose problems sound familiar? **1flow** is for you!\r\n\r\n [inframation]: #\r\n    \"Neologism, short for \u201cinfra-information\u201d: information that matters to YOU.\""
+        "content_en": "- You have so much information to read everyday, and you just don't know where to start?\r\n- You enjoy Twitter and your RSS reader, but you don't have the time to click all those shortened URLs and \u201c*read more*\u201d links to access the full articles?\r\n- You have hundreds of valuable articles starred in Google Reader, but never do anything with them?\r\n- For sure, this *key information* is in one of the 300 articles you've read recently. But which one is it?\r\n- It's difficult to feed efficiently your decisions and projects with the information you collect?\r\n- To synthesize multiple articles, your most powerful tool is still this good old copy'n paste?\r\n\r\nThose problems sound familiar? **1flow** is for you!\r\n\r\n [inframation]: #\r\n    \"Neologism, short for \u201cinfra-information\u201d: information that matters to YOU.\""
     }
 },
 {
@@ -128,18 +128,18 @@
         "content_en-gb": "", 
         "name": "feature_2_title", 
         "content_nt": "", 
-        "content_en": "Features"
+        "content_en": "Long term features"
     }
 },
 {
     "pk": 13, 
     "model": "landing.landingcontent", 
     "fields": {
-        "content_fr": "- Acc\u00e9dez instantan\u00e9ment aux contenus que vous avez surlign\u00e9s sans avoir besoin d'ouvrir \u00e0 nouveau l'article original.\r\n- Archivez tout ce que vous lisez. Jusqu'\u00e0 la fin des temps.\r\n- Bien \u00e9videmment\u00a0: notez, \u00e9tiquettez, classifiez, annotez, partagez et commentez avec vos coll\u00e8gues d'\u00e9quipes th\u00e9matiques.\r\n- Masquez les informations \u00ab\u00a0p\u00e9rim\u00e9es\u00a0\u00bb si vous le souhaitez.\r\n- Ne cliquez plus jamais sur `lire la suite\u00a0\u00bb`\u00a0: lisez les articles entiers directement dans **1flow**.\r\n\r\nEt ce n'est qu'un avant-go\u00fbt\u2026", 
-        "content_en-gb": "- Archive all the information you read. For ever.\r\n- Obviously: rate it, tag it, annotate it, classify it, share it, comment it with co-workers inside thematic-driven teams.\r\n- No more `read more\u00a0\u00bb`: read full articles directly in **1flow**.\r\n- Instantly access the information you have highlighted without the need to re-open the full article.\r\n- Hide *obsolete* information if you want.\r\n\r\nAnd that's just a sneak peak!", 
+        "content_fr": "- Lisez toutes vos sources dans **1flow**\u00a0: blogs, tumblrs, twitter, scoop.it, sites d'informations\u2026\r\n- Archivez tout ce que vous lisez. Jusqu'\u00e0 la fin des temps.\r\n- Bien \u00e9videmment\u00a0: notez, \u00e9tiquettez, classifiez, annotez, partagez et commentez avec vos coll\u00e8gues d'\u00e9quipes th\u00e9matiques.\r\n- Ne cliquez plus jamais sur des liens raccourcies ou des liens\u00a0\u00ab\u00a0*lire la suite*\u00a0\u00bb\u00a0: lisez les articles entiers directement dans **1flow**.\r\n- Acc\u00e9dez instantan\u00e9ment aux contenus que vous avez surlign\u00e9s sans avoir besoin d'ouvrir \u00e0 nouveau l'article original.\r\n\r\nEt ce n'est qu'un avant-go\u00fbt\u2026", 
+        "content_en-gb": "", 
         "name": "feature_2_content", 
-        "content_nt": "WARNING: US and UK versions differ: \"for ever\" and \"forever\", cf:\r\n\r\n\r\n* \"For ever\" is only used in British English. American English only has\r\n\"forever\". http://www.grammarphobia.com/blog/2012/02/forever.html\r\n", 
-        "content_en": "- Archive all the information you read. Forever.\r\n- Obviously: rate it, tag it, annotate it, classify it, share it, comment it with co-workers inside thematic-driven teams.\r\n- No more `read more\u00a0\u00bb`: read full articles directly in **1flow**.\r\n- Instantly access the information you have highlighted without the need to re-open the full article.\r\n- Hide *obsolete* information if you want.\r\n\r\nAnd that's just a sneak peak!"
+        "content_nt": "WARNING: US and UK versions differ: \"for ever\" and \"forever\", cf:\r\n\r\n\r\n* \"For ever\" is only used in British English. American English only has\r\n\"forever\". http://www.grammarphobia.com/blog/2012/02/forever.html\r\n\r\n`read more\u00a0\u00bb`", 
+        "content_en": "- Read all your sources in **1flow**: blogs, tumblrs, twitter, scoop.it, news and information websites\u2026\r\n- Archive all the information you read. Forever.\r\n- Obviously: rate it, tag it, annotate it, classify it, share it, comment it with friends and co-workers inside thematic-driven teams.\r\n- No more shortened URLs nor \u201c*read more*\u201d links: read full articles directly in **1flow**.\r\n- Instantly access the information you have highlighted without the need to re-open the full article.\r\n\r\nAnd that's just a sneak peak!"
     }
 },
 {
@@ -150,7 +150,7 @@
         "content_en-gb": "", 
         "name": "feature_3_title", 
         "content_nt": "", 
-        "content_en": "Google Reader Users"
+        "content_en": "Google Reader users"
     }
 },
 {
@@ -168,18 +168,18 @@
     "pk": 16, 
     "model": "landing.landingcontent", 
     "fields": {
-        "content_fr": "Rejoindre la Beta", 
+        "content_fr": "Rejoindre la beta", 
         "content_en-gb": "", 
         "name": "feature_4_title", 
         "content_nt": "", 
-        "content_en": "Joining the Beta"
+        "content_en": "Joining the beta"
     }
 },
 {
     "pk": 17, 
     "model": "landing.landingcontent", 
     "fields": {
-        "content_fr": "Le 15 Juin prochain, vous embarquerez sur la version Beta de **1flow**.\r\n\r\nNous prendrons soin de vous comme d'un passager en classe affaire, car nous b\u00e2tissons **1flow** pour *vous*.\r\n\r\nNous avons d\u00e9j\u00e0 un plan de vol bien rempli avec de nombreuses fonctionnalit\u00e9s \u00e9tonnantes \u00e0 venir\u00a0; mais [vos retours et vos id\u00e9es][feedback] seront toujours les bienvenus\u00a0!\r\n\r\nPour vous remercier de prendre part \u00e0 ce voyage avec nous, vous b\u00e9n\u00e9ficierez d'avantages incroyables lorsque nous d\u00e9voilerons les fonctionnalit\u00e9s premium de **1flow**.\r\n\r\n  [feedback]: #\r\n\"Cliquez sur le bouton \u00ab\u00a0Feedback\u00a0\u00bb \u00e0 droite de l'\u00e9cran pour nous \u00e9crire ou pour proposer la fonctionnalit\u00e9 dont vous r\u00eavez et voter pour celles qui ont d\u00e9j\u00e0 \u00e9t\u00e9 soumises.\"", 
+        "content_fr": "Le 15 Juin prochain, vous embarquerez sur la version Beta de **1flow**.\r\n\r\nNous prendrons soin de vous comme d'un passager premi\u00e8re classe, car nous b\u00e2tissons **1flow** pour *vous*.\r\n\r\nNous avons d\u00e9j\u00e0 un plan de vol bien rempli avec de nombreuses fonctionnalit\u00e9s \u00e9tonnantes \u00e0 venir\u00a0; mais [vos retours et vos id\u00e9es][feedback] seront toujours les bienvenus\u00a0!\r\n\r\nPour vous remercier de prendre part \u00e0 ce voyage avec nous, vous b\u00e9n\u00e9ficierez d'avantages incroyables lorsque nous d\u00e9voilerons les fonctionnalit\u00e9s premium de **1flow**.\r\n\r\n  [feedback]: #\r\n\"Cliquez sur le bouton \u00ab\u00a0Feedback\u00a0\u00bb \u00e0 droite de l'\u00e9cran pour nous \u00e9crire ou pour proposer la fonctionnalit\u00e9 dont vous r\u00eavez et voter pour celles qui ont d\u00e9j\u00e0 \u00e9t\u00e9 soumises.\"", 
         "content_en-gb": "", 
         "name": "feature_4_content", 
         "content_nt": "On june 15th, you will embark onto the Beta version of **1flow**. \r\n\r\nWe'll take care of your every need like a first-class passenger, because we build **1flow** for *you*.\r\n\r\nWe already have a busy flight plan with t planan awesome feature-packed roadmap but your feedback and ideas will always be welcomed.\r\n\r\nAs a reward for having taken part in this journey, you will benefit from unbelievable advantages when we unveil the premium features of **1flow**.", 
@@ -282,7 +282,7 @@
         "content_en-gb": "", 
         "name": "baseline_site_subtitle", 
         "content_nt": "", 
-        "content_en": "unveil inframation"
+        "content_en": "news & information management space"
     }
 },
 {
