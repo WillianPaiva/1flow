@@ -4,7 +4,7 @@ from mongoengine import Document
 from mongoengine.fields import (IntField, FloatField, BooleanField,
                                 DateTimeField,
                                 ListField, StringField,
-                                URLField, EmailField,
+                                URLField,
                                 ReferenceField, GenericReferenceField,
                                 EmbeddedDocumentField)
 
@@ -19,6 +19,25 @@ LOGGER = logging.getLogger(__name__)
 class Source(Document):
     # is this a feed ??
     url = URLField()
+    name = StringField()
+    slug = StringField()
+
+
+class Feed(Document):
+    name = StringField()
+    url = URLField()
+    restricted = BooleanField()
+
+
+class Subscription(Document):
+    feed = ReferenceField('Feed')
+    user = ReferenceField('User')
+
+    # allow the user to rename the field in its own subscription
+    name = StringField()
+
+    # these are kind of 'folders', but can be more dynamic.
+    tags = ListField(StringField())
 
 
 class Article(Document):
@@ -37,11 +56,13 @@ class Article(Document):
     # An article references its source (origin blog / newspaper…)
     source = GenericReferenceField()
 
+    feed = ReferenceField('Feed')
+
     def is_origin(self):
         return isinstance(self.source, Source)
 
     # Avoid displaying duplicates to the user.
-    duplicates = ListField(ReferenceField('Article')) # , null=True)
+    duplicates = ListField(ReferenceField('Article'))  # , null=True)
 
 
 class Read(Document):
@@ -51,6 +72,10 @@ class Read(Document):
     is_auto_read = BooleanField()
     date_created = DateTimeField()
     date_read = DateTimeField()
+    date_auto_read = DateTimeField()
+
+    # This will be set to Article.default_rating
+    # until the user sets it manually.
     rating = FloatField()
 
     # For free users, fix a limit ?
@@ -72,7 +97,7 @@ class Comment(Document):
     #article = ReferenceField('Article')
     #user = ReferenceField('User')
 
-    in_reply_to = ReferenceField('Comment') # , null=True)
+    in_reply_to = ReferenceField('Comment')  # , null=True)
 
     # @property
     # def type(self):
@@ -90,9 +115,9 @@ class Comment(Document):
 
 class SnapPreference(Document):
     select_paragraph = BooleanField(_('Select whole paragraph on click'),
-                                    default=False) # , blank=True)
+                                    default=False)  # , blank=True)
     default_public = BooleanField(_('Grows public by default'),
-                                  default=True) # , blank=True)
+                                  default=True)  # , blank=True)
 
 
 class NotificationPreference(Document):
@@ -105,5 +130,5 @@ class Preference(Document):
 
 
 class User(Document):
-    email = EmailField()
+    django_user = IntField()
     preferences = EmbeddedDocumentField('Preference')
