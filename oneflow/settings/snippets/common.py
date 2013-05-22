@@ -73,6 +73,11 @@ STATICFILES_FINDERS = (
 
 STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 
+PIPELINE_COMPILERS = (
+    'pipeline_compass.compiler.CompassCompiler',
+    'pipeline.compilers.coffee.CoffeeScriptCompiler',
+)
+
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
@@ -134,6 +139,8 @@ INSTALLED_APPS = (
     'django_reset',
     'south',
     'transmeta',
+    'tastypie',
+    'tastypie_mongoengine',
     'overextends',
     'redisboard',
     'memcache_status',
