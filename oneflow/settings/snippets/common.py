@@ -29,20 +29,43 @@ LANGUAGE_CODE = 'en'
 # dummy ugettext function, as django's docs say
 ugettext = lambda s: s
 
-# Please update ../Makefile if you add/del a language.
+# Translation workflows:
+# - in the DB: all languages variants are accessible and empty by default
+#   (even 'en'), thus we remove 'en-us' because it will just make do the
+#   work twice and confuse translators.
+# - in the webapp: 'en' is *always* defined because the developers create
+#   english strings. For translators to be able to override them without
+#   needing commit access, we use the 'en-us' language, which takes
+#   precedence. This is not perfect, because other 'en-*' variants users
+#   will get the 'bare' strings which can have errors, but at least our
+#   translators have access to en-US strings the same way they access
+#   other languages.
+
 LANGUAGES = (
     ('en', ugettext(u'English')),
-    ('en-gb', ugettext(u'English (UK)')),
+    ('en-us', ugettext(u'English')),
+    ('en-gb', ugettext(u'British')),
     ('fr', ugettext(u'Français')),
+
 # Activate these later when we need them.
 #    ('es', ugettext(u'Español')),
 #    ('fr-CA', ugettext(u'Français (FR)')),
 #    ('es-XX', ugettext(u'Español (ES)')),
 )
 
-# This fake language is used by translators to keep
-# variants and translations notes handy in the admin interface.
-TRANSMETA_LANGUAGES = LANGUAGES + (('nt', ugettext(u'Notes — variants')), )
+TRANSMETA_LANGUAGES = (
+    ('en', ugettext(u'English')),
+
+    # This one is intentionaly removed (see above).
+    #('en-us', ugettext(u'English')),
+
+    ('en-gb', ugettext(u'British')),
+    ('fr', ugettext(u'Français')),
+
+    # The 'nt' fake language is used by translators to keep
+    # variants and translations notes handy in the admin interface.
+    ('nt', ugettext(u'Notes — variants'))
+)
 
 USE_I18N = True
 USE_L10N = True
