@@ -94,6 +94,30 @@ PIPELINE_COMPILERS = (
     'pipeline.compilers.coffee.CoffeeScriptCompiler',
 )
 
+PIPELINE_JS = {
+    'showdown': {
+        'source_filenames': (
+            'js/showdown/showdown.js',
+            'js/showdown/extensions/twitter.js',
+        ),
+        'output_filename': 'js/showdown.js',
+    },
+    'moment': {
+        'source_filenames': (
+            'js/moment/moment.js',
+            'js/moment/langs/*.js',
+        ),
+        'output_filename': 'js/moment.js',
+    },
+    'core': {
+        'source_filenames': (
+            'js/core/core.js',
+            # TODO: put core/*.js when they are born.
+        ),
+        'output_filename': 'js/core.js',
+    }
+}
+
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
