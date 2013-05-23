@@ -124,7 +124,7 @@
     "pk": 12, 
     "model": "landing.landingcontent", 
     "fields": {
-        "content_fr": "Fonctionnalit\u00e9s", 
+        "content_fr": "Fonctionnalit\u00e9s \u00e0 venir", 
         "content_en-gb": "", 
         "name": "feature_2_title", 
         "content_nt": "", 
