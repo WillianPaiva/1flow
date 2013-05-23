@@ -44,6 +44,9 @@
               <li>{% linkto 'index' %}{% trans 'my flow' %}{% endlinkto %}</li>
               <li>{% linkto 'teams' %}{% trans 'my teams' %}{% endlinkto %}</li>
               <li>{% linkto 'notimpl' %}{% trans 'recommended' %}{% endlinkto %}</li>
+              {% if debug %}
+                <li>{% linkto 'debug' %}{% trans 'debug' %}{% endlinkto %}</li>
+              {% endif %}
               <li>
                   <form class="navbar-search">
                     <input type="text" class="search-query input-small"

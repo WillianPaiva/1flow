@@ -9,7 +9,10 @@ App.Store = DS.Store.extend({
 App.Router.map(function(){
     this.resource('teams');
     this.resource('notimpl');
+    this.resource('debug');
     this.resource('help');
+        this.resource('toto');
+
 })
 
 Ember.Handlebars.registerBoundHelper('fromNow', function(date){

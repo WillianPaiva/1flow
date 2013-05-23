@@ -1,0 +1,23 @@
+{% handlebars "debug" %}
+  <div class="container-fluid">
+    <div class="row-fluid">
+      <div class="span10">&nbsp;</div>
+    </div>
+    <div class="row-fluid">
+      <div class="span10 offset1">
+        <h1>{% trans "Debug / Test" %}</h1>
+        <ul>
+        {{#each subscriptions}}
+          <li> linkto subscription » name <span class="label">unread</span></li>
+        {{else}}
+          <li class="empty">
+            {% captureas add_one %}linkto subscription_new {% trans "Add one?" %} endlinkto{% endcaptureas %}
+            {% blocktrans %}
+              No subscription yet. {{add_one}}
+            {% endblocktrans %}
+        {{/each}}
+        </ul>
+      </div>
+    </div>
+  </div>
+{% endhandlebars %}

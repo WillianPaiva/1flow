@@ -9,6 +9,9 @@
 {% include 'ember/views/index.html' %}
 {% include 'ember/views/teams.html' %}
 {% include 'ember/views/notimpl.html' %}
+{% if debug %}
+    {% include 'ember/views/debug.html' %}
+{% endif %}
 {% include 'ember/views/help.html' %}
 {% endblock body %}
 
