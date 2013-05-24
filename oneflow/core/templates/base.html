@@ -24,7 +24,18 @@
   </head>
   <body>
     {% block body %}{% endblock body %}
+
+    {% compressed_js 'bootstrap' %}
+
+    <script type="text/javascript">
+      $('a.link-tooltip').tooltip();
+      try {
+          $("#lang-flags input[type=image]").tooltip({placement: 'bottom'});
+      } catch(err) {};
+    </script>
+
     {% block extrajs_footer %}{% endblock extrajs_footer %}
+
     {% if not debug %}
       {% include 'snippets/userecho.html' %}
       {% if user.is_anonymous or not user.is_staff and not user.is_superuser %}
