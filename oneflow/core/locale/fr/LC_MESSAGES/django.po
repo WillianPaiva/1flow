@@ -2,20 +2,20 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-22 17:51+0200\n"
-"PO-Revision-Date: 2013-05-22 17:09+0200\n"
+"POT-Creation-Date: 2013-05-24 13:42+0200\n"
+"PO-Revision-Date: 2013-05-24 13:44+0200\n"
 "Last-Translator:   <oc@1flow.io>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Translated-Using: django-rosetta 0.7.2\n"
 
@@ -23,16 +23,16 @@ msgstr ""
 msgid "^home/$"
 msgstr "^accueil/$"
 
-#: models/keyval.py:203 models/reldb.py:215
-msgid "Categories"
-msgstr ""
-
-#: models/nonrel.py:92
+#: models/nonrel.py:137
 msgid "Select whole paragraph on click"
 msgstr ""
 
-#: models/nonrel.py:94
+#: models/nonrel.py:139
 msgid "Grows public by default"
+msgstr ""
+
+#: models/oldrel.py:58 models/reldb.py:215
+msgid "Categories"
 msgstr ""
 
 #: templates/home.html:5
@@ -60,27 +60,41 @@ msgid "Sign in…"
 msgstr "Connexion…"
 
 #: templates/ember/main.html:44
-msgid "my flow"
-msgstr "mon flux"
+msgid "flowboard"
+msgstr ""
 
 #: templates/ember/main.html:45
-msgid "my teams"
-msgstr "mes équipes"
+msgid "teams"
+msgstr "équipes"
 
 #: templates/ember/main.html:46
-msgid "recommended"
-msgstr "recommandations"
+msgid "subscriptions"
+msgstr "abonnements"
 
-#: templates/ember/main.html:50
+#: templates/ember/main.html:47
+msgid "discovery"
+msgstr "découverte"
+
+#: templates/ember/main.html:51
 msgid "Search…"
 msgstr "Rechercher…"
 
-#: templates/ember/main.html:55
+#: templates/ember/main.html:56
 msgid "about"
 msgstr "à propos"
 
-#: templates/ember/main.html:56
+#: templates/ember/main.html:57
 msgid "contact"
+msgstr ""
+
+#: templates/ember/views/discovery.html:8
+#: templates/ember/views/recommended.html:8
+msgid "Not implemented"
+msgstr ""
+
+#: templates/ember/views/discovery.html:10
+#: templates/ember/views/recommended.html:10
+msgid "This is just a waiting view. Please be patient!"
 msgstr ""
 
 #: templates/ember/views/index.html:8
@@ -91,14 +105,36 @@ msgstr "Bienvenue !"
 msgid "This this hope. Er… Home!"
 msgstr ""
 
-#: templates/ember/views/notimpl.html:8
-msgid "Not implemented"
+#: templates/ember/views/subscriptions.html:8
+msgid "Subscriptions"
 msgstr ""
 
-#: templates/ember/views/notimpl.html:10
-msgid "This is just a waiting view. Please be patient!"
+#: templates/ember/views/subscriptions.html:14
+msgid "Collapse"
+msgstr ""
+
+#: templates/ember/views/subscriptions.html:16
+msgid "Details"
+msgstr ""
+
+#: templates/ember/views/subscriptions.html:21
+msgid "Add one?"
+msgstr ""
+
+#: templates/ember/views/subscriptions.html:22
+#, python-format
+msgid ""
+"\n"
+"              No subscription yet. %(add_one)s\n"
+"            "
 msgstr ""
 
 #: templates/ember/views/teams.html:4
 msgid "Your teams"
 msgstr "Vos équipes"
+
+#~ msgid "my flow"
+#~ msgstr "mon flux"
+
+#~ msgid "recommended"
+#~ msgstr "recommandations"
