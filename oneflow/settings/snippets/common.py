@@ -17,7 +17,7 @@ from sparks import platform # NOQA
 PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
 BASE_ROOT    = os.path.dirname(PROJECT_ROOT)
 
-ADMINS   = (('Olivier Cortès', 'oc@1flow.net'), )
+ADMINS   = (('Olivier Cortès', 'oc@1flow.io'), )
 MANAGERS = ADMINS
 
 GRAPPELLI_ADMIN_TITLE = '1flow administration'
@@ -45,7 +45,8 @@ ugettext = lambda s: s
 #       they access other languages.
 LANGUAGES = (
     ('en', ugettext(u'English')),
-    ('en-gb', ugettext(u'British')),
+    # We're not ready to handle a british translation (no resource…)
+    #('en-gb', ugettext(u'English (UK)')),
     ('fr', ugettext(u'Français')),
 
 # Activate these later when we need them.
