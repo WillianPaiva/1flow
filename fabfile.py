@@ -67,7 +67,8 @@ def preview(branch=None):
 
     """
     if branch is None:
-        env.branch = fablocal('git rev-parse --abbrev-ref HEAD')
+        env.branch = fablocal('git rev-parse --abbrev-ref HEAD',
+                              capture=True).strip()
 
     # implicit: else: branch will be 'develop',
     # set directly from the sparks defaults.
