@@ -91,29 +91,90 @@ STATICFILES_FINDERS = (
 STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 
 PIPELINE_COMPILERS = (
-    'pipeline_compass.compiler.CompassCompiler',
+    'pipeline.compilers.less.LessCompiler',
+    # We don't use the one from pipeline, it breaks bootstrap-responsive.
+    #       'pipeline_compass.compiler.CompassCompiler',
+    # Intead, we use the one from django-pipeline-compass-rubygem, which
+    # is the official 'compass' binary, in Ruby. This requires installing
+    # Ruby, but I prefer isung official tools than their un-maintained
+    # python erzatz counterparts.
+    'pipeline_compass.compass.CompassCompiler',
     'pipeline.compilers.coffee.CoffeeScriptCompiler',
 )
 
+PIPELINE_CSS = {
+    'bootstrap': {
+        'source_filenames': (
+            'vendor/bootstrap/bootstrap.scss',
+        ),
+        'output_filename': 'css/bootstrap.css',
+    },
+    'bootstrap-responsive': {
+        'source_filenames': (
+            'vendor/bootstrap/bootstrap.scss',
+            'vendor/bootstrap/bootstrap-responsive.scss',
+        ),
+        'output_filename': 'css/bootstrap-responsive.css',
+    },
+    'font-awesome': {
+        'source_filenames': (
+            'vendor/font-awesome/font-awesome.less',
+        ),
+        'output_filename': 'css/font-awesome.css',
+    },
+    'font-awesome-ie7': {
+        'source_filenames': (
+            'vendor/font-awesome/font-awesome-ie7.less',
+        ),
+        'output_filename': 'css/font-awesome-ie7.css',
+    },
+    'landing': {
+        'source_filenames': (
+            'css/landing-styles.css',
+        ),
+        'output_filename': 'css/landing.css',
+    },
+    'core': {
+        'source_filenames': (
+            'sass/styles.scss',
+        ),
+        'output_filename': 'css/core.css',
+    }
+}
+
 PIPELINE_JS = {
+    'bootstrap': {
+        'source_filenames': (
+            'vendor/bootstrap/javascripts/*.js',
+        ),
+        'output_filename': 'js/bootstrap.js',
+    },
     'showdown': {
         'source_filenames': (
-            'js/showdown/showdown.js',
-            'js/showdown/extensions/twitter.js',
+            'vendor/showdown/showdown.js',
+            'vendor/showdown/extensions/twitter.js',
         ),
         'output_filename': 'js/showdown.js',
     },
     'moment': {
         'source_filenames': (
-            'js/moment/moment.js',
-            'js/moment/langs/*.js',
+            'vendor/moment/moment.js',
+            'vendor/moment/langs/*.js',
         ),
         'output_filename': 'js/moment.js',
+    },
+    'utils': {
+        'source_filenames': (
+            'js/utils/*.js',
+        ),
+        'output_filename': 'js/utils.js',
     },
     'core': {
         'source_filenames': (
             'js/core/core.js',
-            # TODO: put core/*.js when they are born.
+            'js/core/controllers/*.js',
+            'js/core/models/*.js',
+            'js/core/helpers/*.js',
         ),
         'output_filename': 'js/core.js',
     }
@@ -216,6 +277,14 @@ MARKDOWN_DEUX_STYLES = {
         'safe_mode': False,
     }
 }
+
+# Defaults to ['json', 'xml', 'yaml', 'html', 'plist']
+TASTYPIE_DEFAULT_FORMATS = ('json', )
+
+
+LOGIN_URL = 'signin'
+LOGOUT_URL = 'signout'
+LOGIN_REDIRECT_URL = 'home'
 
 LOGGING = {
     'version': 1,

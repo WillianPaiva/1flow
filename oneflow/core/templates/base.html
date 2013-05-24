@@ -1,4 +1,4 @@
-{% load js compressed i18n base_utils markdown_deux_tags %}
+{% load markdown_deux_tags %}
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}">
   <head>
@@ -8,12 +8,11 @@
     <meta name="description" content="">
     <meta name="author" content="Olivier Cortès <oc@1flow.io>">
 
-    {% css 'css/bootstrap.min.css' %}
-    {% css 'css/bootstrap-responsive.min.css' %}
-    {% css 'css/font-awesome.min.css' %}
+    {% compressed_css 'bootstrap-responsive' %}
+    {% compressed_css 'font-awesome' %}
 
     <!--[if IE 7]>
-      {% css 'css/font-awesome-ie7.min.css' %}
+      {% compressed_css 'font-awesome-ie7' %}
     <![endif]-->
     {# HTML5 shim, for IE6-8 support of HTML5 elements #}
     <!--[if lt IE 9]>
@@ -21,17 +20,14 @@
     <![endif]-->
 
     {% django_js_init %}
-    {% block extrajs_header %}
-    {% endblock extrajs_header %}
+    {% block extrajs_header %}{% endblock extrajs_header %}
   </head>
   <body>
-    {% block body %}
-    {% endblock body %}
-    {% block extrajs_footer %}
-    {% endblock extrajs_footer %}
+    {% block body %}{% endblock body %}
+    {% block extrajs_footer %}{% endblock extrajs_footer %}
     {% if not debug %}
       {% include 'snippets/userecho.html' %}
-      {% if user.is_anonymous or not user.is_staff or not user.is_superuser %}
+      {% if user.is_anonymous or not user.is_staff and not user.is_superuser %}
         {% include 'snippets/google-analytics.html' %}
       {% endif %}
     {% endif %}
