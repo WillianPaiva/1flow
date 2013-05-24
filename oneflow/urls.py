@@ -6,6 +6,8 @@ from django.conf.urls.i18n import i18n_patterns
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
 
+from .api import v1_api
+
 admin.autodiscover()
 
 handler500 = 'oneflow.base.views.error_handler'
@@ -43,6 +45,11 @@ urlpatterns += patterns(
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
+)
+
+urlpatterns += patterns(
+    '',
+    (r'^api/', include(v1_api.urls)),
 )
 
 # This will add urls only when DEBUG=True

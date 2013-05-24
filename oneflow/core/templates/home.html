@@ -1,17 +1,19 @@
 {% extends 'base.html' %}
 
-{% load js compressed %}
-
 {% block title %}{% trans 'Home' %}{% endblock title %}
+
+{% block extrajs_header %}
+  <script type="text/javascript">
+    var url_root = '{{ request.META.SCRIPT_NAME }}';
+  </script>
+{% endblock extrajs_header %}
 
 {% block body %}
 {% include 'ember/main.html' %}
 {% include 'ember/views/index.html' %}
 {% include 'ember/views/teams.html' %}
-{% include 'ember/views/notimpl.html' %}
-{% if debug %}
-    {% include 'ember/views/debug.html' %}
-{% endif %}
+{% include 'ember/views/subscriptions.html' %}
+{% include 'ember/views/discovery.html' %}
 {% include 'ember/views/help.html' %}
 {% endblock body %}
 
@@ -23,10 +25,13 @@
 
     {% compressed_js 'showdown' %}
     {% compressed_js 'moment' %}
+    {% compressed_js 'utils' %}
     {% compressed_js 'core' %}
 
     <script type="text/javascript">
         {# This must stay here to catch the Django current language. #}
         moment.lang('{{ LANGUAGE_CODE }}');
     </script>
+
+    {% csrf_token %}
 {% endblock extrajs_footer %}

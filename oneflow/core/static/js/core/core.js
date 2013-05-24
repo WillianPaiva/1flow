@@ -1,21 +1,30 @@
+
+// NOTE: Django-pipeline will automatically "closurize" this file.
+
 App = Ember.Application.create({
     LOG_TRANSITIONS: true
 });
 
 App.Store = DS.Store.extend({
-  revision: 12
+  revision: 12,
+  adapter: DS.DjangoTastypieAdapter.extend({
+      namespace: 'api/v1'
+      // namespace: (url_root + '/api/v1').replace(/^\//g, ''),
+
+    })
 });
 
 App.Router.map(function(){
     this.resource('teams');
-    this.resource('notimpl');
-    this.resource('debug');
+    this.resource('discovery');
+    this.resource('subscriptions', function() {
+        this.route('edit', { path: '/:subscription_id' });
+    });
     this.resource('help');
-        this.resource('toto');
-
 })
 
-Ember.Handlebars.registerBoundHelper('fromNow', function(date){
-    console.log(date + " " + moment(date, "YYYYMMDD").fromNow());
-    return moment(date, "YYYYMMDD").fromNow();
-});
+// App.IndexRoute = Ember.Route.extend({
+//     redirect: function() {
+//         this.replaceWith('subscriptions');
+//     }
+// });

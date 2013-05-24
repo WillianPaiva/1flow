@@ -14,8 +14,14 @@ from django.views.decorators.cache import never_cache
 
 LOGGER = logging.getLogger(__name__)
 
+
+# Avoid the very repetitive:
+#       {% load ember js compressed i18n base_utils %}
+# in the Ember application templates.
 add_to_builtins('ember.templatetags.ember')
 add_to_builtins('django.templatetags.i18n')
+add_to_builtins('djangojs.templatetags.js')
+add_to_builtins('pipeline.templatetags.compressed')
 add_to_builtins('oneflow.base.templatetags.base_utils')
 
 
