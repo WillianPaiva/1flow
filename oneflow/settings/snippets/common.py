@@ -148,9 +148,7 @@ TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT, 'templates')
 )
 
-
 # cf. https://docs.djangoproject.com/en/1.5/ref/settings/#template-context-processors # NOQA
-
 TEMPLATE_CONTEXT_PROCESSORS = (
     # NOTE: ….debug is added only if DEBUG=True, later in another snippet.
     'django.core.context_processors.i18n',
@@ -161,9 +159,12 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'absolute.context_processors.absolute',
     'django.contrib.auth.context_processors.auth',
     'django.contrib.messages.context_processors.messages',
+    # One day, if we have some:
+    #'oneflow.base.context_processors.…',
+    #'oneflow.core.context_processors.…',
 )
 
-#TEMPLATE_CONTEXT_PROCESSORS += ('oneflow.base.context.…', )
+#TEMPLATE_CONTEXT_PROCESSORS += ( )
 
 INSTALLED_APPS = (
     'raven.contrib.django.raven_compat',
