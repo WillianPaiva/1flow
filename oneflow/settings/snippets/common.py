@@ -92,12 +92,24 @@ STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 
 PIPELINE_COMPILERS = (
     'pipeline.compilers.less.LessCompiler',
-    # We don't use the one from pipeline, it breaks bootstrap-responsive.
+    # We don't use the from django-pipeline-compass compiler,
+    # it breaks bootstrap-responsive.
     #       'pipeline_compass.compiler.CompassCompiler',
+    #
     # Intead, we use the one from django-pipeline-compass-rubygem, which
-    # is the official 'compass' binary, in Ruby. This requires installing
-    # Ruby, but I prefer isung official tools than their un-maintained
-    # python erzatz counterparts.
+    # runs the official 'compass' Ruby binary in a subshell.
+    #
+    # WARNING, though: both packages install at the same location.
+    # As of 20130524, django-pipeline-compass-rubygem is itself broken,
+    # because it doesn't ship the __init__.py. Thus it doesn't work alone;
+    # but it doesn't depend on django-pipeline-compass, which makes the
+    # whole process heavily error-prone because we need to install both,
+    # but it's not issued anywhere.
+    #
+    # Finally, after installing 2 python packages and Ruby + the rubygem,
+    # everything works as expected. I personally prefer using the official
+    # 'compass' and have a working CSS, than an un-maintained python erzatz
+    # which doesnt work and breaks CSSs without any error displayed.
     'pipeline_compass.compass.CompassCompiler',
     'pipeline.compilers.coffee.CoffeeScriptCompiler',
 )

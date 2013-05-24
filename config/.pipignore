@@ -1,3 +1,4 @@
+bencode
 distribute
 httplib2
 mccabe
