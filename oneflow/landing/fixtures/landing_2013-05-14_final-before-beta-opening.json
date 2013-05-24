@@ -4,7 +4,6 @@
     "model": "landing.landingcontent", 
     "fields": {
         "content_fr": "invitez-moi \u00e0 la beta\u00a0!", 
-        "content_en-gb": "", 
         "name": "invitation_button_label", 
         "content_nt": "\u00a1 Calamares en su tinta, por favor !\r\nGet an invitation\r\nPlease send me an invitation\r\nI can't wait send me an invitation\r\nI don't want to be overflowed anymore, send me an invitation", 
         "content_en": "invite me to the beta!"
@@ -15,7 +14,6 @@
     "model": "landing.landingcontent", 
     "fields": {
         "content_fr": "Votre adresse e-mail\u2026", 
-        "content_en-gb": "", 
         "name": "email_placeholder_text", 
         "content_nt": "", 
         "content_en": "Your e-mail here\u2026"
@@ -25,8 +23,7 @@
     "pk": 3, 
     "model": "landing.landingcontent", 
     "fields": {
-        "content_fr": "identifiez et utilisez  \r\nl'information qui compte!", 
-        "content_en-gb": "", 
+        "content_fr": "identifiez et utilisez  \r\nl'information qui compte\u00a0!", 
         "name": "big_catcher_title", 
         "content_nt": "unveil *inframation*:  \r\ninformation that really  \r\nmatters to **you**!\r\n\r\nr\u00e9v\u00e9lez l'*inframation*\u00a0:\r\nl'information qui compte  \r\nvraiment pour **vous**\u00a0!", 
         "content_en": "highlight and use  \r\ninformation that matters!"
@@ -37,7 +34,6 @@
     "model": "landing.landingcontent", 
     "fields": {
         "content_fr": "\u00c7a vous dit quelque chose\u00a0?", 
-        "content_en-gb": "", 
         "name": "promise_left_title", 
         "content_nt": "inframation, sounds *familiar*\u00a0?\r\nl'inframation, \u00e7a vous parle\u00a0?", 
         "content_en": "Sounds familiar?"
@@ -48,7 +44,6 @@
     "model": "landing.landingcontent", 
     "fields": {
         "content_fr": "quote-left", 
-        "content_en-gb": "", 
         "name": "promise_left_icon", 
         "content_nt": "bolt\r\numbrella\r\nthumbs-down\r\neject\r\nquote-left", 
         "content_en": "quote-left"
@@ -59,7 +54,6 @@
     "model": "landing.landingcontent", 
     "fields": {
         "content_fr": "1flow en quelques mots", 
-        "content_en-gb": "", 
         "name": "promise_right_title", 
         "content_nt": "", 
         "content_en": "1flow in a nutshell"
@@ -70,7 +64,6 @@
     "model": "landing.landingcontent", 
     "fields": {
         "content_fr": "**1flow** est un espace gratuit de gestion de news et d'information, \u00e0 usage individuel ou en \u00e9quipe. **1flow** vous aide \u00e0 lutter contre l'[infob\u00e9sit\u00e9](# \"surcharge d'informations qui vous emp\u00eache de prendre une d\u00e9cision\") en identifiant l'information qui compte vraiment pour vous. Dans **1flow** vous pouvez agr\u00e9ger, lire, d\u00e9couvrir, archiver, \u00e9diter, partager et discuter de toute l'information en ligne.\r\n\r\n**1flow** inclut donc le meilleur d'un lecteur d'abonnement (comme Google Reader) et permet la cr\u00e9ation imm\u00e9diate de contenu\u00a0; tout cela compl\u00e9t\u00e9 par un puissant syst\u00e8me d'archivage et de recherche.\r\n\r\nVous y faites rentrer *ce qui vous importe r\u00e9ellement* pour nourrir vos id\u00e9es, cr\u00e9ations, projets et d\u00e9cisions, \u00e0 la fois professionnels et personnels. \r\n\r\nTout ceci au m\u00eame endroit (NDT\u00a0: \u00ab\u00a0*all in one flow*\u00a0\u00bb).", 
-        "content_en-gb": "", 
         "name": "promise_right_content", 
         "content_nt": "**1flow** is a free information management platform, for individuals and teams. It's a private space where you can aggregate, read, discover, archive, edit, share and discuss all the online information you collect.\r\n\r\nThe combination of these tools enables you to save the required time and to enrich the context enough to get access to inframation.\r\n\r\n**1flow** provides you the best of an RSS reader, bundled with content creation features and a powerful archive & search system.\r\n\r\nYou will bring in *what really matters* to feed your ideas, creations, projects and decisions, both professionnal and personal.  *All in one flow*.\r\n\r\n**1flow** beta is opening on the 15th of june 2013.\r\n\r\n  [curation]: #\r\n    \"Select, edit and share most relevant contents for a given subject.\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u2014 source: Wikipedia\"", 
         "content_en": "**1flow** is a free news & information management space, for individuals and teams. **1flow** helps you to fight [infobesity](# \"information overload that prevents you to take decision\") by highlighting and using information that really matters to you. In **1flow **you can aggregate, read, discover, archive, edit, share and discuss all the online news & information you collect everyday. \r\n\r\n**1flow** provides you the best of a subscriptions reader (like Google Reader), bundled with content creation features and a powerful archive & search system.\r\n\r\nYou will bring in and highlight *what really matters* to feed your ideas, creations, projects and decisions, both professionnal and personal.  *All in one flow*.\r\n\r\n**1flow** beta is opening on the 15th of june 2013."
@@ -81,7 +74,6 @@
     "model": "landing.landingcontent", 
     "fields": {
         "content_fr": "- Vous avez tellement d'informations \u00e0 lire chaque jour que vous ne savez pas par o\u00f9 commencer\u00a0?\r\n- Vous adorez Twitter et votre lecteur RSS, mais manquez de temps pour cliquer sur toutes ces URLs raccourcies et ces liens\u00a0\u00ab\u00a0*lire la suite*\u00a0\u00bb\u00a0?\r\n- Vous avez des centaines d'articles favoris dans Google Reader, mais vous n'en faites jamais rien\u00a0?\r\n- C'est s\u00fbr, cette *information vitale* est dans l'un des 300 articles r\u00e9cents que vous avez lus. Mais lequel\u00a0?\r\n- Il est difficile d'utiliser efficacement les informations que vous collectez pour vos d\u00e9cisions et vos projets\u00a0?\r\n- Pour synth\u00e9tiser plusieurs articles, votre outil le plus puissant reste ce bon vieux copier-coller\u00a0?\r\n\r\nCes probl\u00e8mes sont familiers\u00a0? **1flow** est pour vous\u00a0!", 
-        "content_en-gb": "", 
         "name": "promise_left_content", 
         "content_nt": "Sauvegarde\r\n\r\nL'*[inframation][]* est l'ensemble des informations pertinentes qui vous \u00e9chappe par manque d'outils, de temps ou de r\u00e9f\u00e9rence contextuelle. Quelques situations communes pour illustrer ce manque\u00a0:\r\n- C'est s\u00fbr, cette *information vitale* est dans l'un des 300 articles r\u00e9cents que vous avez lus. Mais lequel\u00a0?\r\n- Pour synth\u00e9tiser plusieurs contenus, votre pens\u00e9e est limit\u00e9e par ce bon vieux copier-coller.\r\n- Vous avez des centaines d'articles favoris dans Google Reader, mais vous n'en faites jamais rien.\r\n- Vous adorez Twitter et les flux RSS, mais manquez de temps pour cliquer sur  toutes ces URLs raccourcies et ces liens `lire la suite\u00a0\u00bb`.\r\n- Comment savoir si l'auteur de cet article n'est pas de parti pris\u00a0?\r\n- Vous avez tellement d'informations \u00e0 lire chaque jour que vous ne savez pas par o\u00f9 commencer\u00a0!\r\n\r\nCes probl\u00e8mes sont familiers\u00a0? **1flow** est pour vous\u00a0!\r\n\r\n  [inframation]: #\r\n    \"N\u00e9ologisme, contraction de \u00ab\u00a0infra-information\u00a0\u00bb : celle qui est sous-tendue ou sous-jacente \u00e0 la donn\u00e9e \u00e0 laquelle vous avez acc\u00e8s imm\u00e9diat.\"\r\n\r\n [inframation]: #\r\n    \"Neologism, short for \u00ab\u00a0infra-information\u00a0\u00bb : the one which is underpinned or underlying the data that you have immediate access to.\"\r\n\r\n*[inframation][]* is the set of relevant information that you miss by a lack of tools, time or contextual references. Here are a few common situations to illustrate this shortage\u00a0:\r\n- For sure, this *key information* is in one of the 300 articles you've read recently. But which one is it?\r\n- To synthetize multiple articles, your  thought is limited by this good old copy'n paste.\r\n- You have hundreds of valuable articles starred in Google Reader, but you never do anything with them.\r\n- You enjoy Twitter and RSS readers, but definitely not clicking on shortened URLs and `read more \u00bb` links before reading full articles!\r\n- You have so much information to read everyday, and you just don't know where to start?\r\n\r\nThose problems sound familiar? **1flow** is for you!", 
         "content_en": "- You have so much information to read everyday, and you just don't know where to start?\r\n- You enjoy Twitter and your RSS reader, but you don't have the time to click all those shortened URLs and \u201c*read more*\u201d links to access the full articles?\r\n- You have hundreds of valuable articles starred in Google Reader, but never do anything with them?\r\n- For sure, this *key information* is in one of the 300 articles you've read recently. But which one is it?\r\n- It's difficult to feed efficiently your decisions and projects with the information you collect?\r\n- To synthesize multiple articles, your most powerful tool is still this good old copy'n paste?\r\n\r\nThose problems sound familiar? **1flow** is for you!\r\n\r\n [inframation]: #\r\n    \"Neologism, short for \u201cinfra-information\u201d: information that matters to YOU.\""
@@ -92,7 +84,6 @@
     "model": "landing.landingcontent", 
     "fields": {
         "content_fr": "Tous bienvenu(e)s", 
-        "content_en-gb": "", 
         "name": "feature_1_title", 
         "content_nt": "", 
         "content_en": "Everyone welcome"
@@ -103,7 +94,6 @@
     "model": "landing.landingcontent", 
     "fields": {
         "content_fr": "lightbulb", 
-        "content_en-gb": "", 
         "name": "promise_right_icon", 
         "content_nt": "lightbulb\r\nplay\r\ngift\r\nheart\r\nmagic", 
         "content_en": "lightbulb"
@@ -114,7 +104,6 @@
     "model": "landing.landingcontent", 
     "fields": {
         "content_fr": "**1flow** s'adresse \u00e0 toutes les personnes qui traitent de l'information\u00a0; autant dire presque tout le monde\u00a0! \r\n\r\nEn tant que professionnel, quel que soit [votre secteur d'activit\u00e9](# \"1flow s'adapte\u00a0: Internet, Services, Veille concurrentielle,  RP, Droit, Banques, Finances, Assurances, Sant\u00e9, ONG\u2026\"), **1flow** vous aidera \u00e0 booster votre veille et vos recherches. \r\n\r\nA titre personnel, suivre les tendances du jardinage, des nouvelles technologies, du d\u00e9veloppement durable ou de toute autre passion ou cause qui vous tient \u00e0 coeur sera un jeu d'enfant.\r\n\r\nEt enfin, **1flow** est ultra-simple d'utilisation. Pas besoin d'\u00eatre un passionn\u00e9 d'informatique. Tout le monde est bienvenu\u00a0!", 
-        "content_en-gb": "", 
         "name": "feature_1_content", 
         "content_nt": "(Matthieu 1)\r\n\r\n**1flow** s'adresse \u00e0 toutes les personnes qui traitent de l'information\u00a0; autant dire un paquet de monde\u00a0! \r\n\r\nEn tant que professionnel, quel que soit [votre secteur d'activit\u00e9](# \"1flow s'adapte\u00a0: Internet, Services, Veille concurrentielle,  RP, Droit, Banques, Finances, Assurances, Sant\u00e9, ONG\u2026\"), **1flow** vous aidera \u00e0 booster votre veille et vos recherches. \r\n\r\nA titre personnel, suivre les tendances du jardinage, des nouvelles technologies, du d\u00e9veloppement durable ou de toute autre passion ou cause qui vous tient \u00e0 coeur sera un jeu d'enfant.\r\n\r\nEt enfin, **1flow** est ultra-simple d'utilisation. Les geeks comme les non-geeks sont les bienvenus\u00a0!\r\n\r\n\r\n(VERSION VALIDEE AVEC OLIVIER)\r\n**1flow** s'adresse \u00e0 toutes les personnes qui traitent de l'information\u00a0; autant dire un paquet de monde\u00a0! \r\n\r\nEn tant que professionnel, quelque soit [votre secteur d'activit\u00e9](# \"1flow s'adapte\u00a0: Internet, Veille concurrentielle,  RP, Droit, Banques, Finances, Assurances, Sant\u00e9, ONG, Services\u2026\"), **1flow** vous aidera \u00e0 booster votre veille et vos recherches. \r\n\r\nEn tant qu'individu, suivre les tendances de la mode ou de la cuisine sera un jeu d'enfant.\r\n\r\nEt enfin, **1flow** est ultra-simple d'utilisation. Les geeks comme les non-geeks sont les bienvenus\u00a0!", 
         "content_en": "**1flow** is made for every person who deals with online information. Looks like everybody! \r\n\r\nAs a professional, no matter [your industry](# \"1flow adapts:  Internet, Services, Competitive Intelligence, PR, Law, Banking, Finance, Insurance, Health, NGO\u2026\"), **1flow** will help you improving your watch and your research to deliver better results. \r\n\r\nAs an individual, you'll find it easy as a pie to follow the latest trends in gardening, in new technologies, in sustainable development or in any other passion or cause that matters to you.\r\n\r\nLast but not least, **1flow** is damn simple to use. No need to be a computer expert. Everybody's welcome!"
@@ -125,7 +114,6 @@
     "model": "landing.landingcontent", 
     "fields": {
         "content_fr": "Fonctionnalit\u00e9s \u00e0 venir", 
-        "content_en-gb": "", 
         "name": "feature_2_title", 
         "content_nt": "", 
         "content_en": "Long term features"
@@ -136,7 +124,6 @@
     "model": "landing.landingcontent", 
     "fields": {
         "content_fr": "- Lisez toutes vos sources dans **1flow**\u00a0: blogs, tumblrs, twitter, scoop.it, sites d'informations\u2026\r\n- Archivez tout ce que vous lisez. Jusqu'\u00e0 la fin des temps.\r\n- Bien \u00e9videmment\u00a0: notez, \u00e9tiquettez, classifiez, annotez, partagez et commentez avec vos coll\u00e8gues d'\u00e9quipes th\u00e9matiques.\r\n- Ne cliquez plus jamais sur des liens raccourcies ou des liens\u00a0\u00ab\u00a0*lire la suite*\u00a0\u00bb\u00a0: lisez les articles entiers directement dans **1flow**.\r\n- Acc\u00e9dez instantan\u00e9ment aux contenus que vous avez surlign\u00e9s sans avoir besoin d'ouvrir \u00e0 nouveau l'article original.\r\n\r\nEt ce n'est qu'un avant-go\u00fbt\u2026", 
-        "content_en-gb": "", 
         "name": "feature_2_content", 
         "content_nt": "WARNING: US and UK versions differ: \"for ever\" and \"forever\", cf:\r\n\r\n\r\n* \"For ever\" is only used in British English. American English only has\r\n\"forever\". http://www.grammarphobia.com/blog/2012/02/forever.html\r\n\r\n`read more\u00a0\u00bb`", 
         "content_en": "- Read all your sources in **1flow**: blogs, tumblrs, twitter, scoop.it, news and information websites\u2026\r\n- Archive all the information you read. Forever.\r\n- Obviously: rate it, tag it, annotate it, classify it, share it, comment it with friends and co-workers inside thematic-driven teams.\r\n- No more shortened URLs nor \u201c*read more*\u201d links: read full articles directly in **1flow**.\r\n- Instantly access the information you have highlighted without the need to re-open the full article.\r\n\r\nAnd that's just a sneak peak!"
@@ -147,7 +134,6 @@
     "model": "landing.landingcontent", 
     "fields": {
         "content_fr": "Google Reader\u00a0?", 
-        "content_en-gb": "", 
         "name": "feature_3_title", 
         "content_nt": "", 
         "content_en": "Google Reader users"
@@ -158,7 +144,6 @@
     "model": "landing.landingcontent", 
     "fields": {
         "content_fr": "Comme vous, nous avons \u00e9t\u00e9 attrist\u00e9s de la fermeture annonc\u00e9e de Reader par Google le 1er Juillet prochain.\r\n\r\nLa bonne nouvelle, c'est que **1flow** vous permettra de migrer tous vos abonnements ainsi que le contenu lu/favori en un clic.\r\n\r\nNous ferons de notre mieux pour vous offrir une exp\u00e9rience digne de Google Reader, et surtout aller plus loin avec de nouvelles fonctionnalit\u00e9s innovantes\u00a0!", 
-        "content_en-gb": "", 
         "name": "feature_3_content", 
         "content_nt": "(VARIANTE MATTHIEU 1)\r\nComme vous, nous avons \u00e9t\u00e9 attrist\u00e9s de la fermeture annonc\u00e9e de Reader par Google le 1er Juillet prochain.\r\n\r\nLa bonne nouvelle, c'est que **1flow** vous permettra de migrer tous vos abonnements ainsi que le contenu lu/favori en un clic.\r\n\r\nNous ferons de notre mieux pour vous offrir une exp\u00e9rience digne de Google Reader, et surtout aller plus loin avec de nouvelles fonctionnalit\u00e9s innovantes\u00a0!\r\n\r\n\r\n(VERSION ACTUELLE VALIDEE AVEC OLIVIER)\r\n\r\nComme vous, nous avons \u00e9t\u00e9 attrist\u00e9s de la fermeture annonc\u00e9e de Reader par Google le 1er Juillet prochain.\r\n\r\nLa bonne nouvelle, c'est que **1flow** vous permettra de migrer tous vos abonnements ainsi que le contenu lu/favori en un clic.\r\n\r\nNous ferons de notre mieux pour offrir une exp\u00e9rience RSS hors du commun, et m\u00eame aller plus loin avec de nouvelles fonctionnalit\u00e9s excellentes\u00a0!", 
         "content_en": "Like you, we were sad when Google announced Reader closing its doors on the 1st of july. We all have valuable data there.\r\n\r\nThe good news is that **1flow** enables you to migrate all your Google Reader subscriptions along with your read/starred content  in one click. \r\n\r\nAnd we'll do our best to provide an experience that is worthy of Google Reader, and even go beyond with new exciting features!"
@@ -169,7 +154,6 @@
     "model": "landing.landingcontent", 
     "fields": {
         "content_fr": "Rejoindre la beta", 
-        "content_en-gb": "", 
         "name": "feature_4_title", 
         "content_nt": "", 
         "content_en": "Joining the beta"
@@ -180,7 +164,6 @@
     "model": "landing.landingcontent", 
     "fields": {
         "content_fr": "Le 15 Juin prochain, vous embarquerez sur la version Beta de **1flow**.\r\n\r\nNous prendrons soin de vous comme d'un passager premi\u00e8re classe, car nous b\u00e2tissons **1flow** pour *vous*.\r\n\r\nNous avons d\u00e9j\u00e0 un plan de vol bien rempli avec de nombreuses fonctionnalit\u00e9s \u00e9tonnantes \u00e0 venir\u00a0; mais [vos retours et vos id\u00e9es][feedback] seront toujours les bienvenus\u00a0!\r\n\r\nPour vous remercier de prendre part \u00e0 ce voyage avec nous, vous b\u00e9n\u00e9ficierez d'avantages incroyables lorsque nous d\u00e9voilerons les fonctionnalit\u00e9s premium de **1flow**.\r\n\r\n  [feedback]: #\r\n\"Cliquez sur le bouton \u00ab\u00a0Feedback\u00a0\u00bb \u00e0 droite de l'\u00e9cran pour nous \u00e9crire ou pour proposer la fonctionnalit\u00e9 dont vous r\u00eavez et voter pour celles qui ont d\u00e9j\u00e0 \u00e9t\u00e9 soumises.\"", 
-        "content_en-gb": "", 
         "name": "feature_4_content", 
         "content_nt": "On june 15th, you will embark onto the Beta version of **1flow**. \r\n\r\nWe'll take care of your every need like a first-class passenger, because we build **1flow** for *you*.\r\n\r\nWe already have a busy flight plan with t planan awesome feature-packed roadmap but your feedback and ideas will always be welcomed.\r\n\r\nAs a reward for having taken part in this journey, you will benefit from unbelievable advantages when we unveil the premium features of **1flow**.", 
         "content_en": "On june 15th, you will embark on the Beta version of **1flow**. \r\n\r\nWe'll take care of your every need like a first-class passenger, because we build **1flow** for *you*.\r\n\r\nWe already have a great flight plan with many awesome features to come, but your [feedback and ideas][feedback] will always be welcomed.\r\n\r\nAs a reward for having taken part in this journey, you will benefit from unbelievable advantages when we unveil the premium features of **1flow**.\r\n\r\n[feedback]: #\r\n\"Click the \u00ab\u00a0Feedback\u00a0\u00bb button on the right of your screen to write us or to suggest the feature of your dreams and vote for those which have been already submitted.\""
@@ -191,7 +174,6 @@
     "model": "landing.landingcontent", 
     "fields": {
         "content_fr": "group", 
-        "content_en-gb": "", 
         "name": "feature_1_icon", 
         "content_nt": "", 
         "content_en": "group"
@@ -202,7 +184,6 @@
     "model": "landing.landingcontent", 
     "fields": {
         "content_fr": "check", 
-        "content_en-gb": "", 
         "name": "feature_2_icon", 
         "content_nt": "ok\r\nheart\r\ncheck\r\nmagic", 
         "content_en": "check"
@@ -213,7 +194,6 @@
     "model": "landing.landingcontent", 
     "fields": {
         "content_fr": "google-plus-sign", 
-        "content_en-gb": "", 
         "name": "feature_3_icon", 
         "content_nt": "", 
         "content_en": "google-plus-sign"
@@ -224,7 +204,6 @@
     "model": "landing.landingcontent", 
     "fields": {
         "content_fr": "plane", 
-        "content_en-gb": "", 
         "name": "feature_4_icon", 
         "content_nt": "", 
         "content_en": "plane"
@@ -235,7 +214,6 @@
     "model": "landing.landingcontent", 
     "fields": {
         "content_fr": "\u00a9 2013, tous droits r\u00e9serv\u00e9s | l'\u00c9quipe **1flow** ", 
-        "content_en-gb": "", 
         "name": "footer_copyright", 
         "content_nt": "", 
         "content_en": "\u00a9 2013, all rights reserved | the **1flow** team"
@@ -246,7 +224,6 @@
     "model": "landing.landingcontent", 
     "fields": {
         "content_fr": "# Merci\u00a0!\r\n\r\n## Bienvenue \u00e0 bord de 1flow.\r\n\r\nNous sommes tr\u00e8s heureux de vous compter parmi nos premiers passagers. En attendant le d\u00e9collage, n'h\u00e9sitez pas \u00e0 inviter des voyageurs suppl\u00e9mentaires en partageant l'adresse [1flow.io](http://1flow.io) autour de vous.\r\n\r\n\u00c0 tr\u00e8s vite\u00a0!\r\n\r\n--\r\nOlivier Cortes & Matthieu Chaignot  \r\nCo-fondateurs de **1flow** et chasseurs d'inframation", 
-        "content_en-gb": "", 
         "name": "successful_thanks_content", 
         "content_nt": "", 
         "content_en": "# Thanks!\r\n\r\n## Welcome aboard 1flow.\r\n\r\nWe are very honored to count you as one of our first passengers. Waiting for the take off, do not hesitate to invite extra travellers by sharing [1flow.io](http://1flow.io) around you. \r\n\r\nSee you soon!\r\n\r\n--  \r\nOlivier Cortes & Matthieu Chaignot  \r\n**1flow** co-founders, inframation hunters\r\n"
@@ -257,7 +234,6 @@
     "model": "landing.landingcontent", 
     "fields": {
         "content_fr": "# Merci\u00a0!\r\n\r\n## Ravis de vous revoir\u00a0!\r\n\r\nVous \u00e9tiez d\u00e9j\u00e0 inscrit(e) pour recevoir une invitation. Nous ne vous avons pas oubli\u00e9(e), vous \u00eates bien sur la liste\u00a0:-D\r\n\r\n\u00c0 tr\u00e8s vite\u00a0!\r\n\r\n--\r\nOlivier Cortes & Matthieu Chaignot  \r\nCo-fondateurs de **1flow** et chasseurs d'inframation", 
-        "content_en-gb": "", 
         "name": "already_registered_thanks_content", 
         "content_nt": "", 
         "content_en": "# Thanks!\r\n\r\n## Welcome back! \r\n\r\nYou were already registered to get an invite to the beta. We haven't forgotten you, your are definitely on the list :-D\r\n\r\nSee you soon!\r\n\r\n--\r\nOlivier Cortes & Matthieu Chaignot  \r\n**1flow** co-founders, inframation hunters"
@@ -268,7 +244,6 @@
     "model": "landing.landingcontent", 
     "fields": {
         "content_fr": "# Merci\u00a0!\r\n\r\n## Vous \u00eates sur liste d'attente\r\n\r\nMerci de votre int\u00e9r\u00eat pour 1flow ! Toutes les invitations pour le vol inaugural ont d\u00e9j\u00e0 \u00e9t\u00e9 attribu\u00e9es. Mais pas d'inqui\u00e9tude, vous \u00eates d\u00e9sormais enregistr\u00e9(e) en bonne place sur notre liste d'attente et vous recevrez tr\u00e8s prochainement votre billet. \r\n\r\nA tr\u00e8s vite !\r\n\r\n--\r\nOlivier Cortes & Matthieu Chaignot  \r\nCo-fondateurs de **1flow** et chasseurs d'inframations", 
-        "content_en-gb": "", 
         "name": "no_invite_left_notice_content", 
         "content_nt": "", 
         "content_en": "# Thanks!\r\n\r\n## You are on the waiting list\r\n\r\nThank you for your interest in 1flow! All the invitations for the first flight have been already assigned. But don't worry, your are now registered in a very good position on our waiting list. So you will receive your invitation very soon. \r\n\r\nSee you soon!\r\n\r\n--  \r\nOlivier Cortes & Matthieu Chaignot  \r\n1flow co-founders, inframation hunters"
@@ -279,7 +254,6 @@
     "model": "landing.landingcontent", 
     "fields": {
         "content_fr": "", 
-        "content_en-gb": "", 
         "name": "baseline_site_subtitle", 
         "content_nt": "", 
         "content_en": "news & information management space"
@@ -290,7 +264,6 @@
     "model": "landing.landingcontent", 
     "fields": {
         "content_fr": "Bienvenue\u00a0!", 
-        "content_en-gb": "", 
         "name": "landing_page_title", 
         "content_nt": "", 
         "content_en": "Welcome!"
@@ -301,7 +274,6 @@
     "model": "landing.landingcontent", 
     "fields": {
         "content_fr": "Merci\u00a0!", 
-        "content_en-gb": "", 
         "name": "landing_thanks_title", 
         "content_nt": "", 
         "content_en": "Thanks!"
@@ -312,7 +284,6 @@
     "model": "landing.landingcontent", 
     "fields": {
         "content_fr": "https://docs.google.com/presentation/d/1CzGVEwLoGFq1F23BeWxT4ge0whuhFh9nElVlQAcH43k/embed?start=true&loop=false&delayms=400", 
-        "content_en-gb": "", 
         "name": "inframation_slides", 
         "content_nt": "", 
         "content_en": "https://docs.google.com/presentation/d/1Ki8oVVb1owX_65vttKOS6JXnKWQu5XFucHvUDsZUBvw/embed?start=true&loop=false&delayms=400"
