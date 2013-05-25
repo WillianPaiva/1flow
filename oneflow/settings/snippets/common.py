@@ -61,6 +61,9 @@ TRANSMETA_LANGUAGES = LANGUAGES + (
     ('nt', ugettext(u'Notes — variants')),
 )
 
+AUTH_USER_MODEL = 'core.SimpleUser'
+
+
 USE_I18N = True
 USE_L10N = True
 USE_TZ   = True

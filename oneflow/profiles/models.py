@@ -14,7 +14,8 @@ from django.utils.translation import ugettext_lazy as _
 
 class UserProfile(models.Model):
 
-    user = models.OneToOneField(User, related_name='profile',
+    user = models.OneToOneField(settings.AUTH_USER_MODEL,
+                                related_name='profile',
                                 on_delete=models.CASCADE)
 
     email_announcements = models.BooleanField(_('Email announcements'),
