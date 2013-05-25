@@ -92,6 +92,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'maintenancemode.middleware.MaintenanceModeMiddleware',
     #'GZipMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
 )
@@ -126,6 +127,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'django_reset',
     'south',
+    #'maintenancemode', — not needed at all, the middleware is sufficient.
     'transmeta',
     'redisboard',
     'markdown_deux',
@@ -135,6 +137,12 @@ INSTALLED_APPS = (
     'oneflow.profiles',
     'oneflow.landing',
     #'oneflow.core',
+)
+
+MAINTENANCE_MODE = os.path.exists(os.path.join(BASE_ROOT, 'MAINTENANCE_MODE'))
+
+MAINTENANCE_IGNORE_URLS = (
+    r'^/admin/.*',
 )
 
 MARKDOWN_DEUX_STYLES = {

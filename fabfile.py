@@ -30,6 +30,7 @@ import sparks.django.fabfile as sdf
 
 # Make the main deployment tasks immediately accessible
 runable, deploy, fast_deploy = sdf.runable, sdf.deploy, sdf.fast_deploy
+maintenance_mode, operational_mode = sdf.maintenance_mode, sdf.operational_mode
 
 # The Django project name
 env.project      = 'oneflow'
