@@ -61,7 +61,7 @@ TRANSMETA_LANGUAGES = LANGUAGES + (
     ('nt', ugettext(u'Notes — variants')),
 )
 
-AUTH_USER_MODEL = 'core.SimpleUser'
+#AUTH_USER_MODEL = 'core.SimpleUser'
 
 
 USE_I18N = True
@@ -218,7 +218,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'maintenancemode.middleware.MaintenanceModeMiddleware', 
+    'maintenancemode.middleware.MaintenanceModeMiddleware',
     #'django.middleware.gzip.GZipMiddleware',
     #'pipeline.middleware.MinifyHTMLMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
