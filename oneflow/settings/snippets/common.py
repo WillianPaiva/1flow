@@ -131,8 +131,7 @@ PIPELINE_CSS = {
             'vendor/bootstrap/stylesheets/bootstrap.css',
             'vendor/bootstrap/stylesheets/bootstrap-responsive.css',
         ),
-        'output_filename':
-            'css/bootstrap-responsive.css',
+        'output_filename': 'css/bootstrap-responsive.css',
     },
     'font-awesome': {
         'source_filenames': (
@@ -163,7 +162,10 @@ PIPELINE_CSS = {
 PIPELINE_JS = {
     'bootstrap': {
         'source_filenames': (
-            'vendor/bootstrap/javascripts/*.js',
+            'vendor/bootstrap/javascripts/bootstrap-*.js',
+            # NOTE: don't ever include the sole 'bootstrap.js',
+            # it will crash the pipeline compressor without any
+            # hint of where the crash occured #bughuntinghappyness.
         ),
         'output_filename': 'js/bootstrap.js',
     },
