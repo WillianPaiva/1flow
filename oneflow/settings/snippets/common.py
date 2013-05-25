@@ -117,8 +117,6 @@ PIPELINE_COMPILERS = (
     'pipeline.compilers.coffee.CoffeeScriptCompiler',
 )
 
-PIPELINE_DISABLE_WRAPPER = True
-
 PIPELINE_CSS = {
 
     # •••••••••••••••••••••••••••••••••••••••••••••••••••••••••• vendor
@@ -170,12 +168,17 @@ PIPELINE_CSS = {
 }
 
 PIPELINE_JS = {
+
+    # •••••••••••••••••••••••••••••••••••••••••••••••••••••••••• vendor
+
     'bootstrap': {
         'source_filenames': (
-            'vendor/bootstrap/js/bootstrap-*.js',
-            # NOTE: don't ever include the sole 'bootstrap.js',
-            # it will crash the pipeline compressor without any
-            # hint of where the crash occured #bughuntinghappyness.
+            # WARNING: order matters: tooltip must be included before popover.
+            'vendor/bootstrap/js/bootstrap-[a-o]*.js',
+            'vendor/bootstrap/js/bootstrap-t*.js',
+            'vendor/bootstrap/js/bootstrap-p*.js',
+            'vendor/bootstrap/js/bootstrap-[q-s]*.js',
+            'vendor/bootstrap/js/bootstrap-[u-z]*.js',
         ),
         'output_filename': 'js/bootstrap.js',
     },
@@ -193,12 +196,16 @@ PIPELINE_JS = {
         ),
         'output_filename': 'js/moment.js',
     },
+
+    # ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••• 1flow
+
     'utils': {
         'source_filenames': (
             'js/utils/*.js',
         ),
         'output_filename': 'js/utils.js',
     },
+
     'core': {
         'source_filenames': (
             'js/core/core.js',
