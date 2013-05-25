@@ -29,6 +29,14 @@ def error_handler(request, *args, **kwargs):
                                             request)))
 
 
+def maintenance_mode(request, *args, **kwargs):
+    """ Self-explanatory, isn't it? """
+
+    return HttpResponseTemporaryServerError(render_to_string('503.html',
+                                            context_instance=RequestContext(
+                                            request)))
+
+
 def not_found_handler(request, *args, **kwargs):
     """ Our 404 custom handler.
 
