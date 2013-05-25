@@ -117,6 +117,8 @@ PIPELINE_COMPILERS = (
     'pipeline.compilers.coffee.CoffeeScriptCompiler',
 )
 
+PIPELINE_DISABLE_WRAPPER = True
+
 PIPELINE_CSS = {
     # NOTE: we don't compile bootstrap via django-pipeline, we rely on
     # compass watch/compile on the developer side to prepare CSS.
