@@ -122,14 +122,14 @@ PIPELINE_CSS = {
     # compass watch/compile on the developer side to prepare CSS.
     'bootstrap': {
         'source_filenames': (
-            'vendor/bootstrap/stylesheets/bootstrap.css',
+            'vendor/bootstrap/less/bootstrap.less',
         ),
         'output_filename': 'css/bootstrap.css',
     },
     'bootstrap-responsive': {
         'source_filenames': (
-            'vendor/bootstrap/stylesheets/bootstrap.css',
-            'vendor/bootstrap/stylesheets/bootstrap-responsive.css',
+            'vendor/bootstrap/less/bootstrap.less',
+            'vendor/bootstrap/less/responsive.less',
         ),
         'output_filename': 'css/bootstrap-responsive.css',
     },
@@ -146,6 +146,8 @@ PIPELINE_CSS = {
         'output_filename': 'css/font-awesome-ie7.css',
     },
     'landing': {
+        # This one is not "compiled" but simply copied. We wanted it
+        # to be integrated into the pipeline for consistency only.
         'source_filenames': (
             'css/landing-styles.css',
         ),
@@ -153,7 +155,7 @@ PIPELINE_CSS = {
     },
     'core': {
         'source_filenames': (
-            'stylesheets/styles.css',
+            'stylesheets/sass/styles.scss',
         ),
         'output_filename': 'css/core.css',
     }
@@ -162,7 +164,7 @@ PIPELINE_CSS = {
 PIPELINE_JS = {
     'bootstrap': {
         'source_filenames': (
-            'vendor/bootstrap/javascripts/bootstrap-*.js',
+            'vendor/bootstrap/js/bootstrap-*.js',
             # NOTE: don't ever include the sole 'bootstrap.js',
             # it will crash the pipeline compressor without any
             # hint of where the crash occured #bughuntinghappyness.
