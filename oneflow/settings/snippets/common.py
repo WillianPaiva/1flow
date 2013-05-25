@@ -120,8 +120,9 @@ PIPELINE_COMPILERS = (
 PIPELINE_DISABLE_WRAPPER = True
 
 PIPELINE_CSS = {
-    # NOTE: we don't compile bootstrap via django-pipeline, we rely on
-    # compass watch/compile on the developer side to prepare CSS.
+
+    # •••••••••••••••••••••••••••••••••••••••••••••••••••••••••• vendor
+
     'bootstrap': {
         'source_filenames': (
             'vendor/bootstrap/less/bootstrap.less',
@@ -135,6 +136,7 @@ PIPELINE_CSS = {
         ),
         'output_filename': 'css/bootstrap-responsive.css',
     },
+
     'font-awesome': {
         'source_filenames': (
             'vendor/font-awesome/font-awesome.less',
@@ -147,6 +149,9 @@ PIPELINE_CSS = {
         ),
         'output_filename': 'css/font-awesome-ie7.css',
     },
+
+    # ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••• 1flow
+
     'landing': {
         # This one is not "compiled" but simply copied. We wanted it
         # to be integrated into the pipeline for consistency only.
@@ -155,6 +160,7 @@ PIPELINE_CSS = {
         ),
         'output_filename': 'css/landing.css',
     },
+
     'core': {
         'source_filenames': (
             'stylesheets/sass/styles.scss',
