@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-22 17:51+0200\n"
+"POT-Creation-Date: 2013-05-25 10:49+0200\n"
 "PO-Revision-Date: 2013-05-15 00:26+0200\n"
 "Last-Translator:   <oc@1flow.io>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,27 +31,27 @@ msgstr "Nom complet"
 msgid "Announcements?"
 msgstr "Annonces ?"
 
-#: models.py:20
+#: models.py:21
 msgid "Email announcements"
 msgstr "Annonces E-mail"
 
-#: models.py:22
+#: models.py:23
 msgid "Register data"
 msgstr "Données d'enregistrement"
 
-#: models.py:24
+#: models.py:25
 msgid "Last modified"
 msgstr "Dernière modification"
 
-#: models.py:25
+#: models.py:26
 msgid "Current validation code"
 msgstr "Code de validation actuel"
 
-#: models.py:29
+#: models.py:30
 msgid "User profile"
 msgstr "Profil utilisateur"
 
-#: models.py:30
+#: models.py:31
 msgid "User profiles"
 msgstr "Profils utilisateurs"
 

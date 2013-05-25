@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-22 17:51+0200\n"
+"POT-Creation-Date: 2013-05-25 10:49+0200\n"
 "PO-Revision-Date: 2013-05-13 15:21+0200\n"
 "Last-Translator:   <admin@1flow.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,11 +51,27 @@ msgstr "^merci/(?P<already_registered>\\w+)?$"
 msgid "again"
 msgstr "encore"
 
-#: templates/landing_base.html:33
+#: templates/landing_base.html:32
+msgid "Head to Home"
+msgstr ""
+
+#: templates/landing_base.html:35
+msgid "Read our blog"
+msgstr ""
+
+#: templates/landing_base.html:40 templates/landing_base.html.py:42
+msgid "Register"
+msgstr ""
+
+#: templates/landing_base.html:45 templates/landing_base.html.py:47
+msgid "Sign in"
+msgstr ""
+
+#: templates/landing_base.html:52
 msgid "Follow us on twitter!"
 msgstr "Suivez-nous sur Twitter !"
 
-#: templates/landing_base.html:67
+#: templates/landing_base.html:84
 msgid "©2013, all right reserved | <strong>1flow</strong> team"
 msgstr "©2013, tous droits réservés | équipe <strong>1flow</strong>"
 

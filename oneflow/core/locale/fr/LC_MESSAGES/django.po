@@ -2,26 +2,34 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-24 13:42+0200\n"
+"POT-Creation-Date: 2013-05-25 10:49+0200\n"
 "PO-Revision-Date: 2013-05-24 13:44+0200\n"
 "Last-Translator:   <oc@1flow.io>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Translated-Using: django-rosetta 0.7.2\n"
 
-#: urls.py:7
+#: urls.py:10
 msgid "^home/$"
 msgstr "^accueil/$"
+
+#: urls.py:15
+msgid "^signin/$"
+msgstr ""
+
+#: urls.py:17
+msgid "^signout/$"
+msgstr ""
 
 #: models/nonrel.py:137
 msgid "Select whole paragraph on click"
@@ -35,9 +43,56 @@ msgstr ""
 msgid "Categories"
 msgstr ""
 
-#: templates/home.html:5
+#: templates/home.html:3
 msgid "Home"
 msgstr "Accueil"
+
+#: templates/signin.html:3 templates/ember/main.html:37
+msgid "Sign in…"
+msgstr "Connexion…"
+
+#: templates/signin.html:8
+msgid "1flow authentication"
+msgstr ""
+
+#: templates/signin.html:38
+#, python-format
+msgid ""
+"\n"
+"              New to 1flow? <a href=\"%(register_url)s\">Register</a>.\n"
+"          "
+msgstr ""
+
+#: templates/signin.html:43
+#, fuzzy
+msgid "Sign in!"
+msgstr "Connexion…"
+
+#: templates/signin.html:49
+msgid "Social authentication"
+msgstr ""
+
+#: templates/signout.html:5
+#, fuzzy
+msgid "Signed out."
+msgstr "Déconnexion"
+
+#: templates/signout.html:6
+msgid "Welcome back to anonymous world."
+msgstr ""
+
+#: templates/signout.html:6
+msgid "Thanks for spending some time on <strong>1flow</strong>."
+msgstr ""
+
+#: templates/signout.html:8
+#, python-format
+msgid ""
+"\n"
+"        Would you like to <a href=\"%(signin_url)s\">sign in again</a> with "
+"another account?\n"
+"    "
+msgstr ""
 
 #: templates/ember/main.html:16
 msgid "Help"
@@ -54,10 +109,6 @@ msgstr "Admin. Django"
 #: templates/ember/main.html:31
 msgid "Sign Out"
 msgstr "Déconnexion"
-
-#: templates/ember/main.html:37
-msgid "Sign in…"
-msgstr "Connexion…"
 
 #: templates/ember/main.html:44
 msgid "flowboard"
