@@ -218,6 +218,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'maintenancemode.middleware.MaintenanceModeMiddleware', 
     #'django.middleware.gzip.GZipMiddleware',
     #'pipeline.middleware.MinifyHTMLMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
@@ -243,7 +244,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     #'oneflow.core.context_processors.…',
 )
 
-#TEMPLATE_CONTEXT_PROCESSORS += ( )
 
 INSTALLED_APPS = (
     'raven.contrib.django.raven_compat',
@@ -259,6 +259,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'django_reset',
     'south',
+    #'maintenancemode', — not needed at all, the middleware is sufficient.
     'transmeta',
     'tastypie',
     'tastypie_mongoengine',
@@ -275,6 +276,12 @@ INSTALLED_APPS = (
     'oneflow.profiles',
     'oneflow.landing',
     'oneflow.core',
+)
+
+MAINTENANCE_MODE = os.path.exists(os.path.join(BASE_ROOT, 'MAINTENANCE_MODE'))
+
+MAINTENANCE_IGNORE_URLS = (
+    r'^/admin/.*',
 )
 
 MARKDOWN_DEUX_STYLES = {

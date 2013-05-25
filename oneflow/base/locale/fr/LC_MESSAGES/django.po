@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-24 13:42+0200\n"
+"POT-Creation-Date: 2013-05-15 00:20+0200\n"
 "PO-Revision-Date: 2013-05-14 13:35+0200\n"
 "Last-Translator:   <admin@1flow.net>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -102,6 +102,38 @@ msgid ""
 msgstr ""
 "Merci de ré-essayer dans un moment, ou de naviguer sur <a href=\"/\">une "
 "autre partie du site</a>."
+
+#: templates/503.html:5 templates/503.html.py:8
+msgid "Maintenance mode"
+msgstr "En maintenance"
+
+#: templates/503.html:9
+msgid "We are upgrading the plane engines with a major booster."
+msgstr "Nous améliorons les moteurs avec un tout nouveau turbo."
+
+#: templates/503.html:10
+msgid "<strong>1flow</strong> should be able to fly again in a few moments."
+msgstr ""
+"<strong>1flow</strong> devrait pouvoir voler de nouveau d'ici quelques "
+"instants."
+
+#: templates/503.html:11
+msgid "Please retry in a little while (just reload this page)."
+msgstr "Merci de ré-essayer plus tard (rechargez simplement cette page)."
+
+#: templates/503.html:12
+msgid ""
+"If the plane stays on the ground for too long, you should be able to get <a "
+"href=\"https://twitter.com/1flow_io\">more information on our twitter "
+"feed</a>."
+msgstr ""
+"Si l'avion reste au sol trop longtemps, vous devriez trouver <a "
+"href=\"https://twitter.com/1flow_io\">plus d'informations sur notre flux "
+"Twitter</a>."
+
+#: templates/503.html:13
+msgid "Thanks for your patience."
+msgstr "Merci de votre patience."
 
 #: templates/error_base.html:13
 #, python-format

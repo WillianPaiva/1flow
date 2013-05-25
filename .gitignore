@@ -1,6 +1,8 @@
 # Django's collectstatic
 /static
 
+/MAINTENANCE_MODE
+
 # PIP local installs
 /src
 

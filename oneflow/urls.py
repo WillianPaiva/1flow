@@ -10,8 +10,9 @@ from .api import v1_api
 
 admin.autodiscover()
 
-handler500 = 'oneflow.base.views.error_handler'
 handler404 = 'oneflow.base.views.not_found_handler'
+handler500 = 'oneflow.base.views.error_handler'
+handler503 = 'oneflow.base.views.maintenance_mode'
 
 # urlpatterns = patterns('',
 #     url(r'^sitemap\.xml$', 'sitemap.view', name='sitemap_xml'),

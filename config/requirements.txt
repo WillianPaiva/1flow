@@ -7,6 +7,7 @@ django-absolute==0.3
 django-bcrypt==0.9.2
 django-debug-toolbar==0.9.4
 django-grappelli==2.4.4
+django-maintenancemode==0.10
 django-markdown-deux==1.0.4
 django-memcache-status==1.1
 django-mongodb-engine==0.4.0
