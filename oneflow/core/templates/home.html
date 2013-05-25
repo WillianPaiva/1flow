@@ -26,8 +26,7 @@
     {% compressed_js 'utils' %}
     {% compressed_js 'core' %}
 
-    {# This must stay here (in the Django template)
-        to catch the server-side current language. #}
+    {# This must stay here (in the template) to get the server-side language. #}
     <script type="text/javascript">
         moment.lang('{{ LANGUAGE_CODE }}');
     </script>
