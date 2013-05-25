@@ -1,0 +1,6 @@
+/* line 2, ../sass/_forms.scss */
+.form-login .form-actions {
+  padding-left: 0;
+  text-align: inherit;
+  background-color: transparent;
+}
