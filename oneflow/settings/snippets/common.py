@@ -151,7 +151,7 @@ PIPELINE_CSS = {
     },
     'core': {
         'source_filenames': (
-            'sass/styles.scss',
+            'stylesheets/styles.css',
         ),
         'output_filename': 'css/core.css',
     }

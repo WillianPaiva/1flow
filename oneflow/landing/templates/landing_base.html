@@ -87,3 +87,14 @@
   </div>
 </footer>
 {% endblock body %}
+
+{% block extrajs_footer %}
+  {% compressed_js 'bootstrap' %}
+
+  <script type="text/javascript">
+    $('a.link-tooltip').tooltip();
+    try {
+        $("#lang-flags input[type=image]").tooltip({placement: 'bottom'});
+    } catch(err) {};
+  </script>
+{% endblock extrajs_footer %}

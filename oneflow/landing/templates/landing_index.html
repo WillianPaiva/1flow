@@ -94,6 +94,7 @@
 {% endblock landing_features %}
 
 {% block extrajs_footer %}
+  {{ block.super }}
   <script type="text/javascript">
     $('.feature a').tooltip();
     $('#promise_right a').tooltip();

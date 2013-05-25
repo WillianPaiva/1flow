@@ -20,16 +20,15 @@
 {% block extrajs_footer %}
 
     {% emberpie_js %}
-
-    {% js 'js/bootstrap.min.js' %}
-
+    {% compressed_js 'bootstrap' %}
     {% compressed_js 'showdown' %}
     {% compressed_js 'moment' %}
     {% compressed_js 'utils' %}
     {% compressed_js 'core' %}
 
+    {# This must stay here (in the Django template)
+        to catch the server-side current language. #}
     <script type="text/javascript">
-        {# This must stay here to catch the Django current language. #}
         moment.lang('{{ LANGUAGE_CODE }}');
     </script>
 
