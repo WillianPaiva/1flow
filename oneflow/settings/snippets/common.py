@@ -115,18 +115,21 @@ PIPELINE_COMPILERS = (
 )
 
 PIPELINE_CSS = {
+    # NOTE: we don't compile bootstrap via django-pipeline, we rely on
+    # compass watch/compile on the developer side to prepare CSS.
     'bootstrap': {
         'source_filenames': (
-            'vendor/bootstrap/bootstrap.scss',
+            'vendor/bootstrap/stylesheets/bootstrap.css',
         ),
         'output_filename': 'css/bootstrap.css',
     },
     'bootstrap-responsive': {
         'source_filenames': (
-            'vendor/bootstrap/bootstrap.scss',
-            'vendor/bootstrap/bootstrap-responsive.scss',
+            'vendor/bootstrap/stylesheets/bootstrap.css',
+            'vendor/bootstrap/stylesheets/bootstrap-responsive.css',
         ),
-        'output_filename': 'css/bootstrap-responsive.css',
+        'output_filename':
+            'css/bootstrap-responsive.css',
     },
     'font-awesome': {
         'source_filenames': (
