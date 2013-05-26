@@ -6,7 +6,10 @@ from sparks.django.settings import include_snippets
 
 include_snippets(
     os.path.dirname(__file__), (
-        # no debug on OBI, we need to be in "real-life-mode".
+        '000_nobother',
+        # production: we don't debug on OBI,
+        # we need to be in "real-life-mode",
+        # as closer as possible of real production servers.
         # Sentry will help us catch errors, anyway.
         '00_production',
         '1flow_io',
