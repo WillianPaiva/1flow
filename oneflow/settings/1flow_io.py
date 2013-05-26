@@ -6,6 +6,7 @@ from sparks.django.settings import include_snippets
 
 include_snippets(
     os.path.dirname(__file__), (
+        '000_nobother',
         '00_production',
         '1flow_io',
         'common',

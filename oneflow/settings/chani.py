@@ -6,6 +6,9 @@ from sparks.django.settings import include_snippets
 
 include_snippets(
     os.path.dirname(__file__), (
+        # Don't forget to deactivate nobother when we'ge got time to
+        # fix other's bugs. Just kidding…
+        '000_nobother',
         '00_development',
         # Activate this to test 404/500…
         #'00_production',
