@@ -8,9 +8,13 @@
 
 import logging
 
+from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
 from django.shortcuts import render
 from django.template import add_to_builtins
 from django.views.decorators.cache import never_cache
+
+from .forms import UserProfileForm
 
 LOGGER = logging.getLogger(__name__)
 
@@ -30,3 +34,21 @@ def home(request):
     """ will return the base of the Ember.JS application. """
 
     return render(request, 'home.html')
+
+
+@never_cache
+def profile(request):
+
+    if request.POST:
+        form = UserProfileForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('profile'))
+
+    else:
+        form = UserProfileForm(request.user.profile)
+
+    context = {'form': form}
+
+    return render(request, 'profile.html', context)
