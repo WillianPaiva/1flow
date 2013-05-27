@@ -20,6 +20,7 @@ include_snippets(
         'cache_development',
         'mail_production',
         # But it's a preview/test environment, still.
+        'celery_preview',
         'raven_preview',
         'common_preview',
         # Thus we get rosetta, and the Django Debug toolbar.

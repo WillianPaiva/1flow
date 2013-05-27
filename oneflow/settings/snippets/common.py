@@ -280,10 +280,12 @@ INSTALLED_APPS = (
     'south',
     #'maintenancemode', — not needed at all, the middleware is sufficient.
     'transmeta',
+    'logentry_admin',
     'tastypie',
     'tastypie_mongoengine',
     'overextends',
     'redisboard',
+    'djcelery',
     'memcache_status',
     'markdown_deux',
     'djangojs',
@@ -296,6 +298,10 @@ INSTALLED_APPS = (
     'oneflow.landing',
     'oneflow.core',
 )
+
+import djcelery
+djcelery.setup_loader()
+# BROKER and other settings are in celery_* snippets.
 
 MAINTENANCE_MODE = os.path.exists(os.path.join(BASE_ROOT, 'MAINTENANCE_MODE'))
 

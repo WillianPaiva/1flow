@@ -18,6 +18,7 @@ include_snippets(
         'db_development',
         'cache_common',
         'cache_development',
+        'celery_development',
         'mail_development',
         'raven_development',
         'common_development',

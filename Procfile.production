@@ -1,0 +1,4 @@
+web: gunicorn_django -b "0.0.0.0:$PORT" -w 4
+flower: python manage.py celery flower
+worker_high: python manage.py celery worker --priority high --loglevel=info
+worker_low: python manage.py celery worker --priority med,low --loglevel=info

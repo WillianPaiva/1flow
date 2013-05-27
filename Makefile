@@ -15,7 +15,7 @@ prod-fastdeploy:
 #	SPARKS_DJANGO_SETTINGS=chani_app ./manage.py runserver 0.0.0.0:8000
 
 runserver:
-	./manage.py runserver 0.0.0.0:8000
+	honcho -f Procfile.development start
 
 run: runserver
 
@@ -46,7 +46,6 @@ test-restart:
 
 prod-restart:
 	fab prod sdf.restart_services
-
 
 fixtures:
 	@find . -name '*.json' -path '*/fixtures/*'
