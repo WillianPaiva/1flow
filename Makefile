@@ -22,8 +22,11 @@ run: runserver
 test: tests
 
 tests:
-	#REUSE_DB=1 ./manage.py test oneflow
-	./manage.py test oneflow --noinput
+	# REUSE fails with
+	# "AttributeError: 'DatabaseCreation' object has no attribute '_rollback_works'"
+	# until https://github.com/jbalogh/django-nose/pull/101 is merged.
+	#REUSE_DB=1 ./manage.py test oneflow  --noinput --stop
+	./manage.py test oneflow --noinput --stop
 
 shell:
 	./manage.py shell
