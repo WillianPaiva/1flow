@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-25 10:49+0200\n"
-"PO-Revision-Date: 2013-05-13 15:21+0200\n"
-"Last-Translator:   <admin@1flow.net>\n"
+"POT-Creation-Date: 2013-05-26 11:13+0200\n"
+"PO-Revision-Date: 2013-05-25 22:14+0200\n"
+"Last-Translator:   <oc@1flow.io>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -53,19 +53,27 @@ msgstr "encore"
 
 #: templates/landing_base.html:32
 msgid "Head to Home"
-msgstr ""
+msgstr "Entrer dans l'application"
 
 #: templates/landing_base.html:35
 msgid "Read our blog"
-msgstr ""
+msgstr "Parcourez notre blog"
 
-#: templates/landing_base.html:40 templates/landing_base.html.py:42
+#: templates/landing_base.html:40
+msgid "Register for a new account"
+msgstr "Enregistrez un nouveau compte"
+
+#: templates/landing_base.html:42
 msgid "Register"
-msgstr ""
+msgstr "Enregistrement"
 
-#: templates/landing_base.html:45 templates/landing_base.html.py:47
+#: templates/landing_base.html:45
+msgid "Identify yourself to access the service"
+msgstr "Identifiez-vous pour accéder au service"
+
+#: templates/landing_base.html:47
 msgid "Sign in"
-msgstr ""
+msgstr "Connexion"
 
 #: templates/landing_base.html:52
 msgid "Follow us on twitter!"
