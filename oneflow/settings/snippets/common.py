@@ -61,8 +61,8 @@ TRANSMETA_LANGUAGES = LANGUAGES + (
     ('nt', ugettext(u'Notes — variants')),
 )
 
-#AUTH_USER_MODEL = 'core.SimpleUser'
-
+# We use oneflow.base.models.User as a drop-in replacement.
+AUTH_USER_MODEL = 'base.User'
 
 USE_I18N = True
 USE_L10N = True
@@ -242,6 +242,8 @@ MIDDLEWARE_CLASSES = (
     #'pipeline.middleware.MinifyHTMLMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
 )
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 
 TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT, 'templates')
