@@ -9,4 +9,4 @@ class UserProfileForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
-        #fields = ('email_announcements', )
+        fields = ('email_announcements', )
