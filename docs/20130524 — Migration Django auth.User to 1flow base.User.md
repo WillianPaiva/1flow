@@ -1,25 +1,27 @@
 
 ## Migration from Django user schema to 1flow user schema
 
-    fab prod sdf.getdata:profiles
+    ENV=test
 
-    fab prod sdf.getdata:auth.User
+    fab ${ENV} sdf.getdata:profiles
+
+    fab ${ENV} sdf.getdata:auth.User
     # edit auth.User > remove 'username'
 
     # should re-create admin
-    fab prod sdf.syncdb
+    fab ${ENV} sdf.syncdb
 
-    fab prod command:'./manage.py reset profiles --noinput'
+    fab ${ENV} command:'./manage.py reset profiles --noinput'
 
     # Why? see http://stackoverflow.com/a/16071185/654755
-    fab prod command:'./manage.py reset auth --noinput'
+    fab ${ENV} command:'./manage.py reset auth --noinput'
 
     # We need to reset logentry.
-    fab prod command:'./manage.py reset admin --noinput'
+    fab ${ENV} command:'./manage.py reset admin --noinput'
 
-    fab prod sdf.putdata
+    fab ${ENV} sdf.putdata
         # modified auth.User
-    fab prod sdf.putdata
+    fab ${ENV} sdf.putdata
         # profiles
 
 ## Form adaptations
