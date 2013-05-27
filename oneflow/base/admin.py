@@ -1,18 +1,21 @@
 # -*- coding: utf-8 -*-
 
 import csv
+
 from django.db import transaction
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
+from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template.defaultfilters import slugify
 from django.shortcuts import get_object_or_404
 from django.contrib import admin
 from django.contrib import messages
-from django.contrib.auth.forms import AdminPasswordChangeForm
 from django.template.response import TemplateResponse
 from django.contrib.admin.util import flatten_fieldsets
+from django.contrib.auth.forms import AdminPasswordChangeForm
 from django.utils.html import escape
+
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.utils.decorators import method_decorator
 from django.views.decorators.debug import sensitive_post_parameters
@@ -24,11 +27,6 @@ from .forms import UserChangeForm, UserCreationForm
 from sparks.django.admin import languages, truncate_field
 
 csrf_protect_m = method_decorator(csrf_protect)
-
-try:
-    from ..profiles.models import UserProfile
-except ImportError:
-    UserProfile = None
 
 
 # •••••••••••••••••••••••••••••••••••••••••••••••• Helpers and abstract classes
@@ -143,11 +141,6 @@ class CSVAdminMixin(admin.ModelAdmin):
 
 
 # ••••••••••••••••••••••••••••••••••••••••••••••• Base Django App admin classes
-
-
-class UserProfileInline(admin.StackedInline):
-    model = UserProfile
-    can_delete = False
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -303,7 +296,7 @@ class OneFlowUserAdmin(UserAdmin, CSVAdminMixin):
                     'date_joined', 'last_login',
                     'profile_email_announcements_display',
                     'is_active', 'is_staff', 'is_superuser',
-                    'groups_display', )
+                    'groups_display', 'profile_display', )
     list_display_links = ('email', 'full_name_display', )
     list_filter = ('profile__email_announcements',
                    'is_active', 'is_staff', 'is_superuser', )
@@ -312,7 +305,9 @@ class OneFlowUserAdmin(UserAdmin, CSVAdminMixin):
     search_fields = ('email', 'first_name', 'last_name', )
     change_list_template = "admin/change_list_filter_sidebar.html"
     change_list_filter_template = "admin/filter_listing.html"
-    inlines = [] if UserProfile is None else [UserProfileInline, ]
+    # Don't display the UserProfile inline, this will conflict with the
+    # post_save() signal in profiles.models. There is a race condition…
+    #inlines = [] if UserProfile is None else [UserProfileInline, ]
 
     def groups_display(self, obj):
         return u', '.join([g.name for g in obj.groups.all()]
@@ -332,6 +327,20 @@ class OneFlowUserAdmin(UserAdmin, CSVAdminMixin):
     profile_email_announcements_display.admin_order_field = 'profile__email_announcements' # NOQA
     profile_email_announcements_display.boolean = True
 
+    def profile_display(self, obj):
+        try:
+            profile = obj.profile
+
+        except:
+            return u'—'
+
+        return u'<a href="{0}">{1}</a>'.format(
+            reverse('admin:%s_%s_change' % (profile._meta.app_label,
+                    profile._meta.module_name), args=[profile.pk]),
+                    _('Edit'))
+
+    profile_display.short_description = _(u"Profile")
+    profile_display.allow_tags = True
 
 admin.site.register(User, OneFlowUserAdmin)
 

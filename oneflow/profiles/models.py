@@ -2,12 +2,11 @@
 
 import uuid
 
-from threading import Timer
 from jsonfield import JSONField
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.db import models, IntegrityError
+from django.db import models
 from django.db.models.signals import post_save
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
@@ -47,33 +46,8 @@ class UserProfile(models.Model):
 
 
 def create_user_profile(sender, instance, created, **kwargs):
-
-    def __create_user_profile(instance):
-        try:
-            profile, _ = UserProfile.objects.get_or_create(user=instance)
-
-        except IntegrityError, e:
-            if not 'duplicate key' in e.args[0]:
-                    raise
-    # 2 scenarii:
-    # - the creation is made via the admin, and the admin will have already
-    #   created the profile.
-    # - the user is created elsewhere, and we *must* create the userprofile
-    #   manually.
-    #
-    # We have to delay the creation, else we could trigger an integrity error
-    # in the first case, which would imply rolling back the whole user creation.
-    # In the Timer(), the creation will fail with the same error, but at least
-    # it will be OK on the admin side.
-    # In other conditions, the userprofile creation will just have been delayed
-    # a little, which I hope is not a serious problem.
-    #
-    # The LogEntry test is useless, because the log entry is created after
-    # the signals processing…
-    # if LogEntry.objects.latest('action_time').get_edited_object() != instance:
-
     if created:
-        t = Timer(1.0, __create_user_profile, args=(instance, ))
-        t.start()
+        UserProfile.objects.get_or_create(user=instance)
+
 
 post_save.connect(create_user_profile, sender=get_user_model())

@@ -33,8 +33,7 @@ def home(request):
             context = request_context_celery(request, {'new_user': user})
 
             # we need to delay to be sure the profile creation is done.
-            background_post_register_actions.apply_async((context, ),
-                                                         countdown=5)
+            background_post_register_actions.delay(context)
 
             return HttpResponseRedirect(reverse('landing_thanks'))
 
