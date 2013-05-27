@@ -97,10 +97,10 @@ msgid_plural ""
 "        "
 msgstr[0] ""
 "\n"
-"Plus que <span class=\"number\">%(counter)s</span> invitations disponibles."
+"Hâtez-vous, seulement <span class=\"number\">%(counter)s</span> invitation disponible !"
 msgstr[1] ""
 "\n"
-"Hâtez-vous, plus qu'une invitation disponible !"
+"Plus que <span class=\"number\">%(counter)s</span> invitations disponibles."
 
 #: templates/snippets/beta_invites_left.html:22
 msgid "No invite left!"
