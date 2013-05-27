@@ -1,3 +1,9 @@
+# Honcho/Foreman convenience Procfile.
+# In conjunction with the Makefile, you will get a
+# fully usable 1flow environment with this one-liner:
+#
+#   make runable && make run
+
 web: python manage.py runserver
 flower: python manage.py celery flower
 worker: python manage.py celery worker -E --loglevel=info --autoreload
