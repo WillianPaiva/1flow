@@ -59,15 +59,14 @@ msgstr "Suivez-nous sur Twitter !"
 msgid "©2013, all right reserved | <strong>1flow</strong> team"
 msgstr "©2013, tous droits réservés | équipe <strong>1flow</strong>"
 
-#: templates/landing_index.html:18
-#, python-format
+#: templates/landing_index.html:17
 msgid ""
 "\n"
-"                          <strong>1flow</strong> opens in %(timer)s.\n"
+"                          <strong>1flow</strong> beta will open soon!\n"
 "                        "
 msgstr ""
 "\n"
-"<strong>1flow</strong> ouvre dans %(timer)s."
+"La beta de <strong>1flow</strong> ouvre très bientôt !"
 
 #: templates/snippets/beta_invites_left.html:6
 #, python-format
