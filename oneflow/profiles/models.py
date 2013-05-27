@@ -27,6 +27,9 @@ class UserProfile(models.Model):
     hash_code = models.CharField(_(u'Current validation code'), max_length=32,
                                  default=lambda: uuid.uuid4().hex)
 
+    data = JSONField(_('profile data, as JSON'),
+                     default='{}', blank=True)
+
     class Meta:
         verbose_name = _(u'User profile')
         verbose_name_plural = _(u'User profiles')
