@@ -19,6 +19,12 @@ runserver:
 
 run: runserver
 
+test: tests
+
+tests:
+	#REUSE_DB=1 ./manage.py test oneflow
+	./manage.py test oneflow --noinput
+
 shell:
 	./manage.py shell
 
