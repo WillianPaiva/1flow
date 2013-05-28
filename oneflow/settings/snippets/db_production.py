@@ -1,8 +1,8 @@
 
 DATABASES['default'] = dj_database_url.config(
-    default='postgres://oneflow:8jxcWaAfPJT3mV@10.0.3.1/oneflow')
+    default='postgres://oneflow:8jxcWaAfPJT3mV@{0}/oneflow'.format(MAIN_SERVER))
 
-mongoengine.connect('oneflow', host='10.0.3.1')
+mongoengine.connect('oneflow', host=MAIN_SERVER)
 
-SESSION_REDIS_HOST = '10.0.3.1'
+SESSION_REDIS_HOST = MAIN_SERVER
 SESSION_REDIS_DB = 2
