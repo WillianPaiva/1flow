@@ -3,6 +3,8 @@
 
     ENV=test
 
+    fab ${ENV} maint
+
     fab ${ENV} sdf.getdata:profiles
 
     fab ${ENV} sdf.getdata:auth.User
@@ -23,6 +25,11 @@
         # modified auth.User
     fab ${ENV} sdf.putdata
         # profiles
+
+
+    restart / clean the supervisor configuration
+
+    fab ${ENV} op
 
 ## Form adaptations
 
