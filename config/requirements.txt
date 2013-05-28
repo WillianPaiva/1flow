@@ -17,6 +17,7 @@ django-maintenancemode==0.10
 django-markdown-deux==1.0.4
 django-memcache-status==1.1
 django-mongodb-engine==0.4.0
+django-object-tools==0.0.7
 django-overextends==0.2.2
 django-pipeline-compass-rubygem==0.1.8
 django-pipeline-compass==0.1.4
@@ -25,6 +26,7 @@ django-redis-sessions==0.4.0
 django-redisboard==0.2.5
 django-secure==1.0
 django-social-auth==0.7.23
+django-south-admin==0.0.3
 django-tastypie-mongoengine==0.4.1
 django-tastypie==0.9.15
 django-transmeta==0.6.10

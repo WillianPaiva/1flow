@@ -10,7 +10,7 @@ import os
 # This is imported here to benefit to all other included snippets.
 from sparks import platform # NOQA
 
-MAIN_SERVER='91.121.220.149'
+MAIN_SERVER = '91.121.220.149'
 
 # We need to go down 2 times because the starting point of these settings is
 # `project/settings/__init__.py`, instead of good old `project/settings.py`.
@@ -285,6 +285,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'django_reset',
     'south',
+    'south_admin',
     #'maintenancemode', — not needed at all, the middleware is sufficient.
     'transmeta',
     'logentry_admin',
