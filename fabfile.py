@@ -22,15 +22,15 @@
 import os
 import pwd
 
-from fabric.api import env, task, run, local as fablocal
-from fabric.context_managers import cd
+from fabric.api import env, task, local as fablocal
 
-from sparks.fabric import with_remote_configuration
+from sparks.fabric import with_remote_configuration, set_roledefs_and_hosts
 import sparks.django.fabfile as sdf
 
 # Make the main deployment tasks immediately accessible
 runable, deploy, fast_deploy = sdf.runable, sdf.deploy, sdf.fast_deploy
 maintenance_mode, operational_mode = sdf.maintenance_mode, sdf.operational_mode
+run_command = sdf.run_command
 
 # The Django project name
 env.project      = 'oneflow'
@@ -38,7 +38,6 @@ env.virtualenv   = '1flow'
 env.user         = '1flow'
 # Where is the django project located
 env.root         = '/home/1flow/www/src'
-env.host_string  = 'obi.1flow.io'
 env.environment  = 'test'
 env.pg_superuser = 'oneflow_admin'
 env.pg_superpass = 'ZQmeDuNF7b2GMC'
@@ -46,8 +45,17 @@ env.pg_superpass = 'ZQmeDuNF7b2GMC'
 
 @task
 def local():
-    env.host_string = 'localhost'
     env.environment = 'test'
+    # NOTE: for a local environment, this roledefs is a pure placebo,
+    # because sparks will not try to deploy anything via supervisor.
+    # We already have a feature-complete-and-ready Profile.development.
+    set_roledefs_and_hosts({
+        'web': ['localhost'],
+        'worker': ['localhost'],
+        'flower': ['localhost'],
+        #'redis': ['localhost'],
+        #'db': ['localhost'],
+    })
     env.user        = pwd.getpwuid(os.getuid()).pw_name
     env.root        = os.path.expanduser('~/sources/1flow')
     env.env_was_set = True
@@ -67,6 +75,16 @@ def preview(branch=None):
         start LXC
 
     """
+
+    set_roledefs_and_hosts({
+        'web': ['obi.1flow.io'],
+        'worker_high': ['obi.1flow.io'],
+        'worker_low': ['worbi.1flow.io'],
+        'flower': ['worbi.1flow.io'],
+        #'redis': ['duncan.licorn.org'],
+        #'db': ['duncan.licorn.org'],
+    })
+
     if branch is None:
         env.branch = fablocal('git rev-parse --abbrev-ref HEAD',
                               capture=True).strip()
@@ -103,23 +121,16 @@ def oneflowapp():
 
 @task(alias='prod')
 def production():
-    env.host_string = '1flow.io'
     env.environment = 'production'
+    set_roledefs_and_hosts({
+        'web': ['1flow.io'],
+        'worker_high': ['worker01.1flow.io'],
+        'worker_low': ['worker02.1flow.io'],
+        'flower': ['worker01.1flow.io'],
+        #'redis': ['duncan.licorn.org'],
+        #'db': ['duncan.licorn.org'],
+    })
     env.env_was_set = True
-
-
-@task
-def command(cmd):
-    with sdf.activate_venv():
-        with cd(env.root):
-            run(cmd)
-
-
-@task
-def out(cmd):
-    with sdf.activate_venv():
-        with cd(env.root):
-            print(run(cmd) != '')
 
 
 @task
