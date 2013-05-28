@@ -52,6 +52,12 @@ Actions in telegraphic style:
     # edit .ssh/config … user:1flow
     ssh-copy-id worbi
     scp .bashrc worbi:
+
+    # SSH: worbi
+    install supervisor
+
+    # LOCAL
     workon 1flow
     cd ~/sources/1flow
     fab -H worbi.1flow.io test deploy
+
