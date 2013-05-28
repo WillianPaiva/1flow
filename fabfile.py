@@ -45,16 +45,15 @@ env.pg_superpass = 'ZQmeDuNF7b2GMC'
 
 @task
 def local():
-    env.environment = 'test'
     # NOTE: for a local environment, this roledefs is a pure placebo,
     # because sparks will not try to deploy anything via supervisor.
     # We already have a feature-complete-and-ready Profile.development.
     set_roledefs_and_hosts({
+        'db': ['localhost'],
         'web': ['localhost'],
         'worker': ['localhost'],
         'flower': ['localhost'],
         #'redis': ['localhost'],
-        #'db': ['localhost'],
     })
     env.user        = pwd.getpwuid(os.getuid()).pw_name
     env.root        = os.path.expanduser('~/sources/1flow')
@@ -77,12 +76,12 @@ def preview(branch=None):
     """
 
     set_roledefs_and_hosts({
+        'db': ['obi.1flow.io'],
         'web': ['obi.1flow.io'],
+        'flower': ['worbi.1flow.io'],
         'worker_high': ['obi.1flow.io'],
         'worker_low': ['worbi.1flow.io'],
-        'flower': ['worbi.1flow.io'],
         #'redis': ['duncan.licorn.org'],
-        #'db': ['duncan.licorn.org'],
     })
 
     if branch is None:
@@ -123,10 +122,11 @@ def oneflowapp():
 def production():
     env.environment = 'production'
     set_roledefs_and_hosts({
+        'db': ['1flow.io'],
         'web': ['1flow.io'],
-        'worker_high': ['worker01.1flow.io'],
+        'flower': ['1flow.io'],
+        'worker_high': ['1flow.io'],
         'worker_low': ['worker02.1flow.io'],
-        'flower': ['worker01.1flow.io'],
         #'redis': ['duncan.licorn.org'],
         #'db': ['duncan.licorn.org'],
     })
