@@ -1,4 +1,4 @@
--e git+https://github.com/Karmak23/sparks#egg=sparks-dev
+-e git+https://github.com/Karmak23/sparks@1.20.4#egg=sparks
 -e git+https://github.com/mbi/django-rosetta@b56350aa2da8d6a9ac8c7ff74d0f64e9d84ca096#egg=django_rosetta-dev
 -e git+https://github.com/platypus-creation/django-rosetta-grappelli.git@83eff3890b6881460f105b6ecd63ff055f51dba4#egg=django_rosetta_grappelli-dev
 django-nose==1.1
