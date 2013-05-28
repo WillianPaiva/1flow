@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 # Settings for 1flow.net (local development)
 
-import os
 from sparks.django.settings import include_snippets
 
 include_snippets(
-    os.path.dirname(__file__), (
+    (
         # Don't forget to deactivate nobother when we'ge got time to
         # fix other's bugs. Just kidding…
         '000_nobother',
@@ -25,7 +24,7 @@ include_snippets(
         'rosetta',
         'djdt',
     ),
-    globals()
+    __file__, globals()
 )
 
 # Override `1flow_net` for local development

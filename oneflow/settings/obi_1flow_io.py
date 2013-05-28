@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 # Settings for obi.1flow.net (test)
 
-import os
 from sparks.django.settings import include_snippets
 
 include_snippets(
-    os.path.dirname(__file__), (
+    (
         '000_nobother',
         # production: we don't debug on OBI,
         # we need to be in "real-life-mode",
@@ -27,7 +26,7 @@ include_snippets(
         'rosetta',
         'djdt',
     ),
-    globals()
+    __file__, globals()
 )
 
 # Override `1flow_io` for preview/test environment.

@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 # Settings for 1flow.net (production)
 
-import os
 from sparks.django.settings import include_snippets
 
 include_snippets(
-    os.path.dirname(__file__), (
+    (
         '000_nobother',
         '00_production',
         '1flow_io',
@@ -20,7 +19,7 @@ include_snippets(
         'common_production',
         #NOTE: *NEVER* 'rosetta' here. We can't get the new translations
         #   back from production to the git repo, due to to git-flow
-        #   design. Which makes perfect sense, anyway.
+        #   design. Which makes perfect sense in production, anyway.
     ),
-    globals()
+    __file__, globals()
 )
