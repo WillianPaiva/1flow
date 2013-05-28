@@ -14,7 +14,7 @@ from django.shortcuts import render
 from django.template import add_to_builtins
 from django.views.decorators.cache import never_cache
 
-from .forms import UserProfileForm
+from ..profiles.forms import UserProfileForm
 
 LOGGER = logging.getLogger(__name__)
 
