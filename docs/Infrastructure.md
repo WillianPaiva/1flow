@@ -18,3 +18,31 @@
 - Redis-sessions is **2**,
     - on preview, **12**.
 
+
+## Installation de nouveau nœud
+
+
+    # OVH: manager
+
+    # SSH: gurney
+    sudo lxc-create -n worbi.1flow.io -t ubuntu -- -b olive
+    # edit …/config -> lxc.network.ipv4 = …
+    # edit /etc/rc.local
+
+    # LOCAL
+    # edit .ssh/config … user:olive
+    cd ~/Dropbox
+
+    # NOTE: not needed in sparks 2.0
+    #fab -H worbi.1flow.io -- sudo apt-get -q update
+
+    fab -H worbi.1flow.io tasks.lxc_base
+
+    # SSH:worbi
+    sudo adduser 1flow --force-badname
+    sudo adduser 1flow sudo
+
+    # LOCAL
+    # edit .ssh/config … user:1flow
+    ssh-copy-id worbi
+    scp .bashrc worbi:
