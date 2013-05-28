@@ -6,4 +6,4 @@
 
 web: python manage.py runserver
 flower: python manage.py celery flower
-worker: python manage.py celery worker -E --loglevel=info --autoreload
+worker: python manage.py celery worker -E -B --loglevel=info --autoreload
