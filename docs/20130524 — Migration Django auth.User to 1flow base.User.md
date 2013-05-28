@@ -26,8 +26,9 @@
     fab ${ENV} sdf.putdata
         # profiles
 
-
+    # remove duplicate supervisor entries
     restart / clean the supervisor configuration
+
 
     fab ${ENV} op
 
