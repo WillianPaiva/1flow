@@ -245,7 +245,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.cache.FetchFromCacheMiddleware',
 )
 
-SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
+#SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
+SESSION_ENGINE = 'redis_sessions.session'
 
 TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT, 'templates')
@@ -288,6 +289,7 @@ INSTALLED_APPS = (
     'tastypie',
     'tastypie_mongoengine',
     'overextends',
+    'redis_sessions',
     'redisboard',
     'djcelery',
     'memcache_status',

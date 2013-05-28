@@ -4,3 +4,5 @@ DATABASES['default'] = dj_database_url.config(
 
 mongoengine.connect('oneflow_dev')
 
+SESSION_REDIS_HOST = 'localhost'
+SESSION_REDIS_DB = 2
