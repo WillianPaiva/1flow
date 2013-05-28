@@ -19,10 +19,16 @@
     - on preview, **12**.
 
 
-## Installation de nouveau nœud
+## Installing a new node
 
+Actions in telegraphic style:
 
     # OVH: manager
+    # edit DNS entries…
+
+    # SSH: duncan
+    # edit pg_hba.conf ?
+    # edit ~groups/local_config/iptables/iptables.d/* ?
 
     # SSH: gurney
     sudo lxc-create -n worbi.1flow.io -t ubuntu -- -b olive
@@ -46,7 +52,6 @@
     # edit .ssh/config … user:1flow
     ssh-copy-id worbi
     scp .bashrc worbi:
-
     workon 1flow
     cd ~/sources/1flow
     fab -H worbi.1flow.io test deploy
