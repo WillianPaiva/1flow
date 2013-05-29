@@ -56,6 +56,7 @@ env.repository   = 'olive@dev.1flow.net:1flow.git'
 def local():
     env.host_string = 'localhost'
     env.environment = 'test'
+    env.virtualenv  = '1flow-master'
     env.user        = pwd.getpwuid(os.getuid()).pw_name
     env.root        = os.path.expanduser('~/sources/1flow')
     env.env_was_set = True
