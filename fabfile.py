@@ -33,8 +33,8 @@ runable, deploy, fast_deploy = sdf.runable, sdf.deploy, sdf.fast_deploy
 maintenance_mode, operational_mode = sdf.maintenance_mode, sdf.operational_mode
 
 # The Django project name
-env.project      = 'oneflow'
-env.virtualenv   = '1flow'
+env.project    = 'oneflow'
+env.virtualenv = '1flow'
 
 # WARNING: don't set `env.user` here, it creates false-negatives when
 # bare-connecting to servers manually from the current directory. Eg.:
@@ -49,6 +49,7 @@ env.host_string  = 'obi.1flow.io'
 env.environment  = 'test'
 env.pg_superuser = 'oneflow_admin'
 env.pg_superpass = 'ZQmeDuNF7b2GMC'
+env.repository   = 'olive@dev1flow.net:1flow.git'
 
 
 @task
@@ -74,6 +75,8 @@ def preview():
         start LXC
 
     """
+
+    # we force the user because we can login as standard user there
     env.user        = '1flow'
     env.env_was_set = True
 
@@ -89,9 +92,10 @@ def zero():
     #     'flower': ['zero.1flow.io'],
     #     #'redis': ['zero.1flow.io'],
     # })
-    env.user        = pwd.getpwuid(os.getuid()).pw_name
+
+    # env.user is set via .ssh/config
     env.host_string = 'zero.1flow.io'
-    env.branch = 'master'
+    env.branch      = 'develop'
     env.env_was_set = True
 
 
@@ -121,6 +125,8 @@ def oneflowapp():
 
 @task(alias='prod')
 def production():
+
+    # we force the user because we can login as standard user there
     env.user        = '1flow'
     env.host_string = '1flow.io'
     env.environment = 'production'
@@ -150,3 +156,10 @@ def testapps(remote_configuration):
                     if app.startswith('{0}.'.format(env.project)))
 
     print(str(list(project_apps)))
+
+
+@task
+def firstdeploy():
+    deploy()
+    sdf.putdata('./oneflow/landing/fixtures/landing_2013-05-14_final-before-beta-opening.json') # NOQA
+    sdf.putdata('./oneflow/base/fixtures/base_2013-05-14_final-before-beta-opening.json') # NOQA
