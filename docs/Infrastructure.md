@@ -59,5 +59,8 @@ Actions in telegraphic style:
     # LOCAL
     workon 1flow
     cd ~/sources/1flow
+
+    # IF: worker
     fab -H worbi.1flow.io test deploy
 
+    # IF: web
