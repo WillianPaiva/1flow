@@ -41,7 +41,7 @@ compilemessages:
 	fab local sdf.compilemessages
 
 upgrade-requirements:
-	(cd config && pip-review -ai)
+	(cd config && pip-review -vai)
 
 update-requirements:
 	(cd config && pip-dump)
