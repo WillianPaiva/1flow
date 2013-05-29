@@ -33,8 +33,8 @@ runable, deploy, fast_deploy = sdf.runable, sdf.deploy, sdf.fast_deploy
 maintenance_mode, operational_mode = sdf.maintenance_mode, sdf.operational_mode
 
 # The Django project name
-env.project      = 'oneflow'
-env.virtualenv   = '1flow'
+env.project    = 'oneflow'
+env.virtualenv = '1flow'
 
 # WARNING: don't set `env.user` here, it creates false-negatives when
 # bare-connecting to servers manually from the current directory. Eg.:
@@ -49,6 +49,7 @@ env.host_string  = 'obi.1flow.io'
 env.environment  = 'test'
 env.pg_superuser = 'oneflow_admin'
 env.pg_superpass = 'ZQmeDuNF7b2GMC'
+env.repository   = 'olive@dev1flow.net:1flow.git'
 
 
 @task
