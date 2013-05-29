@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 # Settings for zero.1flow.io, a master clone used to validate migrations.
 
-import os
 from sparks.django.settings import include_snippets
 
 include_snippets(
-    os.path.dirname(__file__), (
+    (
         '000_nobother',
         '00_production',
         '1flow_io',
@@ -18,7 +17,7 @@ include_snippets(
         'raven_development',
         'common_production',
     ),
-    globals()
+    __file__, globals()
 )
 
 # Overide real production settings, to be able to distinguish.
