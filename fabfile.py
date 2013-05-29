@@ -94,7 +94,7 @@ def zero():
 
     # env.user is set via .ssh/config
     env.host_string = 'zero.1flow.io'
-    env.branch      = 'master'
+    env.branch      = 'develop'
     env.env_was_set = True
 
 
