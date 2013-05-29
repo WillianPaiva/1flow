@@ -74,6 +74,8 @@ def preview():
         start LXC
 
     """
+
+    # we force the user because we can login as standard user there
     env.user        = '1flow'
     env.env_was_set = True
 
@@ -89,9 +91,10 @@ def zero():
     #     'flower': ['zero.1flow.io'],
     #     #'redis': ['zero.1flow.io'],
     # })
-    env.user        = pwd.getpwuid(os.getuid()).pw_name
+
+    # env.user is set via .ssh/config
     env.host_string = 'zero.1flow.io'
-    env.branch = 'master'
+    env.branch      = 'master'
     env.env_was_set = True
 
 
@@ -121,6 +124,8 @@ def oneflowapp():
 
 @task(alias='prod')
 def production():
+
+    # we force the user because we can login as standard user there
     env.user        = '1flow'
     env.host_string = '1flow.io'
     env.environment = 'production'
