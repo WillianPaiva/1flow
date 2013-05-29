@@ -74,13 +74,14 @@ def preview():
 def zero():
     """ A master copy, restarted from scratch everytime to test migrations. """
 
-    set_roledefs_and_hosts({
-        'db': ['zero.1flow.io'],
-        'web': ['zero.1flow.io'],
-        'worker': ['zero.1flow.io'],
-        'flower': ['zero.1flow.io'],
-        #'redis': ['zero.1flow.io'],
-    })
+    # set_roledefs_and_hosts({
+    #     'db': ['zero.1flow.io'],
+    #     'web': ['zero.1flow.io'],
+    #     'worker': ['zero.1flow.io'],
+    #     'flower': ['zero.1flow.io'],
+    #     #'redis': ['zero.1flow.io'],
+    # })
+    env.host_string = 'zero.1flow.io'
     env.branch = 'master'
     env.env_was_set = True
 
