@@ -52,6 +52,7 @@ psycopg2==2.5
 py-bcrypt==0.3
 pylibmc==1.2.3
 pymongo==2.5.1
+pyScss==1.1.5
 pytz==2013b
 raven==3.3.7
 redis==2.7.5

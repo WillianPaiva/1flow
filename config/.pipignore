@@ -9,7 +9,6 @@ paramiko
 pep8
 pycrypto
 pyflakes
-pyScss
 python-dateutil
 python-openid
 six
