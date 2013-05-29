@@ -49,13 +49,14 @@ env.host_string  = 'obi.1flow.io'
 env.environment  = 'test'
 env.pg_superuser = 'oneflow_admin'
 env.pg_superpass = 'ZQmeDuNF7b2GMC'
-env.repository   = 'olive@dev1flow.net:1flow.git'
+env.repository   = 'olive@dev.1flow.net:1flow.git'
 
 
 @task
 def local():
     env.host_string = 'localhost'
     env.environment = 'test'
+    env.virtualenv  = '1flow-master'
     env.user        = pwd.getpwuid(os.getuid()).pw_name
     env.root        = os.path.expanduser('~/sources/1flow')
     env.env_was_set = True
