@@ -156,3 +156,10 @@ def testapps(remote_configuration):
                     if app.startswith('{0}.'.format(env.project)))
 
     print(str(list(project_apps)))
+
+
+@task
+def firstdeploy():
+    deploy()
+    sdf.putdata('./oneflow/landing/fixtures/landing_2013-05-14_final-before-beta-opening.json') # NOQA
+    sdf.putdata('./oneflow/base/fixtures/base_2013-05-14_final-before-beta-opening.json') # NOQA
