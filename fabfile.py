@@ -35,7 +35,14 @@ maintenance_mode, operational_mode = sdf.maintenance_mode, sdf.operational_mode
 # The Django project name
 env.project      = 'oneflow'
 env.virtualenv   = '1flow'
-env.user         = '1flow'
+
+# WARNING: don't set `env.user` here, it creates false-negatives when
+# bare-connecting to servers manually from the current directory. Eg.:
+#       paramiko.transport[DEBUG] userauth is OK
+#       paramiko.transport[INFO] Authentication (publickey) failed.
+# Whereas everything is OK from outside this directory.
+# Conclusion: it seems `env.user` overrides even the ~/.ssh/config values.
+
 # Where is the django project located
 env.root         = '/home/1flow/www/src'
 env.host_string  = 'obi.1flow.io'
@@ -67,6 +74,24 @@ def preview():
         start LXC
 
     """
+    env.user        = '1flow'
+    env.env_was_set = True
+
+
+@task
+def zero():
+    """ A master clone, restarted from scratch everytime to test migrations. """
+
+    # set_roledefs_and_hosts({
+    #     'db': ['zero.1flow.io'],
+    #     'web': ['zero.1flow.io'],
+    #     'worker': ['zero.1flow.io'],
+    #     'flower': ['zero.1flow.io'],
+    #     #'redis': ['zero.1flow.io'],
+    # })
+    env.user        = pwd.getpwuid(os.getuid()).pw_name
+    env.host_string = 'zero.1flow.io'
+    env.branch = 'master'
     env.env_was_set = True
 
 
@@ -96,6 +121,7 @@ def oneflowapp():
 
 @task(alias='prod')
 def production():
+    env.user        = '1flow'
     env.host_string = '1flow.io'
     env.environment = 'production'
     env.env_was_set = True
