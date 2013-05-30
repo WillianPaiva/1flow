@@ -173,7 +173,7 @@ def testapps(remote_configuration):
     print(str(list(project_apps)))
 
 
-@task
+@task(aliases=('first', ))
 def firstdeploy():
     deploy()
     sdf.putdata('./oneflow/landing/fixtures/landing_2013-05-14_final-before-beta-opening.json') # NOQA
