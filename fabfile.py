@@ -24,7 +24,7 @@ import os
 from fabric.api import env, task, local as fablocal
 
 from sparks.fabric import (with_remote_configuration,
-                           set_roledefs_and_roles_or_hosts)
+                           set_roledefs_and_parallel)
 import sparks.django.fabfile as sdf
 
 # Make the main deployment tasks immediately accessible
@@ -56,7 +56,7 @@ def local():
     # NOTE: for a local environment, this roledefs is a pure placebo,
     # because sparks will not try to deploy anything via supervisor.
     # We already have a feature-complete-and-ready Profile.development.
-    set_roledefs_and_roles_or_hosts({
+    set_roledefs_and_parallel({
         'db': ['localhost'],
         'web': ['localhost'],
         'worker': ['localhost'],
@@ -84,9 +84,10 @@ def preview(branch=None):
 
     """
 
-    set_roledefs_and_roles_or_hosts({
+    set_roledefs_and_parallel({
         'db': ['obi.1flow.io'],
         'web': ['obi.1flow.io'],
+        'lang': ['obi.1flow.io'],
         'flower': ['worbi.1flow.io'],
         'worker_high': ['obi.1flow.io'],
         'worker_low': ['worbi.1flow.io'],
@@ -106,10 +107,10 @@ def preview(branch=None):
 
 
 @task
-def zero():
+def zero(branch=None):
     """ A master clone, restarted from scratch everytime to test migrations. """
 
-    set_roledefs_and_roles_or_hosts({
+    set_roledefs_and_parallel({
         'db': ['zero.1flow.io'],
         'web': ['zero.1flow.io'],
         'worker': ['zero.1flow.io'],
@@ -117,8 +118,12 @@ def zero():
         #'redis': ['zero.1flow.io'],
     })
 
+    if branch is None:
+        env.branch = 'develop'
+    else:
+        env.branch = branch
+
     # env.user is set via .ssh/config
-    env.branch      = 'develop'
     env.env_was_set = True
 
 
@@ -151,7 +156,7 @@ def production():
     # we force the user because we can login as standard user there
     env.user        = '1flow'
     env.environment = 'production'
-    set_roledefs_and_roles_or_hosts({
+    set_roledefs_and_parallel({
         'db': ['1flow.io'],
         'web': ['1flow.io'],
         'flower': ['1flow.io'],
