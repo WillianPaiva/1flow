@@ -53,18 +53,11 @@ env.repository   = 'olive@dev.1flow.net:1flow.git'
 
 @task
 def local():
-    # NOTE: for a local environment, this roledefs is a pure placebo,
-    # because sparks will not try to deploy anything via supervisor.
-    # We already have a feature-complete-and-ready Profile.development.
-    set_roledefs_and_parallel({
-        'db': ['localhost'],
-        'web': ['localhost'],
-        'worker': ['localhost'],
-        'flower': ['localhost'],
-        #'redis': ['localhost'],
-    })
-    # NO NEED: fabric will use current user, if no `env.user` is defined.
-    #env.user        = pwd.getpwuid(os.getuid()).pw_name
+    # NOTE: a local environment doesn't need roledefs.
+    # We use Profile.development for running processes.
+    # We just need a host_string for direct calls like:
+    #       fab local sdf.requirements
+    env.host_string = 'localhost'
     env.root        = os.path.expanduser('~/sources/1flow')
     env.env_was_set = True
 
