@@ -26,7 +26,7 @@ def home(request):
         if form.is_valid():
             email = form.cleaned_data['email']
 
-            user = User.objects.create(email=email)
+            user = User.objects.create(username=email, email=email)
 
             # We need to forge a context for celery,
             # passing the request "as is" never works.

@@ -46,10 +46,10 @@ class UserManager(BaseUserManager):
         https://github.com/django/django/blob/master/django/contrib/auth/models.py  # NOQA
         as of 20130526. """
 
-    def create_user(self, email, password=None, **extra_fields):
-        """
-        Creates and saves a User with the given username, email and password.
-        """
+    def create_user(self, username, email, password=None, **extra_fields):
+        """ Creates and saves a User with the given username,
+            email and password. """
+
         now = timezone.now()
 
         if not email:
@@ -57,8 +57,8 @@ class UserManager(BaseUserManager):
 
         email = UserManager.normalize_email(email)
 
-        user = self.model(email=email,
-                          is_staff=False, is_active=True, is_superuser=False,
+        user = self.model(username=username, email=email,
+                          is_active=True, is_staff=False, is_superuser=False,
                           last_login=now, date_joined=now, **extra_fields)
 
         user.set_password(password)
@@ -66,7 +66,7 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, username, email, password, **extra_fields):
-        u = self.create_user(email, password, **extra_fields)
+        u = self.create_user(username, email, password, **extra_fields)
         u.is_staff = True
         u.is_active = True
         u.is_superuser = True
@@ -75,17 +75,18 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    """
-    An abstract base class implementing a fully featured User model with
-    admin-compliant permissions.
+    """ Username, password and email are required.
+        Other fields are optional. """
 
-    Username, password and email are required. Other fields are optional.
-    """
-
-    email = models.EmailField(_('email address'), unique=True, db_index=True,
-                              help_text=_('Required. Any valid email address.'))
-    first_name = models.CharField(_('first name'), max_length=30, blank=True)
-    last_name = models.CharField(_('last name'), max_length=30, blank=True)
+    username = models.CharField(_('User name'), max_length=254,
+                                unique=True, db_index=True,
+                                help_text=_('Required. letters, digits, '
+                                            'and "@+-_".'))
+    email = models.EmailField(_('email address'),  max_length=254,
+                              unique=True, db_index=True, blank=True,
+                              help_text=_('Any valid email address.'))
+    first_name = models.CharField(_('first name'), max_length=64, blank=True)
+    last_name = models.CharField(_('last name'), max_length=64, blank=True)
     is_staff = models.BooleanField(_('staff status'), default=False,
                                    help_text=_('Designates whether the user '
                                                'can log into this admin '
@@ -99,16 +100,12 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
 
     class Meta:
         verbose_name = _('user')
         verbose_name_plural = _('users')
-
-    @property
-    def username(self):
-        return self.email
 
     def get_absolute_url(self):
         return _("/users/{username}/").format(urlquote(self.username))
@@ -121,7 +118,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_short_name(self):
         "Returns the short name for the user."
-        return self.first_name
+        return self.username
 
     def email_user(self, subject, message, from_email=None):
         """ Sends an email to this User. """
