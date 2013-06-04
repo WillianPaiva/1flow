@@ -118,6 +118,7 @@ def request_context_celery(request, *args, **kwargs):
     context = Context(*args, **kwargs)
 
     meta = request.META.copy()
+
     for key in getattr(settings, 'CELERY_CONTEXT_EXPUNGE_META',
                        ('wsgi.errors', 'wsgi.input', )):
         try:
@@ -129,7 +130,11 @@ def request_context_celery(request, *args, **kwargs):
     context.update({
                    'user': request.user,
                    'meta': meta,
-                   'session': request.session})
+                   # We need to pass the session key, not the real object,
+                   # because redis_sessions are not picklable because of
+                   # lambdas. Basic types are, but we never know.
+                   'session_key': request.session.session_key
+                   })
 
     try:
         context.update({'language_code': request.LANGUAGE_CODE})

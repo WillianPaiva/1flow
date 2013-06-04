@@ -4,6 +4,8 @@ import logging
 import simplejson as json
 
 from django.contrib.auth import get_user_model
+#from django.contrib.sessions.models import Session
+from redis_sessions.session import SessionStore
 
 from ..base.utils import send_email_with_db_content
 
@@ -22,7 +24,12 @@ def background_post_register_actions(context):
 
     meta = context['meta']
     user = context['new_user']
-    session = context['session']
+
+    # Classic Django
+    #session = Session.objects.get(pk=context['session_key'])
+
+    # redis_sessions.
+    session = SessionStore(session_key=context['session_key'])
 
     has_invites_left = get_beta_invites_left(True) > 0
 
