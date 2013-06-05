@@ -59,5 +59,10 @@ test-restart:
 prod-restart:
 	fab prod sdf.restart_services
 
+allfixtures: datafixtures fixtures
+
+datafixtures:
+	@find . -name '*.json' -path 'data/*'
+
 fixtures:
 	@find . -name '*.json' -path '*/fixtures/*'
