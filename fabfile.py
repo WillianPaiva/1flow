@@ -120,6 +120,8 @@ def zero(branch=None):
     else:
         env.branch = get_current_git_branch()
 
+    env.host_string = 'zero.1flow.io'
+
     # env.user is set via .ssh/config
     env.env_was_set = True
 
