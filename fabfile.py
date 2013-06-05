@@ -51,6 +51,11 @@ env.pg_superpass = 'ZQmeDuNF7b2GMC'
 env.repository   = 'olive@dev.1flow.net:1flow.git'
 
 
+def get_current_git_branch():
+    return fablocal('git rev-parse --abbrev-ref HEAD',
+                    capture=True).strip()
+
+
 @task
 def local():
     # NOTE: a local environment doesn't need roledefs.
@@ -88,8 +93,7 @@ def preview(branch=None):
     })
 
     if branch is None:
-        env.branch = fablocal('git rev-parse --abbrev-ref HEAD',
-                              capture=True).strip()
+        env.branch = get_current_git_branch()
 
     # implicit: else: branch will be 'develop',
     # set directly from the sparks defaults.
@@ -114,7 +118,7 @@ def zero(branch=None):
     if branch is None:
         env.branch = 'develop'
     else:
-        env.branch = branch
+        env.branch = get_current_git_branch()
 
     # env.user is set via .ssh/config
     env.env_was_set = True
