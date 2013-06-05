@@ -1,45 +1,43 @@
 
 ## Migration from Django user schema to 1flow user schema
 
-    ENV=zero
+    SRC=prod
+    DST=zero
 
-    fab ${ENV} maint
+    fab ${SRC} maint
 
-    fab ${ENV} sdf.getdata:profiles
+    fab ${SRC} sdf.getdata:profiles
     # edit profiles > adapt model (+data, -select_*, …)
 
-    fab ${ENV} sdf.getdata:auth.User
-    # edit auth.User > remove 'username'
+    fab ${SRC} sdf.getdata:auth.User
+    # NO: edit auth.User > remove 'username'
+    # YES: s/auth\.user/base.user/
 
-    fab ${ENV} runable
+    # Will fail at the syncdb run (it's normal)
+    fab ${DST} runable
 
-    # should re-create admin
-    #NO (noinput): fab ${ENV} sdf.syncdb
+    fab ${DST} command:'./manage.py syncdb'
+    fab ${DST} command:'./manage.py reset profiles'
 
-    fab ${ENV} command:'./manage.py syncdb'
-
-    fab ${ENV} command:'./manage.py reset profiles'
-
-    # Why? see http://stackoverflow.com/a/16071185/654755
-    fab ${ENV} command:'./manage.py reset auth'
-
-    # We need to reset logentry.
-    fab ${ENV} command:'./manage.py reset admin'
-
-    fab ${ENV} sdf.putdata
+    fab ${DST} sdf.putdata:
         # modified auth.User
-    fab ${ENV} sdf.putdata
+    fab ${DST} sdf.putdata:
         # modified profiles
 
-    # liked:
-    #fab ${ENV} sdf.update_services_configuration
+    fab ${DST} command:'./manage.py reset south'
+    fab ${DST} command:'./manage.py migrate redisboard --fake 0001'
+    fab ${DST} command:'./manage.py migrate redisboard --fake 0002'
+    fab ${DST} command:'./manage.py migrate redisboard --fake 0003'
 
-    fab ${ENV} sdf.restart_services
+    fab ${DST} command:'sudo rm /etc/supervisor/conf.d/*'
+    fab ${DST} deploy
+    fab ${DST} command:'sudo supervisorctl reload'
 
-    # remove duplicate supervisor entries
-    restart / clean the supervisor configuration
+    # NOT NEEDED:
+    #fab ${DST} sdf.update_services_configuration
+    #fab ${DST} sdf.restart_services
 
-    fab ${ENV} op
+    fab ${DST} op
 
 ## Form adaptations
 
