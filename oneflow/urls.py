@@ -51,6 +51,16 @@ handler503 = 'oneflow.base.views.maintenance_mode'
 urlpatterns = patterns(
     '',
     url(r'', include('oneflow.base.urls')),
+)
+
+if u'oneflow.landing' in settings.INSTALLED_APPS:
+    urlpatterns += patterns(
+        '',
+        url(r'', include('oneflow.index.urls')),
+    )
+
+urlpatterns += patterns(
+    '',
     url(r'', include('social_auth.urls')),
     url(r'^robots\.txt$', TemplateView.as_view(template_name='robots.txt',
         content_type='text/plain')),
