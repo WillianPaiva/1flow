@@ -1,12 +1,13 @@
-{# NOTE: base.html is in core/templates/ #}
+{% extends "base.html" %}
 {% comment %}
+    NOTE: base.html is the one from core/templates/
+
     HEADS UP: This template is symlinked in ajax/ to avoid
     http://dev.1flow.net/webapps/1flow/group/12751/ #}
     It happens because the logout action is an Ajax POST call,
     and django-user-account tries to keep the ajax state, whereas
     it should just do a plain redirect (but it's not configurable).
 {% endcomment %}
-{% extends "base.html" %}
 
 {% load i18n %}
 
