@@ -32,6 +32,10 @@ from django.contrib.auth import get_user_model
 from oneflow.core.models import (Feed, Subscription, PseudoQuerySet,
                                  Article, Read, Folder, TreeCycleException,
                                  User, Group, Tag, WebSite, Author)
+from oneflow.core.models.nonrel import (
+    CONTENT_TYPE_SPECIAL,
+    CONTENT_TYPES_FINAL,
+)
 from oneflow.core.tasks import global_feeds_checker
 from oneflow.base.utils import RedisStatsCounter
 from oneflow.base.tests import (connect_mongodb_testsuite, TEST_REDIS)
@@ -621,6 +625,34 @@ class AbsolutizeTest(TestCase):
         self.assertEquals(self.article4.url, u'http://host.non.exixstentz.com/absolutize_test') # NOQA
         self.assertEquals(self.article4.url_absolute, False)
         self.assertEquals(self.article4.url_error[:108], u"HTTPConnectionPool(host='host.non.exixstentz.com', port=80): Max retries exceeded with url: /absolutize_test") # NOQA
+
+
+@override_settings(STATICFILES_STORAGE=
+                   'pipeline.storage.NonPackagingPipelineStorage',
+                   CELERY_EAGER_PROPAGATES_EXCEPTIONS=True,
+                   CELERY_ALWAYS_EAGER=True,
+                   BROKER_BACKEND='memory',)
+class ArticleSpecialProcessingTest(TestCase):
+
+    def setUp(self):
+
+        #Article.drop_collection()
+        #Feed.drop_collection()
+
+        self.article1 = Article(title=u'Youtube test #1',
+                                url=u'https://www.youtube.com/watch?v=pZa6ZQqX6EA').save() # NOQA
+
+    def tearDown(self):
+        Article.drop_collection()
+        Feed.drop_collection()
+
+    def test_validate_processors(self):
+
+        self.assertTrue(self.article1.content_type in CONTENT_TYPES_FINAL)
+        self.assertEquals(self.article1.content_type, CONTENT_TYPE_SPECIAL)
+        self.assertEquals(self.article1.content, u'0@youtube')
+        self.assertContains(self.article1.content_special_rendered(),
+                            u'/embed/pZa6ZQqX6EA')
 
 
 @override_settings(STATICFILES_STORAGE=

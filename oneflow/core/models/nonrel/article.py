@@ -72,6 +72,8 @@ from .common import (DocumentHelperMixin,
                      CONTENT_NOT_PARSED, CONTENT_TYPE_NONE,
                      CONTENT_TYPE_HTML,
                      CONTENT_TYPE_MARKDOWN_V1, CONTENT_TYPE_MARKDOWN,
+                     CONTENT_TYPE_DOCUMENT,
+                     CONTENT_TYPE_SPECIAL,
                      CONTENT_TYPE_BOOKMARK,
                      CONTENT_TYPES_FINAL,
                      CONTENT_PREPARSING_NEEDS_GHOST,
@@ -123,6 +125,39 @@ global_ghost_lock = RedisExpiringLock('__ghost.py__')
 
 
 # ——————————————————————————————————————————————————————————————————— end ghost
+
+SPECIAL_PROCESSORS = {
+    # WARNING: keep URLs ordered in lists! See the methods for details.
+    u'youtube' : {
+        u'name': _(u'Youtube video'),
+        u'urls': [ re.compile(ur'.*youtube.com/watch\?v=(?P<id>[^/]+)') ],
+        u'thumbnail': u'//img.youtube.com/vi/{id}/default.jpg',
+        u'template': u'''
+    <div class="article-iframe-wrapper">
+        <iframe width="600" height="400" src="//www.youtube.com/embed/{id}"
+            frameborder="0" allowfullscreen>
+        </iframe>
+    </div>
+    ''',
+    },
+    u'dailymotion': {},
+    u'github.com': {
+        u'name': _(u'GitHub repository'),
+        u'urls': [ re.compile(ur'.*//github.com/(?P<user>[^/]+)/(?P<repo>[^/]+)') ],
+        u'storables': {u'repo_infos': (u'https://api.github.com/repos/{user}/{repo}', 'json', '1h')}
+        u'thumbnail': u'{repo_infos.owner.avatar_url}',
+        u'styles': ('''
+.repository {
+    color: black;
+}
+        ''', 'scss'),
+        u'template': u'''
+<div class="repository"
+
+    ''',
+
+    },
+}
 
 
 @task(name='Article.absolutize_url', queue='swarm', default_retry_delay=3600)
@@ -242,8 +277,12 @@ class Article(Document, DocumentHelperMixin):
                                 help_text=_(u'Article content'))
     content_type  = IntField(default=CONTENT_TYPE_NONE,
                              verbose_name=_(u'Content type'),
-                             help_text=_(u'Type of article content '
-                                         u'(text, image…)'))
+                             help_text=_(u'1flow simplified type of article '
+                                         u'content (HTML, Mdown, Document…)'))
+    content_mime_type = StringField(verbose_name=_(u'MIME type'),
+                                    help_text=_(u'Exact MIME type of the '
+                                                u'article content, in case '
+                                                u'it is a document.'))
     content_error = StringField(verbose_name=_(u'Error'), default=u'',
                                 help_text=_(u'Error when fetching content'))
 
@@ -402,6 +441,31 @@ class Article(Document, DocumentHelperMixin):
 
         except OriginalData.DoesNotExist:
             return OriginalData(article=self).save()
+
+    @property
+    def content_special_name(self):
+        url_matcher_idx, processor_name = self.content.split(u'@')
+
+        return SPECIAL_PROCESSORS.get(processor_name, {
+            u'name': _(u'(no name specified)'),
+        })[u'name']
+
+    def content_special_render(self):
+
+        url_matcher_idx, processor_name = self.content.split(u'@')
+        processor = SPECIAL_PROCESSORS.get(processor_name, {})
+
+        try:
+            url_matcher = processor.get(u'urls', [])[int(url_matcher_idx)]
+            template    = processor[u'template']
+            match       = url_matcher.match(self.url)
+
+        except:
+            LOGGER.exception(u'Special rendering of article failed.')
+            return None
+
+        else:
+            return template.format(**match.groupdict())
 
     def add_original_data(self, name, value):
         od = self.original_data
@@ -1054,7 +1118,12 @@ class Article(Document, DocumentHelperMixin):
 
         try:
             # The first that matches will stop the chain.
+
+            self.fetch_content_special(force=force, commit=commit)
+
             self.fetch_content_bookmark(force=force, commit=commit)
+
+            self.fetch_content_document(force=force, commit=commit)
 
             self.fetch_content_text(force=force, commit=commit)
 
@@ -1182,10 +1251,10 @@ class Article(Document, DocumentHelperMixin):
         if self.orphaned:
             return False
 
-        if not self.url_absolute:
+        if self.duplicate_of:
             return False
 
-        if self.duplicate_of:
+        if not self.url_absolute:
             return False
 
         if self.content_type not in CONTENT_TYPES_FINAL:
@@ -1361,8 +1430,8 @@ class Article(Document, DocumentHelperMixin):
         """ Try to extract title from the HTML content, and set the article
             title from there. """
 
-        if not force or (self.origin_type == ORIGIN_TYPE_WEBIMPORT
-                            and self.title.endswith(self.url)):
+        if not force and not (self.origin_type == ORIGIN_TYPE_WEBIMPORT
+                              and self.title.endswith(self.url)):
             # In normal conditions (RSS/Atom feeds), the title has already
             # been set by the fetcher task, from the feed. No need to do the
             # work twice.
@@ -1462,6 +1531,59 @@ class Article(Document, DocumentHelperMixin):
 
         return content, encoding
 
+    def fetch_content_special(self, force=False, commit=True):
+        """ This method should probably get its contents dynamically from
+            the database and in the future, the 1flow public index. For its
+            first version, it's hard-coded. """
+
+        if config.ARTICLE_FETCHING_DISABLED:
+            LOGGER.info(u'Special URLs fetching disabled in configuration.')
+            return
+
+        if self.content_type == CONTENT_TYPE_NONE:
+
+            matched = None
+
+            for name, processor in SPECIAL_PROCESSORS.items():
+                for index, url in enumerate(processor.get(u'urls', [])):
+                    matched = url.match(self.url)
+
+                    if matched is not None:
+                        LOGGER.info(u'%s matched %s:%s', self.url, name, url)
+                        break
+
+                if matched:
+                    break
+
+            if matched is None:
+                # Let other processors continue.
+                return
+
+            self.image_url = processor.get(u'thumbnail', u'').format(
+                **matched.groupdict())
+
+            self.content_type = CONTENT_TYPE_SPECIAL
+
+            try:
+                self.extract_and_set_title(commit=False)
+
+            except:
+                LOGGER.exception(u'Failed to set title on special article %s',
+                                 self)
+
+            #
+            # HEADS UP: the content will be dynamically rendered from the
+            #           processor_template. the "@" thing is an hard-coded
+            #           internal format used in the renderer property.
+            #
+            self.content = u'{0}@{1}'.format(index, name)
+
+            if commit:
+                self.save()
+
+            raise StopProcessingException(u'Done processing special content '
+                                          u'on article {0}'.format(self))
+
     def fetch_content_bookmark(self, force=False, commit=True):
 
         if config.ARTICLE_FETCHING_DISABLED:
@@ -1531,7 +1653,80 @@ class Article(Document, DocumentHelperMixin):
             # TODO: generate a snapshot of the website and store the image.
 
                 raise StopProcessingException(u'Done setting up bookmark '
-                                              u'content for article %s.', self)
+                                              u'content for article '
+                                              u'{0}.'.format(self))
+
+    def fetch_content_document(self, force=False, commit=True):
+        """ This method will download documents (PDF, WAV, ODT…), store them
+            in the database. For presentation, see the templates.
+
+            The maximum size of the storable documents can be specified in
+            dynamic configuration.
+
+            The procedure follows:
+
+            1. try to hint from URL extension (suffix),
+            2. fetch real content (if size and other config directives match),
+            3. if hint is None OR forced from content, check against real
+               content-type and determine MIME,
+            4. if type is HTML, give up for the text fetching to take hand.
+            5. else, commit everything and stop processing.
+
+        """
+
+        return True
+
+        if config.ARTICLE_FETCHING_DOCUMENT_DISABLED:
+            LOGGER.info(u'Documents fetching disabled in configuration.')
+            return
+
+        if self.content_type == CONTENT_TYPE_NONE:
+
+            mimetype, encoding = mimetypes.guess_type(self.url)
+
+            if mimetype is None:
+                LOGGER.warning(u'Found no MIME type for %s, please '
+                               u'implement deep inspection.', self)
+                return
+
+            self.content_mime_type = mimetype
+
+            if mimetype.endswith(u'/html'):
+                # Document will be fully parsed as HTML by another method.
+                return
+
+            # TODO: create a preview.
+            # self.image_url =
+
+            # TODO: download the file.
+            #self.content =
+
+            try:
+                content = self.extract_and_set_title(commit=False)
+
+            except:
+                # This can fail in any other case than an HTML page.
+                # Better be aware and prevent a crash, because in case
+                # of a document, this is harmless and mostly expected.
+                LOGGER.exception(u'Could not extract title of '
+                                 u'article %s', self)
+
+            if content is not None:
+
+                size = len(content)
+
+                if size < config.DOCUMENT_MAX_SIZE_INTERNAL:
+                    self.content = content
+                    self.content_type = CONTENT_TYPE_DOCUMENT
+
+                else:
+                    LOGGER.info(u'')
+
+            if commit:
+                self.save()
+
+            raise StopProcessingException(u'Done processing document '
+                                          u'{0}.'.format(self))
 
     def fetch_content_text(self, force=False, commit=True):
 
@@ -1848,6 +2043,13 @@ class OriginalData(Document, DocumentHelperMixin):
     meta = {
         'db_alias': 'archive',
     }
+
+    @property
+    def always_download(self):
+
+        return self.content_type == CONTENT_TYPE_DOCUMENT \
+            and self.content_mime_type \
+            in config.DOCUMENT_ALWAYS_DOWNLOAD.split()
 
     @property
     def feedparser_hydrated(self):

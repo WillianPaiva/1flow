@@ -491,7 +491,6 @@ def article_full_content_display(article):
                                      article)
                     return None
 
-
 @register.simple_tag
 #@cached(CACHE_ONE_WEEK)
 def read_original(article, with_text=None):

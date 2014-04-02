@@ -280,6 +280,56 @@ CONSTANCE_CONFIG = {
                                   u'to Markdown internal conversion. '
                                   u'Default: enabled in normal conditions.')),
 
+    'IRC_SUPPORT_CHANNEL': (ugettext(u'#1flow'), ugettext(u'Support IRC '
+                            u'channel. Set empty to disable displaying it '
+                            u'in the support text message.')),
+
+    # ——————————————————————————————————————————————————————— Documents storage
+
+    'DOCUMENT_MAX_SIZE_INTERNAL': (-1, ugettext(u'Maximum size of documents '
+                                   u'stored in the MongoDB database (0 = no '
+                                   u'storage, negative value == no limit '
+                                   u'== store everything). NOTE: storing large '
+                                   u'documents in the database is usually a '
+                                   u'bad idea but it has some advantages. '
+                                   u'MongoDB has a BSON maximum size '
+                                   u'of 16Mib, and will not store larger '
+                                   u'documents, anyway. See http://docs.'
+                                   u'mongodb.org/manual/faq/developers/'
+                                   u'#faq-developers-when-to-use-gridfs '
+                                   u'for details.')),
+
+    #
+    # HEADS UP: when implementing external storage, configure it via a settings
+    #           setup in an environment variable, à la 12-factor. The variable
+    #           name should just be documented, but nothing should be put here.
+    #
+
+    'DOCUMENT_MAX_SIZE_EXTERNAL': (0, ugettext(u'If internal database storage '
+                                   u'is disabled or limited, documents can '
+                                   u'still be stored externally (either via '
+                                   u'GridFS or any Django-compatible storage '
+                                   u'like Amazon S3, SFTP, Dropbox… This '
+                                   u'directive has the same meaning as the '
+                                   u'internal one, eg. 0 == no storage, '
+                                   u'negative == unlimited and positive == '
+                                   u'size limit. NOTE: EXTERNAL STORAGE IS '
+                                   u'NOT YET IMPLEMENTED.')),
+
+    'DOCUMENT_TYPE_FROM_CONTENT': (True, ugettext(u'If document type cannot be '
+                              u'determined from request MIME type or filename '
+                              u'extension guess it from the content. This is '
+                              u'slower, but much accurate.')),
+
+    'DOCUMENT_ALWAYS_DOWNLOAD': (u'application/octet-stream', ugettext(u'The '
+                                 u'MIME types that will always be presented as '
+                                 u'download only (eg. no viewer). Having at '
+                                 u'least “application/octet-stream” is a good '
+                                 u'idea, but you can remove it if you want to '
+                                 u'experiment or screw your users browsers.')),
+
+    # ——————————————————————————————————————————————————————————————— Archiving
+
     'ARTICLE_ARCHIVE_BATCH_SIZE': (100 if DEBUG else 50000,
                                    ugettext(u'how much articles will be '
                                    u'archived at each archive task run.')),

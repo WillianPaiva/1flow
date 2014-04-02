@@ -88,11 +88,17 @@ CONTENT_TYPE_MARKDOWN_V1 = 2
 CONTENT_TYPE_MARKDOWN    = 3
 CONTENT_TYPE_IMAGE       = 100
 CONTENT_TYPE_VIDEO       = 200
+# Document can be PDF, ODT, Whatever.
+# We will add viewers / editors incrementaly.
+CONTENT_TYPE_DOCUMENT    = 500
+CONTENT_TYPE_SPECIAL     = 700
 CONTENT_TYPE_BOOKMARK    = 900
 CONTENT_TYPES_FINAL      = (CONTENT_TYPE_MARKDOWN,
                             CONTENT_TYPE_MARKDOWN_V1,
                             CONTENT_TYPE_IMAGE,
                             CONTENT_TYPE_VIDEO,
+                            CONTENT_TYPE_DOCUMENT,
+                            CONTENT_TYPE_SPECIAL,
                             CONTENT_TYPE_BOOKMARK,
                             )
 

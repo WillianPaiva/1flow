@@ -31,6 +31,10 @@
 
       {% include 'snippets/read/article-content-bookmark.html' %}
 
+    {% elif article.content_type == CONTENT_TYPE_SPECIAL %}
+
+      {% include 'snippets/read/article-content-special.html' %}
+
     {% elif article.content_type == CONTENT_TYPE_HTML %}
       {% include 'snippets/read/article-content-not-safe.html' %}
 
