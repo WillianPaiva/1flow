@@ -17,94 +17,9 @@ You'll find a more user-oriented original pitch at http://1flow.io/ and project 
 
 
 
-# Quick installation
+# Installation
 
-1flow can be run on a single machine, but it is more likely to be installed on a multi-machines setup, when in production.
-
-If you plan to install it on your machine for development or test purposes, know that this process will install `PostgreSQL`, `MongoDB`, `Redis` and `memcache` and their development packages. A lot more will be installed too, but most of it will be in the `virtualenv`, thus not particularly polluting your machine.
-
-The best option is to run the installation process on a dedicated (probably virtual) machine or in an LXC container.
-
-
-
-## Linux
-
-This installation has been tested on Ubuntu 12.04 LTS and 13.10.
-
-I've written it by memory, please [open an issue](issues/new) in case you find anything unclear or incomplete.
-
-We assume you already have a development environment installed, with `git` and `pip`.
-
-    # sparks (1flow's deployment library) needs virtualenvwrapper to be installed
-    sudo pip install virtualenvwrapper
-    mkvirtualenv 1flow
-    workon 1flow
-    # A lot of things in sparks and 1flow rely on the ~/sources/ directory.
-    cd && mkdir sources && cd sources
-    git clone git+https://github.com/1flow/1flow.git
-    cd 1flow
-    cp config/dot.env.example ~/.env.1flow
-
-    make bootstrap
-
-During the bootstrap phase, which *will* take a long time, you have to:
-
-- tune `~/.env.1flow` to match your environment. It's nearly already set for
-  a development environment on 127.0.0.1. You will not have many things to
-  change if running on localhost, but it's still worth a review.
-- Create the PostgreSQL role `oneflow_admin` with the password you set
-  in `~/.env.1flow`. Grant it `CREATE DATABASE` and `CREATE ROLE`
-  (`INHERIT` is not needed).
-- under Linux only: create a database and a PG role for your Linux user account. Eg.
-
-    sudo su - postgres
-    createuser YOUR_USERNAME
-    # and set it superuser
-    createdb YOUR_USERNAME -o YOUR_USERNAME
-    exit
-
-- tune `/etc/postgresql/…/pg_hba.conf` to allow yourself to connect via `peer`, and other accounts to connect via `md5`.
-
-Notes:
-
-- as `make bootstrap` will install PostgreSQL, wait a little if it's not installed when you try to create the `oneflow_admin` role.
-- you can run `make bootstrap` as many times as necessary if you miss any manual step.
-
-When the `bootstrap` procedure is acheived, you can run 1flow:
-
-	. ~/.env.1flow
-    make run
-
-Then go to http://localhost:8000/ and enjoy your local 1flow instance.
-
-You can put it behind an `nginx` proxy if you want.
-
-
-
-### And after…
-
-To run a production instance, things are *not* much complicated. You will have to tune the project `fabfile` to suit your needs, and use fabric/sparks commands. If you're curious, the `production` target is the one that powers [1flow.io](http://1flow.io/).
-
-
-
-## Install on OSX
-
-1flow runs perfectly on OSX Mavericks (10.9) with Xcode 5.x.
-
-Previously, I developed 1flow on OSX 10.8 with Xcode 4.6 and it worked completely fine too. I haven't tested it recently, but it should still work. Please report any issue you find.
-
-Just follow the same procedure as for a Linux installation.
-
-
-
-### Caveats on OSX
-
-If you run `make bootstrap` more than once, you could eventually end up in a situation where one or more service (MongoDB, PostgreSQL, Redis, Memcached) is installed but not launched. This happens because the related `.plist` is not symlinked to `~/Library/LaunchAgents/`. Just run something like:
-
-    ln -sfv /usr/local/opt/postgresql/*.plist ~/Library/LaunchAgents
-    lunchy start postgres
-
-[Lunchy](lunch) has been installed by `sparks`, I'm sure you will love it.
+**Please, [see the wiki](/1flow/1flow/wiki/Installation).**
 
 
 
