@@ -761,6 +761,10 @@ def read_with_endless_pagination(request, **kwargs):
 
     if request.is_ajax():
 
+        # Used to debug/test the spinner.
+        #import time
+        #time.sleep(15)
+
         if request.GET.get('count', False):
             count = reads.count()
 
