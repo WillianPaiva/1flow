@@ -1,0 +1,10 @@
+<div class="article-bookmark">
+    <h1>{{ article.title }}</h1>
+
+    {% with content=article.content_special_render %}
+        {{ content|safe }}
+
+    {% endwith %}
+
+<p class="very-muted small">~ {% blocktrans with content_type=article.content_special_name %}Entry identified as {{ content_type }} by the 1flow engine{% endblocktrans %} ~</p>
+</div>
