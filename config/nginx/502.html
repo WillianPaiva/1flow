@@ -1,12 +1,28 @@
+<!DOCTYPE html><html lang="en">
+<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>1flow – Sources</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" /><meta name="msmobile-web-app-capable" content="yes" />
+<link type="text/plain" rel="author" href="http://1flow.io/humans.txt" />
+<link rel="icon" type="image/png" href="/static/img/favicon.png" />
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
+<link href="//netdna.bootstrapcdn.com/bootswatch/3.1.1/slate/bootstrap.min.css" rel="stylesheet">
 <body>
-<div style="text-align: center">
-<p>&nbsp;<br />&nbsp;</p>
-<h1>1flow.io</h1>
-<h2>is under maintenance</h2>
-<p>We are migrating databases, and this needs a complete halt.</p>
-<p>This page will automatically reload itself in <span id="CDTimer">40</span> seconds.</p>
-<p>For up-to-date status and news, <a href="http://blog.1flow.io/">head to our blog</a>.</p>
-<h4>Sorry for the annoyance, 1flow will be up back soon.</h4>
+<div class="container">
+	<div class="row ">&nbsp;<br/>&nbsp;</div>
+	<div class="row visible-sm">&nbsp;<br/>&nbsp;</div>
+	<div class="row visible-md">&nbsp;<br/>&nbsp;</div>
+	<div class="row visible-lg">&nbsp;<br/>&nbsp;</div>
+	<div class="row">
+		<div class="jumbotron col-md-8 col-md-offset-2">
+			<h1><img src="favicon.png" alt="1flow logo">&nbsp;<strong>1flow.io</strong></h1>
+			<h2><br />The webapp is either <em>under maintenance</em>, or the page you were looking for <em>took too long to load</em>.</h2>
+			<p>We agree this situation is very annoying, and are sorry for the inconvenience.</p>
+			<p><br />This page will automatically reload itself in <span id="CDTimer">40</span> seconds.<br />
+				<img src="/loading-cylon.svg" alt="Loading icon" width="100%"></p>
+			<p><br />If this situation doesn't evolve in a few minutes, <a href="http://blog.1flow.io/">head to our blog to see if there is a planned maintenance</a>, or <a href="//webchat.freenode.net/?channels=#1flow">contact us directly on the discussion channel</a>.</p>
+		</div>
+	</div>
 </div>
 
 <script language="JavaScript" type="text/javascript">
@@ -18,11 +34,11 @@ function CountDown(){
    TimerSPan.innerHTML=TimerVal;
    TimerVal=TimerVal-1;
    if (TimerVal<0) { TimerVal=0;
-   location.reload(true); 
+   location.reload(true);
    }
 }
 CountDown();
 /*]]>*/
-</script> 
+</script>
 </body>
 
