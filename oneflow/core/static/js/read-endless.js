@@ -165,6 +165,10 @@ function toggle_content(oid, callback) {
 
             if (async_url) {
                 $.get(async_url, function(data){
+
+                    scrollbars(document.querySelector("#article-content-" + oid));
+
+
                     $content.html(data);
 
                     // Special case to hide the header on the fly.

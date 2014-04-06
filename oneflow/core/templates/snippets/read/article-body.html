@@ -4,7 +4,7 @@
 <div class="reading-meta-container article-meta-information"></div>
 <div class="reading-meta-container article-meta-attributes"></div>
 
-<div class="article acceptable-scrollbars white-scrollbars {{ read_in_list|yesno:'slide-togglable slide-toggle-notice,' }}"
+<div class="article {{ read_in_list|yesno:'slide-togglable slide-toggle-notice,' }}"
     {% if read_in_list %}
       data-toggle-id="{{ article.id }}"
       data-toggle-function="toggle_content"
@@ -28,7 +28,7 @@
     {% endcomment %}
 
   <div class="read-content-wrapper only_when_open" id="content-{{ article.id }}">
-    <div class="article-content"
+    <div id="article-content-{{ article.id }}" class="article-content"
 
         {% if read_in_list %}
                 data-content-async="{% url "article_content" article.id %}"
