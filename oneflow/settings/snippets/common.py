@@ -169,6 +169,7 @@ PIPELINE_CSS = {
     'bootstrap': {
         'source_filenames': (
             'vendor/bootstrap/3.0.3/less/bootstrap.less',
+            'vendor/scrollbars/scrollbars.css',
         ),
         'output_filename': 'css/bootstrap.css',
     },
@@ -210,6 +211,7 @@ PIPELINE_CSS = {
     'core-bootswatch': {
         'source_filenames': (
             'sass/styles-core-bootswatch.scss',
+            'vendor/scrollbars/scrollbars.css',
         ),
 
         'output_filename': 'css/core-bootswatch.css',
@@ -273,7 +275,7 @@ PIPELINE_JS = {
     #
     'vendor-local': {
         'source_filenames': (
-
+            'vendor/scrollbars/scrollbars.js',
             'vendor/showdown/showdown.js',
             'vendor/showdown/extensions/twitter.js',
 
