@@ -12,61 +12,59 @@
     {% endif %}
     >
 
-    {% include 'snippets/read/read-admin-informations.html' %}
+  {% include 'snippets/read/read-admin-informations.html' %}
 
-    {% comment %}
+  {% comment %}
 
-    {% cache 0 article_meta_bottom article LANGUAGE_CODE %}
+  {% cache 0 article_meta_bottom article LANGUAGE_CODE %}
 
-      {% with meta_class='bottom only_when_open' %}
-          {# other variables are unset, this is intended for `False` values. #}
-          {% include "snippets/read/article-meta.html" %}
-      {% endwith %}
+    {% with meta_class='bottom only_when_open' %}
+        {# other variables are unset, this is intended for `False` values. #}
+        {% include "snippets/read/article-meta.html" %}
+    {% endwith %}
 
-    {% endcache %}
+  {% endcache %}
 
-    {% endcomment %}
+  {% endcomment %}
 
-  <div class="read-content-wrapper only_when_open" id="content-{{ article.id }}">
-    <div id="article-content-{{ article.id }}" class="article-content"
+  <div id="article-content-{{ article.id }}" class="article-content only_when_open"
 
-        {% if read_in_list %}
-                data-content-async="{% url "article_content" article.id %}"
-                data-meta-async="{% url "read_meta" read.id %}">
+      {% if read_in_list %}
+              data-content-async="{% url "article_content" article.id %}"
+              data-meta-async="{% url "read_meta" read.id %}">
 
-            <div class="article-body-loading">
-                <h3><i class="icon-spinner icon-spin icon-large"></i>
-                &nbsp;&nbsp;{% trans "Loading…" %}</h3>
-            </div>
+          <div class="article-body-loading">
+              <h3><i class="icon-spinner icon-spin icon-large"></i>
+              &nbsp;&nbsp;{% trans "Loading…" %}</h3>
+          </div>
 
-        {% else %}
-            {# close the div #} > {# end close the div #}
+      {% else %}
+          {# close the div #} > {# end close the div #}
 
-            {# HEADS UP: this call must be the same as in 'snippets/read/article-content-async.html' #}
-            {% article_read_content read %}
+          {# HEADS UP: this call must be the same as in 'snippets/read/article-content-async.html' #}
+          {% article_read_content read %}
 
-        {% endif %}
+      {% endif %}
 
-    </div>
+  </div>
 
-    {% comment %}
+  {% comment %}
 
-    {% cache 0 article_bottom article LANGUAGE_CODE %}
+  {% cache 0 article_bottom article LANGUAGE_CODE %}
 
-    <div class="end-meta clicker-muter-constrainer">
-        <div class="status-icons watch-status end-watch-status centered">
-          {% include "snippets/read/watch-status.html" with with_text=1 %}
-        </div>
+  <div class="end-meta clicker-muter-constrainer">
+      <div class="status-icons watch-status end-watch-status centered">
+        {% include "snippets/read/watch-status.html" with with_text=1 %}
+      </div>
 
-      {% with end_actions=1 with_text=1 %}
-        {% include 'snippets/read/watch-actions.html' %}
-        {% include 'snippets/read/read-actions.html' %}
-      {% endwith %}
-    </div>
+    {% with end_actions=1 with_text=1 %}
+      {% include 'snippets/read/watch-actions.html' %}
+      {% include 'snippets/read/read-actions.html' %}
+    {% endwith %}
+  </div>
 
-    {% endcache %}
+  {% endcache %}
 
-    {% endcomment %}
+  {% endcomment %}
 
-  </div><!-- .article-content-wrapper -->
 </div><!-- .article -->
