@@ -166,8 +166,7 @@ function toggle_content(oid, callback) {
             if (async_url) {
                 $.get(async_url, function(data){
 
-                    scrollbars(document.querySelector("#article-content-" + oid));
-
+                    scrollbars(document.querySelector("#article-" + oid));
 
                     $content.html(data);
 
