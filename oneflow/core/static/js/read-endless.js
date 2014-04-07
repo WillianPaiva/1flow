@@ -171,7 +171,7 @@ function toggle_content(oid, callback) {
                     //    open_scrollbars.destroy();
                     //}
 
-                    scrollbars(document.querySelector("#article-" + oid));
+                    scrollbars(document.querySelector("#article-content-" + oid));
 
                     $acontent.html(data);
 
