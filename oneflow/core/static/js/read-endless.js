@@ -133,12 +133,12 @@ function toggle_content(oid, callback) {
 
         open_auxilliary = function ($on_what) {
 
-            var $content  = $on_what.find('.article-content').first();
-            var async_url = $content.data('content-async');
-            var meta_url  = $content.data('meta-async');
+            var $acontent  = $on_what.find('.article-content').first();
+            var async_url = $acontent.data('content-async');
+            var meta_url  = $acontent.data('meta-async');
 
             //console.debug('open_aux on ' + oid + ', '+ auto_mark_read_timers[oid]);
-            //console.debug($content);
+            //console.debug($acontent);
             //console.debug(async_url);
 
             // no need bothering testing !is(':visible'). It costs
@@ -171,9 +171,9 @@ function toggle_content(oid, callback) {
                     //    open_scrollbars.destroy();
                     //}
 
-                    scrollbars(document.querySelector("#article-" + oid));
+                    scrollbars(document.querySelector("#article-content-" + oid));
 
-                    $content.html(data);
+                    $acontent.html(data);
 
                     // Special case to hide the header on the fly.
                     // TODO: this is a very edge case whose counter-part
@@ -181,13 +181,13 @@ function toggle_content(oid, callback) {
                     // just works smoothly currently. This should be
                     // enhanced in the future to be more solid or more
                     // "officially supported".
-                    if ($content.find('iframe.no-article-content')) {
+                    if ($acontent.find('iframe.no-article-content')) {
                         $on_what.addClass('original-view');
                     }
 
                     // be sure we don't call it next time, it's already loaded.
-                    // DOESN'T WORK: $content.removeData('async');
-                    $content.attr('data-content-async', '');
+                    // DOESN'T WORK: $acontent.removeData('async');
+                    $acontent.attr('data-content-async', '');
                 });
             }
 
