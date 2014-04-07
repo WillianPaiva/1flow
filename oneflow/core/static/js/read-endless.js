@@ -105,6 +105,7 @@ function read_init(){
 var open_content = null;
 var last_opened  = null;
 var open_actions = null;
+var open_scrollbars = null;
 var auto_mark_read_timers = {};
 var remove_iframes_timers = {};
 var remove_iframes_delay = 10000;
@@ -166,7 +167,11 @@ function toggle_content(oid, callback) {
             if (async_url) {
                 $.get(async_url, function(data){
 
-                    scrollbars(document.querySelector("#article-" + oid));
+                    //if (open_scrollbars) {
+                    //    open_scrollbars.destroy();
+                    //}
+
+                    open_scrollbars = scrollbars(document.querySelector("#article-" + oid));
 
                     $content.html(data);
 
@@ -215,6 +220,10 @@ function toggle_content(oid, callback) {
             // (previous) values.
             open_content = null;
             last_opened  = oid;
+
+            if (open_scrollbars) {
+                open_scrollbars.destroy();
+            }
 
             // console.debug('set open to null and last to ' + oid);
 
