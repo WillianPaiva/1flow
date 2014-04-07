@@ -1,7 +1,7 @@
 Contributing Changes to 1flow
 -----------------------------
 
-Contribution areas are listed in `AUTHORS.md`. If you have any other idea, feel free to [suggest it on IRC][irc].
+Contribution areas are listed in `AUTHORS.md` and there is an [official list of issues we need external help on][helpneeded]. If you have any other idea, feel free to [suggest it on IRC][irc].
 
 Contributing to the project is both welcomed and encouraged. To do so, you have at least two options:
 
@@ -37,3 +37,4 @@ Thanks!
 
 
   [irc]: irc://chat.freenode.net/#1flow
+  [helpneeded]: https://github.com/1flow/1flow/issues?labels=needs+help&page=1&state=open
