@@ -227,8 +227,8 @@ function toggle_content(oid, callback) {
 
             // console.debug('set open to null and last to ' + oid);
 
-            $('#article-meta-left').html('');
-            $('#article-meta-right').html('');
+            $('.article-meta-information').html('');
+            $('.article-meta-attributes').html('');
 
             $content.slideUp(scroll_speed, "swing", run_callback);
 
