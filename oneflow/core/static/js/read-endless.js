@@ -128,7 +128,7 @@ function toggle_content(oid, callback) {
 
     var me      = "#" + oid,
         $me     = $(me),
-        $content = $("#content-" + oid),
+        $content = $("#article-content-" + oid),
 
         open_auxilliary = function ($on_what) {
 
@@ -386,7 +386,7 @@ function toggle_content(oid, callback) {
                 open_me(true);
             }
 
-            $("#content-" + to_close).slideUp(scroll_speed, "swing", function(){
+            $("#article-content-" + to_close).slideUp(scroll_speed, "swing", function(){
                 $current.removeClass('open_content');
 
                 close_auxilliary($current);
