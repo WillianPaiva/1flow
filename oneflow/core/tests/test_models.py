@@ -466,6 +466,19 @@ class FeedsTest(TestCase):
                           u'http://www.tumblr.com/blog/1flowio')
         self.assertEquals(Feed._get_collection().count(), 5)
 
+    def test_closed_feeds_are_never_good(self):
+        """ This test addresses Github #10.
+
+            It is very simple, but the `.good_feeds` query is quite complex.
+        """
+
+        self.assertTrue(len(Feed.good_feeds) == 1)
+
+        closed_reason = u'closed for tests'
+        self.feed.close(closed_reason)
+
+        self.assertTrue(len(Feed.good_feeds) == 0)
+
 
 @override_settings(STATICFILES_STORAGE=
                    'pipeline.storage.NonPackagingPipelineStorage',
