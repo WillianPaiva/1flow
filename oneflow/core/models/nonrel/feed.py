@@ -289,8 +289,8 @@ class Feed(Document, DocumentHelperMixin):
         return cls.objects.filter(
             # not internal, still open and validated by a human.
             (Q(is_internal__ne=True)
-             | Q(closed__ne=True)
-             | Q(good_for_use=True))
+             & Q(closed__ne=True)
+             & Q(good_for_use=True))
 
             # And not being duplicate of any other feed.
             & (Q(duplicate_of__exists=False) | Q(duplicate_of=None))
