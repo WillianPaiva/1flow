@@ -419,22 +419,26 @@ def add_subscription(request, **kwargs):
     return render(request, 'add-subscription.html', {'form': form})
 
 
-def delete_subscription(request, **kwargs):
+def cancel_subscription(request, **kwargs):
 
     subscription_id = kwargs.pop('subscription', None)
     subscription    = Subscription.get_or_404(subscription_id)
 
-    if request.user.is_superuser or subscription.user == request.user.mongo:
+    if not request.user.is_superuser or subscription.user != request.user.mongo:
+        return HttpResponseForbidden(u'Not owner.')
 
+    if kwargs.pop('confirm', False):
         subscription.delete()
 
         messages.info(request, _(u'Subscription <em>{0}</em> successfully '
-                      u'deleted.').format(subscription.name),
+                      u'cancelled.').format(subscription.name),
                       extra_tags=u'safe')
 
         return redirect('source_selector')
 
-    return HttpResponseForbidden()
+    else:
+        return render(request, 'snippets/selector/cancel-subscription.html',
+                      {'subscription': subscription})
 
 
 class FeedsCompleterView(Select2View):
