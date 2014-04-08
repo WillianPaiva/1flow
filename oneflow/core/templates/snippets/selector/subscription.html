@@ -41,9 +41,12 @@
                         data-toggle="tooltip" class="manage popover-top"><i class="icon-globe"></i></a>
                 {% endif %}
 
-
                 <a href="{% url 'edit_subscription' subscription=subscription.id %}"
-                data-toggle="modal" data-target="#" class="manage"><i class="icon-cog popover-top" title="{% trans "Manage the properties of this stream" %}" data-toggle="tooltip"></i></a>
+                    data-toggle="modal" class="manage"
+                    data-target="#manage-subscription-{{ subscription.id }}"><i
+                    class="icon-cog popover-top"
+                    title="{% trans "Manage the properties of this stream" %}"
+                    data-toggle="tooltip"></i></a>
             </span>
 
             {% if unread_count %}

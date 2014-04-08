@@ -194,9 +194,13 @@ urlpatterns = patterns(
                        views.FeedsCompleterView.as_view())),
         name='feeds_completer'),
 
-    url(_(ur'^subscription/(?P<subscription>(?:[0-9a-f]{24,24})+)/delete$'),
-        login_required(never_cache(views.delete_subscription)),
-        name='delete_subscription'),
+    url(_(ur'^subscription/(?P<subscription>(?:[0-9a-f]{24,24})+)/cancel$'),
+        login_required(never_cache(views.cancel_subscription)),
+        name='cancel_subscription_display'),
+
+    url(_(ur'^subscription/(?P<subscription>(?:[0-9a-f]{24,24})+)/cancel/do$'),
+        login_required(never_cache(views.cancel_subscription)),
+        name='cancel_subscription', kwargs={'confirm': True}),
 
     url(_(ur'^subscription/(?P<subscription>(?:[0-9a-f]{24,24})+)$'),
         login_required(never_cache(views.edit_subscription)),
