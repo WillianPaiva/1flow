@@ -72,7 +72,13 @@ def active(context, pattern, return_value=None):
 @register.simple_tag(takes_context=True)
 def search_label(context):
 
-    view_name = context['request'].resolver_match.view_name
+    try:
+        view_name = context['request'].resolver_match.view_name
+
+    except AttributeError:
+        # Happens on / when the request is a
+        # WSGIRequest and not an HttpRequest.
+        view_name = u'home'
 
     if u'folder' in view_name:
         return _(u'Search in folder…')
