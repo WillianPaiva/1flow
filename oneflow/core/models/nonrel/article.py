@@ -112,7 +112,6 @@ if config.FEED_FETCH_GHOST_ENABLED:
     else:
         GHOST_BROWSER = ghost.Ghost()
 
-
 else:
     ghost = None # NOQA
 
@@ -1177,6 +1176,7 @@ class Article(Document, DocumentHelperMixin):
 
         #
         # NOTE: sync the conditions with @Feed.good_articles
+        #       and core.views.read_with_endless_pagination::search
         #
 
         if self.orphaned:
