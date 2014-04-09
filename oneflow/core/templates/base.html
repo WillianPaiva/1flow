@@ -15,18 +15,8 @@
   </head>
   <body id="{% block body_id %}{% endblock body_id %}" {% block body_data %}{% endblock body_data %} class="acceptable-scrollbars" onload="loadScrollForHash()">
     {% block navbar %}
-      {% if user.is_superuser %}
-        {# Never cache the navbar for admins, we must know about maintenance mode #}
-        {% include 'snippets/navbar.html' %}
-        {% include 'snippets/help-arrows.html' %}
-
-      {% else %}
-        {% cache 86400 home_navbar user %}
-          {% include 'snippets/navbar.html' %}
-          {% include 'snippets/help-arrows.html' %}
-        {% endcache %}
-
-      {% endif %}
+      {% include 'snippets/navbar.html' %}
+      {% include 'snippets/help-arrows.html' %}
     {% endblock navbar %}
 
     {% block body %}{% endblock body %}
