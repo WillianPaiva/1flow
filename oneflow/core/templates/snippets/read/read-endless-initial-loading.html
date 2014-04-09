@@ -1,6 +1,6 @@
 <li>
     <div class="initial-loading centered hidden">
-        <h3 class="loading"><img src="{{STATIC_URL}}vendor/loading/loading-bars.svg" alt="Loading icon" />&nbsp;&nbsp;{% trans "Loading entries…" %}</h3>
+        <h3 class="loading"><img src="{{STATIC_URL}}vendor/loading/loading-bars.svg" alt="Loading icon" />&nbsp;&nbsp;{% if search %}{% trans "Searching database…" %}<br /><small>{% trans "— please hang tight —" %}</small>{% else %}{% trans "Loading entries…" %}{% endif %}</h3>
         <h4 class="thanks1 hidden fade in">{% trans "Thanks for your patience." %}</h4>
         <h4 class="thanks2 hidden fade in">
             {% trans "Oh my god, is this <strong>that</strong> long?!" %}
@@ -18,7 +18,7 @@
                 try {
                     $('.initial-loading .thanks1').removeClass("hidden");
                 } catch (err) {}
-            }, 5000);
+            }, {% if search %}10000{% else %}5000{% endif %});
 
             setTimeout(function() {
                 if ($('.read-list-item').length > 0) {
@@ -28,7 +28,7 @@
                     $('.initial-loading .thanks1').addClass("hidden");
                     $('.initial-loading .thanks2').removeClass("hidden");
                 } catch (err) {}
-            }, 15000);
+            }, {% if search %}20000{% else %}15000{% endif %});
 
             setTimeout(function() {
                 if ($('.read-list-item').length > 0) {
@@ -38,7 +38,7 @@
                     $('.initial-loading .thanks2').addClass("hidden");
                     $('.initial-loading .thanks3').removeClass("hidden");
                 } catch (err) {}
-            }, 30000);
+            }, {% if search %}35000{% else %}30000{% endif %});
 
             setTimeout(function() {
                 if ($('.read-list-item').length > 0) {
@@ -47,7 +47,7 @@
                 try {
                     $('.initial-loading .problem-report').removeClass("hidden");
                 } catch (err) {}
-            }, 45000);
+            }, {% if search %}60000{% else %}45000{% endif %});
 
         </script>
     </div>
