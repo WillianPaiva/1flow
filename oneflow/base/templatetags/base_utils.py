@@ -69,6 +69,20 @@ def active(context, pattern, return_value=None):
     return u''
 
 
+@register.simple_tag(takes_context=True)
+def search_label(context):
+
+    view_name = context['request'].resolver_match.view_name
+
+    if u'folder' in view_name:
+        return _(u'Search in folder…')
+
+    elif u'feed' in view_name:
+        return _(u'Search in feed…')
+
+    return _(u'Search…')
+
+
 class CaptureasNode(Node):
     def __init__(self, nodelist, varname):
         self.nodelist = nodelist
