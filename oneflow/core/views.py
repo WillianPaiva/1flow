@@ -66,7 +66,7 @@ from .forms import (FullUserCreationForm,
 from .tasks import import_google_reader_trigger
 from .models.nonrel import (Feed, Subscription, FeedIsHtmlPageException,
                             Article, Read,
-                            Folder, WebSite,
+                            Folder, WebSite, Tag,
                             TreeCycleException,
                             CONTENT_TYPES_FINAL)
 from .models.reldb import HelpContent
@@ -686,6 +686,7 @@ def _rwep_build_page_header_text(subscription, folder, user, primary_mode):
 
 
 def read_with_endless_pagination(request, **kwargs):
+    """ This is the central view for ALL reading lists. """
 
     (query_kwargs,
      primary_mode) = _rwep_generate_query_kwargs(request, **kwargs)
@@ -694,9 +695,9 @@ def read_with_endless_pagination(request, **kwargs):
     user           = djuser.mongo
     #preferences    = user.preferences
 
-    # —————————————————————————————————————————————————— subscription or folder
+    # ———————————————————————————————————————————————————————————— Subscription
 
-    # "feed" (from the user point of view) is actually
+    # A “feed” (from the user point of view) is actually
     # a subscription (from the developer point of view).
     subscription = kwargs.get('feed', None)
 
@@ -717,6 +718,8 @@ def read_with_endless_pagination(request, **kwargs):
 
         query_kwargs[u'subscriptions__contains'] = subscription
 
+    # —————————————————————————————————————————————————————————————————— Folder
+
     folder = kwargs.get('folder', None)
 
     if folder:
@@ -736,11 +739,98 @@ def read_with_endless_pagination(request, **kwargs):
         query_kwargs[u'subscriptions__in'] = \
             Subscription.objects(folders=folder)
 
-    # ——————————————————————————————————————————————————————————————— the query
+    # —————————————————————————————————————————————————————————————————— Search
 
-    #LOGGER.info(u'query_kwargs: %s', query_kwargs)
+    search = request.GET.get('search', None)
 
-    reads = user.reads(**query_kwargs).order_by(order_by).no_cache()
+    if request.is_ajax():
+        # Ajax requests for django-endless-pagination
+        # infinite scrolling. Get search query if any.
+        search = request.session.get('search', None)
+
+    else:
+        # Classic access. Update the session for
+        # django-endless-pagination ajax requests.
+        request.session['search'] = search
+
+    if search:
+        isearch = search.lower()
+
+        # Implement these loops for multi-words search.
+        for term in isearch.split():
+            if term.startswith(u'+'):
+                pass
+            elif term.startswith(u'-'):
+                pass
+
+        if subscription:
+            user_feeds = [subscription.feed]
+
+        elif folder:
+            user_feeds = [s.feed for s in Subscription.objects(folders=folder)]
+
+        else:
+            user_feeds = [s.feed for s in user.subscriptions]
+
+        LOGGER.info(u'Matched user feeds for search “%s”: %s',
+                    isearch, len(user_feeds))
+
+        matched_articles = Article.objects(
+            #
+            # NOTE: sync these filters with core.article.is_good
+            #       and core.feed.is_good
+            #
+            feeds__in=user_feeds,
+            orphaned__ne=True,
+            url_absolute=True,
+            duplicate_of__exists=False,
+            content_type__in=CONTENT_TYPES_FINAL).no_cache()
+
+        LOGGER.info(u'First-pass filtered articles for search “%s”: %s',
+                    isearch, matched_articles.count())
+
+        matched_articles = matched_articles.filter(
+            Q(title__icontains=isearch)
+            | Q(excerpt__icontains=isearch)
+            | Q(content__icontains=isearch))
+
+        LOGGER.info(u'Matched articles for search “%s”: %s',
+                    isearch, matched_articles.count())
+
+    # ————————————————————————————————————————————————————————————— Final query
+
+    # NOTE: this call will produce an UnicodeDecodeError
+    # on subscription* item, but other than that, it's fine.
+    LOGGER.info(query_kwargs)
+
+    if search:
+
+        tags = set()
+
+        for term in search.split():
+            try:
+                tag = Tag.objects.get(name=term)
+
+            except:
+                # Not a tag
+                pass
+            else:
+                tags.add(tag)
+
+        if tags:
+            reads = user.reads(**query_kwargs).filter(
+                Q(tags=tag)
+                | Q(article__in=matched_articles)).order_by(
+                    order_by).no_cache()
+        else:
+            reads = user.reads(article__in=matched_articles,
+                               **query_kwargs).order_by(
+                                   order_by).no_cache()
+
+    else:
+        reads = user.reads(**query_kwargs).order_by(order_by).no_cache()
+
+    LOGGER.info(u'Matched reads: %s', reads.count())
 
     header_text_left, header_text_right = _rwep_build_page_header_text(
         subscription, folder, user, primary_mode)
@@ -750,7 +840,7 @@ def read_with_endless_pagination(request, **kwargs):
         u'subscription': subscription,
         u'folder': folder,
         u'current_mode': primary_mode[0],
-
+        u'search': search,
         # 'user' is already there, via a context processor.
 
         u'read_page_header_text_left': header_text_left,
@@ -776,18 +866,20 @@ def read_with_endless_pagination(request, **kwargs):
             # Check and update cache counters
             #
 
-            try:
-                _rwep_ajax_update_counters(kwargs, query_kwargs,
-                                           subscription, folder, user, count)
-            except UnicodeDecodeError:
-                pass
+            if search is None:
 
-            if subscription:
-                _rwep_special_update_counters(subscription, user)
+                try:
+                    _rwep_ajax_update_counters(kwargs, query_kwargs,
+                                               subscription, folder, user, count)
+                except UnicodeDecodeError:
+                    pass
 
-            #
-            # prepare the "inline mini-template" for ajax update.
-            #
+                if subscription:
+                    _rwep_special_update_counters(subscription, user)
+
+                #
+                # prepare the "inline mini-template" for ajax update.
+                #
 
             mode, negated = primary_mode
 
