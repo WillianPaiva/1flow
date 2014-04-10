@@ -695,6 +695,28 @@ def read_with_endless_pagination(request, **kwargs):
     user           = djuser.mongo
     #preferences    = user.preferences
 
+    # —————————————————————————————————————————————————————— Search preparation
+
+    search = request.GET.get('search', None)
+
+    if request.is_ajax():
+        # Ajax requests for django-endless-pagination
+        # infinite scrolling. Get search query if any.
+        search = request.session.get('search', None)
+
+    else:
+        # Classic access. Update the session for
+        # django-endless-pagination ajax requests.
+        search_cleared = search == u'' and request.session['search'] != u''
+
+        request.session['search'] = search
+
+        if search_cleared:
+            if request.resolver_match.view_name == u'read_all':
+                return redirect('source_selector')
+
+            return redirect(request.path)
+
     # ———————————————————————————————————————————————————————————— Subscription
 
     # A “feed” (from the user point of view) is actually
@@ -737,21 +759,9 @@ def read_with_endless_pagination(request, **kwargs):
         # LOGGER.info(u'Refining reads by folder %s', folder)
 
         query_kwargs[u'subscriptions__in'] = \
-            Subscription.objects(folders=folder)
+            Subscription.objects(folders=folder).no_cache()
 
     # —————————————————————————————————————————————————————————————————— Search
-
-    search = request.GET.get('search', None)
-
-    if request.is_ajax():
-        # Ajax requests for django-endless-pagination
-        # infinite scrolling. Get search query if any.
-        search = request.session.get('search', None)
-
-    else:
-        # Classic access. Update the session for
-        # django-endless-pagination ajax requests.
-        request.session['search'] = search
 
     if search:
         isearch = search.lower()
@@ -797,13 +807,6 @@ def read_with_endless_pagination(request, **kwargs):
         #LOGGER.info(u'Matched articles for search “%s”: %s',
         #            isearch, matched_articles.count())
 
-    # ————————————————————————————————————————————————————————————— Final query
-
-    # NOTE: this call will produce an UnicodeDecodeError
-    # on subscription* item, but other than that, it's fine.
-    # LOGGER.info(query_kwargs)
-
-    if search:
         tags = set()
 
         for term in search.split():
@@ -816,15 +819,16 @@ def read_with_endless_pagination(request, **kwargs):
             else:
                 tags.add(tag)
 
+    # ————————————————————————————————————————————————————————————— Final query
+
         if tags:
             reads = user.reads(**query_kwargs).filter(
-                Q(tags=tag)
-                | Q(article__in=matched_articles)).order_by(
+                Q(tags=tag) | Q(article__in=matched_articles)).order_by(
                     order_by).no_cache()
         else:
-            reads = user.reads(article__in=matched_articles,
-                               **query_kwargs).order_by(
-                                   order_by).no_cache()
+            reads = user.reads(
+                article__in=matched_articles, **query_kwargs).order_by(
+                    order_by).no_cache()
 
     else:
         reads = user.reads(**query_kwargs).order_by(order_by).no_cache()

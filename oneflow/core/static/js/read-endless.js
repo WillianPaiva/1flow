@@ -1009,20 +1009,27 @@ function setup_snappers() {
 
 function hide_initial_loading() {
 
-    try {
-        $(".initial-loading").addClass("hidden", function(){
-            // WARNING: do not use sole document.location.
-            // In case of a '#' inside it will loop all the
-            // articles in the counter span!!
-            $.get(document.location.pathname + '?count=1',
-                function(data){
-                    $('#reads-number').html(data);
-                }
-            );
-        }).delete();
+    var update_reads_number = function() {
+        // WARNING: do not use sole document.location.
+        // In case of a '#' inside it will loop all the
+        // articles in the counter span!!
 
+        $.get(
+            document.location.pathname + '?count=1',
+            function(data){
+                console.info("Up-to-date reads number: " + data);
+                $('#reads-number').html(data);
+            }
+        );
+    }
+
+    try {
+        if ($(".initial-loading").is(":visible")) {
+            $(".initial-loading").addClass("hidden").remove();
+            update_reads_number();
+        }
     } catch (err) {
-        // nothing, just don't crash if it's not here.
+        console.log(err);
     }
 }
 
