@@ -790,9 +790,9 @@ def read_with_endless_pagination(request, **kwargs):
         #            isearch, matched_articles.count())
 
         matched_articles = matched_articles.filter(
-            Q(title__icontains=isearch)
-            | Q(excerpt__icontains=isearch)
-            | Q(content__icontains=isearch))
+            Q(title__icontains=isearch))
+            #| Q(excerpt__icontains=isearch)
+            #| Q(content__icontains=isearch))
 
         #LOGGER.info(u'Matched articles for search “%s”: %s',
         #            isearch, matched_articles.count())
