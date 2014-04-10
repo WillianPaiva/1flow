@@ -759,7 +759,7 @@ def read_with_endless_pagination(request, **kwargs):
         # LOGGER.info(u'Refining reads by folder %s', folder)
 
         query_kwargs[u'subscriptions__in'] = \
-            Subscription.objects(folders=folder)
+            Subscription.objects(folders=folder).no_cache()
 
     # —————————————————————————————————————————————————————————————————— Search
 
