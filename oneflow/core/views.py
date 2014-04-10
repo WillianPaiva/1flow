@@ -695,6 +695,28 @@ def read_with_endless_pagination(request, **kwargs):
     user           = djuser.mongo
     #preferences    = user.preferences
 
+    # —————————————————————————————————————————————————————— Search preparation
+
+    search = request.GET.get('search', None)
+
+    if request.is_ajax():
+        # Ajax requests for django-endless-pagination
+        # infinite scrolling. Get search query if any.
+        search = request.session.get('search', None)
+
+    else:
+        # Classic access. Update the session for
+        # django-endless-pagination ajax requests.
+        search_cleared = search == u'' and request.session['search'] != u''
+
+        request.session['search'] = search
+
+        if search_cleared:
+            if request.resolver_match.view_name == u'read_all':
+                return redirect('source_selector')
+
+            return redirect(request.path)
+
     # ———————————————————————————————————————————————————————————— Subscription
 
     # A “feed” (from the user point of view) is actually
@@ -740,18 +762,6 @@ def read_with_endless_pagination(request, **kwargs):
             Subscription.objects(folders=folder)
 
     # —————————————————————————————————————————————————————————————————— Search
-
-    search = request.GET.get('search', None)
-
-    if request.is_ajax():
-        # Ajax requests for django-endless-pagination
-        # infinite scrolling. Get search query if any.
-        search = request.session.get('search', None)
-
-    else:
-        # Classic access. Update the session for
-        # django-endless-pagination ajax requests.
-        request.session['search'] = search
 
     if search:
         isearch = search.lower()
