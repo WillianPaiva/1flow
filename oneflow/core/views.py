@@ -772,8 +772,8 @@ def read_with_endless_pagination(request, **kwargs):
         else:
             user_feeds = [s.feed for s in user.subscriptions]
 
-        LOGGER.info(u'Matched user feeds for search “%s”: %s',
-                    isearch, len(user_feeds))
+        #LOGGER.info(u'Matched user feeds for search “%s”: %s',
+        #            isearch, len(user_feeds))
 
         matched_articles = Article.objects(
             #
@@ -786,25 +786,24 @@ def read_with_endless_pagination(request, **kwargs):
             duplicate_of__exists=False,
             content_type__in=CONTENT_TYPES_FINAL).no_cache()
 
-        LOGGER.info(u'First-pass filtered articles for search “%s”: %s',
-                    isearch, matched_articles.count())
+        #LOGGER.info(u'First-pass filtered articles for search “%s”: %s',
+        #            isearch, matched_articles.count())
 
         matched_articles = matched_articles.filter(
             Q(title__icontains=isearch)
             | Q(excerpt__icontains=isearch)
             | Q(content__icontains=isearch))
 
-        LOGGER.info(u'Matched articles for search “%s”: %s',
-                    isearch, matched_articles.count())
+        #LOGGER.info(u'Matched articles for search “%s”: %s',
+        #            isearch, matched_articles.count())
 
     # ————————————————————————————————————————————————————————————— Final query
 
     # NOTE: this call will produce an UnicodeDecodeError
     # on subscription* item, but other than that, it's fine.
-    LOGGER.info(query_kwargs)
+    # LOGGER.info(query_kwargs)
 
     if search:
-
         tags = set()
 
         for term in search.split():
@@ -830,7 +829,7 @@ def read_with_endless_pagination(request, **kwargs):
     else:
         reads = user.reads(**query_kwargs).order_by(order_by).no_cache()
 
-    LOGGER.info(u'Matched reads: %s', reads.count())
+    # LOGGER.info(u'Matched reads: %s', reads.count())
 
     header_text_left, header_text_right = _rwep_build_page_header_text(
         subscription, folder, user, primary_mode)
