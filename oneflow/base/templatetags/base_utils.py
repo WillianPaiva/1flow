@@ -32,61 +32,55 @@ from sparks.foundations import utils as sfu
 register = Library()
 
 
+def get_view_name(context):
+
+    # context['request'].resolver_match.func
+    # context['request'].resolver_match.args
+    # context['request'].resolver_match.kwargs
+    # context['request'].resolver_match.view_name
+
+    try:
+        return context['request'].resolver_match.view_name
+
+    except AttributeError:
+        # Happens on / when the request is a
+        # WSGIRequest and not an HttpRequest.
+        return u'home'
+
+
 @register.simple_tag(takes_context=True)
-def reverse_active(context, url, return_value=None):
+def reverse_active(context, views_names, return_value=None):
     """ In the template:
 
-            <!-- returns 'active' if the current path
-                            matches the reverse url of "views.name" -->
-            class="{% reverse_active "views.name" %}"
-
-            <!-- returns 'my-active' if the current path
-                            matches the reverse url of "views.name" -->
-            class="{% reverse_active "views.name" "my-active" %}"
+            class="{% reverse_active "view_name" %}"
+            class="{% reverse_active "view_name1,view_name2" "my-active" %}"
 
         Taken from http://gnuvince.wordpress.com/2007/09/14/a-django-template-tag-for-the-current-active-page/ #NOQA
         and extended a lot to simplify template calls…
     """
 
-    if reverse(url) == context['request'].path:
-        return return_value or u'active'
+    for view_name in views_names.split(','):
+        if reverse(view_name) == context['request'].path:
+            return return_value or u'active'
 
     return u''
 
 
 @register.simple_tag(takes_context=True)
-def active(context, pattern, return_value=None):
+def view_name_active(context, pattern, return_value=None):
     """ Same as reverse active, but for URLs without any
         view. :param:`pattern` must be a valid regular expression.
 
-        class="{% active request "/help/" "top-menu-element-active" %}"
+            class="{% active "/help/" "top-menu-element-active" %}"
 
     """
 
-    if re.search(pattern, context['request'].path):
+    view_name = get_view_name(context)
+
+    if re.search(pattern, view_name):
         return return_value or u'active'
 
     return u''
-
-
-@register.simple_tag(takes_context=True)
-def search_label(context):
-
-    try:
-        view_name = context['request'].resolver_match.view_name
-
-    except AttributeError:
-        # Happens on / when the request is a
-        # WSGIRequest and not an HttpRequest.
-        view_name = u'home'
-
-    if u'folder' in view_name:
-        return _(u'Search in folder…')
-
-    elif u'feed' in view_name:
-        return _(u'Search in feed…')
-
-    return _(u'Search…')
 
 
 class CaptureasNode(Node):

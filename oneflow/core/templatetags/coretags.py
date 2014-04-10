@@ -37,6 +37,7 @@ from django.utils.translation import ugettext_lazy as _, pgettext_lazy
 
 #from cache_utils.decorators import cached
 
+from ...base.templatetags.base_utils import get_view_name
 from ...base.utils.dateutils import (now, today,
                                      naturaldelta as onef_naturaldelta)
 
@@ -167,6 +168,31 @@ def feature_not_ready():
                      _(u'Feature coming soon. More information on the '
                        u'1flow blog http://blog.1flow.io/ or Twitter '
                        u'@1flow_io.')))
+
+
+@register.simple_tag(takes_context=True)
+def search_action(context):
+
+    view_name = get_view_name(context)
+
+    if view_name == u'source_selector':
+        return u'action="{0}"'.format(reverse('read_all'))
+
+    return u''
+
+
+@register.simple_tag(takes_context=True)
+def search_label(context):
+
+    view_name = get_view_name(context)
+
+    if u'folder' in view_name:
+        return _(u'Search in folder…')
+
+    elif u'feed' in view_name:
+        return _(u'Search in feed…')
+
+    return _(u'Search…')
 
 
 @register.simple_tag
