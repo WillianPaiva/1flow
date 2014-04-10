@@ -807,13 +807,6 @@ def read_with_endless_pagination(request, **kwargs):
         #LOGGER.info(u'Matched articles for search “%s”: %s',
         #            isearch, matched_articles.count())
 
-    # ————————————————————————————————————————————————————————————— Final query
-
-    # NOTE: this call will produce an UnicodeDecodeError
-    # on subscription* item, but other than that, it's fine.
-    # LOGGER.info(query_kwargs)
-
-    if search:
         tags = set()
 
         for term in search.split():
@@ -826,15 +819,16 @@ def read_with_endless_pagination(request, **kwargs):
             else:
                 tags.add(tag)
 
+    # ————————————————————————————————————————————————————————————— Final query
+
         if tags:
             reads = user.reads(**query_kwargs).filter(
-                Q(tags=tag)
-                | Q(article__in=matched_articles)).order_by(
+                Q(tags=tag) | Q(article__in=matched_articles)).order_by(
                     order_by).no_cache()
         else:
-            reads = user.reads(article__in=matched_articles,
-                               **query_kwargs).order_by(
-                                   order_by).no_cache()
+            reads = user.reads(
+                article__in=matched_articles, **query_kwargs).order_by(
+                    order_by).no_cache()
 
     else:
         reads = user.reads(**query_kwargs).order_by(order_by).no_cache()
