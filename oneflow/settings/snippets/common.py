@@ -514,6 +514,9 @@ INSTALLED_APPS = [
     # We don't use `mathfilters` as of 20130831.
     #'mathfilters',
 
+    # Roll on, Elastic Search :-D
+    'haystack',
+
     'widget_tweaks',
     'oneflow.base',
     'oneflow.profiles',

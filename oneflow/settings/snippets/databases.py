@@ -51,6 +51,15 @@ mongoengine.register_connection('archive',              # alias
                                 port=MONGODB_PORT_ARCHIVE,
                                 tz_aware=USE_TZ)
 
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': os.environ.get('HAYSTACK_DEFAULT_CONNECTION_URL'),
+        'INDEX_NAME': os.environ.get('HAYSTACK_DEFAULT_CONNECTION_INDEX',
+                                     os.environ.get('DATABASE_NAME')),
+    },
+}
+
 DBCACHE_SERVER = os.environ.get('DBCACHE_SERVER', None)
 
 if DBCACHE_SERVER is None:
