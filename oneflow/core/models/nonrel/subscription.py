@@ -333,20 +333,16 @@ class Subscription(Document, DocumentHelperMixin):
         missing   = 0
         rechecked = 0
 
-        # When checking the subscription from its feed, allow optimising
-        # the whole story by not querying the articles again for each
-        # subscription. The feed will do the query once, and forward the
-        # QuerySet to all subscriptions to be checked.
-
+        # See generic_check_subscriptions_method() for comment about this.
         if articles is None:
             articles = self.feed.good_articles.order_by('-id')
 
         for article in articles:
             #
-            # NOTE: `is_good` is checked at a lower level in
-            #       `self.create_read()` because the `is_good`
-            #       status has nothing to do here with
-            #       dates-only checks.
+            # NOTE: Checking `article.is_good()` is done at a lower
+            #       level in the individual `self.create_read()`.
+            #       It has nothing to do with the dates-only checks
+            #       that we do here.
             #
 
             params = {}
@@ -518,7 +514,28 @@ def User_subscriptions_by_folder_property_get(self):
 
 
 def generic_check_subscriptions_method(self, commit=True, extended_check=False):
-    """ This one is used for `Read` and `User` classes. """
+    """ For each subscription, check all reads. Eg see if subscribers have
+        all the corresponding reads they should have, for all the articles
+        of the subscription's feed.
+
+        Also, wipe non-existing subscriptions (eg. dangling DBRefs).
+
+        This method is used for `Feed` `User` classes (see later).
+
+        When a user subscribes to a feed, it will be run to connect all
+        existing articles to the user via new reads, avoiding the need
+        for having two different method that basically accomplish the
+        same thing.
+
+        When checking subscriptions from their feed via this method,
+        This will run the articles query once and will use the same
+        QuerySet for all subscriptions to be checked.
+
+        As is it a by-default-cached query, this will save some
+        resources, at the expense of risking beiing declared
+        “invalid cursor” at some point by the engine if checks take
+        too much time.
+    """
 
     # if not force:
     #     LOGGER.info(u'%s.check_subscriptions() is very costy and should '

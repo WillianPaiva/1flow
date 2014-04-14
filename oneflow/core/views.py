@@ -535,7 +535,7 @@ def _rwep_generate_order_by(request, **kwargs):
         if value in (u'id', u'title', ):
             return
 
-        raise RuntimeError
+        raise NotImplementedError('order_by needs love!')
 
     if request.user.is_superuser or request.user.is_staff:
         order_by = unicode(request.GET.get('order_by', u'-id'))
