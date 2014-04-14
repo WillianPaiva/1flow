@@ -1,0 +1,10 @@
+{{ object.title }}
+
+{% if object.content_type == CONTENT_TYPE_MARKDOWN %}
+	{{ object.content }}
+
+{% endif %}
+
+{% for tag in object.tags %}
+	{{ tag.name }}
+{% endfor %}
