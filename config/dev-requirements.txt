@@ -8,6 +8,7 @@
 -e git+https://github.com/platypus-creation/django-rosetta-grappelli.git@83eff3890b6881460f105b6ecd63ff055f51dba4#egg=django_rosetta_grappelli-dev
 coverage==3.6
 django-devserver==0.7.0
+django-haystack-panel==0.2.1
 django-nose==1.2
 django-shell-ipynb==0.2.0
 ecdsa

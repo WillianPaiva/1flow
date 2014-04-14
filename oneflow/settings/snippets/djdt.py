@@ -20,10 +20,17 @@
 
 """
 
+#
+# INFO: in case the Haystack debug panel is not enough,
+#       look at https://github.com/kezabelle/django-haystackbrowser
+#
+
+
 # NOTE: INSTALLED_APPS is a list (not a tuple)
 # in 1flow, because of the conditional landing.
 INSTALLED_APPS += [
     'debug_toolbar',
+    'haystack_panel',
     #'debug_toolbar_user_panel',
     #'template_timings_panel',
     #'debug_toolbar_mongo',
@@ -38,6 +45,7 @@ DEBUG_TOOLBAR_PANELS = (
     #'template_timings_panel.panels.TemplateTimings.TemplateTimings',
     #'debug_toolbar_mongo.panel.MongoDebugPanel',
     'debug_toolbar.panels.sql.SQLDebugPanel',
+    'haystack_panel.panel.HaystackDebugPanel',
     'debug_toolbar.panels.timer.TimerDebugPanel',
     'debug_toolbar.panels.logger.LoggingPanel',
     #'debug_toolbar_user_panel.panels.UserPanel',
