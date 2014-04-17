@@ -102,6 +102,13 @@ webdeploy-compilemessages:
 	fab prod -H 1flow.io sdf.compilemessages
 	fab prod R:web restart:1
 
+webdeploy-collectcompile:
+	git upa
+	fab prod R:web pull
+	fab prod -H 1flow.io -- rm -rf www/src/static
+	fab prod -H 1flow.io sdf.collectstatic sdf.compilemessages
+	fab prod R:web restart:1
+
 allfixtures: datafixtures fixtures
 
 datafixtures:
