@@ -21,11 +21,29 @@
 
         <div class="name-wrapper level-{{ level }}">
             {% if level|divisibleby:'2' %}
-                <span class="name" style="border-top-color: {{ folder_color_border }}">{{ folder.name }}</span>&nbsp;<span class="css-hover-muted"><a href="{% url 'edit_folder' folder=folder.id %}" data-toggle="modal" data-target="#" class="manage"><i class="icon-cog"></i></a></span>
+                <span class="name" style="border-top-color: {{ folder_color_border }}">{{ folder.name }}</span>&nbsp;<span class="css-hover-muted">
+                    <button href="{% url 'edit_folder' folder=folder.id %}" data-toggle="modal" data-target="#" class="btn btn-xs btn-default"><i class="icon-cog"></i> {% trans "Folder settings" %}</button>
+                {% if level|add:1 < folder.max_depth %}
+                    <button
+                    href="{% url 'add_folder_with_parent' parent=folder.id %}"
+                    id="add-folder-trigger" class="btn btn-xs btn-default"
+                    data-toggle="modal" data-target="#"><i
+                    class="icon-fixed-width icon-folder-open"></i>&nbsp;{% trans "Add a sub-folder" %}</button>
+                {% endif %}
+                </span>
 
             {% else %}
-                <span class="css-hover-muted"><a href="{% url 'edit_folder' folder=folder.id %}"
-                    data-toggle="modal" data-target="#" class="manage"><i class="icon-cog"></i></a></span>&nbsp;<span class="name" style="border-top-color: {{ folder_color_border }}">{{ folder.name }}</span>
+                <span class="css-hover-muted">
+                {% if level|add:1 < folder.max_depth %}
+                    <button
+                    href="{% url 'add_folder_with_parent' parent=folder.id %}"
+                    id="add-folder-trigger" class="btn btn-xs btn-default"
+                    data-toggle="modal" data-target="#"><i
+                    class="icon-fixed-width icon-folder-open"></i>&nbsp;{% trans "Add a sub-folder" %}</button>
+                {% endif %}
+                    <button href="{% url 'edit_folder' folder=folder.id %}"
+                    data-toggle="modal" data-target="#" class="btn btn-xs btn-default"><i class="icon-cog"></i> {% trans "Folder settings" %}</button>
+                </span>&nbsp;<span class="name" style="border-top-color: {{ folder_color_border }}">{{ folder.name }}</span>
 
             {% endif %}
 

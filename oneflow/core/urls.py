@@ -158,6 +158,10 @@ urlpatterns = patterns(
         login_required(never_cache(views.source_selector)),
         name='source_selector'),
 
+    url(_(ur'^folder/new/(?P<parent>[0-9a-f]{24,24})/$'),
+        login_required(never_cache(views.manage_folder)),
+        name='add_folder_with_parent'),
+
     url(_(ur'^folder/new/$'),
         login_required(never_cache(views.manage_folder)),
         name='add_folder'),
