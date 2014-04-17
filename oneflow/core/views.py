@@ -322,8 +322,11 @@ def edit_subscription(request, **kwargs):
 
 
 def add_feed(request, feed_url, subscribe=True):
-    """ The :param`subscribe` parameter is set to False for staff members
-        who use a different URL. """
+    """ Subscribe a user to a feed, given a feed URL.
+
+        The :param`subscribe` parameter is set to ``False`` for staff
+        members who use a different URL.
+    """
 
     user = request.user.mongo
     feeds = []
@@ -386,6 +389,13 @@ def add_feed(request, feed_url, subscribe=True):
                 except Exception, sub_exc:
                     LOGGER.exception(u'Failed to subscribe user %s to feed %s',
                                      user, feed)
+
+                else:
+                    # A user subscribing to a feed from the web implicitely
+                    # tells us that this feed is still running. Even if for
+                    # some reason we closed it in the past, it seems OK now.
+                    if feed.closed:
+                        feed.reopen()
 
             else:
                 already_subscribed = True
