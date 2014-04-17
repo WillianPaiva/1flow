@@ -40,7 +40,7 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.template import add_to_builtins
 #from django.views.generic import ListView
-from django.contrib.auth import authenticate, login, get_user_model
+from django.contrib.auth import get_user_model
 from django.utils.translation import (ugettext_lazy as _,
                                       ugettext as __, ungettext)
 
@@ -52,8 +52,7 @@ from endless_pagination.utils import get_page_number_from_request
 
 from sparks.django.utils import HttpResponseTemporaryServerError
 
-from .forms import (FullUserCreationForm,
-                    UserProfileEditForm,
+from .forms import (UserProfileEditForm,  # FullUserCreationForm,
                     HomePreferencesForm,
                     ReadPreferencesForm,
                     SelectorPreferencesForm,
@@ -894,7 +893,8 @@ def read_with_endless_pagination(request, **kwargs):
 
                 try:
                     _rwep_ajax_update_counters(kwargs, query_kwargs,
-                                               subscription, folder, user, count)
+                                               subscription, folder,
+                                               user, count)
                 except UnicodeDecodeError:
                     pass
 
