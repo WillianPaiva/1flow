@@ -170,6 +170,9 @@ $folder-border-width-default: 2px;
     }
 }
 
+#add-content-buttons {
+    margin-top: 20px;
+}
 
 @import "selector-folders";
 @import "selector-subscriptions";
