@@ -542,25 +542,34 @@ def _rwep_generate_query_kwargs(request, **kwargs):
 def _rwep_generate_order_by(request, **kwargs):
 
     def check_order_by(value):
-        if value in (u'id', u'title', ):
+        if value in (u'date_published', u'date_added', u'id', u'title', ):
             return
 
         raise NotImplementedError('order_by needs love!')
 
-    if request.user.is_superuser or request.user.is_staff:
-        order_by = unicode(request.GET.get('order_by', u'-id'))
+    default_order_by = (u'-id', )
+
+    if request.user.mongo.is_staff_or_superuser_and_enabled:
+        order_by = request.GET.get('order_by', None)
+
+        if order_by:
+            order_by = unicode(order_by).split(',')
+
+        else:
+            order_by = default_order_by
     else:
-        order_by = u'-id'
+        order_by = order_by = default_order_by
 
     try:
-        if order_by.startswith(u'-'):
-            check_order_by(order_by[1:])
-        else:
-            check_order_by(order_by)
+        for order in order_by:
+            if order.startswith(u'-'):
+                check_order_by(order[1:])
+            else:
+                check_order_by(order)
     except:
-        LOGGER.exception(u'order_by check failed (value "%s"); using "-id".',
-                         order_by)
-        order_by = u'-id'
+        LOGGER.exception(u'order_by check failed (value "%s"); '
+                         u'using default.', order_by)
+        order_by = default_order_by
 
     return order_by
 
@@ -834,14 +843,16 @@ def read_with_endless_pagination(request, **kwargs):
         if tags:
             reads = user.reads(**query_kwargs).filter(
                 Q(tags=tag) | Q(article__in=matched_articles)).order_by(
-                    order_by).no_cache()
+                    *order_by).no_cache()
         else:
             reads = user.reads(
                 article__in=matched_articles, **query_kwargs).order_by(
-                    order_by).no_cache()
+                    *order_by).no_cache()
 
     else:
-        reads = user.reads(**query_kwargs).order_by(order_by).no_cache()
+        reads = user.reads(**query_kwargs).order_by(*order_by).no_cache()
+
+    LOGGER.info(u'order_by is: %s', order_by)
 
     # LOGGER.info(u'Matched reads: %s', reads.count())
 
