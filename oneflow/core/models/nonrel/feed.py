@@ -556,12 +556,20 @@ class Feed(Document, DocumentHelperMixin):
                 if link.get('rel', None) == 'alternate' \
                     and link.get('type', None) in (u'application/rss+xml',
                                                    u'application/atom+xml',
-                                                   u'text/xml', ) \
-                    and (not skip_comments
-                         or not u'comments for '
-                         in link.get('title', u'').lower()):
+                                                   u'text/xml', ):
 
-                    yield link.get('href')
+                    lower_title = link.get('title', u'').lower()
+
+                    if not skip_comments and not (
+                        u'comments for ' in lower_title
+                        or
+                        u'comments on ' in lower_title
+                        or
+                        _(u'comments for ') in lower_title
+                        or
+                            _(u'comments on ') in lower_title):
+
+                        yield link.get('href')
 
     @classmethod
     def signal_post_save_handler(cls, sender, document,
