@@ -1,90 +1,73 @@
-<div id="header" class="clearfix">
 
-
-    <div class="ctrls">
-        <div class="btn-group pull-right">
-            <button class="btn dropdown-toggle" data-toggle="dropdown">
-                {% trans "Add new content" %}&nbsp;&nbsp;<span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu">
-                <li><a id="import-web-item-trigger"
-                    href="{% url 'import_web_pages' %}"
-                    data-toggle="modal"
-                    data-target="#"><i
-                    class="icon-fixed-width icon-cloud-download"></i>&nbsp;{% trans "Import web pages" %}</a></li>
-
-                <li><a href="{% url 'add_subscription' %}"
-                    id="add-subscription-trigger">
-                    <i class="icon-fixed-width icon-rss"></i>&nbsp;{% trans "Subscribe to a stream" %}</a></li>
-
-                <li><a href="{% url 'add_folder' %}"
-                        id="add-folder-trigger"
-                        data-toggle="modal" data-target="#"><i
-                        class="icon-fixed-width icon-folder-open"></i>&nbsp;{% trans "Add a folder" %}</a></li>
-
-                {#{% include 'snippets/selector/import-web-items-trigger.html' with in_list=1 %}#}
-            </ul>
-        </div>
-    </div>
-</div>
-
-<div id="lists">
-    <form>
+<div id="lists" class="row">
+    <fieldset id="reading-lists" class="col-xs-12 col-sm-6">
+        <legend>{% trans "Reading lists" %}</legend>
         <div class="row">
-            <fieldset id="reading-lists" class="col-xs-12 col-sm-6">
-                <legend>{% trans "Reading lists" %}</legend>
-                <div class="row">
-                    <div class="col-xs-6">
-                        <ul class="list-unstyled">
-                            <li class="muted not-ready" {% feature_not_ready %}>
-                                {% trans "Inbox" %}</li>
+            <div class="col-xs-6">
+                <ul class="list-unstyled">
+                    <li class="muted not-ready" {% feature_not_ready %}>
+                        {% trans "Inbox" %}</li>
 
-                            <li>{% special_subscription_list_with_count mongodb_user 'web_import' %}</li>
+                    <li>{% special_subscription_list_with_count mongodb_user 'web_import' %}</li>
 
-                            <li>{% reading_list_with_count mongodb_user 'read_later' True %}</li>
-                            <li>{% reading_list_with_count mongodb_user 'read' True %}</li>
-                        </ul>
-                    </div>
-                    <div class="col-xs-6">
-                        <ul class="list-unstyled">
-                            <li>{% reading_list_with_count mongodb_user 'read_fun' %}</li>
-                            <li>{% reading_list_with_count mongodb_user 'read_starred' %}</li>
+                    <li>{% reading_list_with_count mongodb_user 'read_later' True %}</li>
+                    <li>{% reading_list_with_count mongodb_user 'read' True %}</li>
+                </ul>
+            </div>
+            <div class="col-xs-6">
+                <ul class="list-unstyled">
+                    <li>{% reading_list_with_count mongodb_user 'read_fun' %}</li>
+                    <li>{% reading_list_with_count mongodb_user 'read_starred' %}</li>
 
-                            <li class="muted not-ready" {% feature_not_ready %}>
-                                {% trans "Sent Articles" %}</li>
+                    <li class="muted not-ready" {% feature_not_ready %}>
+                        {% trans "Sent Articles" %}</li>
 
-                            <li>{% reading_list_with_count mongodb_user 'read_all' %}</li>
-                        </ul>
-                    </div>
-                </div>
-            </fieldset>
-
-            <fieldset id="watching-lists" class="col-xs-12 col-sm-6">
-                <legend>{% trans "Watching lists" %}</legend>
-                <div class="row">
-                    <div class="col-xs-6">
-                        <ul class="list-unstyled">
-                          <li>{% reading_list_with_count mongodb_user 'read_facts' %}</li>
-                          <li>{% reading_list_with_count mongodb_user 'read_numbers' %}</li>
-                          <li>{% reading_list_with_count mongodb_user 'read_analysis' %}</li>
-                          <li>{% reading_list_with_count mongodb_user 'read_prospective' %}</li>
-                        </ul>
-                    </div>
-                    <div class="col-xs-6">
-                        <ul class="list-unstyled">
-                          <li>{% reading_list_with_count mongodb_user 'read_know_how' %}</li>
-                          <li>{% reading_list_with_count mongodb_user 'read_rules' %}</li>
-                          <li>{% reading_list_with_count mongodb_user 'read_quotes' %}</li>
-                          <li>{% reading_list_with_count mongodb_user 'read_knowledge' %}</li>
-                        </ul>
-                    </div>
-                </div>
-            </fieldset>
+                    <li>{% reading_list_with_count mongodb_user 'read_all' %}</li>
+                </ul>
+            </div>
         </div>
-    </form>
+    </fieldset>
+
+    <fieldset id="watching-lists" class="col-xs-12 col-sm-6">
+        <legend>{% trans "Watching lists" %}</legend>
+        <div class="row">
+            <div class="col-xs-6">
+                <ul class="list-unstyled">
+                  <li>{% reading_list_with_count mongodb_user 'read_facts' %}</li>
+                  <li>{% reading_list_with_count mongodb_user 'read_numbers' %}</li>
+                  <li>{% reading_list_with_count mongodb_user 'read_analysis' %}</li>
+                  <li>{% reading_list_with_count mongodb_user 'read_prospective' %}</li>
+                </ul>
+            </div>
+            <div class="col-xs-6">
+                <ul class="list-unstyled">
+                  <li>{% reading_list_with_count mongodb_user 'read_know_how' %}</li>
+                  <li>{% reading_list_with_count mongodb_user 'read_rules' %}</li>
+                  <li>{% reading_list_with_count mongodb_user 'read_quotes' %}</li>
+                  <li>{% reading_list_with_count mongodb_user 'read_knowledge' %}</li>
+                </ul>
+            </div>
+        </div>
+    </fieldset>
 </div>
 
-<div class="clearfix"></div>
+<div id="add-content-buttons" class="clearfix row">
+
+    <div class="col-sm-4 centered"><a id="import-web-item-trigger"
+        href="{% url 'import_web_pages' %}"
+        data-toggle="modal"
+        data-target="#" class="btn btn-lg btn-default"><i
+        class="icon-fixed-width icon-cloud-download"></i>&nbsp;{% trans "Import web pages" %}</a></div>
+
+    <div class="col-sm-4 centered"><a href="{% url 'add_subscription' %}"
+        id="add-subscription-trigger" class="btn btn-lg btn-default">
+        <i class="icon-fixed-width icon-rss"></i>&nbsp;{% trans "Subscribe to a stream" %}</a></div>
+
+    <div class="col-sm-4 centered"><a href="{% url 'add_folder' %}"
+            id="add-folder-trigger" class="btn btn-lg btn-default"
+            data-toggle="modal" data-target="#"><i
+            class="icon-fixed-width icon-folder-open"></i>&nbsp;{% trans "Add a folder" %}</a></div>
+</div>
 
 <div id="folders">
     {% for folder in mongodb_user.top_folders %}
