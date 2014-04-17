@@ -268,7 +268,13 @@ def manage_folder(request, **kwargs):
             form = ManageFolderForm(instance=folder, owner=user)
 
         else:
-            form = ManageFolderForm(owner=user)
+            parent = kwargs.pop('parent', None)
+
+            if parent:
+                form = ManageFolderForm(owner=user, initial={'parent': parent})
+            else:
+
+                form = ManageFolderForm(owner=user)
 
     return render(request, 'snippets/selector/manage-folder.html',
                   {'form': form, 'folder': folder})
