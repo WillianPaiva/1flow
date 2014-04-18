@@ -1,0 +1,25 @@
+{# BOOKMARK Unicode: U+1F516 (U+D83D U+DD16), UTF-8: F0 9F 94 96 #}
+<a href="javascript:void(location.href='http://{{ settings.SITE_DOMAIN }}{% url 'add_feed' '' %}'+encodeURIComponent(location.href));"
+    class="bookmarklet btn {{ btn_size }} btn-success popover-top"
+    onclick="javascript:alert('{% trans "Drag this link to your bookmarks toolbar" %}');return false;"
+    title="{% trans "Drag this link to your bookmarks toolbar" %}"
+    data-toggle="tooltip"><i
+        class="icon-bookmark">
+        </i>&nbsp;{% trans "Subscribe in 1flow" %}</a>
+
+{% if mongodb_user.is_staff_or_superuser_and_enabled %}
+
+    <br />
+
+    <a href="javascript:void(location.href='http://{{ settings.SITE_DOMAIN }}{% url 'add_feed_staff' '' %}'+encodeURIComponent(location.href));"
+        class="bookmarklet btn {{ btn_size }} btn-warning"
+        onclick="javascript:alert('{% trans "Drag this link to your bookmarks toolbar" %}');return false;"
+        title="{% trans "Drag this link to your bookmarks toolbar" %}"
+        data-toggle="tooltip"><i
+        class="icon-cloud-download">
+        </i>&nbsp;{% trans "Import feed into 1flow" %}</a>
+
+    <br />
+    {% trans "(no subscription, for staff only)" %}
+
+{% endif %}

@@ -431,7 +431,23 @@ def add_subscription(request, **kwargs):
     else:
         form = AddSubscriptionForm(owner=request.user.mongo)
 
-    return render(request, 'add-subscription.html', {'form': form})
+    context = {'form': form}
+
+    #
+    # HEADS UP: the non `in_modal` form is used during the first-connection
+    #           wizard. It will help the user add feeds / subscriptions, while
+    #           his/her selector is empty.
+    #
+
+    if request.is_ajax():
+        context['in_modal'] = True
+
+        template = 'snippets/selector/add-subscription.html'
+
+    else:
+        template = 'add-subscription.html'
+
+    return render(request, template, context)
 
 
 def cancel_subscription(request, **kwargs):
