@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-18 11:31+0200\n"
-"PO-Revision-Date: 2014-04-18 11:35+0009\n"
+"POT-Creation-Date: 2014-04-18 13:19+0200\n"
+"PO-Revision-Date: 2014-04-18 13:20+0009\n"
 "Last-Translator: Olivier Cortes <karmak23@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -2791,7 +2791,7 @@ msgstr "Contribuez"
 msgid "Donate:"
 msgstr "Donnez :"
 
-#: templates/help.html:3 templates/snippets/navbar.html:240
+#: templates/help.html:3 templates/snippets/navbar.html:234
 msgid "Features"
 msgstr "Fonctionnalités"
 
@@ -3225,19 +3225,19 @@ msgstr "Écrire"
 msgid "Collaborate"
 msgstr "Collaborer"
 
-#: templates/snippets/navbar.html:131
+#: templates/snippets/navbar.html:132
 msgid "Press Shift-Alf-F to focus"
 msgstr "Pressez Shift-Alt-F pour activer"
 
-#: templates/snippets/navbar.html:162
+#: templates/snippets/navbar.html:156
 msgid "Maintenance"
 msgstr "Maintenance"
 
-#: templates/snippets/navbar.html:246
+#: templates/snippets/navbar.html:240
 msgid "About"
 msgstr "À propos"
 
-#: templates/snippets/navbar.html:247
+#: templates/snippets/navbar.html:241
 msgid "Contact"
 msgstr "Contact"
 
@@ -3941,8 +3941,8 @@ msgid "Add one or more subscriptions"
 msgstr "Ajouter un ou plusieurs abonnements"
 
 #: templates/snippets/selector/add-subscription.html:29
-msgid "Choose an existing feed:"
-msgstr "Choisissez un flux existant :"
+msgid "Pick some in 1flow database:"
+msgstr "Faites votre cueillette dans la base de données 1flow :"
 
 #: templates/snippets/selector/add-subscription.html:39
 msgid "Choose an existing feed"
@@ -4535,6 +4535,9 @@ msgstr "converti"
 msgctxt "awesome-font icon name"
 msgid "exchange"
 msgstr "exchange"
+
+#~ msgid "Choose an existing feed:"
+#~ msgstr "Choisissez un flux existant :"
 
 #~ msgid "Add new content"
 #~ msgstr "Ajouter du contenu"
