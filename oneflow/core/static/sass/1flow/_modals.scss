@@ -1,6 +1,7 @@
 
 #manage-folder.modal,
 .manage-subscription.modal,
+#add-subscription.modal,
 #share-read.modal,
 #import-web-pages.modal {
 
@@ -8,15 +9,14 @@
         margin-bottom: 0;
     }
 
-    .sub-modal h4 {
-        margin-top: 1em;
-        margin-bottom: 1em;
-    }
-
     label,
     input,
     select {
         font-size: 150%;
+    }
+
+    h4 {
+        line-height: 2em;
     }
 
     input {
@@ -79,7 +79,7 @@
 @media (min-width: $screen-md-min) {
 
     #import-web-pages .modal-dialog {
-        width: 70%;
+        width: 50%;
 
         textarea {
             font-size: 80%;

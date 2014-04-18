@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-14 13:32+0200\n"
-"PO-Revision-Date: 2014-04-17 21:29+0009\n"
+"POT-Creation-Date: 2014-04-18 11:31+0200\n"
+"PO-Revision-Date: 2014-04-18 11:35+0009\n"
 "Last-Translator: Olivier Cortes <karmak23@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -43,7 +43,7 @@ msgstr "lectures"
 #: admin.py:137 models/nonrel/read.py:284 models/nonrel/read.py:293
 #: templates/snippets/read/reading-list-header.html:52
 #: templates/snippets/read/reading-list-header.html:84
-#: templates/snippets/selector/folder.html:37
+#: templates/snippets/selector/folder.html:55
 #: templates/snippets/selector/subscription.html:72
 msgid "starred"
 msgstr "favoris"
@@ -118,7 +118,6 @@ msgid "Content"
 msgstr "Contenu"
 
 #: admin.py:488
-#, python-brace-format
 msgid "<span title=\"{0}\" style=\"cursor: pointer; font-size: 300%\">•••</span>"
 msgstr "<span title=\"{0}\" style=\"cursor: pointer; font-size: 300%\">•••</span>"
 
@@ -127,7 +126,6 @@ msgid "Fetch err."
 msgstr "Err. récup."
 
 #: admin.py:501
-#, python-brace-format
 msgid "<span title=\"{0}\" style=\"cursor: pointer; font-size: 300%;\">•••</span>"
 msgstr "<span title=\"{0}\" style=\"cursor: pointer; font-size: 300%;\">•••</span>"
 
@@ -160,7 +158,6 @@ msgid "Dupe of"
 msgstr "Dupe de"
 
 #: admin.py:745
-#, python-brace-format
 msgid ""
 "<span title=\"Last 3 errors:\n"
 "{0}\" style=\"cursor: pointer\">{1} error(s)</span>"
@@ -169,7 +166,6 @@ msgstr ""
 "{0}\" style=\"cursor: pointer\">{1} erreur(s)</span>"
 
 #: admin.py:748
-#, python-brace-format
 msgid "{0}: {1}"
 msgstr "{0} : {1}"
 
@@ -250,12 +246,10 @@ msgid "Forcing all feed refresh…"
 msgstr "Déclenchement forcé du rafraîchissement de tous les flux…"
 
 #: tasks.py:758
-#, python-brace-format
 msgid "Reminder: {0} feed(s) closed in last {1} day(s)"
 msgstr "Rappel : {0} flux fermé(s) ce(s) {1} dernier(s) jour(s)"
 
 #: tasks.py:760
-#, python-brace-format
 msgid ""
 "\n"
 "\n"
@@ -352,156 +346,150 @@ msgid "^selector/$"
 msgstr "^selecteur/$"
 
 #: urls.py:161
+msgid "^folder/new/(?P<parent>[0-9a-f]{24,24})/$"
+msgstr "^dossier/nouveau/(?P<parent>[0-9a-f]{24,24})/$"
+
+#: urls.py:165
 msgid "^folder/new/$"
 msgstr "^dossier/nouveau/$"
 
-#: urls.py:165
+#: urls.py:169
 msgid "^folder/(?P<folder>(?:[0-9a-f]{24,24})+)/delete$"
 msgstr "^dossier/(?P<folder>(?:[0-9a-f]{24,24})+)/supprimer$"
 
-#: urls.py:169
+#: urls.py:173
 msgid "^folder/(?P<folder>(?:[0-9a-f]{24,24})+)$"
 msgstr "^dossier/(?P<folder>(?:[0-9a-f]{24,24})+)$"
 
-#: urls.py:175
+#: urls.py:179
 msgid "^feed/add/nosub/(.*)$"
 msgstr "^flux/ajouter/pasdab/(.*)$"
 
-#: urls.py:179
+#: urls.py:183
 msgid "^feed/add/(.*)$"
 msgstr "^flux/ajouter/(.*)$"
 
-#: urls.py:184
+#: urls.py:188
 msgid "^subscription/new/$"
 msgstr "^abonnement/nouveau/$"
 
-#: urls.py:192
+#: urls.py:196
 msgid "^json/feeds-completer/$"
 msgstr "^json/feeds-completer/$"
 
-#: urls.py:197
+#: urls.py:201
 msgid "^subscription/(?P<subscription>(?:[0-9a-f]{24,24})+)/cancel$"
 msgstr "^abonnement/(?P<subscription>(?:[0-9a-f]{24,24})+)/resilier$"
 
-#: urls.py:201
+#: urls.py:205
 msgid "^subscription/(?P<subscription>(?:[0-9a-f]{24,24})+)/cancel/do$"
 msgstr "^abonnement/(?P<subscription>(?:[0-9a-f]{24,24})+)/resilier/vraiment$"
 
-#: urls.py:205
+#: urls.py:209
 msgid "^subscription/(?P<subscription>(?:[0-9a-f]{24,24})+)$"
 msgstr "^abonnement/(?P<subscription>(?:[0-9a-f]{24,24})+)$"
 
-#: urls.py:209
+#: urls.py:213
 msgid "^import/contacts/$"
 msgstr "^importer/contacts/$"
 
-#: urls.py:219
+#: urls.py:223
 msgid "^import/url/(.*)$"
 msgstr "^importer/url/(.*)$"
 
-#: urls.py:223
+#: urls.py:227
 msgid "^status/article/([0-9a-f]{24,24})/$"
 msgstr "^etat/article/([0-9a-f]{24,24})/$"
 
-#: urls.py:227
+#: urls.py:231
 msgid "^webimport/$"
 msgstr "^import-web/$"
 
-#: urls.py:231
+#: urls.py:235
 msgid "^(?P<klass>\\w+)/(?P<oid>\\w+)/toggle/(?P<key>\\w+.\\w+)/?$"
 msgstr "^(?P<klass>\\w+)/(?P<oid>\\w+)/toggle/(?P<key>\\w+.\\w+)/?$"
 
-#: urls.py:234
+#: urls.py:238
 msgid "^help/$"
 msgstr "^aide/$"
 
-#: urls.py:236
+#: urls.py:240
 msgid "^signin_error/$"
 msgstr "^erreur_connexion/$"
 
-#: urls.py:241
+#: urls.py:245
 msgid "^grimport/(?:(?P<user_id>\\d+)/)?$"
 msgstr "^importgr/(?:(?P<user_id>\\d+)/)?$"
 
-#: urls.py:244
+#: urls.py:248
 msgid "^grstop/(?P<user_id>\\d+)/$"
 msgstr "^stopgr/(?P<user_id>\\d+)/$"
 
-#: urls.py:247
+#: urls.py:251
 msgid "^grtoggle/(?P<user_id>\\d+)/$"
 msgstr "^basculergr/(?P<user_id>\\d+)/$"
 
-#: urls.py:250
+#: urls.py:254
 msgid "^grstatus/$"
 msgstr "^etatgr/$"
 
-#: urls.py:255
+#: urls.py:259
 msgid "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: views.py:242
-#, python-brace-format
+#: views.py:241
 msgid "Save <em>{0}</em> failed: {1}"
 msgstr "Enregistrement de <em>{0}</em> impossible : {1}"
 
-#: views.py:247
-#, python-brace-format
+#: views.py:246
 msgid "Folder <em>{0}</em> successfully {1}."
 msgstr "Dossier <em>{0}</em> {1} avec succès."
 
-#: views.py:248 models/nonrel/feed.py:215
+#: views.py:247 models/nonrel/feed.py:215
 msgid "modified"
 msgstr "modifié"
 
-#: views.py:249
+#: views.py:248
 msgid "created"
 msgstr "créé"
 
-#: views.py:254
-#, python-brace-format
+#: views.py:253
 msgid "Could not {0} folder: {1}."
 msgstr "Impossible de {0} le dossier : {1}."
 
-#: views.py:255
+#: views.py:254
 msgid "modify"
 msgstr "de modifier"
 
-#: views.py:255
+#: views.py:254
 msgid "create"
 msgstr "de créer"
 
-#: views.py:300
-#, python-brace-format
+#: views.py:305
 msgid "Subscription <em>{0}</em> successfully modified."
 msgstr "Abonnement <em>{0}</em> modifié avec succès."
 
-#: views.py:305
-#, python-brace-format
+#: views.py:310
 msgid "Could not save subscription: {0}."
 msgstr "Impossible d'enregistrer l'abonnement : {0}."
 
-#: views.py:350
-#, python-brace-format
+#: views.py:358
 msgid "Malformed URL {0}"
 msgstr "URL {0} mal-formée"
 
-#: views.py:355
-#, python-brace-format
+#: views.py:363
 msgid "Very malformed url {0}"
 msgstr "URL {0} très mal-formée"
 
-#: views.py:362
-#, python-brace-format
+#: views.py:370
 msgid "The website at {0} does not seem to provide any feed."
 msgstr "Le site web {0} semble ne proposer aucun flux."
 
-#: views.py:366
-#, python-brace-format
+#: views.py:374
 msgid "Could not create any feed from URL {0}: {1}"
 msgstr "Impossible de créer un flux à partir de l'adresse {0} : {1}"
 
-#: views.py:409
-#, python-brace-format
+#: views.py:424
 msgid ""
 "Successfully subscribed to {0} streams. Articles are being added "
 "progressively, thanks for your patience."
@@ -509,26 +497,25 @@ msgstr ""
 "Abonné à {0} flux avec succès. Les articles sont en train d'être importés "
 "petit-à-petit, merci de votre patience."
 
-#: views.py:433
-#, python-brace-format
+#: views.py:464
 msgid "Subscription <em>{0}</em> successfully cancelled."
 msgstr "Abonnement <em>{0}</em> résilié avec succès."
 
-#: views.py:679
+#: views.py:710
 #, python-format
 msgid " (%(count)s subscription)"
 msgid_plural " (%(count)s subscriptions)"
 msgstr[0] " (%(count)s abonnement)"
 msgstr[1] " (%(count)s abonnements)"
 
-#: views.py:687
+#: views.py:718
 #, python-format
 msgid "In your <span class=\"hide\">%(count)s</span> subscription"
 msgid_plural "In your %(count)s subscriptions"
 msgstr[0] "Dans votre <span class=\"hide\">%(count)s</span> abonnement"
 msgstr[1] "Dans vos %(count)s abonnements"
 
-#: views.py:741 views.py:761
+#: views.py:772 views.py:792
 msgid ""
 "As administrator, you are accessing the feed of another user. USE WITH "
 "CAUTION."
@@ -536,62 +523,58 @@ msgstr ""
 "Vous accédez au flux d'un autre utilisateur en tant qu'administrateur. "
 "AGISSEZ AVEC PRUDENCE."
 
-#: views.py:906
+#: views.py:938
 msgid "no item"
 msgstr "aucun élément"
 
-#: views.py:1052
-#, python-brace-format
+#: views.py:1084
 msgid "{1} shared <em>{0}</em> with you."
 msgstr "{1} a partagé <em>{0}</em> avec vous."
 
-#: views.py:1055
-#, python-brace-format
+#: views.py:1087
 msgid "Recorded <em>{0}</em> as shared by {1} in your inbox."
 msgstr ""
 "<em>{0}</em> a été enregistré dans votre boîte de réception, comme partagé "
 "par {1}."
 
-#: views.py:1097
-#, python-brace-format
+#: views.py:1129
 msgid "Share article with <code>{0}</code> failed: {1}"
 msgstr "Le partage de l'article avec <code>{0}</code> a échoué : {1}"
 
-#: views.py:1103
-#, python-brace-format
+#: views.py:1135
 msgid "Successfully shared <em>{0}</em> with {1} persons"
 msgstr "L'article <em>{0}</em> a été partagé avec {1} personne(s)"
 
-#: views.py:1539
+#: views.py:1571
 msgid "An import is already running for your Google Reader data."
 msgstr "Un import de vos données Google Reader est déjà en cours."
 
-#: views.py:1543
+#: views.py:1575
 msgid "Google Reader import deactivated."
 msgstr "L'import Google Reader est désactivé."
 
-#: views.py:1547
+#: views.py:1579
 msgid "Your beta invite has not yet been accepted, sorry."
 msgstr "Votre invitation à la BETA n'a pas encore été acceptée, désolé."
 
-#: views.py:1554
+#: views.py:1586
 msgid "You are not logged into Google Oauth or you have no token."
 msgstr ""
 "Vous n'êtes pas identifié(e) via Google, ou vous n'avez pas de jeton "
 "d'accès."
 
-#: views.py:1558
+#: views.py:1590
 msgid "Error parsing Google Oauth tokens. Please try signout and re-signin."
 msgstr ""
 "Erreur pendant le traitement des jetons d'accès Google. Essayez de vous "
 "déconnecter et reconnecter."
 
-#: views.py:1564
+#: views.py:1596
 #, python-format
 msgid "Google Reader import started for user ID %s."
 msgstr "L'import Google Reader a démarré pour l'utilisateur %s."
 
-#: views.py:1567
+#: views.py:1599
 msgid "Google Reader import started."
 msgstr "L'import Google Reader a démarré."
 
@@ -610,7 +593,6 @@ msgstr ""
 "class=\"icon-question-sign\"></i></a>."
 
 #: forms/read.py:53
-#, python-brace-format
 msgid ""
 "Hi {{fullname}},\n"
 "\n"
@@ -696,12 +678,10 @@ msgid "Enter an URL"
 msgstr "Saississez une URL"
 
 #: forms/selector.py:325
-#, python-brace-format
 msgid "Select feed(s) from the {0} referenced"
 msgstr "Sélectionnez des flux parmis les {0} référencés"
 
 #: forms/selector.py:328
-#, python-brace-format
 msgid ""
 "<span class=\"muted\">NOTE: this can be long. You will be notified when "
 "search is done.</span> <a href=\"{0}\" target=\"_blank\">How does it "
@@ -790,7 +770,6 @@ msgstr ""
 " je ne suis pas sûr…"
 
 #: models/reldb.py:70
-#, python-brace-format
 msgid "{field_name}: {truncated_field_value}"
 msgstr "{field_name} : {truncated_field_value}"
 
@@ -973,12 +952,10 @@ msgstr ""
 "pointent vers la même destination finale sur le web."
 
 #: models/nonrel/article.py:304
-#, python-brace-format
 msgid "{0} (#{1}) from {2}"
 msgstr "{0} (#{1}) from {2}"
 
 #: models/nonrel/article.py:351
-#, python-brace-format
 msgid "{0} ago"
 msgstr "il y a {0}"
 
@@ -987,7 +964,6 @@ msgid "Unknown source"
 msgstr "Source inconnue"
 
 #: models/nonrel/article.py:393 models/nonrel/read.py:701
-#, python-brace-format
 msgid "Multiple sources ({0} feeds)"
 msgstr "Sources multiples ({0} flux)"
 
@@ -1020,32 +996,26 @@ msgid " (unsure)"
 msgstr "(non confirmé)"
 
 #: models/nonrel/common.py:122
-#, python-brace-format
 msgid "Items sent by {0}"
 msgstr "Éléments envoyés par {0}"
 
 #: models/nonrel/common.py:124
-#, python-brace-format
 msgid "Imported items of {0}"
 msgstr "Éléments importés de {0}"
 
 #: models/nonrel/common.py:126
-#, python-brace-format
 msgid "Inbox of {0}"
 msgstr "Boîte de réception de {0}"
 
 #: models/nonrel/common.py:202
-#, python-brace-format
 msgid "{0} #{1} not found"
 msgstr "{0} #{1} introuvable"
 
 #: models/nonrel/common.py:206
-#, python-brace-format
 msgid "{0}({1}) not found"
 msgstr "{0}({1}) introuvable"
 
 #: models/nonrel/common.py:458 models/nonrel/common.py:491
-#, python-brace-format
 msgid ""
 "{0} is already in the parent chain of {1}. Setting the later parent of the "
 "former would result in a cycle and is not allowed."
@@ -1212,12 +1182,18 @@ msgid "Public description of the feed in English language. As Markdown."
 msgstr "Public description of the feed in English language. As Markdown."
 
 #: models/nonrel/feed.py:364 models/nonrel/folder.py:115
-#, python-brace-format
 msgid "{0} (#{1})"
 msgstr "{0} (#{1})"
 
-#: models/nonrel/feed.py:742
-#, python-brace-format
+#: models/nonrel/feed.py:568
+msgid "comments for "
+msgstr "commentaires pour "
+
+#: models/nonrel/feed.py:570
+msgid "comments on "
+msgstr "commentaires sur "
+
+#: models/nonrel/feed.py:750
 msgid "Imported item from {0}"
 msgstr "Élément importé depuis {0}"
 
@@ -1234,17 +1210,14 @@ msgid "Children folders"
 msgstr "Dossier(s) enfant(s)"
 
 #: models/nonrel/folder.py:110
-#, python-brace-format
 msgid "{0} (#{1}) for user {2}{3}{4}"
 msgstr "{0} (#{1}) de l'utilisateur {2}{3}{4}"
 
 #: models/nonrel/folder.py:112
-#, python-brace-format
 msgid ", parent: {0} (#{1})"
 msgstr ", parent : {0} (#{1})"
 
 #: models/nonrel/folder.py:114
-#, python-brace-format
 msgid ", children: {0}"
 msgstr ", enfant(s) : {0}"
 
@@ -2501,7 +2474,6 @@ msgid "frown"
 msgstr "frown"
 
 #: models/nonrel/read.py:621
-#, python-brace-format
 msgid "{0}∞{1} (#{2}∞#{3}→#{4}) {5} @{6}"
 msgstr "{0}∞{1} (#{2}∞#{3}→#{4}) {5} @{6}"
 
@@ -2511,12 +2483,10 @@ msgid "unread"
 msgstr "non-lu"
 
 #: models/nonrel/read.py:666
-#, python-brace-format
 msgid " ({feed})"
 msgstr " ({feed}) "
 
 #: models/nonrel/read.py:671
-#, python-brace-format
 msgid "{title}{source}"
 msgstr "{title}{source}"
 
@@ -2525,12 +2495,10 @@ msgid "a quick read"
 msgstr "brève lecture "
 
 #: models/nonrel/read.py:728
-#, python-brace-format
 msgid "{0} read"
 msgstr "lecture de {0}"
 
 #: models/nonrel/read.py:740
-#, python-brace-format
 msgid ""
 "<span class=\"popover-top\" data-toggle=\"tooltip\" title=\"Reading time: "
 "{0}\">{1}</span>"
@@ -2553,7 +2521,6 @@ msgid "Folder(s) in which this subscription appears."
 msgstr "Dossier(s) dans lesquel(s) cet abonnement apparaît."
 
 #: models/nonrel/subscription.py:178
-#, python-brace-format
 msgid "{0}+{1} (#{2})"
 msgstr "{0}+{1} (#{2})"
 
@@ -2580,7 +2547,6 @@ msgid ""
 msgstr ""
 
 #: models/nonrel/tag.py:101
-#, python-brace-format
 msgid "{0} {1}⚐ (#{2})"
 msgstr "{0} {1}⚐ (#{2})"
 
@@ -3050,7 +3016,7 @@ msgstr "Raccourcis :"
 
 #: templates/navbars/read-endless.html:26
 #: templates/snippets/preferences/staff.html:25
-#: templates/snippets/selector/selector.html:35
+#: templates/snippets/selector/selector.html:4
 msgid "Reading lists"
 msgstr "Listes de lecture"
 
@@ -3071,7 +3037,7 @@ msgid "Unread"
 msgstr "Non-lu"
 
 #: templates/navbars/read-endless.html:56
-#: templates/snippets/selector/selector.html:63
+#: templates/snippets/selector/selector.html:32
 msgid "Watching lists"
 msgstr "Listes de veille"
 
@@ -3325,6 +3291,7 @@ msgid "Need to import data from Readability / Pocket?"
 msgstr "Besoin d'importer des données depuis Readability / Pocket ?"
 
 #: templates/snippets/import/import-web-pages.html:54
+#: templates/snippets/selector/add-subscription.html:152
 #: templates/snippets/selector/manage-folder.html:44
 #: templates/snippets/selector/manage-subscription.html:91
 #: templates/snippets/share/share-one.html:81
@@ -3405,7 +3372,7 @@ msgid "Folders and subscriptions"
 msgstr "Dossiers et abonnements"
 
 #: templates/snippets/preferences/selector.html:26
-#: templates/snippets/selector/selector.html:137
+#: templates/snippets/selector/selector.html:129
 msgid "Closed streams"
 msgstr "Flux fermés"
 
@@ -3881,15 +3848,17 @@ msgstr "Ouvrir l'article original dans une nouvelle fenêtre/onglet."
 msgid ", rated "
 msgstr ", noté"
 
-#: templates/snippets/read/read-meta-async.html:133
+#: templates/snippets/read/read-meta-async.html:134
+#: templates/snippets/read/read-meta-async.html:140
 msgid "Open posterior item"
 msgstr "Ouvrir l'élément postérieur"
 
-#: templates/snippets/read/read-meta-async.html:138
+#: templates/snippets/read/read-meta-async.html:146
 msgid "Close current item"
 msgstr "Fermer l'élément courant"
 
-#: templates/snippets/read/read-meta-async.html:143
+#: templates/snippets/read/read-meta-async.html:152
+#: templates/snippets/read/read-meta-async.html:160
 msgid "Open anterior item"
 msgstr "Ouvrir l'élément antérieur"
 
@@ -3928,34 +3897,58 @@ msgstr "Retourner au sélecteur de source"
 
 #: templates/snippets/read/reading-list-header.html:44
 #: templates/snippets/read/reading-list-header.html:76
-#: templates/snippets/selector/folder.html:35
+#: templates/snippets/selector/folder.html:53
 #: templates/snippets/selector/subscription.html:70
 msgid "unread"
 msgstr "non-lu"
 
 #: templates/snippets/read/reading-list-header.html:48
 #: templates/snippets/read/reading-list-header.html:80
-#: templates/snippets/selector/folder.html:36
+#: templates/snippets/selector/folder.html:54
 #: templates/snippets/selector/subscription.html:71
 msgid "for later"
 msgstr "plus tard"
 
 #: templates/snippets/read/reading-list-header.html:56
 #: templates/snippets/read/reading-list-header.html:88
-#: templates/snippets/selector/folder.html:38
+#: templates/snippets/selector/folder.html:56
 #: templates/snippets/selector/subscription.html:73
 msgid "all"
 msgstr "tous"
 
-#: templates/snippets/selector/add-subscription.html:3
+#: templates/snippets/selector/add-subscription-bookmarklets.html:4
+#: templates/snippets/selector/add-subscription-bookmarklets.html:5
+#: templates/snippets/selector/add-subscription-bookmarklets.html:16
+#: templates/snippets/selector/add-subscription-bookmarklets.html:17
+msgid "Drag this link to your bookmarks toolbar"
+msgstr "Glissez-déposez ce lien dans votre barre de signets."
+
+#: templates/snippets/selector/add-subscription-bookmarklets.html:8
+msgid "Subscribe in 1flow"
+msgstr "S'abonner dans 1flow"
+
+#: templates/snippets/selector/add-subscription-bookmarklets.html:20
+msgid "Import feed into 1flow"
+msgstr "Ajouter le flux à 1flow"
+
+#: templates/snippets/selector/add-subscription-bookmarklets.html:23
+msgid "(no subscription, for staff only)"
+msgstr "(pas d'abonnement ; pour le staff)"
+
+#: templates/snippets/selector/add-subscription.html:8
+#: templates/snippets/selector/add-subscription.html:16
 msgid "Add one or more subscriptions"
 msgstr "Ajouter un ou plusieurs abonnements"
 
-#: templates/snippets/selector/add-subscription.html:8
+#: templates/snippets/selector/add-subscription.html:29
+msgid "Choose an existing feed:"
+msgstr "Choisissez un flux existant :"
+
+#: templates/snippets/selector/add-subscription.html:39
 msgid "Choose an existing feed"
 msgstr "Choisissez un flux existant"
 
-#: templates/snippets/selector/add-subscription.html:11
+#: templates/snippets/selector/add-subscription.html:42
 msgid ""
 "Please choose some news feeds to subscribe to. Just type a few letters in "
 "the field, like “CNN”, “design”, “software development”… You can subscribe "
@@ -3965,15 +3958,16 @@ msgstr ""
 "simplement quelques lettres comme « monde », « architecture » ou « "
 "développement logiciel »…"
 
-#: templates/snippets/selector/add-subscription.html:22
+#: templates/snippets/selector/add-subscription.html:53
+#: templates/snippets/selector/add-subscription.html:155
 msgid "Subscribe"
 msgstr "S'abonner"
 
-#: templates/snippets/selector/add-subscription.html:37
+#: templates/snippets/selector/add-subscription.html:68
 msgid "Note: "
 msgstr "Note :"
 
-#: templates/snippets/selector/add-subscription.html:37
+#: templates/snippets/selector/add-subscription.html:68
 msgid ""
 "The sources you choose will be added to what we call the <em>sources "
 "selector</em>. It's the screen that will show after you click <em>Add to my "
@@ -3985,67 +3979,60 @@ msgstr ""
 " avoir cliqué sur <em>Ajouter à mes sources</em>. La prochaine fois que vous"
 " viendrez sur 1flow, vous serez amené(e) directement là-bas."
 
-#: templates/snippets/selector/add-subscription.html:66
+#: templates/snippets/selector/add-subscription.html:104
+#, python-format
+msgctxt "Anchor ID of title in help/feature page"
+msgid ""
+"Or install the bookmarklet (<a href=\"%(help_url)s#adding-news-sources\" "
+"target=\"_blank\">how-to use?</a>):"
+msgstr ""
+"Ou installez la <em>bookmarklet</em> (<a href=\"%(help_url)s#ajout-de-"
+"nouvelles-sources\" target=\"_blank\">comment l'utiliser ?</a>) :"
+
+#: templates/snippets/selector/add-subscription.html:111
 msgid "or"
 msgstr "ou"
 
-#: templates/snippets/selector/add-subscription.html:68
+#: templates/snippets/selector/add-subscription.html:113
 msgid "Add feeds while browsing the web"
 msgstr "Ajoutez des flux pendant que vous surfez sur le web"
 
-#: templates/snippets/selector/add-subscription.html:73
-#: templates/snippets/selector/add-subscription.html:79
-msgid "Drag this link to your bookmarks toolbar"
-msgstr "Glissez-déposez ce lien dans votre barre de signets."
-
-#: templates/snippets/selector/add-subscription.html:73
-msgid "Subscribe in 1flow"
-msgstr "S'abonner dans 1flow"
-
-#: templates/snippets/selector/add-subscription.html:79
-msgid "Import feed into 1flow"
-msgstr "Ajouter le flux à 1flow"
-
-#: templates/snippets/selector/add-subscription.html:82
-msgid "(no subscription, for staff only)"
-msgstr "(pas d'abonnement ; pour le staff)"
-
-#: templates/snippets/selector/add-subscription.html:90
+#: templates/snippets/selector/add-subscription.html:119
 msgid ""
 "\n"
-"            <strong>Drag-n-drop this bookmarklet into your bookmark toolbar.</strong></p><p>\n"
+"        <strong>Drag-n-drop this bookmarklet into your bookmark toolbar.</strong></p><p>\n"
 "\n"
-"            When you want to subscribe to a news website or a blog, just click on the bookmarklet to discover its feed(s).</p>\n"
+"        When you want to subscribe to a news website or a blog, just click on the bookmarklet to discover its feed(s).</p>\n"
 "\n"
-"        "
+"    "
 msgstr ""
 "\n"
-"<strong>Glissez-déposez cette bookmarklet dans votre barre de signets.</strong></p><p>\n"
+"<strong>Glissez-déposez cette <em>bookmarklet</em> dans votre barre de signets.</strong></p><p>\n"
 "\n"
-"Quand vous souhaitez vous abonner à un site d'informations ou un blog, cliquez simplement sur la bookmarlet pour découvrir ses flux.</p>"
+"Quand vous souhaitez vous abonner à un site d'informations ou un blog, cliquez simplement sur la <em>bookmarklet</em> pour découvrir ses flux.</p>"
 
-#: templates/snippets/selector/add-subscription.html:97
+#: templates/snippets/selector/add-subscription.html:126
 msgid ""
 "To subscribe to raw RSS/Atom feed URLs, just open or copy them in your "
-"browser's location bar, then click on the bookmarklet."
+"browser location bar, then click on the bookmarklet."
 msgstr ""
 "Pour vous abonner à un flux RSS/Atom brut à partir de son addresse, copiez-"
 "la ou ouvrez-la simplement dans la barre d'adresse de votre navigateur, puis"
-" cliquez sur la bookmarklet."
+" cliquez sur la <em>bookmarklet</em>."
 
-#: templates/snippets/selector/add-subscription.html:97
+#: templates/snippets/selector/add-subscription.html:126
 #, python-format
 msgid ""
 "\n"
 "<strong>Pro tip</strong>: use it to manually subscribe to RSS/Atom feeds <i class=\"icon-question-sign\"></i></p>\n"
 "\n"
-"            <p><a href=\"%(help_url)s#adding-news-sources\">Need more help?</a>\n"
-"        "
+"        <p><a href=\"%(help_url)s#adding-news-sources\">Need more help?</a>\n"
+"    "
 msgstr ""
 "\n"
 "<strong>Pro tip</strong>: utilisez-la pour vous abonner manuellement à des flux RSS/Atom <i class=\"icon-question-sign\"></i></p>\n"
 "\n"
-"<p><a href=\"%(help_url)s#ajout-de-nouvelles-sources\">Plus de détails?</a>"
+"<p><a href=\"%(help_url)s#ajout-de-nouvelles-sources\">Plus de détails ?</a>"
 
 #: templates/snippets/selector/cancel-subscription.html:7
 msgid "Cancel subscription"
@@ -4079,7 +4066,17 @@ msgstr "Je pensais à autre chose"
 msgid "Do it. I'm sure. I won't cry."
 msgstr "Vas-y. Fais-le. Maintenant !"
 
-#: templates/snippets/selector/folder.html:56
+#: templates/snippets/selector/folder.html:25
+#: templates/snippets/selector/folder.html:45
+msgid "Folder settings"
+msgstr "Propriétés du dossier"
+
+#: templates/snippets/selector/folder.html:31
+#: templates/snippets/selector/folder.html:42
+msgid "Add a sub-folder"
+msgstr "Ajouter un sous-dossier"
+
+#: templates/snippets/selector/folder.html:74
 #, python-format
 msgid "No subscription in “%(folder_name)s”."
 msgstr "Pas d'abonnement dans « %(folder_name)s »."
@@ -4109,7 +4106,7 @@ msgstr ""
 "L'import de l'adresse <code>%(failed_url)s</code> a échoué : %(failed_reason)s"
 
 #: templates/snippets/selector/import-web-items-trigger.html:21
-#: templates/snippets/selector/selector.html:14
+#: templates/snippets/selector/selector.html:61
 msgid "Import web pages"
 msgstr "Importer des pages web"
 
@@ -4122,7 +4119,7 @@ msgid "Edit folder"
 msgstr "Modifier le dossier"
 
 #: templates/snippets/selector/manage-folder.html:13
-#: templates/snippets/selector/selector.html:23
+#: templates/snippets/selector/selector.html:77
 msgid "Add a folder"
 msgstr "Ajouter un dossier"
 
@@ -4185,31 +4182,27 @@ msgstr "Chercher sur le Google Play Store"
 msgid "Cancel this subscription"
 msgstr "Résilier cet abonnement"
 
-#: templates/snippets/selector/selector.html:7
-msgid "Add new content"
-msgstr "Ajouter du contenu"
-
-#: templates/snippets/selector/selector.html:18
-msgid "Subscribe to a stream"
-msgstr "S'abonner à un flux"
-
-#: templates/snippets/selector/selector.html:40
+#: templates/snippets/selector/selector.html:9
 msgid "Inbox"
 msgstr "Boîte de réception"
 
-#: templates/snippets/selector/selector.html:54
+#: templates/snippets/selector/selector.html:23
 msgid "Sent Articles"
 msgstr "Articles envoyés"
 
-#: templates/snippets/selector/selector.html:108
+#: templates/snippets/selector/selector.html:69
+msgid "Subscribe to a stream"
+msgstr "S'abonner à un flux"
+
+#: templates/snippets/selector/selector.html:100
 msgid "Unclassified information streams"
 msgstr "Flux d'informations non-classés"
 
-#: templates/snippets/selector/selector.html:117
+#: templates/snippets/selector/selector.html:109
 msgid "unclassified-streams"
 msgstr "flux-non-classes"
 
-#: templates/snippets/selector/selector.html:146
+#: templates/snippets/selector/selector.html:138
 msgid "closed-streams"
 msgstr "flux-fermes"
 
@@ -4238,7 +4231,7 @@ msgid "Click to display all the %(all_count)s articles of this subscription."
 msgstr "Cliquez pour afficher les %(all_count)s articles de cet abonnement."
 
 #: templates/snippets/share/share-one.html:25
-#, python-format, python-brace-format
+#, python-format
 msgid ""
 "\n"
 " The message you type will be integrated in the mail sent to your friends or colleagues, with a small exerpt of the article, and an image if the article has one.\n"
@@ -4399,17 +4392,14 @@ msgid "Imported elements"
 msgstr "Éléments importés"
 
 #: templatetags/coretags.py:102
-#, python-brace-format
 msgid "You have {0} newly imported items."
 msgstr "Vous avez {0} éléments récemment importés"
 
 #: templatetags/coretags.py:104
-#, python-brace-format
 msgid "You have {0} newly imported items, out of {1} so far"
 msgstr "Vous avez {0} éléments non-lus sur un total de {1}"
 
 #: templatetags/coretags.py:106
-#, python-brace-format
 msgid "You imported {0} web items so far"
 msgstr "Vous avez importé {0} éléments web"
 
@@ -4422,7 +4412,6 @@ msgid "All articles"
 msgstr "Tous les articles"
 
 #: templatetags/coretags.py:112
-#, python-brace-format
 msgid "You have {0} articles in 1flow"
 msgstr "Vous avez {0} articles dans 1flow"
 
@@ -4431,17 +4420,14 @@ msgid "All unread"
 msgstr "Tous les non-lus"
 
 #: templatetags/coretags.py:115
-#, python-brace-format
 msgid "You have {0} unread articles"
 msgstr "Vous avez {0} articles non-lus"
 
 #: templatetags/coretags.py:118
-#, python-brace-format
 msgid "You have {0} articles to read later"
 msgstr "Vous avez {0} articles à lire plus tard"
 
 #: templatetags/coretags.py:121
-#, python-brace-format
 msgid "You have {0} starred articles"
 msgstr "Vous avez {0} articles sélectionnés"
 
@@ -4450,32 +4436,26 @@ msgid "Archived"
 msgstr "Archivé"
 
 #: templatetags/coretags.py:124
-#, python-brace-format
 msgid "You have {0} archived articles"
 msgstr "Vous avez {0} articles archivés"
 
 #: templatetags/coretags.py:128
-#, python-brace-format
 msgid "You have {0} fun articles"
 msgstr "Vous avez {0} articles tordants"
 
 #: templatetags/coretags.py:132
-#, python-brace-format
 msgid "You have {0} articles marked as fact(s)"
 msgstr "Vous avez {0} articles contenant des faits marquants"
 
 #: templatetags/coretags.py:135
-#, python-brace-format
 msgid "You have {0} articles marked as number(s)"
 msgstr "Vous avez {0} articles contenant des chiffres-clefs"
 
 #: templatetags/coretags.py:138
-#, python-brace-format
 msgid "You have {0} articles marked as analysis"
 msgstr "Vous avez {0} articles marqués comme analyses/études"
 
 #: templatetags/coretags.py:141
-#, python-brace-format
 msgid "You have {0} articles marked as prospective"
 msgstr "Vous avez {0} éléments de prospective"
 
@@ -4484,22 +4464,18 @@ msgid "Best-practices"
 msgstr "Bonnes pratiques"
 
 #: templatetags/coretags.py:144
-#, python-brace-format
 msgid "You have {0} articles marked as best-practices"
 msgstr "Vous avez {0} articles marqués comme bonnes-pratiques/état de l'art"
 
 #: templatetags/coretags.py:147
-#, python-brace-format
 msgid "You have {0} articles marked as regulation/legal"
 msgstr "Vous avez {0} éléments marqués comme réglementation/juridique/légal"
 
 #: templatetags/coretags.py:150
-#, python-brace-format
 msgid "You have {0} articles marked as quote(s)"
 msgstr "Vous avez {0} articles contenant des citations"
 
 #: templatetags/coretags.py:153
-#, python-brace-format
 msgid "You have {0} articles marked as knowledge"
 msgstr "Vous avez {0} éléments marqués comme savoir ou connaissance"
 
@@ -4536,7 +4512,6 @@ msgid "k+"
 msgstr "k+"
 
 #: templatetags/coretags.py:397
-#, python-brace-format
 msgid "{0} articles"
 msgstr "{0} articles"
 
@@ -4560,6 +4535,9 @@ msgstr "converti"
 msgctxt "awesome-font icon name"
 msgid "exchange"
 msgstr "exchange"
+
+#~ msgid "Add new content"
+#~ msgstr "Ajouter du contenu"
 
 #~ msgid "^subscription/(?P<subscription>(?:[0-9a-f]{24,24})+)/delete$"
 #~ msgstr "^abonnement/(?P<subscription>(?:[0-9a-f]{24,24})+)/supprimer$"
