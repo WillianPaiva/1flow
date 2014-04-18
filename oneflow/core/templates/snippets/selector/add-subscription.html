@@ -1,40 +1,73 @@
+{% if in_modal %}
 
-<div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-ld-6 col-md-offset-3">
+<div id="add-subscription" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 class="modal-title">{% trans "Add one or more subscriptions" %}</h3>
+            </div>
+            <div class="modal-body">
+
+{% else %}
+    <div class="row">
+    <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-ld-6 col-md-offset-3">
+
     <h1>{% trans "Add one or more subscriptions" %}</h1>
 
-    <form method="POST" action="{% url 'add_subscription' %}" class="form form-inline form-add-subscription">
+{% endif %}
+
+    <form method="POST" id="add-subscriptions-form"
+        action="{% url 'add_subscription' %}"
+        class="form form-inline form-add-subscription">
+
         {% csrf_token %}
+        {% url 'help' as help_url %}
 
-        <h3>{% trans "Choose an existing feed" %}</h3>
+        {% if in_modal %}
 
-        {% if not mongodb_user.has_content %}
-            <p>{% trans "Please choose some news feeds to subscribe to. Just type a few letters in the field, like “CNN”, “design”, “software development”… You can subscribe to more than one." %}</p>
-            <div class="spacer20"></div>
-        {% endif %}
+            <h4 class="centered">{% trans "Pick some in 1flow database:" %}</h4>
 
-        {% with field=form.feeds %}
-            <div class="control-group centered">
+            {% with field=form.feeds %}
+                <div class="control-group centered">
+                    {% render_field field %}
+                </div>
+            {% endwith %}
 
-                <label class="control-label" for="{{ field.auto_id }}">{{ field.label|safe }}</label>
+        {% else %}
 
-                &nbsp;&nbsp;{% render_field field %}&nbsp;
+            <h3>{% trans "Choose an existing feed" %}</h3>
 
-                <button type="submit" class="btn btn-primary">{% trans "Subscribe" %}</button>
-            </div>
-            <div class="control-group">
+            {% if not mongodb_user.has_content %}
+                <p>{% trans "Please choose some news feeds to subscribe to. Just type a few letters in the field, like “CNN”, “design”, “software development”… You can subscribe to more than one." %}</p>
+                <div class="spacer20"></div>
+            {% endif %}
 
-                {% if field.errors %}
-                    <span class="help-block">{{ field.errors|join:", " }}</span>
-                {% endif %}
+            {% with field=form.feeds %}
+                <div class="control-group centered">
 
-                <div class="help-block">{{ field.help_text|safe }}</div>
+                    <label class="control-label" for="{{ field.auto_id }}">{{ field.label|safe }}</label>
 
-            </div>
+                    &nbsp;&nbsp;{% render_field field %}&nbsp;
 
-        {% endwith %}
+                    <button type="submit" class="btn btn-primary">{% trans "Subscribe" %}</button>
+                </div>
+                <div class="control-group">
 
-        {% if not mongodb_user.has_content %}
-            <p class="muted">{% trans "Note: " %}{% trans "The sources you choose will be added to what we call the <em>sources selector</em>. It's the screen that will show after you click <em>Add to my sources</em>. Next time you come to 1flow, you will be brought directly there." %}</p>
+                    {% if field.errors %}
+                        <span class="help-block">{{ field.errors|join:", " }}</span>
+                    {% endif %}
+
+                    <div class="help-block">{{ field.help_text|safe }}</div>
+
+                </div>
+
+            {% endwith %}
+
+            {% if not mongodb_user.has_content %}
+                <p class="muted">{% trans "Note: " %}{% trans "The sources you choose will be added to what we call the <em>sources selector</em>. It's the screen that will show after you click <em>Add to my sources</em>. Next time you come to 1flow, you will be brought directly there." %}</p>
+            {% endif %}
+
         {% endif %}
 
         {% comment %}
@@ -52,7 +85,8 @@
             {% endif %}
 
         </div>
-                {% endcomment %}
+
+        {% endcomment %}
 
     </form>
 
@@ -62,53 +96,67 @@
         });
     </script>
 
-        <div class="or-choice">{% trans "or" %}</div>
+    {% if in_modal %}
 
-        <h3>{% trans "Add feeds while browsing the web" %}</h3>
+        <div class="clearfix spacer50"></div>
 
-        <div class="bookmarklet-container">
+        <h4 class="centered">{% blocktrans context "Anchor ID of title in help/feature page" %}Or install the bookmarklet (<a href="{{help_url}}#adding-news-sources" target="_blank">how-to use?</a>):{% endblocktrans %}&nbsp;&nbsp;
+        {% include "snippets/selector/add-subscription-bookmarklets.html" with btn_size="btn-md" %}
+        </h4>
 
-            {# BOOKMARK Unicode: U+1F516 (U+D83D U+DD16), UTF-8: F0 9F 94 96 #}
-            <a href="javascript:void(location.href='http://{{ settings.SITE_DOMAIN }}{% url 'add_feed' '' %}'+encodeURIComponent(location.href));" class="bookmarklet btn btn-lg btn-success popover-top" onclick="javascript:alert(&quot;{% trans "Drag this link to your bookmarks toolbar" %}&quot;);return false;" title="{% trans "Drag this link to your bookmarks toolbar" %}" data-toggle="tooltip"><i class="icon-bookmark"></i>&nbsp;{% trans "Subscribe in 1flow" %}</a>
+    {% else %}
 
-            {% if mongodb_user.is_staff_or_superuser_and_enabled %}
 
-                <br />
+    <div class="or-choice">{% trans "or" %}</div>
 
-                <a href="javascript:void(location.href='http://{{ settings.SITE_DOMAIN }}{% url 'add_feed_staff' '' %}'+encodeURIComponent(location.href));" class="bookmarklet btn btn-huge btn-warning" onclick="javascript:alert(&quot;{% trans "Drag this link to your bookmarks toolbar" %}&quot;);return false;"><i class="icon-cloud-download"></i>&nbsp;{% trans "Import feed into 1flow" %}</a>
+    <h3>{% trans "Add feeds while browsing the web" %}</h3>
 
-                <br />
-                {% trans "(no subscription, for staff only)" %}
+    <div class="bookmarklet-container">
+        {% include "snippets/selector/add-subscription-bookmarklets.html" with btn_size="btn-lg" %}
+    </div>
 
-            {% endif %}
+    <p>{% blocktrans %}
+        <strong>Drag-n-drop this bookmarklet into your bookmark toolbar.</strong></p><p>
 
-        </div>
+        When you want to subscribe to a news website or a blog, just click on the bookmarklet to discover its feed(s).</p>
 
-        {% url 'help' as help_url %}
+    {% endblocktrans %}</p>
 
-        <p>{% blocktrans %}
-            <strong>Drag-n-drop this bookmarklet into your bookmark toolbar.</strong></p><p>
-
-            When you want to subscribe to a news website or a blog, just click on the bookmarklet to discover its feed(s).</p>
-
-        {% endblocktrans %}</p>
-
-        <p class="muted popover-left" data-toggle="tooltip" title="{% trans "To subscribe to raw RSS/Atom feed URLs, just open or copy them in your browser location bar, then click on the bookmarklet." %}">{% blocktrans %}
+    <p class="muted popover-left" data-toggle="tooltip" title="{% trans "To subscribe to raw RSS/Atom feed URLs, just open or copy them in your browser location bar, then click on the bookmarklet." %}">{% blocktrans %}
 <strong>Pro tip</strong>: use it to manually subscribe to RSS/Atom feeds <i class="icon-question-sign"></i></p>
 
-            <p><a href="{{help_url}}#adding-news-sources">Need more help?</a>
-        {% endblocktrans %}</p>
-
-        {% comment %}
-
-        {% trans "Feature not ready yet, under development." as search_placeholder_text %}
-
-        {% with search_placeholder='placeholder:'|add:search_placeholder_text %}
-            {% include "widgets/forms/field-input-text.html" with field=form.search_for|add_class:"span5"|attr:'disabled="disabled"'|attr:search_placeholder %}
-
-        {% endwith %}
-
-        {% endcomment %}
+        <p><a href="{{help_url}}#adding-news-sources">Need more help?</a>
+    {% endblocktrans %}</p>
+    {% endif %}
 
 
+    {% comment %}
+
+    {% trans "Feature not ready yet, under development." as search_placeholder_text %}
+
+    {% with search_placeholder='placeholder:'|add:search_placeholder_text %}
+        {% include "widgets/forms/field-input-text.html" with field=form.search_for|add_class:"span5"|attr:'disabled="disabled"'|attr:search_placeholder %}
+
+    {% endwith %}
+
+    {% endcomment %}
+
+{% if in_modal %}
+            </div>
+            <div class="modal-footer">
+
+                <span class="pull-left"><a href="#"
+                    class="btn btn-default"
+                    data-dismiss="modal">{% trans "Cancel" %}</a>
+                </span>
+
+                <a class="btn btn-primary" href="javascript:$('#add-subscriptions-form').submit()">{% trans "Subscribe" %}</a>
+            </div>
+        </div>
+    </div>
 </div>
+{% else %}
+    </div>
+</div><!-- .row -->
+{% endif %}
+

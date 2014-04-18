@@ -127,23 +127,17 @@
           <li>
               <form class="navbar-form navbar-left form-inline" role="search"
                 {% search_action %}>
-                <div class="form-group popover-bottom" data-toggle="tooltip"
+                <div id="navbar-search-form-group"
+                    class="form-group popover-bottom" data-toggle="tooltip"
                     title="{% trans "Press Shift-Alf-F to focus" %}">
-
-                  {% if search %}
-                    <div class="input-group">
-                  {% endif %}
 
                     <input class="form-control search" name="search"
                         placeholder="{% search_label %}"
-                        accesskey="f" value="{% firstof search '' %}" />
-
-                  {% if search %}
-                      <span class="input-group-addon"><a href="?search="
-                          style="display: block"><i
-                          class="icon icon-remove"></i></a></span>
-                    </div>
-                  {% endif %}
+                        accesskey="f" value="{% firstof search '' %}"
+                        />{% if search %}<span
+                          id="clear-search-form"><a
+                          href="?search="><i
+                          class="icon icon-remove"></i></a></span>{% endif %}
                 </div>
               </form>
           </li>
