@@ -2,7 +2,7 @@
 
 {# TODO DJ 1.6 remove all cache arguments, and simply make the cache expire when the right conditions happen. #}
 {# I don't bother pivoting on the thumbnail, it can wait until cache expiry. #}
-{% cache 86400 subscription_block_start subscription.id subscription.has_unread subscription.name folder.id subscription.is_closed %}
+{% cache 86400 subscription_block_start subscription.id subscription.has_unread subscription.name subscription.is_closed %}
 
     <div class="{% subscription_css subscription folder level %}">
 
