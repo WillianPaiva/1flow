@@ -30,6 +30,28 @@ CONSTANCE_REDIS_PREFIX = 'c0s1f:'
 
 CONSTANCE_CONFIG = {
 
+    # ————————————————————————————————————————————————————————— Workers & tasks
+
+
+    'CHECK_SUBSCRIPTIONS_DISABLED': (False, ugettext(u'Disable or not the '
+                                     u'night subscription check that will '
+                                     u'check_reads() all subscriptions that '
+                                     u'do not have the same number of '
+                                     u'articles than the feed they belong '
+                                     u'to. Default: enabled.')),
+
+    'CHECK_DUPLICATES_DISABLED': (False, ugettext(u'Disable or not the '
+                                  u'night duplicates check that will '
+                                  u'ensure all duplicate articles have '
+                                  u'no read left in the system. Default: '
+                                  u'let it run (=enabled).')),
+
+    'CHECK_READS_DISABLED': (False, ugettext(u'Disable or not the night '
+                             u'reads check that will switch on-and-off their '
+                             u'`is_good` attribute. Default: let it run '
+                             u'(=enabled).')),
+
+
     # ————————————————————————————————————————————————————————————— Staff stuff
 
 
@@ -88,7 +110,9 @@ CONSTANCE_CONFIG = {
                                u'date. Leave in the far future for endless '
                                u'display.')),
 
-    # •••••••••••••••••••••••••••••••••••••••••••••• WEB / Templates / JS & CSS
+
+    # ——————————————————————————————————————————————————————— Site theme & CDNs
+
 
     'WEB_CDNS_ENABLED': (False, ugettext(u'Enable This to use public CDNs for '
                          u'common JS and CSS (jQuery, bootstrap...). Disabled '
@@ -108,8 +132,11 @@ CONSTANCE_CONFIG = {
                                  u'uses inverse colors. Default: true, for '
                                  u'detail-admin theme.')),
 
+
+    # ———————————————————————————————————————————————————————————— User support
     # HEADS UP: the 3 next are translatable, to allow providing
     #           different addresses for multi-language support.
+
 
     'SUPPORT_EMAIL_ADDRESS': (ugettext(u'supportREMOVETHIS@1flow.io'),
                               ugettext(u'Support email address. Set empty '
@@ -123,7 +150,9 @@ CONSTANCE_CONFIG = {
     'IRC_SUPPORT_SERVER': (ugettext(u'irc.freenode.net'),
                             ugettext(u'Support IRC server.')),
 
-    # ———————————————————————————————————————————— Allow new users to register?
+
+    # ——————————————————————————————————————————————————— Logins & registration
+
 
     'SOCIAL_LOGIN_ENABLED': (True, ugettext(u'Already known users are allowed '
                              u'to sign in via social network accounts. '
@@ -147,7 +176,9 @@ CONSTANCE_CONFIG = {
                                     u'patch, but the configuration directive '
                                     u'exists, at least.')),
 
-    # ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••• Read webapp
+
+    # ————————————————————————————————————————————————————————— Plain documents
+
 
     'DOCUMENTS_ARCHIVING_DISABLED': (False, ugettext(u'Set this to True to '
                             u'disable maintenance archiving operations. '
@@ -155,7 +186,9 @@ CONSTANCE_CONFIG = {
                             u'NOT SUFFICIENT, because of `original_data` that '
                             u'must be disabled too, via `*_FETCH_DISABLED`).')),
 
-    # ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••• Read webapp
+
+    # ——————————————————————————————————————————————————————————— Reading lists
+
 
     'READ_INFINITE_AUTOSCROLL_ENABLED': (True, ugettext(u'Make the read view '
                                          u'(either list or tiles) '
@@ -176,11 +209,13 @@ CONSTANCE_CONFIG = {
                                    u'read. When the user has not configured '
                                    u'his/her own, this one will be used.')),
 
-    # •••••••••••••••••••••••••••••••••••••••••••••••••••••••••• RSS feed fetch
 
+    # ————————————————————————————————————————————————————— RSS feed refreshing
     # SEMANTIC NOTE: we use 'disabled' (and not 'enabled') because the rss
     # refreshing is something that is enabled in normal conditions. Stopping
     # it is an unusual / rare action, so the setting is named accordingly.
+
+
     'FEED_FETCH_DISABLED': (False, ugettext(u'Set this to True for '
                             u'maintenance operations and wait for all '
                             u'fetchers to terminate. It should take at '
@@ -217,8 +252,6 @@ CONSTANCE_CONFIG = {
                                   u'time. Workers should adjust the value '
                                   u'automatically as time passes.')),
 
-    # •••••••••••••••••••••••••••••••••••••••••••••••• Feed admin configuration
-
     'FEED_REFRESH_RANDOMIZE': (True, ugettext(u'Set this to False if you want '
                                u'all feeds with the same fetch interval to '
                                u'fetch at the same time. Default is to '
@@ -246,7 +279,9 @@ CONSTANCE_CONFIG = {
                                u'just closed feed will be warned about to '
                                u'site managers via mail.')),
 
-    # ••••••••••••••••••••••••••••••••••••••••••••••••••••••••• Article parsing
+
+    # —————————————————————————————————————————————— Article fetching & parsing
+
 
     'ARTICLE_FETCHING_DEBUG': (False, ugettext(u'Enable this to log '
                                u'intermediate article versions. Default: '
@@ -290,28 +325,6 @@ CONSTANCE_CONFIG = {
                                    u'expressed in days. Set to 0 to archive '
                                    u'everything without mercy.')),
 
-    # ••••••••••••••••••••••••••••••••••••••••••• Various checks and core tasks
-
-    'CHECK_SUBSCRIPTIONS_DISABLED': (False, ugettext(u'Disable or not the '
-                                     u'night subscription check that will '
-                                     u'check_reads() all subscriptions that '
-                                     u'do not have the same number of '
-                                     u'articles than the feed they belong '
-                                     u'to. Default: enabled.')),
-
-    'CHECK_DUPLICATES_DISABLED': (False, ugettext(u'Disable or not the '
-                                  u'night duplicates check that will '
-                                  u'ensure all duplicate articles have '
-                                  u'no read left in the system. Default: '
-                                  u'let it run (=enabled).')),
-
-    'CHECK_READS_DISABLED': (False, ugettext(u'Disable or not the night '
-                             u'reads check that will switch on-and-off their '
-                             u'`is_good` attribute. Default: let it run '
-                             u'(=enabled).')),
-
-    # ——————————————————————————————————————————————————————— Exerpt generation
-
     'EXCERPT_PARAGRAPH_MIN_LENGTH': (64, ugettext(u'Number of characters '
                                      u'below which a paragraph does not '
                                      u'have enough data (words) to be '
@@ -325,6 +338,7 @@ CONSTANCE_CONFIG = {
     # stop because of waves exhaustion, but the global import will never stop
     # because neither GR_MAX_ARTICLES nor total_starred nor total_reads would
     # have been reached.
+
     'GR_MAX_ARTICLES': (25 if DEBUG else 500000, ugettext(u'maximum number '
                         u'of Google Reader articles imported for a user. '
                         u'WARNING: GR_LOAD_LIMIT * GR_WAVE_LIMIT must equals '
