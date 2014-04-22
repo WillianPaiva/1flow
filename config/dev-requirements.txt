@@ -7,18 +7,16 @@
 -e git+https://github.com/playfire/django-debug-toolbar-user-panel.git@master#egg=django-debug-toolbar-user-panel-dev
 -e git+https://github.com/calebsmith/django-template-debug.git@master#egg=django_template_debug-dev
 -e git+https://github.com/platypus-creation/django-rosetta-grappelli.git@master#egg=django_rosetta_grappelli-dev
-coverage==3.6
+coverage==3.7.1
 django-nose==1.2
 django-shell-ipynb==0.2.0
-ecdsa
+django-haystack-panel==0.2.1
+django-debug-toolbar==1.1
 flake8==2.0
 guppy==0.1.10
 ipython==1.1.0
 line-profiler==1.0b3
 paramiko==1.12.0
 pip-tools==0.3.4
-pycrypto
-pyzmq==13.1.0
 sqlparse==0.1.9
-Django==1.5.4
 Werkzeug==0.9.4
