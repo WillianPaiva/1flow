@@ -32,8 +32,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.datastructures import SortedDict
 
 
-from django.contrib import admin as django_admin
-import mongoadmin as admin
+from django.contrib import admin
+#import mongoadmin as admin
 
 from .models import EmailContent, User
 
@@ -46,7 +46,7 @@ LOGGER = logging.getLogger(__name__)
 # •••••••••••••••••••••••••••••••••••••••••••••••• Helpers and abstract classes
 
 
-class NearlyReadOnlyAdmin(django_admin.ModelAdmin):
+class NearlyReadOnlyAdmin(admin.ModelAdmin):
     """ borrowed from https://code.djangoproject.com/ticket/17295
         with enhancements from http://stackoverflow.com/a/12923739/654755 """
 
@@ -67,7 +67,7 @@ class NearlyReadOnlyAdmin(django_admin.ModelAdmin):
         return request.user.is_superuser
 
 
-class CSVAdminMixin(django_admin.ModelAdmin):
+class CSVAdminMixin(admin.ModelAdmin):
     """
     Adds a CSV export action to an admin view.
     Modified/updated version of http://djangosnippets.org/snippets/2908/
@@ -195,6 +195,7 @@ class OneFlowUserAdmin(UserAdmin, CSVAdminMixin):
     full_name_display.short_description = _(u'Full name')
 
 admin.site.register(User, OneFlowUserAdmin)
+
 try:
     admin.site.unregister(DjangoUser)
 except:
@@ -207,7 +208,7 @@ if settings.FULL_ADMIN:
     subject_fields_displays = tuple((field + '_display')
                                     for field in subject_fields_names)
 
-    class EmailContentAdmin(django_admin.ModelAdmin):
+    class EmailContentAdmin(admin.ModelAdmin):
         list_display  = ('name', ) + subject_fields_displays
         search_fields = ('name', ) + subject_fields_names
         ordering      = ('name', )
