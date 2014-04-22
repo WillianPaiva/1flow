@@ -27,7 +27,8 @@ INSTALLED_APPS += [
 
     # WARNING: user panel is not compatible with djdt 1.x
     #'debug_toolbar_user_panel',
-    'template_timings_panel',
+
+    #'template_timings_panel',
     #'debug_toolbar_mongo',
 ]
 
@@ -38,16 +39,21 @@ DEBUG_TOOLBAR_PANELS = (
     'debug_toolbar.panels.request.RequestPanel',
     'debug_toolbar.panels.headers.HeadersPanel',
     'debug_toolbar.panels.templates.TemplatesPanel',
+
     #'template_timings_panel.panels.TemplateTimings.TemplateTimings',
     #'debug_toolbar_mongo.panel.MongoDebugPanel',
+
     'debug_toolbar.panels.cache.CachePanel',
     'debug_toolbar.panels.sql.SQLPanel',
     'debug_toolbar.panels.timer.TimerPanel',
     'debug_toolbar.panels.logging.LoggingPanel',
     'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+
+    # Not usable or no used
     #'debug_toolbar_user_panel.panels.UserPanel',
     #'debug_toolbar.panels.signals.SignalsPanel',
-    #'debug_toolbar.panels.logging.LoggingPanel',
+
+    'debug_toolbar.panels.logging.LoggingPanel',
     'debug_toolbar.panels.settings.SettingsPanel',
     'debug_toolbar.panels.versions.VersionsPanel',
 )
