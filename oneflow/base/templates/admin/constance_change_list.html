@@ -1,16 +1,21 @@
 {% extends "admin/change_form.html" %}
 {% load constance_tags admin_list i18n %}
 
-{% block extrahead %}
-{{ block.super }}
-<script type="text/javascript" charset="utf-8">
-    (function($) {
-        $(document).ready(function() {
-            grappelli.initSearchbar();
-            grappelli.initFilter();
-        });
-    })(django.jQuery);
-</script>
+{% block extrastyle %}
+  {{ block.super }}
+  {{ media.css }}
+<style>
+#result_list .changed {
+      background-color: #ffc;
+}
+  #changelist table tbody td:first-child {
+      text-align: left;
+}
+  .help {
+      font-weight: normal !important;
+      color: grey;
+}
+</style>
 {% endblock %}
 
 {% block content %}
