@@ -22,6 +22,8 @@
 import csv
 import logging
 
+from constance.admin import ConstanceAdmin
+
 from django.conf import settings
 from django.http import HttpResponse
 from django.template.defaultfilters import slugify
@@ -41,6 +43,148 @@ from sparks.django.admin import languages, truncate_field
 
 
 LOGGER = logging.getLogger(__name__)
+
+# Monkey-patch constance to create nice groups.
+ConstanceAdmin.fieldsets = (
+
+        (_(u'Worker control & maintenance mode'), {
+            'classes': ('grp-collapse grp-open', ),
+            'fields': (
+                'FEED_FETCH_DISABLED',
+            ),
+        }),
+
+        (_(u'User announcements'), {
+            'classes': ('grp-collapse grp-open', ),
+            'fields': (
+                'ANNOUNCEMENT_USER',
+                'ANNOUNCEMENT_USER_PREFIX',
+                'ANNOUNCEMENT_USER_PRIORITY',
+                'ANNOUNCEMENT_USER_START',
+                'ANNOUNCEMENT_USER_END',
+            ),
+        }),
+        (_(u'Staff announcements'), {
+            'classes': ('grp-collapse grp-closed', ),
+            'fields': (
+                'ANNOUNCEMENT_STAFF',
+                'ANNOUNCEMENT_STAFF_PREFIX',
+                'ANNOUNCEMENT_STAFF_PRIORITY',
+                'ANNOUNCEMENT_STAFF_START',
+                'ANNOUNCEMENT_STAFF_END',
+            ),
+        }),
+
+        (_(u'Plain documents'), {
+            'classes': ('grp-collapse grp-closed', ),
+            'fields': (
+                'DOCUMENTS_ARCHIVING_DISABLED',
+            ),
+        }),
+
+        (_(u'Reading lists'), {
+            'classes': ('grp-collapse grp-closed', ),
+            'fields': (
+                'READ_INFINITE_AUTOSCROLL_ENABLED',
+                'READ_INFINITE_ITEMS_PER_FETCH',
+                'READ_ARTICLE_MIN_LENGTH',
+                'READ_AVERAGE_READING_SPEED',
+            ),
+        }),
+
+        (_(u'RSS feed refreshing'), {
+            'classes': ('grp-collapse grp-closed', ),
+            'fields': (
+                # 'FEED_FETCH_DISABLED' is located in “worker control” section
+                'FEED_FETCH_GHOST_ENABLED',
+                'FEED_FETCH_MAX_ERRORS',
+                'FEED_FETCH_DEFAULT_INTERVAL',
+                'FEED_FETCH_MIN_INTERVAL',
+                'FEED_FETCH_MAX_INTERVAL',
+                'FEED_FETCH_RAISE_THRESHOLD',
+                'FEED_FETCH_PARALLEL_LIMIT',
+                'FEED_REFRESH_RANDOMIZE',
+                'FEED_REFRESH_RANDOMIZE_DELAY',
+                'FEED_ADMIN_LIST_PER_PAGE',
+                'FEED_ADMIN_MEANINGFUL_DELTA',
+                'FEED_CLOSED_WARN_LIMIT',
+            ),
+        }),
+
+        (_(u'Article fetching & parsing'), {
+            'classes': ('grp-collapse grp-closed', ),
+            'fields': (
+                'ARTICLE_FETCHING_DEBUG',
+                'ARTICLE_ABSOLUTIZING_DISABLED',
+                'ARTICLE_FETCHING_DISABLED',
+                'ARTICLE_FETCHING_TEXT_DISABLED',
+                'ARTICLE_FETCHING_VIDEO_DISABLED',
+                'ARTICLE_FETCHING_IMAGE_DISABLED',
+                'ARTICLE_MARKDOWN_DISABLED',
+                'ARTICLE_ARCHIVE_BATCH_SIZE',
+                'ARTICLE_ARCHIVE_OLDER_THAN',
+                'EXCERPT_PARAGRAPH_MIN_LENGTH',
+            ),
+        }),
+
+        (_(u'Logins & registration'), {
+            'classes': ('grp-collapse grp-closed', ),
+            'fields': (
+                'SOCIAL_LOGIN_ENABLED',
+                'SOCIAL_REGISTRATION_ENABLED',
+                'LOCAL_LOGIN_ENABLED',
+                'LOCAL_REGISTRATION_ENABLED',
+            ),
+        }),
+
+        (_(u'Site theme & CDNs'), {
+            'classes': ('grp-collapse grp-closed', ),
+            'fields': (
+                'WEB_CDNS_ENABLED',
+                'WEB_BOOTSWATCH_THEME',
+                'WEB_THEME_NAVBAR_INVERSE',
+            ),
+        }),
+
+
+        (_(u'User support'), {
+            'classes': ('grp-collapse grp-closed', ),
+            'fields': (
+                'SUPPORT_EMAIL_ADDRESS',
+                'IRC_SUPPORT_CHANNEL',
+                'IRC_SUPPORT_SERVER',
+            ),
+        }),
+
+        (_(u'Check tasks'), {
+            'classes': ('grp-collapse grp-closed', ),
+            'fields': (
+                'CHECK_SUBSCRIPTIONS_DISABLED',
+                'CHECK_DUPLICATES_DISABLED',
+                'CHECK_READS_DISABLED',
+            ),
+        }),
+
+        (_(u'Dangerous or debug'), {
+            'classes': ('grp-collapse grp-closed', ),
+            'fields': (
+                'STAFF_HAS_FULL_ACCESS',
+            ),
+        }),
+
+        (_(u'Google Reader (obsolete)'), {
+            'classes': ('grp-collapse grp-closed', ),
+            'fields': (
+                'GR_MAX_ARTICLES',
+                'GR_MAX_FEEDS',
+                'GR_LOAD_LIMIT',
+                'GR_WAVE_LIMIT',
+                'GR_MAX_RETRIES',
+                'GR_END_DATE',
+                'GR_STORAGE_LIMIT',
+            ),
+        }),
+    )
 
 
 # •••••••••••••••••••••••••••••••••••••••••••••••• Helpers and abstract classes
