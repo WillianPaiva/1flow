@@ -1,0 +1,82 @@
+{% extends "admin/change_form.html" %}
+{% load constance_tags admin_list i18n %}
+
+{% block extrahead %}
+{{ block.super }}
+<script type="text/javascript" charset="utf-8">
+    (function($) {
+        $(document).ready(function() {
+            grappelli.initSearchbar();
+            grappelli.initFilter();
+        });
+    })(django.jQuery);
+</script>
+{% endblock %}
+
+{% block content %}
+  <div id="content-main">
+    <div class="module" id="changelist">
+        <form id="changelist-form" action="" method="post">{% csrf_token %}
+
+          {% for name, admin_stuff in fieldsets %}
+
+            <fieldset class="grp-module {{ admin_stuff.classes|join:' ' }}"
+                style="padding-right: 0; margin-bottom: 1em">
+
+              <h2 class="grp-collapse-handler">{{ name }}</h2>
+
+              <table cellspacing="0" id="result_list" style="width: 100%">
+                <thead>
+                <tr>
+                  <th>{% trans "Name" %}</th>
+                  <th>{% trans "Default" %}</th>
+                  <th>{% trans "Value" %}</th>
+                  <th>{% trans "Is modified" %}</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                  {% with admin_stuff.fields as fields %}
+
+                    {% for item in config %}
+
+                      {% if item.name in fields %}
+
+                        <tr class="{% cycle 'row1' 'row2' %}">
+                          <th>{{item.name}}
+                              <div class="help">{{item.help_text}}</div>
+                          </th>
+                          <td>
+                              {{ item.default }}
+                          </td>
+                              <td>
+                                  {{item.form_field.errors}}
+                                  {{item.form_field}}
+                              </td>
+                          <td>
+                              {% if item.modified %}
+                                  <img src="{% static 'admin/img/icon-yes.gif' %}" alt="{{ item.modified }}" />
+                              {% else %}
+                                  <img src="{% static 'admin/img/icon-no.gif' %}" alt="{{ item.modified }}" />
+                              {% endif %}
+                          </td>
+                        </tr>
+                      {% endif %}
+
+                    {% endfor %}
+
+                  {% endwith %}
+
+                </tbody>
+              </table>
+            </fieldset>
+
+            {% endfor %}
+
+        <p class="paginator" style="float: right"><br />
+        <input type="submit" name="_save" class="default" value="{% trans 'Save' %}"/>
+        </p>
+      </form>
+    </div>
+  </div>
+{% endblock %}
