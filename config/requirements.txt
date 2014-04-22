@@ -1,17 +1,16 @@
 -e git+https://github.com/1flow/sparks.git@master#egg=sparks
--e git+https://github.com/gregmuellegger/django-reset.git@e8bbc9286849a16adcc664ef3c0943be75af90a8#egg=django_reset
+-e git+https://github.com/bradjasper/django-jsonfield.git@master#egg=jsonfield
+-e git+https://github.com/gregmuellegger/django-reset.git@master#egg=django_reset
 -e git+https://github.com/Karmak23/django-cache-utils.git@master#egg=cache_utils
--e git+https://github.com/Karmak23/django-jsonfield.git@master#egg=jsonfield
 -e git+https://github.com/Karmak23/django-writingfield.git@master#egg=writingfield
 -e git+https://github.com/Karmak23/humanize.git@master#egg=humanize
 -e git+https://github.com/Karmak23/libgreader.git@master#egg=libgreader
 -e git+https://github.com/Karmak23/soup-strainer.git@master#egg=strainer
--e git+https://github.com/jschrewe/django-mongoadmin.git@067aadb550b2032c4b548438621b9f58edf5c7c5#egg=mongoadmin
--e git+https://github.com/jschrewe/django-mongodbforms.git@7a3f4f025cedf250e118e7629a8f0cf37cb85d1e#egg=mongodbforms
--e git+https://github.com/kmmbvnr/django-jenkins.git@a3a283125a0c3391c833c9c86794bb892fea8f7f#egg=django_jenkins
--e git+https://github.com/nickstenning/honcho.git@b172b30d6c53edde2434687b1e4eb8cac114ff15#egg=honcho
--e git+https://github.com/noirbizarre/django-ember.git@47b5dad4f623efaccd3492c11d96fa4afdf8fb33#egg=django_ember
--e git+https://github.com/noirbizarre/django.js.git@e3fb6b87f5eb98aaa0b87498db58fc354b46dcee#egg=django.js
+-e git+https://github.com/jschrewe/django-mongoadmin.git@master#egg=mongoadmin
+-e git+https://github.com/jschrewe/django-mongodbforms.git@master#egg=mongodbforms
+-e git+https://github.com/kmmbvnr/django-jenkins.git@master#egg=django_jenkins
+-e git+https://github.com/nickstenning/honcho.git@master#egg=honcho
+-e git+https://github.com/noirbizarre/django.js.git@master#egg=django.js
 anyjson==0.3.3
 astroid==1.0.1
 beautifulsoup4==4.3.2
