@@ -24,36 +24,42 @@
 # in 1flow, because of the conditional landing.
 INSTALLED_APPS += [
     'debug_toolbar',
+
+    # WARNING: user panel is not compatible with djdt 1.x
     #'debug_toolbar_user_panel',
-    #'template_timings_panel',
+    'template_timings_panel',
     #'debug_toolbar_mongo',
 ]
 
 MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware', )
 
 DEBUG_TOOLBAR_PANELS = (
-    'debug_toolbar.panels.request_vars.RequestVarsDebugPanel',
-    'debug_toolbar.panels.headers.HeaderDebugPanel',
-    'debug_toolbar.panels.template.TemplateDebugPanel',
+    'debug_toolbar.panels.redirects.RedirectsPanel',
+    'debug_toolbar.panels.request.RequestPanel',
+    'debug_toolbar.panels.headers.HeadersPanel',
+    'debug_toolbar.panels.templates.TemplatesPanel',
     #'template_timings_panel.panels.TemplateTimings.TemplateTimings',
     #'debug_toolbar_mongo.panel.MongoDebugPanel',
-    'debug_toolbar.panels.sql.SQLDebugPanel',
-    'debug_toolbar.panels.timer.TimerDebugPanel',
-    'debug_toolbar.panels.logger.LoggingPanel',
+    'debug_toolbar.panels.cache.CachePanel',
+    'debug_toolbar.panels.sql.SQLPanel',
+    'debug_toolbar.panels.timer.TimerPanel',
+    'debug_toolbar.panels.logging.LoggingPanel',
+    'debug_toolbar.panels.staticfiles.StaticFilesPanel',
     #'debug_toolbar_user_panel.panels.UserPanel',
-    #'debug_toolbar.panels.signals.SignalDebugPanel',
-    'debug_toolbar.panels.settings_vars.SettingsVarsDebugPanel',
-    'debug_toolbar.panels.version.VersionDebugPanel',
+    #'debug_toolbar.panels.signals.SignalsPanel',
+    #'debug_toolbar.panels.logging.LoggingPanel',
+    'debug_toolbar.panels.settings.SettingsPanel',
+    'debug_toolbar.panels.versions.VersionsPanel',
 )
 
 # If it becomes too slow, activate this.
 #DEBUG_TOOLBAR_MONGO_STACKTRACES = False
 
 DEBUG_TOOLBAR_CONFIG = {
-    'INTERCEPT_REDIRECTS': False,
+    #'INTERCEPT_REDIRECTS': False,
     'ENABLE_STACKTRACES' : False,
     #'SHOW_TOOLBAR_CALLBACK': custom_show_toolbar,
     #'EXTRA_SIGNALS': ['myproject.signals.MySignal'],
-    'HIDE_DJANGO_SQL': False,
+    #'HIDE_DJANGO_SQL': False,
     #'TAG': 'div',
 }
