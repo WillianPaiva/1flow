@@ -24,6 +24,7 @@ from django.conf.urls.i18n import i18n_patterns
 from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponsePermanentRedirect
 from django.contrib.auth.decorators import login_required
+from django.contrib import admin
 from django.views.decorators.cache import never_cache
 from django.views.generic import TemplateView
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
@@ -31,8 +32,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from .api import v1_api
 
-# This is our ".admin" module. it runs autodiscover() automatically.
-import admin
 admin.autodiscover()
 
 # We need to import this after Django's standard autodiscover().
