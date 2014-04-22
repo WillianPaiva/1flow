@@ -423,6 +423,8 @@ if not DEBUG:
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_CACHE_ALIAS = 'sessions'
 
+REDISBOARD_DETAIL_FILTERS = ['(uptime|db|last|total).*', ]
+
 TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT, 'templates')
 )
@@ -498,9 +500,8 @@ INSTALLED_APPS = [
     'overextends',
     #'django_markdown',
     'writingfield',
-    #'redisboard',
+    'redisboard',
     'djcelery',
-    'memcache_status',
     'markdown_deux',
     'djangojs',
     'django_select2',
@@ -591,7 +592,8 @@ try:
         # We send flower bugs to a dedicated sentry project,
         # it pollutes us too much.
         'dsn': os.environ.get('RAVEN_DSN_FLOWER'
-                              if 'flower' in sys.argv or 'shell_ipynb' in sys.argv
+                              if 'flower' in sys.argv
+                              or 'shell_ipynb' in sys.argv
                               else 'RAVEN_DSN'),
     }
 except KeyError:
