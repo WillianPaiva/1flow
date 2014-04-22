@@ -28,29 +28,10 @@ import datetime
 CONSTANCE_BACKEND      = 'constance.backends.redisd.RedisBackend'
 CONSTANCE_REDIS_PREFIX = 'c0s1f:'
 
+# This setting is available only in our own constance fork.
+CONSTANCE_CHANGE_LIST_TEMPLATE = u'admin/constance_change_list.html'
+
 CONSTANCE_CONFIG = {
-
-    # ————————————————————————————————————————————————————————— Workers & tasks
-
-
-    'CHECK_SUBSCRIPTIONS_DISABLED': (False, ugettext(u'Disable or not the '
-                                     u'night subscription check that will '
-                                     u'check_reads() all subscriptions that '
-                                     u'do not have the same number of '
-                                     u'articles than the feed they belong '
-                                     u'to. Default: enabled.')),
-
-    'CHECK_DUPLICATES_DISABLED': (False, ugettext(u'Disable or not the '
-                                  u'night duplicates check that will '
-                                  u'ensure all duplicate articles have '
-                                  u'no read left in the system. Default: '
-                                  u'let it run (=enabled).')),
-
-    'CHECK_READS_DISABLED': (False, ugettext(u'Disable or not the night '
-                             u'reads check that will switch on-and-off their '
-                             u'`is_good` attribute. Default: let it run '
-                             u'(=enabled).')),
-
 
     # ————————————————————————————————————————————————————————————— Staff stuff
 
@@ -216,9 +197,9 @@ CONSTANCE_CONFIG = {
     # it is an unusual / rare action, so the setting is named accordingly.
 
 
-    'FEED_FETCH_DISABLED': (False, ugettext(u'Set this to True for '
-                            u'maintenance operations and wait for all '
-                            u'fetchers to terminate. It should take at '
+    'FEED_FETCH_DISABLED': (False, ugettext(u'Set this to True on '
+                            u'maintenance operations. After setting, wait '
+                            u'for all fetchers to terminate. It should take at '
                             u'most FEED_FETCH_DEFAULT_INTERVAL seconds.')),
 
     'FEED_FETCH_GHOST_ENABLED': (False, ugettext(u'Enable Ghost fetching or '
@@ -330,14 +311,37 @@ CONSTANCE_CONFIG = {
                                      u'have enough data (words) to be '
                                      u'considered informational.')),
 
-    # •••••••••••••••••••••••••••••••••••••••••••••••••••• Google Reader Import
 
+    # ————————————————————————————————————————————————————————————— Check tasks
+
+
+    'CHECK_SUBSCRIPTIONS_DISABLED': (False, ugettext(u'Disable or not the '
+                                     u'night subscription check that will '
+                                     u'check_reads() all subscriptions that '
+                                     u'do not have the same number of '
+                                     u'articles than the feed they belong '
+                                     u'to. Default: enabled.')),
+
+    'CHECK_DUPLICATES_DISABLED': (False, ugettext(u'Disable or not the '
+                                  u'night duplicates check that will '
+                                  u'ensure all duplicate articles have '
+                                  u'no read left in the system. Default: '
+                                  u'let it run (=enabled).')),
+
+    'CHECK_READS_DISABLED': (False, ugettext(u'Disable or not the night '
+                             u'reads check that will switch on-and-off their '
+                             u'`is_good` attribute. Default: let it run '
+                             u'(=enabled).')),
+
+
+    # ———————————————————————————————————————————————————— Google Reader Import
     # GR_LOAD_LIMIT * GR_WAVE_LIMIT must equals GR_MAX_ARTICLES:
     # In the worst case, a user could have only one feed containing all its
     # articles. In this case, if WAVE_LIMIT is too low, the import tasks will
     # stop because of waves exhaustion, but the global import will never stop
     # because neither GR_MAX_ARTICLES nor total_starred nor total_reads would
     # have been reached.
+
 
     'GR_MAX_ARTICLES': (25 if DEBUG else 500000, ugettext(u'maximum number '
                         u'of Google Reader articles imported for a user. '
