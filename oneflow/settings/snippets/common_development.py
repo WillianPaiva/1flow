@@ -76,7 +76,7 @@ ALLOWED_HOSTS += [
 
 # NOTE: INSTALLED_APPS is a list (not a tuple)
 # in 1flow, because of the conditional landing.
-INSTALLED_APPS += ['django_jenkins', 'django_nose', 'devserver', ]
+INSTALLED_APPS += ['django_jenkins', 'django_nose', ]  # 'devserver', ]
                    #'template_debug', )
 
 DEVSERVER_DEFAULT_ADDR = '0.0.0.0'
@@ -89,4 +89,5 @@ NOSE_ARGS = ['--stop'] #, '--ipdb', '--ipdb-failures', ]
 
 import logging
 import south.logger
+
 logging.getLogger('south').setLevel(logging.CRITICAL)
