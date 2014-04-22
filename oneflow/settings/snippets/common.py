@@ -419,8 +419,9 @@ if not DEBUG:
         'pipeline.middleware.MinifyHTMLMiddleware',
     ) + MIDDLEWARE_CLASSES[-1:]
 
-#SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
-SESSION_ENGINE = 'redis_sessions.session'
+# Use Django-redis as session backend.
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'sessions'
 
 TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT, 'templates')
@@ -495,7 +496,6 @@ INSTALLED_APPS = [
     'tastypie',
     'tastypie_mongoengine',
     'overextends',
-    'redis_sessions',
     #'django_markdown',
     'writingfield',
     #'redisboard',
