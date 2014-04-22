@@ -1,0 +1,25 @@
+{% extends 'home.html' %}
+
+{% block title %}{% if status %}{% trans 'Import status' %}{% else %}{% trans 'Import' %}{% endif %}{% endblock title %}
+
+{% block application_content %}
+
+    <div class="row-fluid">
+        <div class="span8 offset2">
+
+            <div class="spacer50"></div>
+            <h1>{% trans "Import subscriptions via OPML file" %}</h1>
+           <form id="import-opml-form"
+                    class="form form-horizontal" method="POST"
+                    action="{% url 'import_opml' %}" >
+
+                    {{ form.as_p }}
+                    {% csrf_token %}
+
+
+
+            </form>
+        </div>
+    </div>
+
+{% endblock application_content %}

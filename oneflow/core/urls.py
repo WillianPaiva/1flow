@@ -242,6 +242,11 @@ urlpatterns = patterns(
 
     # •••••••••••••••••••••••••••••••••••••••••••••••••••••••••••  Google Reader
 
+    url(_(ur'^import/opml$'),
+        login_required(never_cache(views.import_opml)),
+        name='import_opml'),
+
+    # •••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••• OPML Import
     url(_(ur'^grimport/(?:(?P<user_id>\d+)/)?$'),
         login_required(views.google_reader_import),
         name='google_reader_import'),
@@ -259,6 +264,7 @@ urlpatterns = patterns(
     url(_(ur'^feed/(?P<feed_id>\w+)/close/toggle/$'),
         staff_member_required(views.feed_closed_toggle),
         name='feed_closed_toggle'),
+
 
     *read_patterns
 )

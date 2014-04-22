@@ -23,7 +23,7 @@ from .preferences import (HomePreferencesForm, ReadPreferencesForm,
                           SelectorPreferencesForm, StaffPreferencesForm)
 
 from .selector import (ManageFolderForm, ManageSubscriptionForm,
-                       AddSubscriptionForm, WebPagesImportForm)
+                       AddSubscriptionForm, WebPagesImportForm, OPMLImportForm)
 
 from .user import FullUserCreationForm, UserProfileEditForm
 

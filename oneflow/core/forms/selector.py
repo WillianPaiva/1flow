@@ -36,9 +36,10 @@ from mongodbforms import DocumentForm
 from django_select2.widgets import (Select2Widget, Select2MultipleWidget,
                                     HeavySelect2MultipleWidget)
 
-from ..models import (Folder, Subscription, Feed, Article, Read)
+from ..models import (Folder, Subscription, Feed, Article, Read, OPMLImport)
 from .fields import OnlyNameChoiceField, OnlyNameMultipleChoiceField
 
+from sparks.django.forms import RestrictedFileField
 
 LOGGER = logging.getLogger(__name__)
 
@@ -597,3 +598,17 @@ class WebPagesImportForm(forms.Form):
         self.import_articles_from_urls()
 
         return self.import_created, self.import_failed
+
+
+class OPMLImportForm(DocumentForm):
+    folder = OnlyNameChoiceField(queryset=Folder.objects.all(),
+                                 empty_label=_(u'(None)'),
+                                 label=_(u'Folder'),
+                                 required=False, widget=Select2Widget())
+
+    content = RestrictedFileField(max_upload_size=1000000)
+
+    class Meta:
+        model = OPMLImport
+        fields = ('folder', 'content', )
+

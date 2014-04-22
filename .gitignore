@@ -23,3 +23,10 @@
 *~
 
 .sass-cache
+
+# PyCharm files
+.idea
+
+# Sublime Text files
+*.sublime-project
+*.sublime-workspace

@@ -61,7 +61,8 @@ from .forms import (UserProfileEditForm,  # FullUserCreationForm,
                     ManageSubscriptionForm,
                     AddSubscriptionForm,
                     WebPagesImportForm,
-                    ReadShareForm)
+                    ReadShareForm,
+                    OPMLImportForm)
 from .tasks import import_google_reader_trigger
 from .models.nonrel import (Feed, Subscription, FeedIsHtmlPageException,
                             Article, Read,
@@ -1716,3 +1717,18 @@ def google_reader_import_status(request):
     data['gr_import'] = gri
 
     return render(request, 'snippets/google-reader-import-status.html', data)
+
+def import_opml(request):
+    """
+    Handle OPML file submission
+    """
+
+    if request.method == "POST":
+        pass
+    elif request.method == "GET":
+        form = OPMLImportForm(request.POST)
+
+        return render(request, 'import-opml.html', {'form': form})
+    else:
+        raise Exception("Wrong method")
+

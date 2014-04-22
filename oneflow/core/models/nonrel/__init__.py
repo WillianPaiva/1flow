@@ -52,6 +52,7 @@ from .subscription import * # NOQA
 # read needs article, folder, subscription, user
 from .read import * # NOQA
 
+from .imports import OPMLImport
 # We need to explicitely clutter the class globals for it
 # to find the *_replace_duplicate_everywhere celery tasks.
 DocumentHelperMixin.nonrel_globals = globals()
