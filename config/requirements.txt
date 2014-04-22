@@ -11,6 +11,7 @@
 -e git+https://github.com/kmmbvnr/django-jenkins.git@master#egg=django_jenkins
 -e git+https://github.com/nickstenning/honcho.git@master#egg=honcho
 -e git+https://github.com/noirbizarre/django.js.git@master#egg=django.js
+-e git+https://github.com/pinax/django-user-accounts.git@f92825b4673022e3bef6306347f24ad051b77e65#egg=accounts
 anyjson==0.3.3
 astroid==1.0.1
 beautifulsoup4==4.3.2
@@ -50,7 +51,6 @@ django-south-admin==0.0.3
 django-tastypie-mongoengine==0.4.5
 django-tastypie==0.10.0
 django-transmeta==0.7.3
-django-user-accounts==1.0c3
 django-widget-tweaks==1.3
 Django>=1.5,<1.6
 Django-Select2==4.2.1
