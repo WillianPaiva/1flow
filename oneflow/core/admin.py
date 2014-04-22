@@ -39,16 +39,14 @@ from .models.nonrel import (Tag, Feed, Article, Read, CONTENT_TYPE_MARKDOWN,
                             User as MongoUser, Group as MongoGroup)
 from .models.reldb import HelpContent
 
-from django.contrib import admin as django_admin
-import mongoadmin as admin
+from django.contrib import admin
+import mongoadmin
 from mongodbforms import DocumentForm
 
 from sparks.django.admin import languages, truncate_field
 
-from ..base.admin import CSVAdminMixin
-from ..base.utils.dateutils import now, naturaldelta, naturaltime
-
-from .gr_import import GoogleReaderImport
+#from ..base.admin import CSVAdminMixin
+from ..base.utils.dateutils import naturaldelta, naturaltime
 
 # NOTE: using "from base.models import User" will generate
 # a "cannot proxy swapped model base.User" when creating the
@@ -57,172 +55,68 @@ from .gr_import import GoogleReaderImport
 User = get_user_model()
 
 
-# —————————————————————————————————————————————————— Google Reader Import users
-#                              (obsolete as of 20130701, but kept as reference)
+if settings.FULL_ADMIN:
+    name_fields_names = tuple(('name_' + code)
+                              for code, lang in languages)
+    name_fields_displays = tuple((field + '_display')
+                                 for field in name_fields_names)
+    content_fields_names = tuple(('content_' + code)
+                                 for code, lang in languages)
+    content_fields_displays = tuple((field + '_display')
+                                    for field in content_fields_names)
 
-class GriUser(User):
-    """ Just a proxy to User model, to be able to build a list against it. """
+    class HelpContentAdmin(admin.ModelAdmin):
+        list_display_links = ('label', )
+        list_display       = ('label', 'ordering', 'active', ) \
+            + name_fields_displays
+        list_editable      = ('ordering', 'active', )
+        search_fields      = ('label', ) + name_fields_names + content_fields_names # NOQA
+        ordering           = ('ordering', 'label', )
+        save_as            = True
+        fieldsets = (
+            (_(u'Main'), {
+                'fields': (
+                    ('label', 'active', 'ordering', ),
+                ),
+            }),
+            (_(u'Translators notes'), {
+                'classes': ('grp-collapse grp-closed', ),
+                'fields': (
+                    'name_nt',
+                    'content_nt',
+                )
+            }),
+            (_(u'Contents (English)'), {
+                'fields': (
+                    'name_en',
+                    'content_en',
+                )
+            }),
+            (_(u'Contents (French)'), {
+                'fields': (
+                    'name_fr',
+                    'content_fr',
+                )
+            }),
+        )
 
-    class Meta:
-        proxy = True
-        #fields = ('id', 'username', )
-        verbose_name = _(u'Google Reader import')
-        verbose_name_plural = _(u'Google Reader imports')
+    for attr, attr_name in zip(name_fields_names,
+                               name_fields_displays):
+        setattr(HelpContentAdmin, attr_name,
+                truncate_field(HelpContent, attr))
 
+    for attr, attr_name in zip(content_fields_names,
+                               content_fields_displays):
+        setattr(HelpContentAdmin, attr_name,
+                truncate_field(HelpContent, attr))
 
-class GriOneFlowUserAdmin(UserAdmin, CSVAdminMixin):
-    """ Wrap our GoogleReaderImport class onto User accounts,
-        to be able to act on imports from the Django administration. """
-
-    list_display = ('id', 'username', 'gri_feeds_display',
-                    'gri_articles_display', 'gri_reads_display',
-                    'gri_starred_display', 'gri_executed_display',
-                    'gri_duration_display', 'gri_eta_display',
-                    'gri_action_display', 'can_import_display', )
-    list_display_links = ('id', 'username', )
-    ordering = ('-date_joined', )
-    date_hierarchy = 'date_joined'
-    search_fields = ('username', 'email', )
-    change_list_template = "admin/change_list_filter_sidebar.html"
-    change_list_filter_template = "admin/filter_listing.html"
-
-    def has_add_permission(self, request):
-        # Don't display the ADD button in the Django interface.
-        return False
-
-    def gri_articles_display(self, obj):
-
-        return GoogleReaderImport(obj.id).articles() or u'—'
-
-    gri_articles_display.short_description = _(u'articles')
-
-    def gri_feeds_display(self, obj):
-
-        gri = GoogleReaderImport(obj.id)
-
-        number, total = gri.feeds(), gri.total_feeds()
-
-        if number >= total:
-            return number or u'—'
-
-        return u'%s/%s' % (number, total)
-
-    gri_feeds_display.short_description = _(u'feeds')
-
-    def gri_reads_display(self, obj):
-
-        gri = GoogleReaderImport(obj.id)
-
-        number, total = gri.reads(), gri.total_reads()
-
-        if number >= total:
-            return number or u'—'
-
-        return u'%s/%s' % (number, total)
-
-    gri_reads_display.short_description = pgettext_lazy(u'noun, plural',
-                                                        u'reads')
-
-    def gri_starred_display(self, obj):
-
-        gri = GoogleReaderImport(obj.id)
-
-        number, total = gri.starred(), gri.total_starred()
-
-        if number >= total:
-            return number or u'—'
-
-        return u'%s/%s' % (number, total)
-
-    gri_starred_display.short_description = _(u'starred')
-
-    def gri_executed_display(self, obj):
-
-        gri = GoogleReaderImport(obj.id)
-
-        with django_language():
-            if gri.running() is None:
-                return u'—'
-
-            else:
-                return naturaltime(gri.start())
-
-    gri_executed_display.short_description = _(u'executed')
-
-    def gri_duration_display(self, obj):
-
-        gri = GoogleReaderImport(obj.id)
-
-        with django_language():
-            if gri.running():
-                return naturaldelta(now() - gri.start())
-
-            elif gri.running() is False:
-                return naturaldelta(gri.end() - gri.start())
-
-            else:
-                return u'—'
-
-    gri_duration_display.short_description = _(u'duration')
-
-    def gri_eta_display(self, obj):
-
-        gri = GoogleReaderImport(obj.id)
-
-        eta = gri.eta()
-
-        if eta:
-            with django_language():
-                return naturaldelta(eta)
-
-        return u'—'
-
-    gri_eta_display.short_description = _(u'ETA')
-
-    def gri_action_display(self, obj):
-
-        gri = GoogleReaderImport(obj.id)
-
-        has_google = obj.social_auth.filter(provider=
-                                            'google-oauth2').count() > 0
-        if has_google:
-            if gri.running():
-                return u'<a href="{0}">{1}</a>'.format(
-                    reverse('google_reader_import_stop',
-                            kwargs={'user_id': obj.id}), _(u'stop'))
-
-            else:
-                return u'<a href="{0}">{1}</a>'.format(
-                    reverse('google_reader_import',
-                            kwargs={'user_id': obj.id}),
-                    _(u'start') if gri.running() is None
-                    else _(u'restart'))
-        else:
-            return u'<span style="text-decoration: line-through">OAuth2</span>'
-
-    gri_action_display.short_description = _(u'import')
-    gri_action_display.allow_tags = True
-
-    def can_import_display(self, obj):
-
-        gri = GoogleReaderImport(obj.id)
-
-        return u'<a href="{0}">{1}</a>'.format(
-            reverse('google_reader_can_import_toggle',
-                    kwargs={'user_id': obj.id}),
-            _(u'deny') if gri.can_import else _(u'allow'))
-
-    can_import_display.short_description = _(u'Permission')
-    can_import_display.allow_tags = True
+    admin.site.register(HelpContent, HelpContentAdmin)
 
 
-admin.site.register(GriUser, GriOneFlowUserAdmin)
+# ————————————————————————————————————————————————————————————————————— MongoDB
 
 
-# ——————————————————————————————————————————————————————————— pure Core objects
-
-
-class TagAdmin(admin.DocumentAdmin):
+class TagAdmin(mongoadmin.DocumentAdmin):
 
     list_display = ('id', 'name', 'language', 'duplicate_of',
                     'parents_display', 'children_display')
@@ -280,7 +174,7 @@ class MongoUserAdminForm(DocumentForm):
         }
 
 
-class MongoUserAdmin(admin.DocumentAdmin):
+class MongoUserAdmin(mongoadmin.DocumentAdmin):
     list_display = ('id', 'username', 'first_name', 'last_name', 'django_user',
                     'is_staff_display', 'is_superuser_display', )
     list_display_links = ('id', 'username', )
@@ -336,7 +230,7 @@ class MongoGroupAdminForm(DocumentForm):
         }
 
 
-class MongoGroupAdmin(admin.DocumentAdmin):
+class MongoGroupAdmin(mongoadmin.DocumentAdmin):
     list_display = ('id', 'name', 'internal_name', 'creator',
                     'backend', )
     list_display_links = ('id', 'name',  'internal_name', )
@@ -386,7 +280,7 @@ class ArticleAdminForm(DocumentForm):
         }
 
 
-class ArticleAdmin(admin.DocumentAdmin):
+class ArticleAdmin(mongoadmin.DocumentAdmin):
 
     class Media:
         js = (settings.STATIC_URL + 'writingfield/mousetrap.min.js',
@@ -512,7 +406,7 @@ class ArticleAdmin(admin.DocumentAdmin):
 admin.site.register(Article, ArticleAdmin)
 
 
-class ReadAdmin(admin.DocumentAdmin):
+class ReadAdmin(mongoadmin.DocumentAdmin):
 
     list_display = ('id', 'article_display',
                     'user_display',
@@ -625,7 +519,7 @@ class FeedAdminForm(DocumentForm):
         }
 
 
-class FeedAdmin(admin.DocumentAdmin):
+class FeedAdmin(mongoadmin.DocumentAdmin):
 
     class Media:
         css = {
@@ -866,60 +760,3 @@ class FeedAdmin(admin.DocumentAdmin):
 
 
 admin.site.register(Feed, FeedAdmin)
-
-if settings.FULL_ADMIN:
-    name_fields_names = tuple(('name_' + code)
-                              for code, lang in languages)
-    name_fields_displays = tuple((field + '_display')
-                                 for field in name_fields_names)
-    content_fields_names = tuple(('content_' + code)
-                                 for code, lang in languages)
-    content_fields_displays = tuple((field + '_display')
-                                    for field in content_fields_names)
-
-    class HelpContentAdmin(django_admin.ModelAdmin):
-        list_display_links = ('label', )
-        list_display       = ('label', 'ordering', 'active', ) \
-            + name_fields_displays
-        list_editable      = ('ordering', 'active', )
-        search_fields      = ('label', ) + name_fields_names + content_fields_names # NOQA
-        ordering           = ('ordering', 'label', )
-        save_as            = True
-        fieldsets = (
-            (_(u'Main'), {
-                'fields': (
-                    ('label', 'active', 'ordering', ),
-                ),
-            }),
-            (_(u'Translators notes'), {
-                'classes': ('grp-collapse grp-closed', ),
-                'fields': (
-                    'name_nt',
-                    'content_nt',
-                )
-            }),
-            (_(u'Contents (English)'), {
-                'fields': (
-                    'name_en',
-                    'content_en',
-                )
-            }),
-            (_(u'Contents (French)'), {
-                'fields': (
-                    'name_fr',
-                    'content_fr',
-                )
-            }),
-        )
-
-    for attr, attr_name in zip(name_fields_names,
-                               name_fields_displays):
-        setattr(HelpContentAdmin, attr_name,
-                truncate_field(HelpContent, attr))
-
-    for attr, attr_name in zip(content_fields_names,
-                               content_fields_displays):
-        setattr(HelpContentAdmin, attr_name,
-                truncate_field(HelpContent, attr))
-
-    admin.site.register(HelpContent, HelpContentAdmin)
