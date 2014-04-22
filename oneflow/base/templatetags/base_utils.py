@@ -231,3 +231,6 @@ def countdown(value, redirect=None, limit=0, show_seconds=True,
     }
 
 
+@register.filter
+def lookup(d, key):
+    return d[key]
