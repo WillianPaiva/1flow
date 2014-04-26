@@ -873,7 +873,7 @@ def read_with_endless_pagination(request, **kwargs):
     else:
         reads = user.reads(**query_kwargs).order_by(*order_by).no_cache()
 
-    LOGGER.info(u'order_by is: %s', order_by)
+    #LOGGER.info(u'order_by is: %s', order_by)
 
     # LOGGER.info(u'Matched reads: %s', reads.count())
 
