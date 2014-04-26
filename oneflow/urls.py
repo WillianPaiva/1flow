@@ -180,3 +180,12 @@ urlpatterns += patterns(
 # cf. https://docs.djangoproject.com/en/1.5/ref/contrib/staticfiles/
 #           #django.contrib.staticfiles.urls.staticfiles_urlpatterns
 urlpatterns += staticfiles_urlpatterns()
+
+
+# Debug toolbar setup is explicit.
+#  Cf. https://github.com/django-debug-toolbar/django-debug-toolbar/issues/585#issuecomment-41461381 # NOQA
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns += patterns('',
+        url(r'^__debug__/', include(debug_toolbar.urls)),
+    )
