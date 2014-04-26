@@ -32,7 +32,11 @@ INSTALLED_APPS += [
     #'debug_toolbar_mongo',
 ]
 
-MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware', )
+DEBUG_TOOLBAR_PATCH_SETTINGS = False
+
+# DJDT must come first or very early.
+MIDDLEWARE_CLASSES = ('debug_toolbar.middleware.DebugToolbarMiddleware',
+                      ) + MIDDLEWARE_CLASSES
 
 DEBUG_TOOLBAR_PANELS = (
     'debug_toolbar.panels.redirects.RedirectsPanel',
@@ -64,6 +68,7 @@ DEBUG_TOOLBAR_PANELS = (
 DEBUG_TOOLBAR_CONFIG = {
     #'INTERCEPT_REDIRECTS': False,
     'ENABLE_STACKTRACES' : False,
+    'JQUERY_URL': '',
     #'SHOW_TOOLBAR_CALLBACK': custom_show_toolbar,
     #'EXTRA_SIGNALS': ['myproject.signals.MySignal'],
     #'HIDE_DJANGO_SQL': False,
