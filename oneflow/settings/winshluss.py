@@ -20,6 +20,8 @@
 
 """
 
+DBCACHE_SERVER = '127.0.0.1'
+
 import socket
 from sparks.django.settings import include_snippets
 
@@ -63,11 +65,12 @@ ALLOWED_HOSTS += [
 if socket.gethostname().lower() == 'duncan':
     SITE_DOMAIN = 'big.1flow.io'
 else:
-    SITE_DOMAIN = 'lil.1flow.io'
+    SITE_DOMAIN = 'localhost:8000'
 
 # For testing both configurations.
 #ACCOUNT_OPEN_SIGNUP = False
 
-EMAIL_HOST = 'gurney'
+#EMAIL_HOST = 'gurney'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 #EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 #EMAIL_FILE_PATH = '/tmp/1flow.mail'
