@@ -28,8 +28,14 @@ with warnings.catch_warnings():
     # own code. BUMMER!
 
     warnings.filterwarnings("ignore", category=DeprecationWarning)
-    import django.conf.urls.defaults # NOQA
-    import django.utils.hashcompat # NOQA
+    try:
+        import django.conf.urls.defaults # NOQA
+        import django.utils.hashcompat # NOQA
+
+    except ImportError:
+        # This will fail in Django 1.6, it doesn't exist anymore.
+        pass
+
     try:
         import jpype # NOQA
 

@@ -24,6 +24,7 @@ from django.conf.urls.i18n import i18n_patterns
 from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponsePermanentRedirect
 from django.contrib.auth.decorators import login_required
+from django.contrib import admin
 from django.views.decorators.cache import never_cache
 from django.views.generic import TemplateView
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
@@ -31,8 +32,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from .api import v1_api
 
-# This is our ".admin" module. it runs autodiscover() automatically.
-import admin
 admin.autodiscover()
 
 # We need to import this after Django's standard autodiscover().
@@ -181,3 +180,12 @@ urlpatterns += patterns(
 # cf. https://docs.djangoproject.com/en/1.5/ref/contrib/staticfiles/
 #           #django.contrib.staticfiles.urls.staticfiles_urlpatterns
 urlpatterns += staticfiles_urlpatterns()
+
+
+# Debug toolbar setup is explicit.
+#  Cf. https://github.com/django-debug-toolbar/django-debug-toolbar/issues/585#issuecomment-41461381 # NOQA
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns += patterns('',
+        url(r'^__debug__/', include(debug_toolbar.urls)),
+    )

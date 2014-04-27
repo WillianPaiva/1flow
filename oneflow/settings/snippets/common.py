@@ -419,8 +419,11 @@ if not DEBUG:
         'pipeline.middleware.MinifyHTMLMiddleware',
     ) + MIDDLEWARE_CLASSES[-1:]
 
-#SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
-SESSION_ENGINE = 'redis_sessions.session'
+# Use Django-redis as session backend.
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'sessions'
+
+REDISBOARD_DETAIL_FILTERS = ['(uptime|db|last|total).*', ]
 
 TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT, 'templates')
@@ -495,12 +498,10 @@ INSTALLED_APPS = [
     'tastypie',
     'tastypie_mongoengine',
     'overextends',
-    'redis_sessions',
     #'django_markdown',
     'writingfield',
-    #'redisboard',
+    'redisboard',
     'djcelery',
-    'memcache_status',
     'markdown_deux',
     'djangojs',
     'django_select2',
@@ -591,7 +592,8 @@ try:
         # We send flower bugs to a dedicated sentry project,
         # it pollutes us too much.
         'dsn': os.environ.get('RAVEN_DSN_FLOWER'
-                              if 'flower' in sys.argv or 'shell_ipynb' in sys.argv
+                              if 'flower' in sys.argv
+                              or 'shell_ipynb' in sys.argv
                               else 'RAVEN_DSN'),
     }
 except KeyError:
