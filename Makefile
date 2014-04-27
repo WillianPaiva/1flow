@@ -109,6 +109,9 @@ webdeploy-collectcompile:
 	fab prod -H 1flow.io sdf.collectstatic sdf.compilemessages
 	fab prod R:web restart:1
 
+webdeploy-environment:
+	fab prod push_environment restart:1
+
 allfixtures: datafixtures fixtures
 
 datafixtures:
@@ -116,18 +119,3 @@ datafixtures:
 
 fixtures:
 	@find . -name '*.json' -path '*/fixtures/*'
-
-test-restart:
-	fab test sdf.restart_services
-
-prod-restart:
-	fab prod sdf.restart_services
-
-test-fastdeploy:
-	fab test fastdeploy
-
-prod-fastdeploy:
-	fab prod fastdeploy
-
-fastdeploy-environment:
-	fab prod push_environment restart:1
