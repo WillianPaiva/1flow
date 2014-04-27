@@ -9,12 +9,12 @@
 /celerybeat-schedule
 /celerybeat.pid
 /celery.states*
+.ipynb_checkpoints
 
 
 # PIP local installs
 /src
 
-*.ipynb
 *.mo
 *.pyc
 *.pyo

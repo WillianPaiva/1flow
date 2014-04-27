@@ -75,11 +75,3 @@ REDIS_FEEDBACK_PORT = int(os.environ.get('REDIS_FEEDBACK_PORT', REDIS_PORT))
 REDIS_FEEDBACK_DB   = int(os.environ.get('REDIS_FEEDBACK_DB'))
 
 CONSTANCE_REDIS_CONNECTION = os.environ.get('CONSTANCE_REDIS_CONNECTION')
-
-SESSION_REDIS_PREFIX = 'sss'
-SESSION_REDIS_HOST   = os.environ.get('SESSION_REDIS_HOST', DBCACHE_SERVER)
-SESSION_REDIS_DB     = int(os.environ.get('SESSION_REDIS_DB'))
-SESSION_REDIS_PORT   = int(os.environ.get('SESSION_REDIS_PORT', REDIS_PORT))
-
-# TODO: if we ever need this, move it to $ENV!
-#SESSION_REDIS_PASSWORD = 'password'
