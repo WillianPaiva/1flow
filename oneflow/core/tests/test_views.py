@@ -223,7 +223,7 @@ class SelectorViewTest(TestCase):
         for folder_name in (u'Folder #1', u'Folder #2', u'Folder #3',
                             u'Folder #4', u'Folder #5', u'Folder #6'):
             self.folders.append(
-                Folder.add_folder(folder_name, self.mongodb_user)
+                Folder.add_folder(folder_name, self.mongodb_user)[0]
             )
 
     @classmethod
