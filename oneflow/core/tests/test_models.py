@@ -832,12 +832,12 @@ class FoldersTest(TestCase):
 
         self.assertEquals(len(user.folders), 0)
 
-        ftest1 = Folder.add_folder('test1', user)
+        ftest1, created = Folder.add_folder('test1', user)
 
         self.assertEquals(len(user.folders), 1)
 
-        ftest2 = Folder.add_folder('test2', user)
-        ftest3 = Folder.add_folder('test3', user)
+        ftest2, created = Folder.add_folder('test2', user)
+        ftest3, created = Folder.add_folder('test3', user)
 
         #We didn't pass "root" as argument. `Folder` class
         # updated the DB, but not our local instance.
@@ -856,12 +856,12 @@ class FoldersTest(TestCase):
         user = self.mongodb_user
         root = user.root_folder
 
-        ftest1 = Folder.add_folder('test1', user)
+        ftest1, created = Folder.add_folder('test1', user)
 
         self.assertEquals(len(user.folders), 1)
 
-        ftest2 = Folder.add_folder('test2', user, ftest1)
-        ftest3 = Folder.add_folder('test3', user, ftest1)
+        ftest2, created = Folder.add_folder('test2', user, ftest1)
+        ftest3, created = Folder.add_folder('test3', user, ftest1)
 
         # We didn't pass "root" as argument. `Folder` class
         # updated the DB, but not our local instance. This
@@ -932,9 +932,9 @@ class FoldersTest(TestCase):
         user = self.mongodb_user
         root = user.root_folder
 
-        ftest1 = Folder.add_folder('test1', user)
-        ftest2 = Folder.add_folder('test2', user, ftest1)
-        ftest3 = Folder.add_folder('test3', user, ftest2)
+        ftest1, created = Folder.add_folder('test1', user)
+        ftest2, created = Folder.add_folder('test2', user, ftest1)
+        ftest3, created = Folder.add_folder('test3', user, ftest2)
 
         # root
         self.assertTrue(root.is_parent_of(ftest1))
@@ -968,9 +968,9 @@ class FoldersTest(TestCase):
         user = self.mongodb_user
         root = user.root_folder
 
-        ftest1 = Folder.add_folder('test1', user)
-        ftest2 = Folder.add_folder('test2', user, ftest1)
-        ftest3 = Folder.add_folder('test3', user, ftest2)
+        ftest1, created = Folder.add_folder('test1', user)
+        ftest2, created = Folder.add_folder('test2', user, ftest1)
+        ftest3, created = Folder.add_folder('test3', user, ftest2)
 
         self.assertTrue(ftest1.is_parent_of(ftest2))
         self.assertTrue(ftest1.is_parent_of(ftest3))
