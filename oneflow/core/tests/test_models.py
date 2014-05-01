@@ -71,7 +71,7 @@ class ThrottleIntervalTest(TestCase):
         self.assertEquals(t(1000, some_news, no_mutual, no_dupe,
                           'etag', 'last_modified'), 540.0)
         self.assertEquals(t(1000, some_news, no_mutual, no_dupe,
-                          '', 'last_modified'),  540.0)
+                          '', 'last_modified'), 540.0)
         self.assertEquals(t(1000, some_news, no_mutual, no_dupe,
                           None, 'last_modified'), 540.0)
 
@@ -92,7 +92,7 @@ class ThrottleIntervalTest(TestCase):
         self.assertEquals(t(1000, no_news, a_mutual, no_dupe,
                           'etag', 'last_modified'), 800.0)
         self.assertEquals(t(1000, no_news, a_mutual, no_dupe,
-                          '', 'last_modified'),  800.0)
+                          '', 'last_modified'), 800.0)
         self.assertEquals(t(1000, no_news, a_mutual, no_dupe,
                           None, 'last_modified'), 800.0)
 
@@ -104,7 +104,7 @@ class ThrottleIntervalTest(TestCase):
         self.assertEquals(t(1000, no_news, a_mutual, a_dupe,
                           'etag', 'last_modified'), 900.0)
         self.assertEquals(t(1000, no_news, a_mutual, a_dupe,
-                          '', 'last_modified'),  900.0)
+                          '', 'last_modified'), 900.0)
         self.assertEquals(t(1000, no_news, a_mutual, a_dupe,
                           None, 'last_modified'), 900.0)
 
@@ -132,7 +132,7 @@ class ThrottleIntervalTest(TestCase):
                           None, 'last_modified'), 810.0)
 
         self.assertEquals(t(1000, some_news, no_mutual, a_dupe,
-                          'etag', ''),   810.0)
+                          'etag', ''), 810.0)
         self.assertEquals(t(1000, some_news, no_mutual, a_dupe,
                           'etag', None), 810.0)
 
@@ -146,7 +146,7 @@ class ThrottleIntervalTest(TestCase):
                           None, 'last_modified'), 1250)
 
         self.assertEquals(t(1000, no_news, no_mutual, a_dupe,
-                          'etag', ''),   1250)
+                          'etag', ''), 1250)
         self.assertEquals(t(1000, no_news, no_mutual, a_dupe,
                           'etag', None), 1250)
 
@@ -225,9 +225,8 @@ class ThrottleIntervalTest(TestCase):
         more_news = config.FEED_FETCH_RAISE_THRESHOLD + 5
         less_news = config.FEED_FETCH_RAISE_THRESHOLD - 5
         just_one  = 1
-
-        a_dupe  = 1
-        no_dupe = 0
+        a_dupe    = 1
+        no_dupe   = 0
         no_mutual = 0
 
         self.assertEquals(t(1000, just_one, no_mutual, a_dupe,
@@ -423,18 +422,18 @@ class FeedsTest(TestCase):
         self.assertEquals(Feed._get_collection().count(), 3)
 
         # Via the RSS listing page
-        feed, created = Feed.create_feeds_from_url(u'http://www.zdnet.fr/services/rss/')[0] # NOQA
+        feed, created = Feed.create_feeds_from_url(u'http://www.zdnet.fr/services/rss/')[0]  # NOQA
         self.assertFalse(created)
         self.assertEquals(feed.url, u'http://www.zdnet.fr/feeds/rss/')
         self.assertEquals(Feed._get_collection().count(), 3)
 
         # Via the first RSS (raw)
-        feed, created = Feed.create_feeds_from_url(u'http://www.zdnet.fr/feeds/rss/')[0] # NOQA
+        feed, created = Feed.create_feeds_from_url(u'http://www.zdnet.fr/feeds/rss/')[0]  # NOQA
         self.assertFalse(created)
         self.assertEquals(feed.url, u'http://www.zdnet.fr/feeds/rss/')
         self.assertEquals(Feed._get_collection().count(), 3)
 
-        feed, created = Feed.create_feeds_from_url(u'http://www.atlantico.fr/')[0] # NOQA
+        feed, created = Feed.create_feeds_from_url(u'http://www.atlantico.fr/')[0]  # NOQA
         self.assertTrue(created)
         self.assertEquals(feed.url, u'http://www.atlantico.fr/rss.xml')
         self.assertEquals(Feed._get_collection().count(), 4)
@@ -445,7 +444,7 @@ class FeedsTest(TestCase):
         self.assertEquals(Feed._get_collection().count(), 5)
 
         # Not created again, even from an article which has the comment feed.
-        feed, created = Feed.create_feeds_from_url(u'http://ntoll.org/article/build-a-drogulus')[0] # NOQA
+        feed, created = Feed.create_feeds_from_url(u'http://ntoll.org/article/build-a-drogulus')[0]  # NOQA
         self.assertFalse(created)
         self.assertEquals(feed.url, u'http://ntoll.org/rss.xml')
         self.assertEquals(Feed._get_collection().count(), 5)
@@ -590,13 +589,13 @@ class AbsolutizeTest(TestCase):
         self.article1 = Article(title=u'test1',
                                 url=u'http://rss.feedsportal.com/c/707/f/9951/s/2b27496a/l/0L0Sreseaux0Etelecoms0Bnet0Cactualites0Clire0Elancement0Emondial0Edu0Esamsung0Egalaxy0Es40E25980A0Bhtml/story01.htm').save() # NOQA
         self.article2 = Article(title=u'test2',
-                                url=u'http://feedproxy.google.com/~r/francaistechcrunch/~3/hEIhLwVyEEI/').save() # NOQA
+                                url=u'http://feedproxy.google.com/~r/francaistechcrunch/~3/hEIhLwVyEEI/').save()  # NOQA
         self.article3 = Article(title=u'test3',
-                                url=u'http://obi.1flow.io/absolutize_test_401').save() # NOQA
+                                url=u'http://obi.1flow.io/absolutize_test_401').save()  # NOQA
         self.article4 = Article(title=u'test4',
-                                url=u'http://host.non.exixstentz.com/absolutize_test').save() # NOQA
+                                url=u'http://host.non.exixstentz.com/absolutize_test').save()  # NOQA
         self.article5 = Article(title=u'test5',
-                                url=u'http://1flow.io/absolutize_test_404').save() # NOQA
+                                url=u'http://1flow.io/absolutize_test_404').save()  # NOQA
 
     def tearDown(self):
         Article.drop_collection()
