@@ -21,9 +21,14 @@
 
 from sparks.foundations.classes import SimpleObject
 
-from .reldb import * # NOQA
-from .nonrel import * # NOQA
-from .keyval import * # NOQA
+# ——————————————————————————————————————————————————————————————————— PG Models
+
+from .help import HelpContent  # NOQA
+
+# —————————————————————————————————————————————————————— MongoDB / Redis models
+
+from .nonrel import *  # NOQA
+from .keyval import *  # NOQA
 
 RATINGS = SimpleObject(from_dict={
     'STARRED': 5.0,
