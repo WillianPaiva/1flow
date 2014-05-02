@@ -224,8 +224,9 @@ class DocumentHelperMixin(object):
 
         if hasattr(cls, defect_name) and hasattr(cls, defect_name + '_done'):
 
-            Q1_params    = {defect_name + '_done__exists': False}
-            Q2_params    = {defect_name + '_done': False}
+            Q1_params = {defect_name + '_done__exists': False}
+            Q2_params = {defect_name + '_done': False}
+
             done_count   = 0
             failed_count = 0
             failed_ids   = []
