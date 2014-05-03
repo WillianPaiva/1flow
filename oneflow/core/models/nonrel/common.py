@@ -133,7 +133,10 @@ def lowername(objekt):
 
 
 class TreeCycleException(Exception):
-    """ Raised when a tree has a cycle. Obviously it should not have. """
+    """ Raised when a tree has a cycle. Obviously it should not have.
+
+        MIGRATION: DROP.
+    """
     pass
 
 
@@ -150,7 +153,11 @@ class FeedFetchException(Exception):
 
 class NotTextHtmlException(Exception):
     """ Raised when the content of an article is not text/html, to switch to
-        other parsers, without re-requesting the actual content. """
+        other parsers, without re-requesting the actual content.
+
+
+        MIGRATION: KEEP.
+    """
     def __init__(self, message, response):
         # Call the base class constructor with the parameters it needs
         Exception.__init__(self, message)
@@ -170,6 +177,9 @@ class DocumentHelperMixin(object):
             base.__name__)
         ValueError: Document Document may not be subclassed
 
+
+
+        MIGRATION: transform into a Model mixin.
     """
 
     # HACK: this variable must be set to the nonrel.__init__.globals()
@@ -180,6 +190,11 @@ class DocumentHelperMixin(object):
 
     @property
     def _db_name(self):
+        """
+
+            MIGRATION: DROP.
+
+        """
         return self._get_db().name
 
     @classmethod
@@ -188,6 +203,10 @@ class DocumentHelperMixin(object):
             Not as powerful, though.
 
             .. versionadded:: 0.21.7
+
+
+
+            MIGRATION: KEEP into a Model Mixin.
         """
 
         try:
@@ -214,6 +233,12 @@ class DocumentHelperMixin(object):
 
     @classmethod
     def check_temporary_defect(cls, defect_name, limit=None, progress=None):
+        """
+
+
+
+            MIGRATION: KEEP into a Model Mixin.
+        """
 
         if limit is None:
             # Don't let "Cursor … invalid at server" errors stop us.
@@ -295,7 +320,18 @@ class DocumentHelperMixin(object):
                          u'attributes on %s.', defect_name, cls.__name__)
 
     def register_duplicate(self, duplicate, force=False):
+        """ Common behavior to all models to register an instance as a
+            duplicate of some other.
 
+            If you have any specific processing to do after a record was
+            marked as duplicate, implement
+            a :func:`_class_name_lower_ + '_replace_duplicate_everywhere'`
+            function as a celery task that
+
+
+
+            MIGRATION: KEEP into a Model Mixin.
+        """
         # be sure this helper method is called
         # on a document that has the atribute.
         assert hasattr(duplicate, 'duplicate_of')
@@ -353,6 +389,9 @@ class DocumentHelperMixin(object):
 
             The unique path can also eventually be used for statistics, to
             avoid unbrowsable too big folders in Graphite.
+
+
+            MIGRATION: DROP.
         """
 
         # TODO: factorize this sometwhere common to all classes.
@@ -381,6 +420,8 @@ class DocumentHelperMixin(object):
             delattr(self, attribute_name)
 
     def safe_reload(self):
+        """ MIGRATION: DROP. """
+
         try:
             self.reload()
 
@@ -388,7 +429,18 @@ class DocumentHelperMixin(object):
             pass
 
     def compute_cached_descriptors(self, **kwargs):
+        """ Recompute one or more cached descriptors values on demand.
+            To recompute all descriptors, pass the argument ``all=True``.
 
+            To recompute selectively some other descriptors,
+            pass one or more ``<descriptor_name>=True`` as argument(s).
+
+
+
+            MIGRATION:
+            - Outsource what_name values into the class.
+            - Move to Model Mixin
+        """
         # TODO: detect descriptors automatically by examining the __class__.
 
         lower_class = self.__class__.__name__.lower()
@@ -418,6 +470,10 @@ class DocumentHelperMixin(object):
                                      attr_name, func_name)
 
     def check_owner(self, user):
+        """
+
+            MIGRATION: keep in model mixin ? Replace with permission app ?
+        """
 
         try:
             return user.is_staff_or_superuser_and_enabled \
@@ -448,6 +504,8 @@ class DocumentTreeMixin(object):
             children = ListField(ReferenceField('self',
                                  reverse_delete_rule=PULL), default=list)
 
+
+        MIGRATION: replace by MPTT.
     """
 
     def set_parent(self, parent, update_reverse_link=True, full_reload=True):
@@ -554,7 +612,11 @@ class DocumentTreeMixin(object):
 
 class PseudoQuerySet(list):
     """ Sometimes Django expects a queryset, but we build a complexly
-        sorted list, and we want this list to display nicely in forms. """
+        sorted list, and we want this list to display nicely in forms.
+
+
+        MIGRATION: DROP.
+    """
 
     def __init__(self, *args, **kwargs):
         self.model = kwargs.pop('model', None)
@@ -606,6 +668,10 @@ class BackendSource(EmbeddedDocument):
                 'remote_id': <the gg2 'id' attribute>,
                 'remote_url': <the gg2 'link::self' attribute>,
             }
+
+
+        MIGRATION: Extend Django's Group Model.
+
     """
 
     name = StringField()
@@ -617,7 +683,11 @@ class BackendSource(EmbeddedDocument):
 class CorePermissions(models.Model):
     """ This Django Model holds no data, but allows to create standard Django
         permissions for MongoEngine documents. These permissions are manageable
-        via the Django admin like any other. """
+        via the Django admin like any other.
+
+
+        MIGRATION: DROP.
+    """
 
     class Meta:
         app_label   = 'core'

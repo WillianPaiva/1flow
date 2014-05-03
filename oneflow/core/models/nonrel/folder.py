@@ -75,6 +75,11 @@ def folder_bookmarked_articles_count_default(folder, *args, **kwargs):
 
 
 class Folder(Document, DocumentHelperMixin, DocumentTreeMixin):
+    """ A simple nestable Folder system, thanks to Django's MPTT.
+
+        MIGRATION: PORT to MPTT
+    """
+
     name  = StringField(verbose_name=_(u'Name'),
                         unique_with=['owner', 'parent'])
     owner = ReferenceField('User', verbose_name=_(u'Owner'),
@@ -118,6 +123,10 @@ class Folder(Document, DocumentHelperMixin, DocumentTreeMixin):
 
     @classmethod
     def get_root_for(cls, user):
+        """
+
+            MIGRATION: KEEP.
+        """
 
         try:
             return cls.objects.get(name=u'__root__', owner=user)
@@ -126,6 +135,10 @@ class Folder(Document, DocumentHelperMixin, DocumentTreeMixin):
             return cls(name=u'__root__', owner=user).save()
 
     def validate(self, *args, **kwargs):
+        """
+
+            MIGRATION: PORT.
+        """
 
         try:
             super(Folder, self).validate(*args, **kwargs)
@@ -147,6 +160,8 @@ class Folder(Document, DocumentHelperMixin, DocumentTreeMixin):
         """
 
             Returns (folder, created) or raise an exception.
+
+            MIGRATION: KEEP.
         """
 
         if len(tag.parents) == 1:
@@ -176,6 +191,8 @@ class Folder(Document, DocumentHelperMixin, DocumentTreeMixin):
         """
 
             Returns (folder, created) or raise an exception.
+
+            MIGRATION: MOVE TO MANAGER.
         """
 
         assert parent is None or isinstance(parent, cls)
@@ -215,6 +232,10 @@ class Folder(Document, DocumentHelperMixin, DocumentTreeMixin):
 
     @classmethod
     def signal_pre_delete_handler(cls, sender, document, **kwargs):
+        """
+
+            MIGRATION: DROP.
+        """
 
         folder_to_delete = document
 
@@ -228,19 +249,30 @@ class Folder(Document, DocumentHelperMixin, DocumentTreeMixin):
 
     @property
     def has_content(self):
+        """
+
+            MIGRATION: KEEP.
+        """
 
         # PERF: it's faster to test for children than query for subscriptions.
         return self.children or self.subscriptions
 
     @property
     def max_depth(self):
+        """
+
+            MIGRATION: KEEP.
+        """
 
         return 4 \
             if self.owner.preferences.selector.extended_folders_depth \
             else 2
 
     def get_subfolders(self, current_level):
+        """
 
+            MIGRATION: KEEP or USE Django's MPTT.
+        """
         if current_level >= self.max_depth:
             return PseudoQuerySet()
 
@@ -258,28 +290,35 @@ class Folder(Document, DocumentHelperMixin, DocumentTreeMixin):
 
 
 def User_folders_property_get(self):
+    """ MIGRATION: DROP (native with JOIN/related). """
 
     return Folder.objects(owner=self, parent__ne=None)
 
 
 def User_root_folder_property_get(self):
+    """ MIGRATION: move to User Model """
 
     return Folder.get_root_for(self)
 
 
 def User_top_folders_property_get(self):
+    """ MIGRATION: move to User Model """
 
     return self.folders.filter(parent=self.root_folder).order_by('name')
 
 
 def User_folders_tree_property_get(self):
     """ Returns the full (but preference-via
-        depth-limited) user folders tree as a list. """
+        depth-limited) user folders tree as a list.
+
+        MIGRATION: move to User Model
+    """
 
     return self.get_folders_tree()
 
 
 def User_get_folders_tree_method(self, for_parent=False):
+    """ MIGRATION: move to User Model """
 
     folders = PseudoQuerySet(model=Folder)
 

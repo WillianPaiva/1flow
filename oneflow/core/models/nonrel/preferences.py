@@ -19,6 +19,14 @@
 
 """
 
+"""
+    MIGRATION:
+        Wipe everything and PORT to Kii's preferences system.
+        @eliotberriot, it's your turn :-D
+
+"""
+
+
 from constance import config
 
 from mongoengine import Document, EmbeddedDocument

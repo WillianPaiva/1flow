@@ -71,7 +71,10 @@ __all__ = (
 
 def user_django_user_random_default():
     """ 20130731: unused function but I keep this code for random()-related
-        and future use. """
+        and future use.
+
+        MIGRATION: DROP.
+    """
 
     count = 1
 
@@ -224,6 +227,8 @@ class User(Document, DocumentHelperMixin):
     is_staff     = BooleanField(default=False, verbose_name=_(u'Superuser'),
                                 help_text=_(u'The user has super user related '
                                             u'permissions (see Django doc.).'))
+
+    # —————————————————————————————————————————— MIGRATION: KEEP + MERGE ——————
 
     address_book = ListField(StringField(), verbose_name=_(u'Address book'))
 
@@ -392,6 +397,7 @@ class User(Document, DocumentHelperMixin):
             for contact in group.members:
                 try:
                     yield contact.email, contact.display_name
+
                 except:
                     LOGGER.warning(u'Cannot yield %s > %s', contact,
                                    contact.__class__.__name__)
@@ -409,6 +415,7 @@ class User(Document, DocumentHelperMixin):
 
     @property
     def is_local(self):
+
         return self.django.password != u'!'
 
     @property
@@ -425,16 +432,29 @@ class User(Document, DocumentHelperMixin):
 
     @property
     def preferences(self):
+        """
+
+            MIGRATION: KEEP → PORT TO DJANGO.
+        """
+
         if self.preferences_data is None:
             self.preferences_data = Preferences().save()
             self.save()
 
         return self.preferences_data
 
+    # —————————————————————————————————————————— MIGRATION: KEEP END ———————————
+
     @property
     def django(self):
         """ Cached property that returns the PostgreSQL counterpart
-            of the current MongoDB user account. """
+            of the current MongoDB user account.
+
+
+
+            MIGRATION: DROP.
+        """
+
         try:
             return self.__django_user__
 
@@ -443,11 +463,13 @@ class User(Document, DocumentHelperMixin):
             return self.__django_user__
 
     def __unicode__(self):
+        """ MIGRATION: DROP """
         return u'%s #%s (Django ID: %s)' % (self.username or u'<UNKNOWN>',
                                             self.id, self.django_user)
 
     @property
     def is_staff_or_superuser_and_enabled(self):
+        """ MIGRATION: KEEP. """
         return ((self.is_staff or self.is_superuser)
                 and self.preferences.staff.super_powers_enabled
                 and config.STAFF_HAS_FULL_ACCESS)
@@ -477,7 +499,7 @@ class User(Document, DocumentHelperMixin):
     #     return False
 
     def get_full_name(self):
-
+        """ DROP """
         if self.first_name or self.last_name:
             return u'%s %s' % (self.first_name, self.last_name)
 
@@ -485,7 +507,7 @@ class User(Document, DocumentHelperMixin):
 
     @property
     def display_name(self):
-
+        """ MIGRAITON: KEEP """
         if self.firstname or self.lastname:
             return u'{0} {1} @{2}'.format(self.firstname,
                                           self.lastname,
@@ -500,6 +522,9 @@ class User(Document, DocumentHelperMixin):
 
             Creating a user account means doing it in both models (Django's
             User model and our MongoDB one) at once.
+
+
+            MIGRATION: DROP.
         """
 
         try:
@@ -517,6 +542,11 @@ class User(Document, DocumentHelperMixin):
     @classmethod
     def signal_post_save_handler(cls, sender, document,
                                  created=False, **kwargs):
+        """
+
+
+            MIGRATION: DROP.
+        """
 
         user = document
 
@@ -546,18 +576,28 @@ class User(Document, DocumentHelperMixin):
     @classmethod
     def signal_pre_save_post_validation_handler(cls, sender,
                                                 document, **kwargs):
+        """
+
+            MIGRATION: KEEP and put on another signal.
+        """
 
         if document.preferences is None:
             document.preferences = Preferences().save()
 
     def post_create_task(self):
-        """ Method meant to be run from a celery task. """
+        """ Method meant to be run from a celery task.
+
+
+            MIGRATION: DROP.
+        """
 
         django_user = DjangoUser.objects.get(id=self.django_user)
         self.username = django_user.username
         self.last_name = django_user.last_name
         self.first_name = django_user.first_name
         self.save()
+
+    # —————————————————————————————————————————— MIGRATION: KEEP + PORT ————————
 
     @property
     def nofolder_subscriptions(self):
@@ -594,7 +634,16 @@ class User(Document, DocumentHelperMixin):
         return [s for s in self.nofolder_subscriptions if s.feed.closed]
 
 
+    # —————————————————————————————————————————— MIGRATION: KEEP END  ——————————
+
+
 def __mongo_user(self):
+    """
+
+
+        MIGRATION: DROP.
+    """
+
     try:
         return self.__mongo_user_cache__
 
@@ -619,6 +668,11 @@ def __mongo_user(self):
 # synchronized on specific fields, without producing post-save signal
 # cycles in either direction.
 def DjangoUser__save__method(self, *args, **kwargs):
+    """
+
+
+        MIGRATION: DROP.
+    """
 
     back_sync = kwargs.pop('mongo_django_sync', True)
 
@@ -645,6 +699,11 @@ DjangoUser.save  = DjangoUser__save__method
 
 
 class Group(Document, DocumentHelperMixin):
+    """
+
+        MIGRATION: DROP (and use Django's implementation)
+    """
+
     name           = StringField(unique_with='creator')
     internal_name  = StringField(default=u'',
                                  help_text=_(u'This field should not be '
