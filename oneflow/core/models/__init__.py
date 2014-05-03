@@ -25,6 +25,15 @@ from sparks.foundations.classes import SimpleObject
 
 from .help import HelpContent  # NOQA
 
+from .common import *  # NOQA
+#from .preferences import *  # NOQA
+
+# user has to come before folder, subscription, read, feed
+#from .user import *  # NOQA
+
+# folder has to come before read, subscription
+#from .folder import *  # NOQA
+
 # —————————————————————————————————————————————————————— MongoDB / Redis models
 
 from .nonrel import *  # NOQA
