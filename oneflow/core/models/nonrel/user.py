@@ -553,11 +553,18 @@ class User(Document, DocumentHelperMixin):
     def post_create_task(self):
         """ Method meant to be run from a celery task. """
 
-        django_user = DjangoUser.objects.get(id=self.django_user)
-        self.username = django_user.username
-        self.last_name = django_user.last_name
-        self.first_name = django_user.first_name
-        self.save()
+        try:
+            django_user = DjangoUser.objects.get(id=self.django_user)
+
+        except:
+            LOGGER.exception(u'Could not get Django user %s',
+                             self.django_user)
+
+        else:
+            self.username = django_user.username
+            self.last_name = django_user.last_name
+            self.first_name = django_user.first_name
+            self.save()
 
     @property
     def nofolder_subscriptions(self):
