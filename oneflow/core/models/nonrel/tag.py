@@ -42,17 +42,6 @@ from .common import DocumentHelperMixin
 LOGGER = logging.getLogger(__name__)
 
 
-@task(name='Tag.replace_duplicate_everywhere', queue='low')
-def tag_replace_duplicate_everywhere(tag_id, dupe_id, *args, **kwargs):
-
-    tag  = Tag.objects.get(id=tag_id)
-    dupe = Tag.objects.get(id=dupe_id)
-
-    # This method is defined in nonrel.article to avoid an import loop.
-    return tag.replace_duplicate_in_articles(dupe, *args, **kwargs)
-    #
-    # TODO: do the same for feeds, reads (, subscriptions?) …
-    #
 __all__ = ['Tag', ]
 
 
@@ -91,6 +80,17 @@ class Tag(Document, DocumentHelperMixin):
 
     def __unicode__(self):
         return _(u'{0} {1}⚐ (#{2})').format(self.name, self.language, self.id)
+
+    def replace_duplicate_everywhere(self, duplicate_id, *args, **kwargs):
+
+        duplicate = self.__class__.objects.get(id=duplicate_id)
+
+        # This method is defined in nonrel.article to avoid an import loop.
+        self.replace_duplicate_in_articles(duplicate, *args, **kwargs)
+        #
+        # TODO: do the same for feeds, reads (, subscriptions?) …
+        #
+        pass
 
     @classmethod
     def signal_post_save_handler(cls, sender, document,

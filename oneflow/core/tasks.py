@@ -946,7 +946,7 @@ def global_duplicates_checker(limit=None, force=False):
                                 u'reads, fixing…', duplicate, reads_count)
 
                     duplicate.duplicate_of.replace_duplicate_everywhere(
-                        duplicate)
+                        duplicate.id)
 
                     if limit and done_dupes_count >= limit:
                         break
