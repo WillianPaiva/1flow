@@ -2,8 +2,14 @@
 # Migration MongoDB → PostgreSQL
 
 - port all models
+	- archive DB back into production DB, dedicated table.
+		- simplify dot.env, settings, etc (no more archive DB)
+- port API
 - port all views
+
 - rename MongoDB classes as “MongoArticle” etc
+
+
 - rename MongoDB tasks
 - migrate feeds
 	- clone feed into PG
