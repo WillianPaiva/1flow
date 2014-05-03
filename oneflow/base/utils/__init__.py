@@ -30,7 +30,7 @@ import importlib
 try:
     import blinker
 except:
-    blinker = None # NOQA
+    blinker = None  # NOQA
 
 from bs4 import BeautifulSoup
 
