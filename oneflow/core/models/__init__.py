@@ -29,10 +29,10 @@ from .common import *  # NOQA
 #from .preferences import *  # NOQA
 
 # user has to come before folder, subscription, read, feed
-#from .user import *  # NOQA
+from .user import *  # NOQA
 
 # folder has to come before read, subscription
-#from .folder import *  # NOQA
+from .folder import *  # NOQA
 
 # —————————————————————————————————————————————————————— MongoDB / Redis models
 
