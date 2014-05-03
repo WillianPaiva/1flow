@@ -24,7 +24,6 @@ import requests
 import feedparser
 
 from statsd import statsd
-from celery import task
 from constance import config
 
 from xml.sax import SAXParseException
@@ -40,7 +39,8 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import URLValidator
 
-from ....base.utils import (RedisExpiringLock,
+from ....base.utils import (register_task_method,
+                            RedisExpiringLock,
                             RedisSemaphore,
                             HttpResponseLogProcessor)
 
@@ -66,18 +66,15 @@ from .user import User
 LOGGER                = logging.getLogger(__name__)
 feedparser.USER_AGENT = settings.DEFAULT_USER_AGENT
 
-__all__ = ('feed_update_latest_article_date_published',
-           'feed_update_recent_articles_count',
-           'feed_update_subscriptions_count',
-           'feed_update_all_articles_count',
-           'feed_refresh',
-           'Feed',
+__all__ = [
+    'Feed',
 
-           'feed_all_articles_count_default',
-           'feed_good_articles_count_default',
-           'feed_bad_articles_count_default',
-           'feed_recent_articles_count_default',
-           'feed_subscriptions_count_default', )
+    'feed_all_articles_count_default',
+    'feed_good_articles_count_default',
+    'feed_bad_articles_count_default',
+    'feed_recent_articles_count_default',
+    'feed_subscriptions_count_default',
+]
 
 
 # ————————————— issue https://code.google.com/p/feedparser/issues/detail?id=404
@@ -118,41 +115,6 @@ def feed_recent_articles_count_default(feed, *args, **kwargs):
 def feed_subscriptions_count_default(feed, *args, **kwargs):
 
     return feed.subscriptions.count()
-
-
-@task(name='Feed.update_latest_article_date_published', queue='low')
-def feed_update_latest_article_date_published(feed_id, *args, **kwargs):
-
-    feed = Feed.objects.get(id=feed_id)
-    return feed.update_latest_article_date_published(*args, **kwargs)
-
-
-@task(name='Feed.update_recent_articles_count', queue='low')
-def feed_update_recent_articles_count(feed_id, *args, **kwargs):
-
-    feed = Feed.objects.get(id=feed_id)
-    return feed.update_recent_articles_count(*args, **kwargs)
-
-
-@task(name='Feed.update_subscriptions_count', queue='low')
-def feed_update_subscriptions_count(feed_id, *args, **kwargs):
-
-    feed = Feed.objects.get(id=feed_id)
-    return feed.update_subscriptions_count(*args, **kwargs)
-
-
-@task(name='Feed.update_all_articles_count', queue='low')
-def feed_update_all_articles_count(feed_id, *args, **kwargs):
-
-    feed = Feed.objects.get(id=feed_id)
-    return feed.update_all_articles_count(*args, **kwargs)
-
-
-@task(name='Feed.refresh', queue='medium')
-def feed_refresh(feed_id, *args, **kwargs):
-
-    feed = Feed.objects.get(id=feed_id)
-    return feed.refresh(*args, **kwargs)
 
 
 class Feed(Document, DocumentHelperMixin):
@@ -580,7 +542,7 @@ class Feed(Document, DocumentHelperMixin):
         if created:
             if feed._db_name != settings.MONGODB_NAME_ARCHIVE:
                 # Update the feed immediately after creation.
-                feed_refresh.delay(feed.id)
+                feed_refresh_task.delay(feed.id)
 
     def has_option(self, option):
         return option in self.options
@@ -1090,7 +1052,7 @@ class Feed(Document, DocumentHelperMixin):
             # unavailable? on my production server???
 
             # self.refresh_lock.release() ???
-            raise feed_refresh.retry((self.id, ), exc=e)
+            raise feed_refresh_task.retry((self.id, ), exc=e)
 
         # Stop on HTTP errors before stopping on feedparser errors,
         # because he is much more lenient in many conditions.
@@ -1189,6 +1151,18 @@ class Feed(Document, DocumentHelperMixin):
         # If any other refresh job comes, it will check last_fetch and will
         # terminate if called too early.
         self.refresh_lock.release()
+
+
+register_task_method(Feed, Feed.refresh,
+                     globals(), u'medium')
+register_task_method(Feed, Feed.update_all_articles_count,
+                     globals(), queue=u'low')
+register_task_method(Feed, Feed.update_subscriptions_count,
+                     globals(), queue=u'low')
+register_task_method(Feed, Feed.update_recent_articles_count,
+                     globals(), queue=u'low')
+register_task_method(Feed, Feed.update_latest_article_date_published,
+                     globals(), queue=u'low')
 
 
 # ——————————————————————————————————————————————————————— external delete rules
