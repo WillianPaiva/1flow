@@ -23,6 +23,7 @@ import six
 import time
 import redis
 import urllib2
+import charade
 import logging
 import importlib
 
@@ -32,7 +33,6 @@ except:
     blinker = None # NOQA
 
 from bs4 import BeautifulSoup
-import charade
 
 from mongoengine import Document, signals
 
