@@ -21,7 +21,6 @@
 
 import logging
 
-from celery import task
 from statsd import statsd
 
 from pymongo.errors import DuplicateKeyError
@@ -35,20 +34,12 @@ from django.conf import settings
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 
+from ....base.utils import register_task_method
+
 from .common import DocumentHelperMixin
 
 
 LOGGER = logging.getLogger(__name__)
-
-
-__all__ = ('tag_post_create_task', 'tag_replace_duplicate_everywhere', 'Tag', )
-
-
-@task(name='Tag.post_create', queue='high')
-def tag_post_create_task(tag_id, *args, **kwargs):
-
-    tag = Tag.objects.get(id=tag_id)
-    return tag.post_create_task(*args, **kwargs)
 
 
 @task(name='Tag.replace_duplicate_everywhere', queue='low')
@@ -62,6 +53,7 @@ def tag_replace_duplicate_everywhere(tag_id, dupe_id, *args, **kwargs):
     #
     # TODO: do the same for feeds, reads (, subscriptions?) …
     #
+__all__ = ['Tag', ]
 
 
 class Tag(Document, DocumentHelperMixin):
@@ -108,7 +100,10 @@ class Tag(Document, DocumentHelperMixin):
 
         if created:
             if tag._db_name != settings.MONGODB_NAME_ARCHIVE:
-                tag_post_create_task.delay(tag.id)
+
+                # HEADS UP: this task is declared by
+                # the register_task_method call below.
+                tag_post_create_task.delay(tag.id)  # NOQA
 
     def post_create_task(self):
         """ Method meant to be run from a celery task. """
@@ -215,3 +210,7 @@ class Tag(Document, DocumentHelperMixin):
 
         if full_reload:
             self.safe_reload()
+
+
+register_task_method(Tag, Tag.post_create_task, globals(), u'high')
+register_task_method(Tag, Tag.replace_duplicate_everywhere, globals(), u'low')
