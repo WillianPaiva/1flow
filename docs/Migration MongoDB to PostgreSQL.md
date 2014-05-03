@@ -2,17 +2,13 @@
 # Migration MongoDB → PostgreSQL
 
 - port all models
-	- archive DB back into production DB, dedicated table.
+	- The archive DB will be back into the production DB, only a simple  dedicated table.
 		- simplify dot.env, settings, etc (no more archive DB)
-- port API
-- port all views
 
 - rename MongoDB classes as “MongoArticle” etc
+- duplicate core.tasks.refresh_all_feeds() to allow parallel fetches in both databases
+- port all views to PG.
 
+- MIGRATE
 
-- rename MongoDB tasks
-- migrate feeds
-	- clone feed into PG
-		- this will launch tasks, new articles are pulled in, users can use 1flow again
-	- clone articles and relink
-	- clone reads
+- port/clean API (tastypie)
