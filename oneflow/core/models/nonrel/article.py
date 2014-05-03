@@ -108,12 +108,12 @@ if config.FEED_FETCH_GHOST_ENABLED:
     try:
         import ghost
     except:
-        ghost = None # NOQA
+        ghost = None  # NOQA
     else:
         GHOST_BROWSER = ghost.Ghost()
 
 else:
-    ghost = None # NOQA
+    ghost = None  # NOQA
 
 
 # Until we patch Ghost to use more than one Xvfb at the same time,
@@ -1362,7 +1362,7 @@ class Article(Document, DocumentHelperMixin):
             title from there. """
 
         if not force or (self.origin_type == ORIGIN_TYPE_WEBIMPORT
-                            and self.title.endswith(self.url)):
+                         and self.title.endswith(self.url)):
             # In normal conditions (RSS/Atom feeds), the title has already
             # been set by the fetcher task, from the feed. No need to do the
             # work twice.
