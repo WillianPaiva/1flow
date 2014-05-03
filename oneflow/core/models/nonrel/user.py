@@ -427,7 +427,7 @@ class User(Document, DocumentHelperMixin):
     def preferences(self):
         if self.preferences_data is None:
             self.preferences_data = Preferences().save()
-            self.save()
+            #self.save()
 
         return self.preferences_data
 
