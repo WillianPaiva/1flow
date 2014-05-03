@@ -25,8 +25,16 @@ from ....base.utils import connect_mongoengine_signals
 # Make everything comfortly available to the outside.
 #
 
-from .common import * # NOQA
-from .preferences  import * # NOQA
+from .common import (
+    DocumentHelperMixin,
+    DocumentTreeMixin,
+    PseudoQuerySet,
+    BackendSource,
+    CorePermissions,
+)
+
+# We drop preferences during the migration.
+#from .preferences  import * # NOQA
 
 # user has to come before folder, subscription, read, feed
 from .user import * # NOQA
