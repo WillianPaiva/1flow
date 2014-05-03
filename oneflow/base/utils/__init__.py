@@ -63,7 +63,8 @@ boolcast = {
 # —————————————————————————————————————————————————————————————————— Decorators
 
 
-def register_task_method(klass, meth, module_globals, queue=None):
+def register_task_method(klass, meth, module_globals,
+                         queue=None, default_retry_delay=None):
     """ A simple wrapper to register methods as celery tasks.
 
         Necessary because celery tasks-as-methods don't work as expected,
@@ -100,7 +101,7 @@ def register_task_method(klass, meth, module_globals, queue=None):
         exported_name = u'{0}_task'.format(
             task_name.lower().replace('.', '_'))
 
-    @task(name=task_name, queue=queue)
+    @task(name=task_name, queue=queue, default_retry_delay=default_retry_delay)
     def task_func(object_id, *args, **kwargs):
 
         objekt = klass.objects.get(id=object_id)
