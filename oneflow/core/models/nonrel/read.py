@@ -53,7 +53,7 @@ LOGGER                = logging.getLogger(__name__)
 feedparser.USER_AGENT = settings.DEFAULT_USER_AGENT
 
 
-__all__ = ('read_post_create_task', 'Read', )
+__all__ = ['Read', ]
 
 
 READ_BOOKMARK_TYPE_CHOICES = (
@@ -559,7 +559,7 @@ class Read(Document, DocumentHelperMixin):
 
                 # HEADS UP: this task is declared by
                 # the register_task_method call below.
-                read_post_create_task.delay(read.id)
+                read_post_create_task.delay(read.id)  # NOQA
 
     def post_create_task(self):
         """ Method meant to be run from a celery task. """
