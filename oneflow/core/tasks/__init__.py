@@ -566,6 +566,36 @@ def global_reads_checker(limit=None, force=False, verbose=False,
                 skipped_count * 100.0 / processed_reads)
 
 
+# ————————————————————————————————————————————— MongoDB to PostgreSQL migration
+
+@task
+def migrate_mongo_db_to_postgresql():
+
+    config.FEED_FETCH_DISABLED = True
+
+    mongofeeds = []
+
+    for feed in mongofeeds:
+        #clone feed into PG
+        #for subscription in feed.subscriptions:
+        #    clone subscription into PG
+        pass
+
+    # We need all feeds to be cloned at once, to speed up
+    # articles re-linking in case of article in multiple feeds.
+
+    config.FEED_FETCH_DISABLED = False
+
+    for feed in mongofeeds:
+        for article in feed.articles:
+            #clone article into PG
+            #(relink article to feeds)
+            #for read in article.reads:
+            #    clone reads into PG
+            #    (relink read to subscriptions)
+            pass
+
+
 # ••••••••••••••••••••••••••••••••••••••••••••••••••• Move things to Archive DB
 
 
