@@ -310,6 +310,10 @@ class Feed(Document, DocumentHelperMixin):
         # ensure we are not called until tomorrow.
         #
 
+    def update_all_articles_count(self):
+
+        self.all_articles_count = feed_all_articles_count_default(self)
+
     def update_subscriptions_count(self):
 
         self.subscriptions_count = feed_subscriptions_count_default(self)
