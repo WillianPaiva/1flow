@@ -835,12 +835,14 @@ class Article(Document, DocumentHelperMixin):
             if need_reload:
                 read.safe_reload()
 
-    def replace_duplicate_everywhere(self, duplicate, force=False):
+    def replace_duplicate_everywhere(self, duplicate_id, force=False):
         """ register :param:`duplicate` as a duplicate content of myself.
 
             redirect/modify all reads and feeds links to me, keeping all
             attributes as they are.
         """
+
+        duplicate = self.__class__.objects.get(id=duplicate_id)
 
         need_reload = False
 
