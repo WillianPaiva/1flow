@@ -39,10 +39,11 @@ from django.core.urlresolvers import reverse
 from django.core.mail import mail_managers
 from django.utils.translation import ugettext_lazy as _
 
-from ..models import (Article,
-                      Feed, feed_refresh,
-                      Read, User as MongoUser)
-from ..stats import synchronize_statsd_articles_gauges
+from .models import (RATINGS,
+                     Article,
+                     Feed, feed_refresh_task,
+                     Subscription, Read, User as MongoUser)
+from .stats import synchronize_statsd_articles_gauges
 
 from ...base.utils import RedisExpiringLock
 from ...base.utils.dateutils import (now, today, timedelta,
@@ -125,7 +126,7 @@ def refresh_all_feeds(limit=None, force=False):
 
                 if feed.last_fetch is None:
 
-                    feed_refresh.delay(feed.id)
+                    feed_refresh_task.delay(feed.id)
 
                     LOGGER.info(u'Launched immediate refresh of feed %s which '
                                 u'has never been refreshed.', feed)
@@ -139,12 +140,12 @@ def refresh_all_feeds(limit=None, force=False):
                         countdown = randrange(
                             config.FEED_REFRESH_RANDOMIZE_DELAY)
 
-                        feed_refresh.apply_async((feed.id, force),
+                        feed_refresh_task.apply_async((feed.id, force),
                                                  countdown=countdown)
 
                     else:
                         countdown = 0
-                        feed_refresh.delay(feed.id, force)
+                        feed_refresh_task.delay(feed.id, force)
 
                     LOGGER.info(u'%s refresh of feed %s %s (%s late).',
                                 u'Scheduled randomized'
@@ -426,7 +427,7 @@ def global_duplicates_checker(limit=None, force=False):
                                 u'reads, fixing…', duplicate, reads_count)
 
                     duplicate.duplicate_of.replace_duplicate_everywhere(
-                        duplicate)
+                        duplicate.id)
 
                     if limit and done_dupes_count >= limit:
                         break

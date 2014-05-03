@@ -24,8 +24,6 @@ import logging
 import operator
 import feedparser
 
-from celery import task
-
 from pymongo.errors import DuplicateKeyError
 
 from mongoengine import Document, Q, CASCADE
@@ -40,6 +38,7 @@ from mongoengine.errors import NotUniqueError, ValidationError
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _, pgettext_lazy
 
+from ....base.utils import register_task_method
 from ....base.utils.dateutils import now, timedelta, naturaldelta
 
 from .common import DocumentHelperMixin  # , CACHE_ONE_DAY
@@ -54,7 +53,7 @@ LOGGER                = logging.getLogger(__name__)
 feedparser.USER_AGENT = settings.DEFAULT_USER_AGENT
 
 
-__all__ = ('read_post_create_task', 'Read', )
+__all__ = ['Read', ]
 
 
 READ_BOOKMARK_TYPE_CHOICES = (
@@ -62,13 +61,6 @@ READ_BOOKMARK_TYPE_CHOICES = (
     (u'A', _(u'This afternoon')),
     (u'W', _(u'This week-end')),
 )
-
-
-@task(name='Read.post_create', queue='high')
-def read_post_create_task(read_id, *args, **kwargs):
-
-    read = Read.objects.get(id=read_id)
-    return read.post_create_task(*args, **kwargs)
 
 
 class Read(Document, DocumentHelperMixin):
@@ -564,7 +556,10 @@ class Read(Document, DocumentHelperMixin):
 
         if created:
             if read._db_name != settings.MONGODB_NAME_ARCHIVE:
-                read_post_create_task.delay(read.id)
+
+                # HEADS UP: this task is declared by
+                # the register_task_method call below.
+                read_post_create_task.delay(read.id)  # NOQA
 
     def post_create_task(self):
         """ Method meant to be run from a celery task. """
@@ -943,6 +938,8 @@ class Read(Document, DocumentHelperMixin):
                                        if self.is_bookmarked else '-',
                                        update_only=['bookmarked'])
 
+
+register_task_method(Read, Read.post_create_task, globals(), u'high')
 
 # ————————————————————————————————————————————————————————— external properties
 #                                            Defined here to avoid import loops

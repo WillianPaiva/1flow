@@ -40,6 +40,7 @@ from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
 
 from ....base.fields import IntRedisDescriptor
+from ....base.utils import register_task_method
 
 from .common import DocumentHelperMixin, BackendSource
 from .preferences import Preferences
@@ -48,8 +49,7 @@ LOGGER     = logging.getLogger(__name__)
 DjangoUser = get_user_model()
 
 
-__all__ = (
-    'user_post_create_task',
+__all__ = [
     'User', 'Group',
     'user_all_articles_count_default',
     'user_unread_articles_count_default',
@@ -66,7 +66,7 @@ __all__ = (
     'user_rules_articles_count_default',
     'user_prospective_articles_count_default',
     'user_knowledge_articles_count_default',
-)
+]
 
 
 def user_django_user_random_default():
@@ -184,13 +184,6 @@ def user_rules_articles_count_default(user):
 def user_fun_articles_count_default(user):
 
     return user.reads.filter(is_fun=True).count()
-
-
-@task(name='User.post_create', queue='high')
-def user_post_create_task(user_id, *args, **kwargs):
-
-    user = User.objects.get(id=user_id)
-    return user.post_create_task(*args, **kwargs)
 
 
 class User(Document, DocumentHelperMixin):
@@ -439,7 +432,7 @@ class User(Document, DocumentHelperMixin):
 
         if self.preferences_data is None:
             self.preferences_data = Preferences().save()
-            self.save()
+            #self.save()
 
         return self.preferences_data
 
@@ -591,11 +584,18 @@ class User(Document, DocumentHelperMixin):
             MIGRATION: DROP.
         """
 
-        django_user = DjangoUser.objects.get(id=self.django_user)
-        self.username = django_user.username
-        self.last_name = django_user.last_name
-        self.first_name = django_user.first_name
-        self.save()
+        try:
+            django_user = DjangoUser.objects.get(id=self.django_user)
+
+        except:
+            LOGGER.exception(u'Could not get Django user %s',
+                             self.django_user)
+
+        else:
+            self.username = django_user.username
+            self.last_name = django_user.last_name
+            self.first_name = django_user.first_name
+            self.save()
 
     # —————————————————————————————————————————— MIGRATION: KEEP + PORT ————————
 
@@ -634,6 +634,8 @@ class User(Document, DocumentHelperMixin):
         return [s for s in self.nofolder_subscriptions if s.feed.closed]
 
 
+
+register_task_method(User, User.post_create_task, globals(), u'high')
     # —————————————————————————————————————————— MIGRATION: KEEP END  ——————————
 
 

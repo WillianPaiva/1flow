@@ -375,12 +375,13 @@ class DocumentHelperMixin(object):
             # us to do strange things. We have to "guess" and lookup the
             # task name in the current module. OK, not *that* big deal.
             self.nonrel_globals[
-                _cls_name_lower_ + '_replace_duplicate_everywhere'].delay(
+                _cls_name_lower_ + '_replace_duplicate_everywhere_task'].delay(
                 self.id, duplicate.id)
 
         except KeyError:
-            LOGGER.warning(u'Object %s does not have a '
-                           u'`replace_duplicate_everywhere()` task.', self)
+            LOGGER.warning(u'Object %s has no `replace_duplicate_everywhere()` '
+                           u'method, or the method has not been registered as '
+                           u'a task with `register_task_method()`.', self)
 
     def offload_attribute(self, attribute_name, remove=False):
         """ NOTE: this method is not used as of 20130816, but I keep it because

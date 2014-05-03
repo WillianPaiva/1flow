@@ -23,7 +23,6 @@ import logging
 import feedparser
 
 from statsd import statsd
-from celery import task
 
 from pymongo.errors import DuplicateKeyError
 
@@ -37,21 +36,16 @@ from django.utils.translation import ugettext_lazy as _
 from .common import DocumentHelperMixin
 from .website import WebSite
 
+from ....base.utils import register_task_method
+
 LOGGER                = logging.getLogger(__name__)
 feedparser.USER_AGENT = settings.DEFAULT_USER_AGENT
 
 
-__all__ = ('author_post_create_task', 'Author', )
+__all__ = ['Author', ]
 
 
 # ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••• Authors
-
-
-@task(name=u'Author.post_create', queue=u'high')
-def author_post_create_task(author_id, *args, **kwargs):
-
-    author = Author.objects.get(id=author_id)
-    return author.post_create_task(*args, **kwargs)
 
 
 class Author(Document, DocumentHelperMixin):
@@ -90,7 +84,10 @@ class Author(Document, DocumentHelperMixin):
 
         if created:
             if author._db_name != settings.MONGODB_NAME_ARCHIVE:
-                author_post_create_task.delay(author.id)
+
+                # HEADS UP: this task is declared
+                # by the register_task_method below.
+                author_post_create_task.delay(author.id)  # NOQA
 
     def post_create_task(self):
         """ Method meant to be run from a celery task. """
@@ -218,3 +215,6 @@ class Author(Document, DocumentHelperMixin):
                                            website=website)
 
         return None
+
+
+register_task_method(Author, Author.post_create_task, globals(), u'high')

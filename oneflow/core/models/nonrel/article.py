@@ -39,7 +39,7 @@ from markdown_deux import markdown as mk2_markdown
 
 #from xml.sax import SAXParseException
 
-from celery import task, chain as tasks_chain
+from celery import chain as tasks_chain
 from celery.exceptions import SoftTimeLimitExceeded
 
 from humanize.time import naturaldelta
@@ -59,6 +59,7 @@ from django.utils.text import slugify
 from django.template.loader import render_to_string
 from django.template.loader import add_to_builtins
 
+from ....base.utils import register_task_method
 from ....base.utils.http import clean_url
 from ....base.utils.dateutils import now
 from ....base.utils import (detect_encoding_from_requests_response,
@@ -93,12 +94,10 @@ LOGGER                = logging.getLogger(__name__)
 feedparser.USER_AGENT = settings.DEFAULT_USER_AGENT
 
 
-__all__ = ('article_absolutize_url',
-           'article_postprocess_original_data',
-           'article_replace_duplicate_everywhere',
-           'article_find_image',
-           'article_fetch_content',
-           'article_post_create_task', 'Article', )
+__all__ = [
+    'Article',
+    'OriginalData',
+]
 
 
 # ————————————————————————————————————————————————————————————————— start ghost
@@ -108,12 +107,12 @@ if config.FEED_FETCH_GHOST_ENABLED:
     try:
         import ghost
     except:
-        ghost = None # NOQA
+        ghost = None  # NOQA
     else:
         GHOST_BROWSER = ghost.Ghost()
 
 else:
-    ghost = None # NOQA
+    ghost = None  # NOQA
 
 
 # Until we patch Ghost to use more than one Xvfb at the same time,
@@ -122,49 +121,6 @@ global_ghost_lock = RedisExpiringLock('__ghost.py__')
 
 
 # ——————————————————————————————————————————————————————————————————— end ghost
-
-
-@task(name='Article.absolutize_url', queue='swarm', default_retry_delay=3600)
-def article_absolutize_url(article_id, *args, **kwargs):
-
-    article = Article.objects.get(id=article_id)
-    return article.absolutize_url(*args, **kwargs)
-
-
-@task(name='Article.postprocess_original_data', queue='low')
-def article_postprocess_original_data(article_id, *args, **kwargs):
-
-    article = Article.objects.get(id=article_id)
-    return article.postprocess_original_data(*args, **kwargs)
-
-
-@task(name='Article.replace_duplicate_everywhere', queue='low')
-def article_replace_duplicate_everywhere(article_id, dupe_id, *args, **kwargs):
-
-    article = Article.objects.get(id=article_id)
-    dupe    = Article.objects.get(id=dupe_id)
-    return article.replace_duplicate_everywhere(dupe, *args, **kwargs)
-
-
-@task(name='Article.find_image', queue='fetch', default_retry_delay=3600)
-def article_find_image(article_id, *args, **kwargs):
-
-    article = Article.objects.get(id=article_id)
-    return article.find_image(*args, **kwargs)
-
-
-@task(name='Article.fetch_content', queue='fetch', default_retry_delay=3600)
-def article_fetch_content(article_id, *args, **kwargs):
-
-    article = Article.objects.get(id=article_id)
-    return article.fetch_content(*args, **kwargs)
-
-
-@task(name='Article.post_create', queue='high')
-def article_post_create_task(article_id, *args, **kwargs):
-
-    article = Article.objects.get(id=article_id)
-    return article.post_create_task(*args, **kwargs)
 
 
 class Article(Document, DocumentHelperMixin):
@@ -879,12 +835,14 @@ class Article(Document, DocumentHelperMixin):
             if need_reload:
                 read.safe_reload()
 
-    def replace_duplicate_everywhere(self, duplicate, force=False):
+    def replace_duplicate_everywhere(self, duplicate_id, force=False):
         """ register :param:`duplicate` as a duplicate content of myself.
 
             redirect/modify all reads and feeds links to me, keeping all
             attributes as they are.
         """
+
+        duplicate = self.__class__.objects.get(id=duplicate_id)
 
         need_reload = False
 
@@ -1362,7 +1320,7 @@ class Article(Document, DocumentHelperMixin):
             title from there. """
 
         if not force or (self.origin_type == ORIGIN_TYPE_WEBIMPORT
-                            and self.title.endswith(self.url)):
+                         and self.title.endswith(self.url)):
             # In normal conditions (RSS/Atom feeds), the title has already
             # been set by the fetcher task, from the feed. No need to do the
             # work twice.
@@ -1767,7 +1725,10 @@ class Article(Document, DocumentHelperMixin):
             # up the database name.
             if not (article.orphaned or article.duplicate_of):
                 if article._db_name != settings.MONGODB_NAME_ARCHIVE:
-                    article_post_create_task.delay(article.id)
+
+                    # HEADS UP: this task name will be registered later
+                    # by the register_task_method call.
+                    article_post_create_task.delay(article.id)  # NOQA
 
     def post_create_task(self):
         """ Method meant to be run from a celery task. """
@@ -1783,8 +1744,11 @@ class Article(Document, DocumentHelperMixin):
         post_absolutize_chain = tasks_chain(
             # HEADS UP: both subtasks are immutable, we just
             # want the group to run *after* the absolutization.
-            article_fetch_content.si(self.id),
-            article_postprocess_original_data.si(self.id),
+
+            # HEADS UP: this task name will be registered later
+            # by the register_task_method call.
+            article_fetch_content_task.si(self.id),  # NOQA
+            article_postprocess_original_data_task.si(self.id),  # NOQA
         )
 
         # Randomize the absolutization a little, to avoid
@@ -1802,9 +1766,11 @@ class Article(Document, DocumentHelperMixin):
         # Thus, we link the post_absolutize_chain as a callback. It will
         # be run only if absolutization succeeds. Thanks, celery :-)
         #
-        article_absolutize_url.apply_async((self.id, ),
-                                           countdown=randrange(5),
-                                           link=post_absolutize_chain)
+        # HEADS UP: this task name will be registered later
+        # by the register_task_method call.
+        article_absolutize_url_task.apply_async((self.id, ),  # NOQA
+                                                countdown=randrange(5),
+                                                link=post_absolutize_chain)
 
         #
         # TODO: create short_url
@@ -1830,6 +1796,20 @@ class Article(Document, DocumentHelperMixin):
         #
 
         return
+
+
+register_task_method(Article, Article.post_create_task,
+                     globals(), u'high')
+register_task_method(Article, Article.absolutize_url,
+                     globals(), queue=u'swarm', default_retry_delay=3600)
+register_task_method(Article, Article.fetch_content,
+                     globals(), queue=u'fetch', default_retry_delay=3600)
+register_task_method(Article, Article.find_image,
+                     globals(), queue=u'fetch', default_retry_delay=3600)
+register_task_method(Article, Article.replace_duplicate_everywhere,
+                     globals(), queue=u'low')
+register_task_method(Article, Article.postprocess_original_data,
+                     globals(), queue=u'low')
 
 
 class OriginalData(Document, DocumentHelperMixin):
