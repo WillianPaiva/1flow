@@ -1745,8 +1745,8 @@ class Article(Document, DocumentHelperMixin):
 
             # HEADS UP: this task name will be registered later
             # by the register_task_method call.
-            article_fetch_content.si(self.id),  # NOQA
-            article_postprocess_original_data.si(self.id),  # NOQA
+            article_fetch_content_task.si(self.id),  # NOQA
+            article_postprocess_original_data_task.si(self.id),  # NOQA
         )
 
         # Randomize the absolutization a little, to avoid
@@ -1766,9 +1766,9 @@ class Article(Document, DocumentHelperMixin):
         #
         # HEADS UP: this task name will be registered later
         # by the register_task_method call.
-        article_absolutize_url.apply_async((self.id, ),  # NOQA
-                                           countdown=randrange(5),
-                                           link=post_absolutize_chain)
+        article_absolutize_url_task.apply_async((self.id, ),  # NOQA
+                                                countdown=randrange(5),
+                                                link=post_absolutize_chain)
 
         #
         # TODO: create short_url
