@@ -32,6 +32,7 @@ try:
 except:
     blinker = None  # NOQA
 
+from celery import task
 from bs4 import BeautifulSoup
 
 from mongoengine import Document, signals
@@ -59,7 +60,64 @@ boolcast = {
 }
 
 
-# •••••••••••••••••••••••••••••••••••••••••••••••••••••• utils/helper functions
+# —————————————————————————————————————————————————————————————————— Decorators
+
+
+def register_task_method(klass, meth, module_globals, queue=None):
+    """ A simple wrapper to register methods as celery tasks.
+
+        Necessary because celery tasks-as-methods don't work as expected,
+        and we don't want to create to create function tasks because it
+        makes no sense in our OO context.
+
+
+        :param klass: a class where the :param:`meth` method belongs to.
+        :param meth: the method that will run as the task.
+        :param queue: the celery queue the method will run in.
+            Defaults to ``medium``.
+
+        .. note: we gave a try at :mod:`method_decorator` to implement
+            this as a method decorator, but it didn't work with decorator
+            arguments, it's much more complicated than it seems. Thus this
+            simpler function, that requires a little more typing in the
+            modules, but just works.
+    """
+
+    task_name = u'{0}.{1}'.format(klass.__name__, meth.im_func.func_name)
+
+    if task_name.endswith(u'_task'):
+        # The method name ends with “_class” to signify it's
+        # not a standard method. It's not mandatory though.
+
+        exported_name = task_name.lower().replace('.', '_')
+
+        # The celery name is “User.post_create” only, though.
+        task_name = task_name[:-5]
+
+    else:
+        # We add the suffix to the local name, to make explicit
+        # it's a task if the local module is inspected.
+        exported_name = u'{0}_task'.format(
+            task_name.lower().replace('.', '_'))
+
+    @task(name=task_name, queue=queue)
+    def task_func(object_id, *args, **kwargs):
+
+        objekt = klass.objects.get(id=object_id)
+
+        return getattr(objekt, meth.im_func.func_name)(*args, **kwargs)
+
+    # Export the new task in the current module.
+    module_globals[exported_name] = task_func
+
+    # Make it available for celery to import it.
+    module_globals['__all__'].append(exported_name)
+
+    LOGGER.info(u'Registered “%s” as Celery task “%s”.',
+                exported_name, task_name)
+
+
+# ——————————————————————————————————————————————————————————————— utils/helpers
 
 
 def connect_mongoengine_signals(module_globals):
