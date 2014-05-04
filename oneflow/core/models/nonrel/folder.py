@@ -144,9 +144,14 @@ class Folder(Document, DocumentHelperMixin, DocumentTreeMixin):
 
     @classmethod
     def add_folder_from_tag(cls, tag, owner, parent=None):
+        """
+
+            Returns (folder, created) or raise an exception.
+        """
 
         if len(tag.parents) == 1:
-            parent_folder = cls.add_folder_from_tag(tag.parents[0], owner)
+            parent_folder, _created = cls.add_folder_from_tag(tag.parents[0],
+                                                              owner)
 
         elif len(tag.parents) > 1:
             best_parent = tag.parents[0]
@@ -156,17 +161,22 @@ class Folder(Document, DocumentHelperMixin, DocumentTreeMixin):
             # for parent_tag in tag.parents:
             #    …
 
-            parent_folder = cls.add_folder_from_tag(best_parent, owner)
+            parent_folder, _created = cls.add_folder_from_tag(best_parent,
+                                                              owner)
 
         else:
             parent_folder = None
 
-        folder = cls.add_folder(tag.name, owner, parent_folder)
+        folder, created = cls.add_folder(tag.name, owner, parent_folder)
 
-        return folder
+        return folder, created
 
     @classmethod
     def add_folder(cls, name, user, parent=None, children=None):
+        """
+
+            Returns (folder, created) or raise an exception.
+        """
 
         assert parent is None or isinstance(parent, cls)
         assert children is None or hasattr(children, '__iter__')
@@ -177,11 +187,14 @@ class Folder(Document, DocumentHelperMixin, DocumentTreeMixin):
         if parent is None:
             parent = cls.get_root_for(user)
 
+        created = True
+
         try:
             folder = cls(name=name, owner=user, parent=parent).save()
 
         except (NotUniqueError, DuplicateKeyError):
-            folder = cls.objects.get(name=name, owner=user, parent=parent)
+            created = False
+            folder  = cls.objects.get(name=name, owner=user, parent=parent)
 
         else:
             # If the folder exists [with the same parent], no
@@ -198,7 +211,7 @@ class Folder(Document, DocumentHelperMixin, DocumentTreeMixin):
 
         LOGGER.info(u'Created folder %s.', folder)
 
-        return folder
+        return folder, created
 
     @classmethod
     def signal_pre_delete_handler(cls, sender, document, **kwargs):

@@ -21,7 +21,6 @@
 
 import logging
 
-from celery import task
 from statsd import statsd
 
 from pymongo.errors import DuplicateKeyError
@@ -34,19 +33,14 @@ from django.conf import settings
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 
+from ....base.utils import register_task_method
+
 from .common import DocumentHelperMixin
 
 LOGGER = logging.getLogger(__name__)
 
 
-__all__ = ('website_post_create_task', 'WebSite', )
-
-
-@task(name='WebSite.post_create', queue='high')
-def website_post_create_task(website_id):
-
-    website = WebSite.objects.get(id=website_id)
-    website.post_create_task()
+__all__ = ['WebSite', ]
 
 
 class WebSite(Document, DocumentHelperMixin):
@@ -176,3 +170,5 @@ class WebSite(Document, DocumentHelperMixin):
             self.save()
 
             statsd.gauge('websites.counts.total', 1, delta=True)
+
+register_task_method(WebSite, WebSite.post_create_task, globals(), u'high')

@@ -23,25 +23,32 @@
                     {% include "widgets/forms/field-generic-unstyled.html" with field=form.parent %}
 
                     {# This one is not really a textarea, but we use the display organization to make help_text fit nicely. BTW, widget-tweaks is kind enough to make any of our field templates work with any kind of field. This is a feature, and works because our templates are widget-agnostic. #}
-                    {% include "widgets/forms/field-generic-unstyled.html" with field=form.subscriptions %}
+                    {% include "widgets/forms/field-generic-nohelp.html" with field=form.subscriptions %}
 
                     {% if folder %}
-                    <p>{% blocktrans %}
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-3">
+                            <br />
+                            <a href="{% url 'delete_folder' folder=folder.id %}" class="btn btn-danger">{% trans "Delete this folder" %}</a>
+
+                        </div>
+                        <div class="col-md-9">{% blocktrans %}
                         If you delete this folder, all its subfolders will be moved one level up in the folder hierarchy. All its direct subscriptions will be moved to “unclassified”. Subscriptions in its subfolders will not be affected.
-                    {% endblocktrans %}</p>
+                    {% endblocktrans %}</div>
+                    </div>
                     {% endif %}
                 </form>
 
             </div>
             <div class="modal-footer">
 
-                {% if folder %}
-                    <span class="pull-left">
-                    <a href="{% url 'delete_folder' folder=folder.id %}" class="btn btn-danger">{% trans "Delete this folder" %}</a>
-                    </span>
-                {% endif %}
+                <div class="pull-left">
 
-                <a href="#" class="btn btn-default" data-dismiss="modal">{% trans "Cancel" %}</a>
+                    <a href="#" class="btn btn-default"
+                        data-dismiss="modal">{% trans "Cancel" %}</a>
+                </div>
+
                 <a class="btn btn-primary" href="javascript:$('#manage-folder-form').submit()">{% if folder %}{% trans "Save" %}{% else %}{% trans "Create" %}{% endif %}</a>
             </div>
         </div>
