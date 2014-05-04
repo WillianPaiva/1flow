@@ -22,7 +22,6 @@
 import logging
 
 from celery import task
-
 from pymongo.errors import DuplicateKeyError
 
 from mongoengine import Document, CASCADE, PULL
@@ -36,6 +35,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _, ugettext as __
 
 from ....base.fields import IntRedisDescriptor
+from ....base.utils import register_task_method
 from ....base.utils.dateutils import (timedelta, today, combine,
                                       now, time)  # , make_aware, utc)
 
@@ -47,22 +47,20 @@ from .feed import Feed
 LOGGER = logging.getLogger(__name__)
 
 
-__all__ = ('subscription_post_create_task',
-           'subscription_post_delete_task',
-           'subscription_check_reads',
-           'subscription_mark_all_read_in_database',
-           'Subscription',
+__all__ = [
+    'subscription_post_delete_task',
+    'Subscription',
 
-           # Make these accessible to compute them from `DocumentHelperMixin`.
-           'subscription_all_articles_count_default',
-           'subscription_unread_articles_count_default',
-           'subscription_starred_articles_count_default',
-           'subscription_archived_articles_count_default',
-           'subscription_bookmarked_articles_count_default',
+    # Make these accessible to compute them from `DocumentHelperMixin`.
+    'subscription_all_articles_count_default',
+    'subscription_unread_articles_count_default',
+    'subscription_starred_articles_count_default',
+    'subscription_archived_articles_count_default',
+    'subscription_bookmarked_articles_count_default',
 
-           # This one will be picked up by `Read` as an instance method.
-           'generic_check_subscriptions_method',
-           )
+    # This one will be picked up by `Read` as an instance method.
+    'generic_check_subscriptions_method',
+]
 
 
 def subscription_all_articles_count_default(subscription):
@@ -90,18 +88,12 @@ def subscription_bookmarked_articles_count_default(subscription):
     return subscription.reads.filter(is_bookmarked=True).count()
 
 
-@task(name='Subscription.post_create', queue='high')
-def subscription_post_create_task(subscription_id, *args, **kwargs):
-
-    subscription = Subscription.objects.get(id=subscription_id)
-    return subscription.post_create_task(*args, **kwargs)
-
-
 @task(name='Subscription.post_delete', queue='clean')
 def subscription_post_delete_task(subscription, *args, **kwargs):
     """ HEADS UP: we get a real object (not an ID) as first argument.
         Without this, we have no way to get any reference to the
-        deleted instance.
+        deleted instance. Thus, this task cannot be declared the same
+        way as others.
 
         This is an heavy operation for the database, that can be long.
         Thus done in a task, not in a `reverse_delete_rule` nor directly
@@ -109,20 +101,6 @@ def subscription_post_delete_task(subscription, *args, **kwargs):
     """
 
     subscription.reads.update(pull__subscriptions=subscription)
-
-
-@task(name='Subscription.mark_all_read_in_database', queue='low')
-def subscription_mark_all_read_in_database(subscription_id, *args, **kwargs):
-
-    subscription = Subscription.objects.get(id=subscription_id)
-    return subscription.mark_all_read_in_database(*args, **kwargs)
-
-
-@task(name='Subscription.check_reads', queue='low')
-def subscription_check_reads(subscription_id, *args, **kwargs):
-
-    subscription = Subscription.objects.get(id=subscription_id)
-    return subscription.check_reads(*args, **kwargs)
 
 
 class Subscription(Document, DocumentHelperMixin):
@@ -419,6 +397,12 @@ class Subscription(Document, DocumentHelperMixin):
 
         return missing, rechecked, reads, unreads, failed
 
+
+register_task_method(Subscription, Subscription.post_create_task,
+                     globals(), u'high')
+register_task_method(Subscription, Subscription.mark_all_read_in_database,
+                     globals())
+register_task_method(Subscription, Subscription.check_reads, globals())
 
 # ————————————————————————————————————————————————————————— external properties
 #                                            Defined here to avoid import loops
