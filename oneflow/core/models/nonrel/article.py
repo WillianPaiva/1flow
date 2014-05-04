@@ -1017,7 +1017,7 @@ class Article(Document, DocumentHelperMixin):
 
         except StopProcessingException, e:
             LOGGER.info(u'Stopping processing of article %s on behalf of '
-                        u'an internal caller: %s.', self, e)
+                        u'an internal caller: %s.', self, unicode(e))
             return
 
         except SoftTimeLimitExceeded, e:
