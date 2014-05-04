@@ -1146,8 +1146,12 @@ class Article(Document, DocumentHelperMixin):
         if self.duplicate_of:
             return False
 
-        if self.content_type not in CONTENT_TYPES_FINAL:
-            return False
+        # Explanation: even a no-content article can be displayed,
+        # at least in iframe mode. Thus, we do not consider no-content
+        # to mean “bad article”. 20140405.
+        #
+        #if self.content_type not in CONTENT_TYPES_FINAL:
+        #    return False
 
         return True
 
