@@ -1323,8 +1323,8 @@ class Article(Document, DocumentHelperMixin):
         """ Try to extract title from the HTML content, and set the article
             title from there. """
 
-        if not force or (self.origin_type == ORIGIN_TYPE_WEBIMPORT
-                         and self.title.endswith(self.url)):
+        if not force and not (self.origin_type == ORIGIN_TYPE_WEBIMPORT
+                              and self.title.endswith(self.url)):
             # In normal conditions (RSS/Atom feeds), the title has already
             # been set by the fetcher task, from the feed. No need to do the
             # work twice.
@@ -1332,7 +1332,7 @@ class Article(Document, DocumentHelperMixin):
             # NOTE: this will probably change with twitter and other social
             # related imports, thus we'll have to rework the conditions.
             LOGGER.warning(u'Refusing to set the title of non-imported '
-                           u'article %s', self)
+                           u' or title-already-set article %s', self)
             return
 
         if content is None:
