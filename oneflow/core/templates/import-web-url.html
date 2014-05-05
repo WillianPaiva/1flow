@@ -49,14 +49,13 @@
 
 {% if mongodb_user.is_staff_or_superuser_and_enabled and article %}
 </div>
-<div class="row-fluid">
-	<div class="hero-unit span8 offset2 centered">
-
-		<p>{% trans "Admin stuff:" %}
+<div class="row">
+	<div class="jumbotron col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3 centered">
+	<h3>{% trans "Admin stuff" %}</h3>
+		<p>{% trans "Article: " %}
 			<a href="{{ settings.NONREL_ADMIN }}article/{{ article.id }}"
 				target="_blank">{{ article.title }} – {{ article.id }}</a>
 		</p>
-
 	</div>
 {% endif %}
 
