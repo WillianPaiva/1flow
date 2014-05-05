@@ -10,6 +10,7 @@ Contributing to the project is both welcomed and encouraged. To do so, you have 
 - Fork the project.
 - Create a branch for your changes.
 - Modify the files as appropriate.
+	- if you want to contribute a translation/localization, see below.
 - Make `flake8` happy on your modified files;
 	- you can ignore `["E221", "E241", "E272"]`, I do.
 	- Please, remove trailing spaces/tabs at the end of *any* line.
@@ -23,6 +24,19 @@ Contributing to the project is both welcomed and encouraged. To do so, you have 
 -  Obviously, make sure all tests pass. Sorry for having asked it. Just run `make test` and enjoy whatever pleases you.
 - Push your branch to `GitHub` and submit a pull request,
 - Wait for my neurons to connect.
+
+
+## Translations / localizations
+
+Currently, 1flow uses `django-rosetta`, available at your local address [http://localhost:8000/translate/](http://localhost:8000/translate/).
+
+In the code, there are 2 ways to create i18n strings:
+
+- the old, with plain english sentences and a lot of `%s`. **Please do not use this anymore** and use the new instead:
+- the new, where even english localization is available to translators. i18n strings are “codes”, like `exception.article.cannot_set_title`, `info.article.title_changed(%(article_id)s, %(old_title)s, %(new_title)s)`, `label.import_url.urls_list` and so on.
+
+The new form is not yet widespread, we replace old instances while time passes. Please use it in any new code you create. If you fix bugs on existing code, please also convert messages, but in separate commits.
+
 
 # Or submitting issues / feedback
 
