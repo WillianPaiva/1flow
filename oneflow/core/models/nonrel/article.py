@@ -1323,16 +1323,20 @@ class Article(Document, DocumentHelperMixin):
         """ Try to extract title from the HTML content, and set the article
             title from there. """
 
-        if not force and not (self.origin_type == ORIGIN_TYPE_WEBIMPORT
-                              and self.title.endswith(self.url)):
+        if self.origin_type != ORIGIN_TYPE_WEBIMPORT and not force:
+            LOGGER.warning(u'Skipped title extraction on non-imported article '
+                           u'#%s (use `force=True`).', self.id)
+            return
+
+        if self.title and not self.title.endswith(self.url):
             # In normal conditions (RSS/Atom feeds), the title has already
             # been set by the fetcher task, from the feed. No need to do the
             # work twice.
             #
             # NOTE: this will probably change with twitter and other social
             # related imports, thus we'll have to rework the conditions.
-            LOGGER.warning(u'Refusing to set the title of non-imported '
-                           u' or title-already-set article %s', self)
+            LOGGER.error(u'NO WAY I will rework already-set title of '
+                         u'article #%s (even with `force=True).`', self.id)
             return
 
         if content is None:
@@ -1340,10 +1344,6 @@ class Article(Document, DocumentHelperMixin):
                 content = self.content
 
             else:
-                if self.title and not self.title.endswith(self.url):
-                    raise RuntimeError(u'Non-sense to call this method '
-                                       u'on an already set title.')
-
                 # Sadly, we have to reget/reparse the content.
                 # Hopefully, this is only used in extreme cases,
                 # and not the common one.
@@ -1351,9 +1351,7 @@ class Article(Document, DocumentHelperMixin):
                     content, encoding = self.prepare_content_text(url=self.url)
 
                 except:
-                    LOGGER.exception(u'exception.article.cannot_extract_title('
-                                     u'%(article)s)', article=self)
-
+                    LOGGER.exception(u'Could not extract title of article %s', self)
 
         old_title = self.title
 
@@ -1361,12 +1359,12 @@ class Article(Document, DocumentHelperMixin):
             self.title = BeautifulSoup(content).find('title').contents[0]
 
         except:
-            LOGGER.exception(u'Could not extract title of imported '
-                             u'article %s', self)
+            LOGGER.exception(u'Could not extract title of article %s', self)
 
         else:
-            LOGGER.info(u'Changed title of article #%s from “%s” to “%s”',
+            LOGGER.info(u'Changed title of article #%s from “%s” to “%s”.',
                         self.id, old_title, self.title)
+
             self.slug = slugify(self.title)
 
         if commit:
