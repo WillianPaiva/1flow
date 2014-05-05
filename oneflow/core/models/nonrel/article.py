@@ -1356,7 +1356,7 @@ class Article(Document, DocumentHelperMixin):
         old_title = self.title
 
         try:
-            self.title = BeautifulSoup(content).find('title').contents[0]
+            self.title = BeautifulSoup(content).find('title').contents[0].strip()
 
         except:
             LOGGER.exception(u'Could not extract title of article %s', self)
