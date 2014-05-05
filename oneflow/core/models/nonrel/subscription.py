@@ -263,7 +263,7 @@ class Subscription(Document, DocumentHelperMixin):
 
             Also available as a task for background execution.
 
-            .. note: the archived reads stay archived, whatever their
+            .. note:: the archived reads stay archived, whatever their
                 read status is. No need to test this attribute.
         """
 
