@@ -77,7 +77,7 @@ def register_task_method(klass, meth, module_globals,
         :param queue: the celery queue the method will run in.
             Defaults to ``medium``.
 
-        .. note: we gave a try at :mod:`method_decorator` to implement
+        .. note:: we gave a try at :mod:`method_decorator` to implement
             this as a method decorator, but it didn't work with decorator
             arguments, it's much more complicated than it seems. Thus this
             simpler function, that requires a little more typing in the
