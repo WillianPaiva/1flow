@@ -1735,7 +1735,7 @@ class Article(Document, DocumentHelperMixin):
                 if article._db_name != settings.MONGODB_NAME_ARCHIVE:
 
                     # HEADS UP: this task name will be registered later
-                    # by the register_task_method call.
+                    # by the register_task_method() call.
                     article_post_create_task.delay(article.id)  # NOQA
 
     def post_create_task(self):

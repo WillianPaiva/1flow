@@ -767,11 +767,14 @@ def read_with_endless_pagination(request, **kwargs):
         subscription = Subscription.get_or_404(subscription)
 
         if subscription.user != user:
-            if user.is_staff_or_superuser_and_enabled:
+            if user.has_staff_access:
 
                 messages.warning(request, _(u'As administrator, you are '
                                  u'accessing the feed of another user. '
                                  u'USE WITH CAUTION.'), extra_tags='sticky')
+
+            elif user.is_staff_or_superuser_and_enabled:
+                return HttpResponseForbidden('Staff access explicitely denied (check config.STAFF_HAS_FULL_ACCESS)')
 
             else:
                 return HttpResponseForbidden('Not Owner')
@@ -788,10 +791,13 @@ def read_with_endless_pagination(request, **kwargs):
         folder = Folder.get_or_404(folder)
 
         if folder.owner != user:
-            if user.is_staff_or_superuser_and_enabled:
+            if user.has_staff_access:
                 messages.warning(request, _(u'As administrator, you are '
                                  u'accessing the feed of another user. '
                                  u'USE WITH CAUTION.'), extra_tags='sticky')
+
+            elif user.is_staff_or_superuser_and_enabled:
+                return HttpResponseForbidden('Staff access explicitely denied (check config.STAFF_HAS_FULL_ACCESS)')
 
             else:
                 return HttpResponseForbidden('Not Owner')
@@ -1221,7 +1227,7 @@ def set_preference(request, base, sub, value):
     # who have de-activated their super-powers cannot re-enable them.
     if 'staff' in base and not (request.user.is_staff
                                 or request.user.is_superuser):
-        return HttpResponseForbidden(u'forbidden')
+        return HttpResponseForbidden(u'Forbidden. BAD™.')
 
     prefs = request.user.mongo.preferences
 

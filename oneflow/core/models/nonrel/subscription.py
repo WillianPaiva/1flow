@@ -164,7 +164,9 @@ class Subscription(Document, DocumentHelperMixin):
 
         if created:
             if subscription._db_name != settings.MONGODB_NAME_ARCHIVE:
-                subscription_post_create_task.delay(subscription.id)
+                # HEADS UP: this task name will be registered later
+                # by the register_task_method() call.
+                subscription_post_create_task.delay(subscription.id)  # NOQA
 
     def post_create_task(self):
         """ Method meant to be run from a celery task. """
@@ -261,7 +263,7 @@ class Subscription(Document, DocumentHelperMixin):
 
             Also available as a task for background execution.
 
-            .. note: the archived reads stay archived, whatever their
+            .. note:: the archived reads stay archived, whatever their
                 read status is. No need to test this attribute.
         """
 
