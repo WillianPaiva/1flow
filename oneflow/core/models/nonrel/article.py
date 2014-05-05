@@ -1336,7 +1336,7 @@ class Article(Document, DocumentHelperMixin):
             # NOTE: this will probably change with twitter and other social
             # related imports, thus we'll have to rework the conditions.
             LOGGER.error(u'NO WAY I will rework already-set title of '
-                         u'article #%s (even with `force=True).`', self.id)
+                         u'article #%s (even with `force=True`).', self.id)
             return
 
         if content is None:
