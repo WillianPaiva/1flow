@@ -244,7 +244,10 @@ class Subscription(Document, DocumentHelperMixin):
         # Marking all read is not a database-friendly operation,
         # thus it's run via a task to be able to return now immediately,
         # with cache numbers updated.
-        subscription_mark_all_read_in_database.delay(
+        #
+        # HEADS UP: this task name will be registered later
+        # by the register_task_method() call.
+        subscription_mark_all_read_in_database_task.delay(
             self.id, now() if latest_displayed_read is None
             #
             # TRICK: we use self.user.reads for 2 reasons:
