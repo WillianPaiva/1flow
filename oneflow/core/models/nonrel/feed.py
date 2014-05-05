@@ -546,7 +546,10 @@ class Feed(Document, DocumentHelperMixin):
         if created:
             if feed._db_name != settings.MONGODB_NAME_ARCHIVE:
                 # Update the feed immediately after creation.
-                feed_refresh_task.delay(feed.id)
+
+                # HEADS UP: this task name will be registered later
+                # by the register_task_method() call.
+                feed_refresh_task.delay(feed.id)  # NOQA
 
     def has_option(self, option):
         return option in self.options
@@ -1056,7 +1059,10 @@ class Feed(Document, DocumentHelperMixin):
             # unavailable? on my production server???
 
             # self.refresh_lock.release() ???
-            raise feed_refresh_task.retry((self.id, ), exc=e)
+
+            # HEADS UP: this task name will be registered later
+            # by the register_task_method() call.
+            raise feed_refresh_task.retry((self.id, ), exc=e)  # NOQA
 
         # Stop on HTTP errors before stopping on feedparser errors,
         # because he is much more lenient in many conditions.
