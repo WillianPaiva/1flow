@@ -526,16 +526,29 @@ class Feed(Document, DocumentHelperMixin):
 
                     lower_title = link.get('title', u'').lower()
 
-                    if not skip_comments and not (
-                        u'comments for ' in lower_title
+                    if (
+                        u'comments feed' in lower_title
                         or
-                        u'comments on ' in lower_title
+                        u'comments for' in lower_title
                         or
-                        _(u'comments for ') in lower_title
+                        u'comments on' in lower_title
                         or
-                            _(u'comments on ') in lower_title):
 
-                        yield link.get('href')
+                        # NOTE: unicode() is needed to avoid “Coercing to
+                        # Unicode: needs string or buffer, not __proxy__”,
+                        # triggered by ugettext_lazy, used to catch the
+                        # language of the calling user to maximize chances of
+                        # avoiding comments feeds.
+
+                        unicode(_(u'comments feed')) in lower_title
+                        or
+                        unicode(_(u'comments for')) in lower_title
+                        or
+                        unicode(_(u'comments on')) in lower_title
+                            ) and skip_comments:
+                        continue
+
+                    yield link.get('href')
 
     @classmethod
     def signal_post_save_handler(cls, sender, document,
