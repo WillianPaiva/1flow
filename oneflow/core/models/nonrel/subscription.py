@@ -205,7 +205,7 @@ class Subscription(Document, DocumentHelperMixin):
 
         if background:
             # 'True' is for the 'force' argument.
-            subscription_check_reads.delay(subscription.id, True)
+            subscription_check_reads_task.delay(subscription.id, True)
 
         else:
             subscription.check_reads(force=True)
