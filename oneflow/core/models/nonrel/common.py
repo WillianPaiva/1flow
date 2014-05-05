@@ -420,13 +420,11 @@ class DocumentHelperMixin(object):
     def check_owner(self, user):
 
         try:
-            return user.is_staff_or_superuser_and_enabled \
-                or user == self.user
+            return user.has_staff_access or user == self.user
 
         except AttributeError:
             try:
-                return user.is_staff_or_superuser_and_enabled \
-                    or user == self.owner
+                return user.has_staff_access or user == self.owner
 
             except AttributeError:
 

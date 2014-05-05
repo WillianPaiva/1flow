@@ -627,6 +627,16 @@ class Read(Document, DocumentHelperMixin):
     @property
     def is_restricted(self):
 
+        # TODO: not sure if these conditions are OK.
+        #       We are in a Read, though. We assume
+        #       the calling user is owner. This would
+        #       a privacy issue if not, but could still
+        #       be needed in some cases (debugging
+        #       purposes).
+
+        if self.user.has_staff_access:
+            return False
+
         if (self.user.is_staff_or_superuser_and_enabled
                 and self.user.preferences.staff.allow_all_articles):
             return False

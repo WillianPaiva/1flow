@@ -177,7 +177,7 @@ class OwnerOrSuperuserEditAdaptor(object):
         if user.is_anonymous():
             return False
 
-        elif user.mongo.is_staff_or_superuser_and_enabled:
+        elif user.mongo.has_staff_access:
             return True
 
         else:
