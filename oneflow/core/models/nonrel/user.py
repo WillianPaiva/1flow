@@ -440,10 +440,32 @@ class User(Document, DocumentHelperMixin):
                                             self.id, self.django_user)
 
     @property
+    def has_staff_access(self):
+        """ Returns ``True`` if :meth:`is_staff_or_superuser_and_enabled`
+            returns `` True`` **and** if `config.STAFF_HAS_FULL_ACCESS` is
+            also ``True`` (which is not the default).
+
+            Use this property on something when a staff member is accessing
+            something he/she is not owner of, and this will raise a privacy
+            issue.
+
+            By opposition, the :meth:`is_staff_or_superuser_and_enabled`
+            property is used only to add staff features to any page when
+            the current user is staff and he accesses his own data. Eg. to
+            include staff buttons or staff links to the admin.
+        """
+
+        return self.is_staff_or_superuser_and_enabled \
+            and config.STAFF_HAS_FULL_ACCESS
+
+    @property
     def is_staff_or_superuser_and_enabled(self):
+        """ Returns ``True`` if the user is a staff member or a super user
+            **and** he/she has activated super powers in his/her preferences.
+        """
+
         return ((self.is_staff or self.is_superuser)
-                and self.preferences.staff.super_powers_enabled
-                and config.STAFF_HAS_FULL_ACCESS)
+                and self.preferences.staff.super_powers_enabled)
 
     # def has_permission(self, permission, **kwargs):
     #     if self.is_staff_or_superuser_and_enabled:
