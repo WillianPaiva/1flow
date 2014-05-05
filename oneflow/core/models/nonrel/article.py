@@ -1347,7 +1347,13 @@ class Article(Document, DocumentHelperMixin):
                 # Sadly, we have to reget/reparse the content.
                 # Hopefully, this is only used in extreme cases,
                 # and not the common one.
-                content, encoding = self.prepare_content_text(url=self.url)
+                try:
+                    content, encoding = self.prepare_content_text(url=self.url)
+
+                except:
+                    LOGGER.exception(u'exception.article.cannot_extract_title('
+                                     u'%(article)s)', article=self)
+
 
         old_title = self.title
 
