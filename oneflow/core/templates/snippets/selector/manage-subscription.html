@@ -50,7 +50,7 @@
                     {% include "widgets/forms/field-input-text.html" with field=form.name %}
                     {% include "widgets/forms/field-generic-unstyled.html" with field=form.folders %}
 
-                {% if mongodb_user.is_staff_ and preferences.staff.selector_shows_admin_links %}
+                {% if mongodb_user.is_staff_or_superuser_and_enabled and preferences.staff.selector_shows_admin_links %}
 
                     <div class="manage-admin-actions">
                         <a href="{{ NONREL_ADMIN }}feed/{{ subscription.feed.id }}"
