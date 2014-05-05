@@ -33,7 +33,19 @@ Currently, 1flow uses `django-rosetta`, available at your local address [http://
 In the code, there are 2 ways to create i18n strings:
 
 - the old, with plain english sentences and a lot of `%s`. **Please do not use this anymore** and use the new instead:
-- the new, where even english localization is available to translators. i18n strings are “codes”, like `exception.article.cannot_set_title`, `info.article.title_changed(%(article_id)s, %(old_title)s, %(new_title)s)`, `label.import_url.urls_list` and so on.
+- the new, where even english localization is available to translators. i18n strings are “codes”, like `exception.article.cannot_set_title`, `info.article.title_changed(%(article_id)s, %(old_title)s, %(new_title)s)`, `label.import_url.urls_list` and so on. Python code examples:
+
+    LOGGER.exception(u'exception.article.cannot_extract_title('
+                             u'%(article)s)', article=self)
+
+    LOGGER.info(u'info.article.changed_title(%(article_id)s, '
+                        u'%(old_title)s, %(new_title)s)',
+                        article_id=self.id, old_title=old_title,
+                        new_title=self.title)
+
+More examples in Django templates will come as soon as we implement some.
+
+Important: **we now always use named arguments in i18n strings, for more translators understanding of translatable strings.**
 
 The new form is not yet widespread, we replace old instances while time passes. Please use it in any new code you create. If you fix bugs on existing code, please also convert messages, but in separate commits.
 
