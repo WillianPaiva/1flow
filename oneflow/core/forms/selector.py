@@ -289,6 +289,11 @@ class ManageSubscriptionForm(DocumentForm):
             # built a list. We need to reconstruct it for the save() to work.
             subscription.folders = [self.cleaned_data['folders']]
 
+        elif self.cleaned_data['folders'] is None:
+            # User emptied the folder field. The subscription is back to
+            # “un-sorted” pseudo-folder.
+            subscription.folders = []
+
         if commit:
             subscription.save()
 
