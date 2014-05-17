@@ -195,7 +195,8 @@ class Feed(Document, DocumentHelperMixin):
     thumbnail_url  = URLField(verbose_name=_(u'Thumbnail URL'),
                               help_text=_(u'Full URL of the thumbnail '
                                           u'displayed in the feed selector. '
-                                          u'Can be hosted outside of 1flow.'))
+                                          u'Can be hosted outside of 1flow.'),
+                              default=u'')
     description_fr = StringField(verbose_name=_(u'Description (FR)'),
                                  help_text=_(u'Public description of the feed '
                                              u'in French language. '
