@@ -257,10 +257,7 @@ class Feed(Document, DocumentHelperMixin):
 
             # And not being duplicate of any other feed.
             & (Q(duplicate_of__exists=False) | Q(duplicate_of=None))
-
-            # or just internal; internal feeds have no duplicate by nature,
-            # and are not checked by humans.
-            | Q(is_internal=True))
+            )
 
     @property
     def latest_article(self):
