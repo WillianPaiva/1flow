@@ -1,4 +1,4 @@
--e git+https://github.com/1flow/sparks.git@master#egg=sparks
+-e git+https://github.com/1flow/sparks.git@develop#egg=sparks
 -e git+https://github.com/bradjasper/django-jsonfield.git@master#egg=jsonfield
 -e git+https://github.com/gregmuellegger/django-reset.git@master#egg=django_reset
 -e git+https://github.com/Karmak23/django-constance.git@master#egg=constance
@@ -15,6 +15,7 @@
 anyjson==0.3.3
 astroid==1.1.0
 beautifulsoup4==4.3.2
+billiard==3.3.0.18
 blinker==1.3
 charade==1.0.3
 chardet==2.2.1
@@ -68,6 +69,7 @@ html5lib==0.999
 ipdb==0.8
 ipdbplugin==1.4
 Jinja2==2.7.2
+kombu==3.0.21
 line-profiler==1.0b3
 listparser==0.17
 logilab-common==0.61.0

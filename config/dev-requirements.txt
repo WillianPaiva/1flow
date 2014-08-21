@@ -1,5 +1,5 @@
 -e git+https://github.com/Karmak23/fabric.git@7bd2eee26d7255c7b0edac0b87c1ee196086668f#egg=fabric-dev
--e git+https://github.com/1flow/sparks.git@master#egg=sparks
+-e git+https://github.com/1flow/sparks.git@develop#egg=sparks
 -e git+https://github.com/dcramer/django-devserver.git@master#egg=devserver
 -e git+https://github.com/mbi/django-rosetta.git@master#egg=django_rosetta-dev
 -e git+https://github.com/orf/django-debug-toolbar-template-timings.git@master#egg=django_debug_toolbar_template_timings-dev
@@ -16,7 +16,7 @@ flake8==2.0
 guppy==0.1.10
 ipython==2.0
 line-profiler==1.0b3
-paramiko==1.12.0
+paramiko==1.13.0
 pip-tools==0.3.4
 sqlparse==0.1.9
 Werkzeug==0.9.4
