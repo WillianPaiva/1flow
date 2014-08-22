@@ -19,7 +19,7 @@ You'll find a more user-oriented original pitch at http://1flow.io/ and project 
 
 # Installation
 
-**Please, [see the wiki](/1flow/1flow/wiki/Installation).**
+**Please, [see the wiki](https://github.com/1flow/1flow/wiki/Installation).**
 
 
 
