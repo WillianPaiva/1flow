@@ -81,6 +81,9 @@ update-requirements:
 requirements:
 	fab local sdf.requirements
 
+sparks:
+	pip install -e git+https://github.com/1flow/sparks.git@develop#egg=sparks
+
 syncdb:
 	fab local sdf.syncdb
 	fab local sdf.migrate
