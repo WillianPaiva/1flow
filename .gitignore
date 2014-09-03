@@ -2,6 +2,10 @@
 /static
 .pipcache
 
+# fabfiles for external projects/customers.
+# They are recorded/versionned in external repos.
+*-fabfile.py
+
 # Jenkins reports
 /reports
 
