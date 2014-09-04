@@ -138,12 +138,12 @@ def preview(branch=None):
         env.branch = get_current_git_branch()
     # implicit: else: branch will be 'develop',
     # set directly from the sparks defaults.
+
     env.sparks_options = {
         'nice_arguments': {
             'worker_low': '-n 5',
             'worker_medium': '-n 1',
             'worker_high': '-n -3',
-            'worker_medium': '-n 1',
         },
 
         'worker_concurrency': {
