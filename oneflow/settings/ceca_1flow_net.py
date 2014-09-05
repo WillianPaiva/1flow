@@ -63,4 +63,5 @@ MANAGERS += (('John Adam', 'j.adam@ceca.asso.fr'), )
 EMAIL_SUBJECT_PREFIX='[1flow CECA admin] '
 ALLOWED_HOSTS += [
     'ceca.1flow.net',
+    '178.32.255.67',
 ]
