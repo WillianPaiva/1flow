@@ -959,7 +959,8 @@ def global_duplicates_checker(limit=None, force=False):
                 processed_dupes, total_dupes_count,
                 processed_dupes * 100.0 / total_dupes_count,
                 done_dupes_count,
-                (done_dupes_count * 100.0 / processed_dupes) if processed_dupes else 0.0),
+                (done_dupes_count * 100.0 / processed_dupes)
+                if processed_dupes else 0.0,
                 total_reads_count)
 
 

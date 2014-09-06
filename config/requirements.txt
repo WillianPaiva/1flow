@@ -104,6 +104,6 @@ setproctitle==1.1.8
 simplejson==3.4.0
 South==0.8.4
 sphinx-me==0.2.1
-statsd==3.0.1
+statsd==2.1.2
 urlparse2==1.1.1
 uWSGI==2.0.6
