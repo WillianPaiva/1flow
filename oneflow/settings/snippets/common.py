@@ -732,12 +732,12 @@ SOCIAL_AUTH_PIPELINE = (
     'social_auth.backends.pipeline.user.update_user_details',
 
     #'oneflow.core.social_pipeline.check_1flow_requirements',
-    'oneflow.core.social_pipeline.get_social_avatar',
+    'sparks.django.social_pipeline.get_social_avatar',
 
     # Given the current configuration, we do allow any user to register,
     # or not. In both cases, we create the account, but will deactivate
     # it if registration is disabled.
-    'oneflow.core.social_pipeline.throttle_new_user_accounts',
+    'sparks.django.social_pipeline.throttle_new_user_accounts',
 )
 
 # —————————————————————————————————————————————————————————————— 1flow settings
