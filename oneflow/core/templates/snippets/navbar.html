@@ -67,7 +67,7 @@
             {% endif %}
 
               <li class="divider"></li>
-              <!--<li><a href="{% url 'signout' %}">{% trans 'Sign Out' %}</a></li>-->
+              {# django-user account NEEDS a POST form. <li><a href="{% url 'signout' %}">{% trans 'Sign Out' %}</a></li> #}
               <li><form id="signout-from-menu-form" method="POST" class="form"
                   action="{% url "signout" %}">
                 {% csrf_token %}</form><a href="#"

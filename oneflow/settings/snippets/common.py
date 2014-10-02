@@ -30,7 +30,6 @@ import os
 import sys
 import warnings
 
-
 from django.core.urlresolvers import reverse_lazy
 from django.utils.translation import ugettext_lazy
 
@@ -38,7 +37,7 @@ from django.utils.translation import ugettext_lazy
 ugettext = lambda s: s
 
 # This is imported here to benefit to all other included snippets.
-from sparks import platform # NOQA
+from sparks import platform  # NOQA
 
 # We need to go down 2 times because the starting point of these settings is
 # `project/settings/__init__.py`, instead of good old `project/settings.py`.
