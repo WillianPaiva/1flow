@@ -53,7 +53,7 @@ class MailAccount(ModelDiffMixin):
     username = models.CharField(max_length=255, blank=True)
     password = models.CharField(max_length=255, default=u'', blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
-    date_test = models.DateTimeField(default=long_in_the_past)
+    date_last_conn = models.DateTimeField(default=long_in_the_past)
     conn_error = models.CharField(max_length=255, default=u'', blank=True)
     is_usable = models.BooleanField(default=True, blank=True)
 
@@ -106,7 +106,7 @@ class MailAccount(ModelDiffMixin):
         validate them all.
         """
 
-        self.date_test = long_in_the_past()
+        self.date_last_conn = long_in_the_past()
         self.is_usable = False
 
         if commit:
@@ -122,7 +122,7 @@ class MailAccount(ModelDiffMixin):
             message = u'{0} ({1})'.format(message, unicode(exc))
             LOGGER.exception(u'%s unusable: %s', self, message)
 
-        self.date_test = now()
+        self.date_last_conn = now()
         self.conn_error = message
         self.is_usable = False
 
@@ -132,7 +132,7 @@ class MailAccount(ModelDiffMixin):
     def mark_usable(self, commit=True):
         """ Mark the account usable and clear error. """
 
-        self.date_test = now()
+        self.date_last_conn = now()
         self.conn_error = u''
         self.is_usable = True
 
@@ -177,7 +177,7 @@ class MailAccount(ModelDiffMixin):
     def test_connection(self, force=False):
         """ test connection and report any error. """
 
-        if self.is_usable and now() - self.date_test < 3600 \
+        if self.is_usable and now() - self.date_last_conn < 3600 \
                 and not force:
             return
 
