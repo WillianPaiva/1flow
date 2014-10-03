@@ -260,6 +260,13 @@ img.centered {
   cursor: help;
 }
 
+.inplace-blurred {
+  .textinplaceedit {
+    filter: url("/static/img/filters.svg#blur3px");
+    @include filter(blur(3px));
+  }
+}
+
 .muted {
   color: $gray;
 }
