@@ -1,28 +1,28 @@
 # -*- coding: utf-8 -*-
 """
-    Copyright 2012-2014 Olivier Cortès <oc@1flow.io>
+Copyright 2012-2014 Olivier Cortès <oc@1flow.io>.
 
-    This file is part of the 1flow project.
+This file is part of the 1flow project.
 
-    1flow is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation, either version 3 of
-    the License, or (at your option) any later version.
+1flow is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
 
-    1flow is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
+1flow is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU Affero General Public
-    License along with 1flow.  If not, see http://www.gnu.org/licenses/
+You should have received a copy of the GNU Affero General Public
+License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
 import base64
 import logging
 
-#from django.utils.translation import ugettext_lazy as _
+# from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponseNotFound
 from django.template import RequestContext
 from django.template.loader import render_to_string
@@ -46,6 +46,7 @@ User = get_user_model()
 
 @never_cache
 def unsubscribe(request, email, hash_code):
+    """ User unsubscribes himself from mail notifications. """
 
     email = base64.b64decode(email)
 
@@ -72,8 +73,9 @@ def unsubscribe(request, email, hash_code):
 
 
 def social_signup_closed(request):
-    """ This is a mimic of `account.SignupView.closed()` method, used
-        when social registration is closed, but local registration is not.
+    """ Mimic of `account.SignupView.closed()` method.
+
+    Used when social registration is closed, but local registration is not.
     """
 
     return render(request, 'account/signup_closed.html', {'social': True})
@@ -83,37 +85,39 @@ def social_signup_closed(request):
 
 
 def error_handler(request, *args, **kwargs):
-    """ Our error handler returns a 503 instead of a bare 500. Returning a 503
-        seems much more correct: the situation is clearly temporary and the
-        error will certainly be resolved. For search robots this is better too.
+    """ Our error handler returns a 503 instead of a bare 500.
 
-        Besides that point, our handler passes the whole request to the 500
-        template, via the whole template context processors chain, which could
-        be considered risky, but is really not because we don't have any
-        custom processor and Django's one are fully tested (at least we hope).
+    Returning a 503 seems much more correct: the situation is clearly
+    temporary and the error will certainly be resolved. For search robots
+    this is better too.
+
+    Besides that point, our handler passes the whole request to the 500
+    template, via the whole template context processors chain, which could
+    be considered risky, but is really not because we don't have any
+    custom processor and Django's one are fully tested (at least we hope).
     """
 
     return HttpResponseTemporaryServerError(render_to_string('500.html',
                                             context_instance=RequestContext(
-                                            request)))
+                                                request)))
 
 
 def maintenance_mode(request, *args, **kwargs):
-    """ Self-explanatory, isn't it? """
+    """ Self-explanatory. """
 
     return HttpResponseTemporaryServerError(render_to_string('503.html',
                                             context_instance=RequestContext(
-                                            request)))
+                                                request)))
 
 
 def not_found_handler(request, *args, **kwargs):
     """ Our 404 custom handler.
 
-        Basically, it's just a one liner which does exactly what the Django's
-        one does, but our 404.html lies in base/templates instead of
-        ${root}/templates, and we have no way to specify only the modified
-        path. And I don't want to create ${root}/templates just to hold the
-        400.html.
+    Basically, it's just a one liner which does exactly what the Django's
+    one does, but our 404.html lies in base/templates instead of
+    ${root}/templates, and we have no way to specify only the modified
+    path. And I don't want to create ${root}/templates just to hold the
+    400.html.
     """
 
     return HttpResponseNotFound(render_to_string('404.html',
@@ -121,7 +125,9 @@ def not_found_handler(request, *args, **kwargs):
 
 
 def crash(request, **kwargs):
-    """ deliberately run a non-existent function,
-        we need to have a way to trigger a 500. """
+    """ Deliberately raise an exception.
+
+    We need to have a way to trigger a 500.
+    """
 
     raise RuntimeError(u'Voluntary crash test to validate the error chain.')
