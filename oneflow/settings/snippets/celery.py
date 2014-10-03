@@ -5,26 +5,26 @@
 #       defined in these.
 #
 """
-    Copyright 2013 Olivier Cortès <oc@1flow.io>
+Copyright 2013 Olivier Cortès <oc@1flow.io>.
 
-    This file is part of the 1flow project.
+This file is part of the 1flow project.
 
-    1flow is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation, either version 3 of
-    the License, or (at your option) any later version.
+1flow is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
 
-    1flow is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
+1flow is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU Affero General Public
-    License along with 1flow.  If not, see http://www.gnu.org/licenses/
+You should have received a copy of the GNU Affero General Public
+License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
-#from datetime import timedelta
+# from datetime import timedelta
 import djcelery
 djcelery.setup_loader()
 from celery.schedules import crontab
@@ -39,7 +39,7 @@ except:
 else:
     # get 'medium' from 'medium.worker-03.1flow.io'
     CELERYD_STATE_DB = 'celery.states.{0}'.format(
-                            sys.argv[index + 1].split('.', 1)[0])
+        sys.argv[index + 1].split('.', 1)[0])
     del index
 
 # 2014-03-09: I benchmarked with 0/1/2 on a 15K-items queue, with various
@@ -83,7 +83,7 @@ CELERY_DISABLE_RATE_LIMITS = True
 #
 # 20140309: no more remote worker and we have very small messages (only
 # IDs, no full instance), so stop wasting CPU cycles.
-#CELERY_MESSAGE_COMPRESSION = 'gzip'
+# CELERY_MESSAGE_COMPRESSION = 'gzip'
 
 # Avoid long running and retried tasks to be run over-and-over again.
 BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 86400}
@@ -104,13 +104,13 @@ CELERY_ACCEPT_CONTENT = ['pickle', 'json']
 CELERY_TASK_SERIALIZER = 'pickle'
 CELERY_RESULT_SERIALIZER = 'json'
 
-#CELERY_ALWAYS_EAGER=True
+# CELERY_ALWAYS_EAGER=True
 
 CELERY_TRACK_STARTED = True
 CELERY_SEND_TASK_SENT_EVENT = True
 
 # Disabled by default and I like it, because we use Sentry for this.
-#CELERY_SEND_TASK_ERROR_EMAILS = False
+# CELERY_SEND_TASK_ERROR_EMAILS = False
 
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 
