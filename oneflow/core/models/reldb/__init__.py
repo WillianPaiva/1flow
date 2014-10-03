@@ -20,21 +20,15 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 """
 
 import uuid
-import redis
+import logging
 
 from transmeta import TransMeta
 
 from django.db import models
-from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext as _
 from django.utils.text import slugify
 
-REDIS = redis.StrictRedis(host=settings.REDIS_HOST,
-                          port=settings.REDIS_PORT,
-                          db=settings.REDIS_DB)
-
-DjangoUser = get_user_model()
+LOGGER = logging.getLogger(__name__)
 
 
 class HelpContent(models.Model):
@@ -82,3 +76,8 @@ class HelpContent(models.Model):
         translate = ('name', 'content', )
         verbose_name = _(u'Help section')
         verbose_name_plural = _(u'Help contents')
+
+
+from mailaccount import MailAccount  # NOQA
+
+from mailfeed import MailFeed, MailFeedRule, MailFeedRuleLine  # NOQA
