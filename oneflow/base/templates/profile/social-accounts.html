@@ -1,6 +1,6 @@
 {% load i18n markdown_deux_tags %}
 
-<h1>{% trans "Social accounts" %}</h1>
+<h1 class="user-profile">&nbsp;<br />{% trans "Social accounts" %}</h1>
 
 {% if social_auth.associated %}
 
@@ -51,7 +51,7 @@ find back the spaceport.
     {% endfor %}
   </ul>
 
-  <div class="spacer50"></div>
+  <div class="spacer15"></div>
 
   <h3>{% trans "Associate more accounts" %}</h3>
 {% else %}
@@ -60,11 +60,3 @@ find back the spaceport.
 {% endif %}
   {% captureas next_url%}?next={% absolute 'profile' %}{% endcaptureas %}
   {% include "snippets/social-auth-signin.html" %}
-
-  <div class="spacer50"></div>
-  <div class="jumbotron">
-    <fieldset>
-      <legend><h2>{% trans "Danger zone" %}</h2></legend>
-      <p><a class="btn btn-danger btn-small" href="{% url "account_delete" %}">{% trans "Delete account" %}</a></p>
-    </fieldset>
-  </div>

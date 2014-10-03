@@ -1,0 +1,46 @@
+{% extends 'home.html' %}
+{% load js i18n base_utils inplace_edit %}
+
+{% block body_id %}profile{% endblock body_id %}
+
+{% block title %}{% trans 'Profile' %}{% endblock title %}
+
+{% block application_content %}
+{% inplace_static %}
+
+  <div class="container-fluid" id="profile">
+    <div class="row">
+      <div class="col-xs-10 col-xs-offset-1 col-lg-5 col-lg-offset-0">
+
+        {% include "profile/base-information.html" %}
+
+      </div>
+      <div class="col-xs-10 col-xs-offset-1 col-lg-5 col-lg-offset-2">
+
+        {% include "profile/social-accounts.html" %}
+
+      </div>
+    </div>
+    <div class="spacer25"></div>
+    <div class="row">
+      <div class="col-xs-10 col-xs-offset-1 col-lg-5 col-lg-offset-0">
+
+        <div id="external-accounts">
+          <h1>{% trans "External accounts" %}</h1>
+
+          <a href="{% url 'mailaccount_list_create' %}" class="btn btn-default btn-lg">{% trans "Manage e-mail accounts" %}</a>
+
+        </div>
+
+        {% include "profile/superuser-infos.html" %}
+
+      </div>
+      <div class="col-xs-10 col-xs-offset-1 col-lg-5 col-lg-offset-2">
+
+        {% include "profile/danger-zone.html" %}
+
+      </div>
+    </div>
+  </div>
+
+{% endblock application_content %}

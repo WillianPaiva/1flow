@@ -33,12 +33,9 @@ from django.template import add_to_builtins
 
 from sparks.django.utils import HttpResponseTemporaryServerError
 
-from ..forms import (
-    UserProfileEditForm,
-    WebPagesImportForm,
-)
-from ..models.nonrel import (
-    Article, Read, CONTENT_TYPES_FINAL)
+from ..forms import WebPagesImportForm
+
+from ..models.nonrel import Article, Read, CONTENT_TYPES_FINAL
 from ..models.reldb import HelpContent
 
 from ..gr_import import GoogleReaderImport
@@ -265,20 +262,6 @@ def import_web_pages(request):
 
     return render(request, 'snippets/selector/import-web-pages.html',
                   {'form': form})
-
-
-def profile(request):
-    """ Display user profile. """
-
-    if request.POST:
-        form = UserProfileEditForm(request.POST, instance=request.user)
-
-        if form.is_valid():
-            form.save()
-    else:
-        form = UserProfileEditForm(instance=request.user)
-
-    return render(request, 'profile.html', {'form': form})
 
 
 def help(request):
