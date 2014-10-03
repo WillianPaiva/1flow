@@ -485,6 +485,7 @@ INSTALLED_APPS = [
     'south_admin',
     #'maintenancemode', — not needed at all, the middleware is sufficient.
     'transmeta',
+    'sorting_bootstrap',
 
     # Order matters for inplace & friends.
     'inplaceeditform_bootstrap',
