@@ -1,0 +1,39 @@
+
+<form id="mailaccountform"
+	action="{% url 'mailaccount_list_create' %}"
+	method="post" role="form"
+	>
+	{% csrf_token %}
+	<tr class="{% if not form.errors %}collapse{% endif %}" id="mailaccountform-collapsible">
+        {% for field in form %}
+        	<td>
+
+        	{% if field.name == 'port' or field.name == 'use_ssl' %}
+
+            {% include "widgets/forms/field-generic.html" with field=field field_label_css_class='' field_input_css_class='' field_error_css_class='' field_help_css_class='' %}
+
+        	{% else %}
+
+            {% include "widgets/forms/field-generic.html" with field=field field_label_css_class='col-sm-5 right' field_input_css_class='col-sm-7' field_error_css_class='col-sm-7 col-sm-offset-5' field_help_css_class='col-sm-7 col-sm-offset-5' %}
+
+        	{% endif %}
+
+
+            {% if forloop.last %}
+
+            	</td>
+            	<td>
+
+		      <div class="pull-right">
+
+		    	<input class="btn btn-primary" type="submit"
+		    		value="{% trans "Save" %}" />
+		      </div>
+
+            {% endif %}
+
+        	</td>
+
+        {% endfor %}
+	</tr>
+</form>
