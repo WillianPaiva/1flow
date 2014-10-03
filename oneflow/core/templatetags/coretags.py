@@ -615,3 +615,30 @@ def read_status_css_styles():
                      for status in Read.status_data.keys()
                      if 'list_url' in Read.status_data[status])
 
+# —————————————————————————————————————————————————————————— Mail accounts tags
+
+@register.simple_tag
+def mail_is_usable_to_icon(mailthing):
+
+    template = (u'<span class="label label-{0}" title="{2}" '
+                u'data-toggle="tooltip" data-placement="top">'
+                u'<i class="icon icon-fixed-width icon-{1}"></i></span>')
+
+    if mailthing.is_usable:
+        return template.format(
+            'success', 'ok',
+            _(u'Account successfully working, tested {0} ago.').format(
+                onef_naturaldelta(now() - mailthing.date_test)))
+
+    else:
+        if mailthing.conn_error:
+            return template.format(
+                'danger', 'exclamation',
+                _(u'Account not working, tested {0} ago. '
+                  u'Error reported: {1}').format(
+                    onef_naturaldelta(now() - mailthing.date_test),
+                    mailthing.conn_error))
+        else:
+            return template.format(
+                'warning', 'question',
+                _(u'Account connectivity not tested yet'))
