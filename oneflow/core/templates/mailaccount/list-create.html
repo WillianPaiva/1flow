@@ -1,0 +1,115 @@
+{% extends 'home.html' %}
+{% load sorting_tags %}
+
+{% block title %}{% trans "Mail accounts" %}{% endblock title %}
+{% block body_id %}mail-accounts{% endblock body_id %}
+
+{% block application_content %}
+
+{% inplace_static %}
+
+<div class="spacer50"></div>
+
+<div class="row">
+	<div>
+	{% if mailaccount_list %}
+
+		<div class="actions pull-right">
+			<button id="mailaccountform-collapser" class="btn btn-primary">{% trans "Add new" %}</button>
+		</div>
+
+		<h1>
+			<span>{% trans "Mail accounts" %}</span>
+			<small class="muted">({{ mailaccount_list|length }})</small>
+		</h1>
+		<p class="muted">{% trans "Note: 1flow only supports IMAP e-mail accounts." %}</p>
+
+		<div class="spacer25"></div>
+
+		<table class="table table-hover">
+		<thead>
+
+		  {% include "mailaccount/form.html" %}
+
+		  <tr>
+			{% sort_th "Name" 'name' %}
+			<th class="centered">{% trans "Status" %}</th>
+			{% sort_th "Hostname" 'hostname' %}
+			<th class="right">{% trans "SSL/TLS" %}</th>
+			<th>{% trans "Port" %}</th>
+			{% sort_th "Username" 'username' %}
+			<th>{% trans "password" %}</th>
+			<th class="right">{% trans "Feeds" %}</th>
+			<th class="right">{% trans "Actions" %}</th>
+		  </tr>
+		</thead>
+		<tbody>
+		{% for mailaccount in mailaccount_list %}
+			<tr>
+				<td>{% inplace_edit 'mailaccount.name' %}</td>
+				<td class="centered">{% mail_is_usable_to_icon mailaccount %}</td>
+				<td>{% inplace_edit 'mailaccount.hostname' %}</td>
+				<td class="right">{% inplace_edit 'mailaccount.use_ssl' %}</td>
+				<td>{% inplace_edit 'mailaccount.port' %}</td>
+				<td>{% inplace_edit 'mailaccount.username' %}</td>
+				<td class="inplace-blurred">{% inplace_edit 'mailaccount.password' %}</td>
+				<td class="right">{{ mailaccount.mailfeedrule_set.all.count }}</td>
+				{% url 'mailaccount_delete' mailaccount.pk as delete_url %}
+				<td class="right">{% include "widgets/delete-form-button.html" %}</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+		</table>
+	{% else %}
+
+		<h2>{% blocktrans %}
+		    No mail account yet.
+		{% endblocktrans %}</h2>
+
+	{% endif %}
+	</div>
+</div>
+{% endblock application_content %}
+
+{% block extrajs_footer %}
+    {{ block.super }}
+
+    {% compressed_js 'core' %}
+
+	<script type="text/javascript">
+
+		$('#mailaccountform-collapser').on('click', function(e) {
+		    e.preventDefault();
+		    var $this = $(this);
+		    //var $collapse = $this.closest('.collapse-group').find('.collapse');
+		    $('#mailaccountform-collapsible').collapse('toggle');
+		});
+
+	$('#mailaccountform-collapsible')
+		.on('show.bs.collapse', function(e){
+			console.log("uncollapsed");
+	    	$('#mailaccountform-collapser')
+	    		.html('{% trans "Cancel" %}')
+	    		.removeClass('btn-primary')
+	    		.addClass('btn-default');
+			}
+		)
+		.on('hide.bs.collapse', function(e){
+			console.log("collapsed");
+			$('#mailaccountform-collapser')
+				.html('{% trans "Add new" %}')
+				.removeClass('btn-default')
+				.addClass('btn-primary');
+		    }
+		);
+
+	{% if form.errors %}
+    	$('#mailaccountform-collapser')
+    		.html('{% trans "Cancel" %}')
+    		.removeClass('btn-primary')
+    		.addClass('btn-default');
+	{% endif %}
+
+	</script>
+
+{% endblock extrajs_footer %}

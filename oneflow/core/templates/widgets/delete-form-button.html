@@ -1,0 +1,8 @@
+
+<form action="{{ delete_url }}" method="POST" role="form">
+	{% csrf_token %}
+	<button type="submit" class="btn btn-danger btn-xs"
+		title="{% trans "delete this entry" %}">
+		<i class="icon icon-remove"></i>
+	</button>
+</form>
