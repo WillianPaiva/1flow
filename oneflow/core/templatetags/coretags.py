@@ -628,7 +628,7 @@ def mail_is_usable_to_icon(mailthing):
         return template.format(
             'success', 'ok',
             _(u'Account successfully working, tested {0} ago.').format(
-                onef_naturaldelta(now() - mailthing.date_test)))
+                onef_naturaldelta(now() - mailthing.date_last_conn)))
 
     else:
         if mailthing.conn_error:
@@ -636,7 +636,7 @@ def mail_is_usable_to_icon(mailthing):
                 'danger', 'exclamation',
                 _(u'Account not working, tested {0} ago. '
                   u'Error reported: {1}').format(
-                    onef_naturaldelta(now() - mailthing.date_test),
+                    onef_naturaldelta(now() - mailthing.date_last_conn),
                     mailthing.conn_error))
         else:
             return template.format(
