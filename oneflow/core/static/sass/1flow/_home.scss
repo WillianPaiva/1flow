@@ -206,6 +206,25 @@ header {
             }
         }
     }
+
+    #danger-zone h1,
+    #external-accounts h1 {
+        margin: 10px 0;
+    }
+
+    #danger-zone {
+
+        text-align: center;
+
+        background-color: #ffdddd;
+        border-radius: 10px;
+        padding: 20px;
+
+        h1 {
+            color: $red-blood;
+        }
+
+    }
 }
 
 /* ------------------------------------------------------------------ Preferences */
