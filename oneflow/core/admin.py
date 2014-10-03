@@ -43,7 +43,7 @@ from django.contrib import admin
 import mongoadmin
 from mongodbforms import DocumentForm
 
-from sparks.django.admin import languages, truncate_field
+from sparks.django.utils import languages, truncate_field
 
 #from ..base.admin import CSVAdminMixin
 from ..base.utils.dateutils import naturaldelta, naturaltime
