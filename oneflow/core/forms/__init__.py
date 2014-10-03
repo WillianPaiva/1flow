@@ -25,6 +25,4 @@ from .preferences import (HomePreferencesForm, ReadPreferencesForm,
 from .selector import (ManageFolderForm, ManageSubscriptionForm,
                        AddSubscriptionForm, WebPagesImportForm)
 
-from .user import FullUserCreationForm, UserProfileEditForm
-
 from .read import ReadShareForm

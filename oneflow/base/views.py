@@ -35,6 +35,7 @@ from sparks.django.utils import HttpResponseTemporaryServerError
 
 from ..landing.models import LandingUser
 
+from forms import UserProfileEditForm
 
 LOGGER = logging.getLogger(__name__)
 
@@ -42,6 +43,19 @@ User = get_user_model()
 
 
 # •••••••••••••••••••••••••••••••••••••••••••••••••• user account related views
+
+def profile(request):
+    """ Display user profile. """
+
+    if request.POST:
+        form = UserProfileEditForm(request.POST, instance=request.user)
+
+        if form.is_valid():
+            form.save()
+    else:
+        form = UserProfileEditForm(instance=request.user)
+
+    return render(request, 'profile/index.html', {'form': form})
 
 
 @never_cache
