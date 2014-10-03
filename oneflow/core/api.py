@@ -23,9 +23,10 @@ import logging
 from tastypie_mongoengine.resources import MongoEngineResource
 from tastypie_mongoengine.fields import ReferencedListField, ReferenceField
 
-from tastypie.resources import ALL
+from tastypie.resources import ModelResource, ALL
 from tastypie.fields import CharField
 
+from models.reldb import MailAccount, MailFeed, MailFeedRule, MailFeedRuleLine
 from .models.nonrel import (Feed, Subscription,
                             Article, Read,
                             Author, Preferences)
@@ -35,6 +36,69 @@ from ..base.api import (UserResource,
                         UserObjectsOnlyAuthorization, )
 
 LOGGER = logging.getLogger(__name__)
+
+
+# ———————————————————————————————————————————————————————— Relational resources
+
+class MailAccountResource(ModelResource):
+
+    class Meta:
+        queryset = MailAccount.objects.all()
+
+        # Ember-data expect the following 2 directives
+        always_return_data = True
+        allowed_methods    = ('get', 'post', 'put', 'delete')
+
+        # These are specific to 1flow functionnals.
+        authentication     = SessionAndApiKeyAuthentications()
+        authorization      = UserObjectsOnlyAuthorization()
+
+
+class MailFeedResource(ModelResource):
+
+    class Meta:
+        queryset = MailFeed.objects.all()
+
+        # Ember-data expect the following 2 directives
+        always_return_data = True
+        allowed_methods    = ('get', 'post', 'put', 'delete')
+
+        # These are specific to 1flow functionnals.
+        authentication     = SessionAndApiKeyAuthentications()
+        authorization      = UserObjectsOnlyAuthorization()
+
+
+class MailFeedRuleResource(ModelResource):
+
+    class Meta:
+        queryset = MailFeedRule.objects.all()
+
+        # Ember-data expect the following 2 directives
+        always_return_data = True
+        allowed_methods    = ('get', 'post', 'put', 'delete')
+
+        # These are specific to 1flow functionnals.
+        authentication     = SessionAndApiKeyAuthentications()
+        authorization      = UserObjectsOnlyAuthorization(
+            parent_chain=['account'])
+
+
+class MailFeedRuleLineResource(ModelResource):
+
+    class Meta:
+        queryset = MailFeedRuleLine.objects.all()
+
+        # Ember-data expect the following 2 directives
+        always_return_data = True
+        allowed_methods    = ('get', 'post', 'put', 'delete')
+
+        # These are specific to 1flow functionnals.
+        authentication     = SessionAndApiKeyAuthentications()
+        authorization      = UserObjectsOnlyAuthorization(
+            parent_chain=['rule', 'account'])
+
+
+# ——————————————————————————————————————————————————————————— MongoDB resources
 
 
 class FeedResource(MongoEngineResource):
@@ -149,6 +213,8 @@ class PreferencesResource(MongoEngineResource):
         authorization      = UserObjectsOnlyAuthorization()
 
 
-__all__ = ('SubscriptionResource',
+__all__ = ('MailAccountResource', 'MailFeedResource',
+           'MailFeedRuleResource', 'MailFeedRuleLineResource',
+           'SubscriptionResource',
            'ReadResource', 'ArticleResource',
            'AuthorResource', 'PreferencesResource')
