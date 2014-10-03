@@ -1,5 +1,6 @@
 -e git+https://github.com/1flow/sparks.git@develop#egg=sparks
 -e git+https://github.com/bradjasper/django-jsonfield.git@master#egg=jsonfield
+-e git+https://github.com/Karmak23/django-sorting-bootstrap.git@master#egg=django_sorting_bootstrap-master
 -e git+https://github.com/gregmuellegger/django-reset.git@master#egg=django_reset
 -e git+https://github.com/jamiecurle/django-writingfield.git@master#egg=writingfield
 -e git+https://github.com/Karmak23/django-constance.git@master#egg=constance
