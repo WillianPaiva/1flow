@@ -53,6 +53,7 @@ add_to_builtins('widget_tweaks.templatetags.widget_tweaks')
 add_to_builtins('endless_pagination.templatetags.endless')
 add_to_builtins('sparks.django.templatetags.all')
 add_to_builtins('oneflow.core.templatetags.coretags')
+add_to_builtins('inplaceeditform.templatetags.inplace_edit')
 
 if settings.TEMPLATE_DEBUG:
     add_to_builtins('template_debug.templatetags.debug_tags')
@@ -274,6 +275,8 @@ def help(request):
 
 # ——————————————————————————————————————————————————————————————— Views imports
 
+
+from mailaccounts import MailAccountListCreateView, MailAccountDeleteView  # NOQA
 
 from folder import manage_folder, delete_folder  # NOQA
 
