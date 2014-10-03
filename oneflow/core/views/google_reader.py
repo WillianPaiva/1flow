@@ -31,7 +31,7 @@ from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
 
-from ..tasks import import_google_reader_trigger
+from ..tasks.gr_import import import_google_reader_trigger
 from ..models.nonrel import Feed
 
 from ..gr_import import GoogleReaderImport
