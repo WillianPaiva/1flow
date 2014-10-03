@@ -236,6 +236,30 @@ urlpatterns = patterns(
     url(_(ur'^signin_error/$'), TemplateView.as_view(
         template_name='signin_error.html'), name='signin_error'),
 
+    # ——————————————————————————————————————————————————————————— Mail accounts
+
+
+    # url(_(ur'^mailaccount/?$'),
+    #    login_required(never_cache(
+    #        views.MailAccountIndexView.as_view())),
+    #    name='mailaccount_index'),
+
+    url(_(ur'^mailaccount/?$'),
+        login_required(never_cache(
+            views.MailAccountListCreateView.as_view())),
+        name='mailaccount_list_create'),
+
+    url(_(ur'^mailaccount/(?P<pk>\d+)/delete/?$'),
+        login_required(never_cache(
+            views.MailAccountDeleteView.as_view())),
+        name='mailaccount_delete'),
+
+    # No need, we've got inplace-edit for this purpose.
+    # url(r'^mailaccount/(?P<pk>\d+)/$',
+    #     login_required(never_cache(
+    #         views.MailAccountUpdateView.as_view())),
+    #     name='mailaccount_update'),
+
     # •••••••••••••••••••••••••••••••••••••••••••••••••••••••••••  Google Reader
 
     url(_(ur'^grimport/(?:(?P<user_id>\d+)/)?$'),

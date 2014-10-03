@@ -16,15 +16,22 @@ GNU Affero General Public License for more details.
 
 You should have received a copy of the GNU Affero General Public
 License along with 1flow.  If not, see http://www.gnu.org/licenses/
-
 """
 
-from .preferences import (HomePreferencesForm, ReadPreferencesForm,
-                          SelectorPreferencesForm, StaffPreferencesForm)
+import logging
 
-from .selector import (ManageFolderForm, ManageSubscriptionForm,
-                       AddSubscriptionForm, WebPagesImportForm)
+from django import forms
 
-from .read import ReadShareForm
+from ..models import MailAccount
 
-from mailaccount import MailAccountForm
+LOGGER = logging.getLogger(__name__)
+
+
+class MailAccountForm(forms.ModelForm):
+
+    """ A simple mail account model form. """
+
+    class Meta:
+        model = MailAccount
+        fields = ('name', 'hostname', 'use_ssl',
+                  'port', 'username', 'password', )
