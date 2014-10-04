@@ -26,7 +26,7 @@ from tastypie_mongoengine.fields import ReferencedListField, ReferenceField
 from tastypie.resources import ModelResource, ALL
 from tastypie.fields import CharField
 
-from models.reldb import MailAccount, MailFeed, MailFeedRule, MailFeedRuleLine
+from models.reldb import MailAccount, MailFeed, MailFeedRule
 from .models.nonrel import (Feed, Subscription,
                             Article, Read,
                             Author, Preferences)
@@ -81,21 +81,6 @@ class MailFeedRuleResource(ModelResource):
         authentication     = SessionAndApiKeyAuthentications()
         authorization      = UserObjectsOnlyAuthorization(
             parent_chain=['account'])
-
-
-class MailFeedRuleLineResource(ModelResource):
-
-    class Meta:
-        queryset = MailFeedRuleLine.objects.all()
-
-        # Ember-data expect the following 2 directives
-        always_return_data = True
-        allowed_methods    = ('get', 'post', 'put', 'delete')
-
-        # These are specific to 1flow functionnals.
-        authentication     = SessionAndApiKeyAuthentications()
-        authorization      = UserObjectsOnlyAuthorization(
-            parent_chain=['rule', 'account'])
 
 
 # ——————————————————————————————————————————————————————————— MongoDB resources
@@ -214,7 +199,7 @@ class PreferencesResource(MongoEngineResource):
 
 
 __all__ = ('MailAccountResource', 'MailFeedResource',
-           'MailFeedRuleResource', 'MailFeedRuleLineResource',
+           'MailFeedRuleResource',
            'SubscriptionResource',
            'ReadResource', 'ArticleResource',
            'AuthorResource', 'PreferencesResource')

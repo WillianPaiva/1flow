@@ -80,4 +80,4 @@ class HelpContent(models.Model):
 
 from mailaccount import MailAccount  # NOQA
 
-from mailfeed import MailFeed, MailFeedRule, MailFeedRuleLine  # NOQA
+from mailfeed import MailFeed, MailFeedRule  # NOQA
