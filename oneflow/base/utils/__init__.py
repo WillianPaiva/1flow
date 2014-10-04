@@ -101,12 +101,25 @@ def register_task_method(klass, meth, module_globals,
         exported_name = u'{0}_task'.format(
             task_name.lower().replace('.', '_'))
 
-    @task(name=task_name, queue=queue, default_retry_delay=default_retry_delay)
-    def task_func(object_id, *args, **kwargs):
+    if issubclass(klass, models.Model):
 
-        objekt = klass.objects.get(id=object_id)
+        @task(name=task_name, queue=queue,
+              default_retry_delay=default_retry_delay)
+        def task_func(object_pk, *args, **kwargs):
 
-        return getattr(objekt, meth.im_func.func_name)(*args, **kwargs)
+            objekt = klass.objects.get(pk=object_pk)
+
+            return getattr(objekt, meth.im_func.func_name)(*args, **kwargs)
+
+    else:
+
+        @task(name=task_name, queue=queue,
+              default_retry_delay=default_retry_delay)
+        def task_func(object_id, *args, **kwargs):
+
+            objekt = klass.objects.get(id=object_id)
+
+            return getattr(objekt, meth.im_func.func_name)(*args, **kwargs)
 
     # Export the new task in the current module.
     module_globals[exported_name] = task_func
