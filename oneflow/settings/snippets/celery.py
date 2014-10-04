@@ -139,7 +139,7 @@ CELERYBEAT_SCHEDULE = {
     # We update stats regularly to avoid "loosing" data and desynchronization.
     # UDP packets are not reliable. But that's the point of it, isn't it?
     'synchronize-statsd-gauges': {
-        'task': 'oneflow.core.stats.synchronize_statsd_gauges',
+        'task': 'oneflow.core.tasks.synchronize_statsd_gauges',
         'schedule': crontab(minute='59'),
         'args': (True, ),
     },
