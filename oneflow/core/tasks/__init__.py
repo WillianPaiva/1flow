@@ -44,6 +44,7 @@ from gr_import import clean_gri_keys
 # Else it complains about a missing import.
 from checks import global_checker_task  # NOQA
 
+
 @task(queue='clean')
 def clean_obsolete_redis_keys():
     """ Call in turn all redis-related cleaners. """
@@ -145,3 +146,20 @@ def refresh_all_feeds(limit=None, force=False):
 
         LOGGER.info(u'Launched %s refreshes out of %s feed(s) checked.',
                     count, feeds.count())
+
+
+@task(queue='low')
+def synchronize_statsd_gauges(full=False):
+    """ Synchronize all counters to statsd. """
+
+    from oneflow.core.stats import (
+        synchronize_statsd_articles_gauges,
+        synchronize_statsd_tags_gauges,
+        synchronize_statsd_websites_gauges,
+        synchronize_statsd_authors_gauges,
+    )
+
+    synchronize_statsd_articles_gauges(full=full)
+    synchronize_statsd_tags_gauges(full=full)
+    synchronize_statsd_websites_gauges(full=full)
+    synchronize_statsd_authors_gauges(full=full)
