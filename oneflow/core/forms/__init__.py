@@ -19,12 +19,12 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
-from .preferences import (HomePreferencesForm, ReadPreferencesForm,
+from .preferences import (HomePreferencesForm, ReadPreferencesForm,  # NOQA
                           SelectorPreferencesForm, StaffPreferencesForm)
 
-from .selector import (ManageFolderForm, ManageSubscriptionForm,
+from .selector import (ManageFolderForm, ManageSubscriptionForm,  # NOQA
                        AddSubscriptionForm, WebPagesImportForm)
 
-from .read import ReadShareForm
+from .read import ReadShareForm  # NOQA
 
-from mailaccount import MailAccountForm
+from mailaccount import MailAccountForm  # NOQA
