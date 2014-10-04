@@ -642,3 +642,9 @@ def mail_is_usable_to_icon(mailthing):
             return template.format(
                 'warning', 'question',
                 _(u'Account connectivity not tested yet'))
+
+@register.simple_tag
+def mailfeed_rules_count(mailaccount):
+
+    return (mailaccount.mailfeedrule_set.all().count()
+            + models.MailFeedRule.objects.filter(account=None).count())
