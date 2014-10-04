@@ -328,6 +328,10 @@ class DatetimeRedisDescriptor(RedisCachedDescriptor):
         return time.mktime(value.timetuple())
 
 
+class TextRedisDescriptor(RedisCachedDescriptor):
+    pass
+
+
 class ListRedisProxy(list):
 
     def __init__(self, parent_descriptor, hydrate_func=lambda x: x,
