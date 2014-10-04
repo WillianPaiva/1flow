@@ -238,12 +238,6 @@ urlpatterns = patterns(
 
     # ——————————————————————————————————————————————————————————— Mail accounts
 
-
-    # url(_(ur'^mailaccount/?$'),
-    #    login_required(never_cache(
-    #        views.MailAccountIndexView.as_view())),
-    #    name='mailaccount_index'),
-
     url(_(ur'^mailaccount/?$'),
         login_required(never_cache(
             views.MailAccountListCreateView.as_view())),

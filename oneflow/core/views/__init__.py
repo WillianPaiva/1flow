@@ -276,7 +276,7 @@ def help(request):
 # ——————————————————————————————————————————————————————————————— Views imports
 
 
-from mailaccounts import MailAccountListCreateView, MailAccountDeleteView  # NOQA
+from mailaccount import MailAccountListCreateView, MailAccountDeleteView  # NOQA
 
 from folder import manage_folder, delete_folder  # NOQA
 
