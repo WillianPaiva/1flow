@@ -24,8 +24,6 @@ import operator
 from statsd import statsd
 from constance import config
 
-from celery import task
-
 from oneflow.core.models import (Tag, Feed, Article, Author, WebSite,
                                  CONTENT_TYPE_NONE,
                                  CONTENT_TYPE_HTML,
@@ -553,13 +551,3 @@ def synchronize_statsd_authors_gauges(full=False):
         if full:
             duplicates = Author.objects(duplicate_of__ne=None).no_cache()
             statsd.gauge('authors.counts.duplicates', duplicates.count())
-
-
-@task(queue='low')
-def synchronize_statsd_gauges(full=False):
-    """ Synchronize all counters to statsd. """
-
-    synchronize_statsd_articles_gauges(full=full)
-    synchronize_statsd_tags_gauges(full=full)
-    synchronize_statsd_websites_gauges(full=full)
-    synchronize_statsd_authors_gauges(full=full)
