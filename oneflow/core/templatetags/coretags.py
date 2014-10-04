@@ -35,7 +35,7 @@ from ...base.templatetags.base_utils import get_view_name
 from ...base.utils.dateutils import (now, today,
                                      naturaldelta as onef_naturaldelta)
 
-from ..models.nonrel import Read, CONTENT_TYPE_MARKDOWN  # , CACHE_ONE_WEEK
+from oneflow.core import models   # , CACHE_ONE_WEEK
 
 from ..context_processors import content_types
 
@@ -151,7 +151,7 @@ def read_status_css(read):
 
     css = []
 
-    for attr in Read.get_status_attributes():
+    for attr in models.Read.get_status_attributes():
         css.append(attr if getattr(read, attr) else (u'not_' + attr))
 
     return u' '.join(css)
@@ -404,7 +404,7 @@ def system_announcements(user):
 @register.simple_tag
 def read_action_toggle_url(read):
 
-    any_key = Read.get_status_attributes()[0]
+    any_key = models.Read.get_status_attributes()[0]
     url_base = reverse('toggle', kwargs={'klass': 'Read',
                        'oid': read.id, 'key': any_key}).replace(
         any_key, u'@@KEY@@')
@@ -415,7 +415,7 @@ def read_action_toggle_url(read):
 #@cached(CACHE_ONE_WEEK)
 def article_full_content_display(article):
 
-    if article.content_type == CONTENT_TYPE_MARKDOWN:
+    if article.content_type == models.CONTENT_TYPE_MARKDOWN:
 
         if len(article.content) > config.READ_ARTICLE_MIN_LENGTH:
 
@@ -503,7 +503,7 @@ def article_excerpt_content_display(article):
     # to be sure WE are not cut down by repressive laws from another age.
     #
 
-    if article.content_type == CONTENT_TYPE_MARKDOWN:
+    if article.content_type == models.CONTENT_TYPE_MARKDOWN:
 
         try:
             # Save it for next time / user to cool CPU usage.    save=True
@@ -557,7 +557,7 @@ def read_action(article, action_name, with_text=True, popover_direction=None):
             'with_text': with_text,
             'popover_direction': popover_direction or 'top',
             'action_name': action_name,
-            'action_data': Read.status_data.get(action_name),
+            'action_data': models.Read.status_data.get(action_name),
             'popover_class': '' if with_text else 'popover-tooltip',
             'js_func': "toggle_status(event, '{0}', '{1}')".format(
                        article.id, action_name)
@@ -590,7 +590,7 @@ def read_action_status(action_name, with_text=False):
     return {
         'with_text': with_text,
         'action_name': action_name,
-        'action_data': Read.status_data.get(action_name),
+        'action_data': models.Read.status_data.get(action_name),
     }
 
 
@@ -612,8 +612,8 @@ def read_status_css_styles():
                      u'.not_{0} .action-mark-not_{0}{{display:none}} '
                      u'.not_{0} .action-mark-{0}{{display:inline-block}}'
                      ).format(status)
-                     for status in Read.status_data.keys()
-                     if 'list_url' in Read.status_data[status])
+                     for status in models.Read.status_data.keys()
+                     if 'list_url' in models.Read.status_data[status])
 
 # —————————————————————————————————————————————————————————— Mail accounts tags
 
