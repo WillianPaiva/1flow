@@ -15,14 +15,16 @@
 	{% if mailaccount_list %}
 
 		<div class="actions pull-right">
-			<button id="mailaccountform-collapser" class="btn btn-primary">{% trans "Add new" %}</button>
+			<button id="form-collapser" class="btn btn-primary">{% trans "Add new" %}</button>
 		</div>
 
 		<h1>
 			<span>{% trans "Mail accounts" %}</span>
 			<small class="muted">({{ mailaccount_list|length }})</small>
+			<small><a href="{% url 'mailfeed_list_create' %}" class="btn btn-info btn-sm"><i class="icon icon-exchange"></i>&nbsp;&nbsp;{% trans "Switch to mail feeds" %}</a></small>
 		</h1>
-		<p class="muted">{% trans "Note: 1flow only supports IMAP e-mail accounts." %}</p>
+
+		<p class="muted">{% trans "Mail accounts allow the 1flow engine to access your e-mail box(es), even when you are not logged in. <strong>Note:</strong> <em>1flow only supports IMAP e-mail accounts.</em>" %}</p>
 
 		<div class="spacer25"></div>
 
@@ -40,6 +42,7 @@
 			{% sort_th "Username" 'username' %}
 			<th>{% trans "password" %}</th>
 			<th class="right">{% trans "Feeds" %}</th>
+			<th class="right">{% trans "Mailboxes" %}</th>
 			<th class="right">{% trans "Actions" %}</th>
 		  </tr>
 		</thead>
@@ -53,7 +56,13 @@
 				<td>{% inplace_edit 'mailaccount.port' %}</td>
 				<td>{% inplace_edit 'mailaccount.username' %}</td>
 				<td class="inplace-blurred">{% inplace_edit 'mailaccount.password' %}</td>
-				<td class="right">{{ mailaccount.mailfeedrule_set.all.count }}</td>
+				{% if mailaccount.is_usable %}
+				<td class="right">{% mailfeed_rules_count mailaccount %}</td>
+				<td class="right">{{ mailaccount.mailboxes|length }}</td>
+				{% else %}
+				<td></td>
+				<td></td>
+				{% endif %}
 				{% url 'mailaccount_delete' mailaccount.pk as delete_url %}
 				<td class="right">{% include "widgets/delete-form-button.html" %}</td>
 			</tr>
@@ -66,6 +75,14 @@
 		    No mail account yet.
 		{% endblocktrans %}</h2>
 
+		<div class="spacer50"></div>
+
+		<table class="table">
+			<tbody>
+				{% include "mailaccount/form.html" with create_first=1 %}
+			</tbody>
+		</table>
+
 	{% endif %}
 	</div>
 </div>
@@ -74,42 +91,6 @@
 {% block extrajs_footer %}
     {{ block.super }}
 
-    {% compressed_js 'core' %}
-
-	<script type="text/javascript">
-
-		$('#mailaccountform-collapser').on('click', function(e) {
-		    e.preventDefault();
-		    var $this = $(this);
-		    //var $collapse = $this.closest('.collapse-group').find('.collapse');
-		    $('#mailaccountform-collapsible').collapse('toggle');
-		});
-
-	$('#mailaccountform-collapsible')
-		.on('show.bs.collapse', function(e){
-			console.log("uncollapsed");
-	    	$('#mailaccountform-collapser')
-	    		.html('{% trans "Cancel" %}')
-	    		.removeClass('btn-primary')
-	    		.addClass('btn-default');
-			}
-		)
-		.on('hide.bs.collapse', function(e){
-			console.log("collapsed");
-			$('#mailaccountform-collapser')
-				.html('{% trans "Add new" %}')
-				.removeClass('btn-default')
-				.addClass('btn-primary');
-		    }
-		);
-
-	{% if form.errors %}
-    	$('#mailaccountform-collapser')
-    		.html('{% trans "Cancel" %}')
-    		.removeClass('btn-primary')
-    		.addClass('btn-default');
-	{% endif %}
-
-	</script>
+	{% include "snippets/mail-collapse-js-glue.html" with focus_name='id_name' object_list=mailaccount_list %}
 
 {% endblock extrajs_footer %}

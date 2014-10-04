@@ -1,0 +1,91 @@
+{% extends 'home.html' %}
+{% load sorting_tags %}
+
+{% block title %}{% blocktrans with feed_name=mailfeed.name %}Rules for {{ feed_name }}{% endblocktrans %}{% endblock title %}
+{% block body_id %}mail-feed-rules{% endblock body_id %}
+
+{% block application_content %}
+
+{% inplace_static %}
+
+<div class="spacer50"></div>
+
+<div class="row">
+	<div>
+	{% if mailfeedrule_list %}
+
+		<div class="actions pull-right">
+			<button id="form-collapser" class="btn btn-primary">{% trans "Add new" %}</button>
+		</div>
+
+		<h1>
+			<span>{% blocktrans with feed_name=mailfeed.name %}
+			    Rules for <strong>{{ feed_name }}</strong>
+			{% endblocktrans %}</span>
+			<small class="muted">({{ mailfeedrule_list|length }})</small>
+			<small><a href="{% url 'mailfeed_list_create' %}" class="btn btn-info btn-sm"><i class="icon icon-envelope"></i>&nbsp;&nbsp;{% trans "Back to mail feeds" %}</a></small>
+		</h1>
+
+		<p class="muted">{% trans "Rules can apply to all account (don't choose any)." %}</p>
+
+		<div class="spacer25"></div>
+
+		<table class="table table-hover">
+		<thead>
+
+		  {% include "mailfeedrule/form.html" %}
+
+		  <tr>
+			{% sort_th "Account" 'account' %}
+			{% sort_th "Header" 'header_field' %}
+			{% sort_th "Custom" 'other_header' %}
+			{% sort_th "Match type" 'match_type' %}
+			{% sort_th "Value" 'match_value' %}
+			{% sort_th "Result" 'match_action' %}
+
+			<th class="centered">{% trans "Valid?" %}</th>
+			<th class="right">{% trans "Matches" %}</th>
+			<th class="right">{% trans "Actions" %}</th>
+		  </tr>
+		</thead>
+		<tbody>
+		{% for mailfeedrule in mailfeedrule_list %}
+			<tr>
+				<td>{% inplace_edit 'mailfeedrule.account' %}</td>
+				<td>{% inplace_edit 'mailfeedrule.header_field' %}</td>
+				<td>{% inplace_edit 'mailfeedrule.other_header' %}</td>
+				<td>{% inplace_edit 'mailfeedrule.match_type' %}</td>
+				<td>{% inplace_edit 'mailfeedrule.match_value' %}</td>
+				<td>{% inplace_edit 'mailfeedrule.match_action' %}</td>
+				<td class="centered">{#{% mail_is_usable_to_icon mailfeed %}#}TODO</td>
+				<td class="right">###</td>
+				{% url 'mailfeedrule_delete' mailfeed.pk mailfeedrule.pk as delete_url %}
+				<td class="right">{% include "widgets/delete-form-button.html" %}</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+		</table>
+	{% else %}
+
+		<h2>{% blocktrans with feed_name=mailfeed.name %}
+			    No rule yet for <strong>{{ feed_name }}</strong>.
+			{% endblocktrans %}</h2>
+
+		<div class="spacer50"></div>
+
+		<table class="table">
+			<tbody>
+				{% include "mailfeedrule/form.html" with create_first=1 %}
+			</tbody>
+		</table>
+	{% endif %}
+	</div>
+</div>
+{% endblock application_content %}
+
+{% block extrajs_footer %}
+    {{ block.super }}
+
+	{% include "snippets/mail-collapse-js-glue.html" with focus_name='id_account' object_list=mailfeedrule_list %}
+
+{% endblock extrajs_footer %}

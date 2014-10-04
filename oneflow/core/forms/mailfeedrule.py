@@ -16,17 +16,22 @@ GNU Affero General Public License for more details.
 
 You should have received a copy of the GNU Affero General Public
 License along with 1flow.  If not, see http://www.gnu.org/licenses/
-
 """
 
-from .preferences import (HomePreferencesForm, ReadPreferencesForm,  # NOQA
-                          SelectorPreferencesForm, StaffPreferencesForm)
+import logging
 
-from .selector import (ManageFolderForm, ManageSubscriptionForm,  # NOQA
-                       AddSubscriptionForm, WebPagesImportForm)
+from django import forms
 
-from .read import ReadShareForm  # NOQA
+from ..models import MailFeedRule
 
-from mailaccount import MailAccountForm  # NOQA
-from mailfeed import MailFeedForm  # NOQA
-from mailfeedrule import MailFeedRuleForm  # NOQA
+LOGGER = logging.getLogger(__name__)
+
+
+class MailFeedRuleForm(forms.ModelForm):
+
+    """ A simple mail feed rule model form. """
+
+    class Meta:
+        model = MailFeedRule
+        fields = ('account', 'header_field', 'other_header',
+                  'match_type', 'match_value', 'match_action', )

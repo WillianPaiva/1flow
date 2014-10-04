@@ -1,0 +1,80 @@
+{% extends 'home.html' %}
+{% load sorting_tags %}
+
+{% block title %}{% trans "Mail feeds" %}{% endblock title %}
+{% block body_id %}mail-feeds{% endblock body_id %}
+
+{% block application_content %}
+
+{% inplace_static %}
+
+<div class="spacer50"></div>
+
+<div class="row">
+	<div>
+	{% if mailfeed_list %}
+
+		<div class="actions pull-right">
+			<button id="form-collapser" class="btn btn-primary">{% trans "Add new" %}</button>
+		</div>
+
+		<h1>
+			<span>{% trans "Mail feeds" %}</span>
+			<small class="muted">({{ mailfeed_list|length }})</small>
+			<small><a href="{% url 'mailaccount_list_create' %}" class="btn btn-info btn-sm"><i class="icon icon-exchange"></i>&nbsp;&nbsp;{% trans "Switch to mail accounts" %}</a></small>
+		</h1>
+
+		<p class="muted">{% trans "Mail feeds are sets of rules defining how to examine your e-mail box(es) contents. When e-mails match any rule of a feed, 1flow will either store the whole email in the feed, or can scrap their bodies, looking for links to fetch external articles in the feed.</em>" %}</p>
+
+		<div class="spacer25"></div>
+
+		<table class="table table-hover">
+		<thead>
+
+		  {% include "mailfeed/form.html" %}
+
+		  <tr>
+			{% sort_th "Name" 'name' %}
+			<th>{% trans "Rules" %}</th>
+			<th class="centered">{% trans "Status" %}</th>
+			<th class="right">{% trans "Matches" %}</th>
+			<th class="right">{% trans "Actions" %}</th>
+		  </tr>
+		</thead>
+		<tbody>
+		{% for mailfeed in mailfeed_list %}
+			<tr>
+				<td>{% inplace_edit 'mailfeed.name' %}</td>
+				<td><a href="{% url 'mailfeedrule_list_create' mailfeed.pk %}" class="btn btn-primary btn-xs">{% trans "Manage" %}</a></td>
+				<td class="centered">{#{% mail_is_usable_to_icon mailfeed %}#}TODO</td>
+				<td class="right">###</td>
+				{% url 'mailfeed_delete' mailfeed.pk as delete_url %}
+				<td class="right">{% include "widgets/delete-form-button.html" %}</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+		</table>
+	{% else %}
+
+		<h2>{% blocktrans %}
+		    No mail feed yet.
+		{% endblocktrans %}</h2>
+
+		<div class="spacer50"></div>
+
+		<table class="table">
+			<tbody>
+				{% include "mailfeed/form.html" with create_first=1 %}
+			</tbody>
+		</table>
+	{% endif %}
+	</div>
+</div>
+{% endblock application_content %}
+
+{% block extrajs_footer %}
+    {{ block.super }}
+
+	{% include "snippets/mail-collapse-js-glue.html" with focus_name='id_name' object_list=mailfeed_list %}
+
+{% endblock extrajs_footer %}

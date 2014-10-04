@@ -1,0 +1,42 @@
+
+{% compressed_js 'core' %}
+
+<script type="text/javascript">
+
+$('#form-collapser').on('click', function(e) {
+    e.preventDefault();
+    var $this = $(this);
+    //var $collapse = $this.closest('.collapse-group').find('.collapse');
+    $('.collapsible').collapse('toggle');
+});
+
+$('.collapsible').first()
+	.on('shown.bs.collapse', function(e){
+    	$('#form-collapser')
+    		.html('{% trans "Cancel" %}')
+    		.removeClass('btn-primary')
+    		.addClass('btn-default');
+    	$('#{{ focus_name }}').focus();
+		}
+	)
+	.on('hidden.bs.collapse', function(e){
+		$('#form-collapser')
+			.html('{% trans "Add new" %}')
+			.removeClass('btn-default')
+			.addClass('btn-primary');
+	    }
+	);
+
+{% if form.errors %}
+	$('#form-collapser')
+		.html('{% trans "Cancel" %}')
+		.removeClass('btn-primary')
+		.addClass('btn-default');
+{% endif %}
+
+{% if not object_list %}
+    $('.collapsible').collapse('show');
+	$('#{{ focus_name }}').focus();
+{% endif %}
+
+</script>

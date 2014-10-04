@@ -1,0 +1,38 @@
+
+<form id="mailfeedform"
+	action="{% url 'mailfeed_list_create' %}"
+	method="post" role="form"
+	>
+	{% csrf_token %}
+
+	<tr class="{% if not form.errors %}collapse{% endif %} collapsible">
+        <td colspan="{{ form.fields|length|add:4 }}"><h3>{% if create_first %}{% trans "Please create your first one:" %}{% else %}{% trans "Please fill parameters for a new mail feed" %}{% endif %}</h3></td>
+    </tr>
+    <tr class="{% if not form.errors %}collapse{% endif %} collapsible">
+
+        {% for field in form %}
+        	<td>
+
+            {% include "widgets/forms/field-generic.html" with field=field %}
+
+            {% if forloop.last %}
+
+            	</td>
+            	<td {% if not create_first %}colspan="4"{% endif %}
+            		class="right">
+
+			    	<input class="btn btn-primary" type="submit"
+			    		value="{% trans "Save" %}" />
+
+            {% endif %}
+
+        	</td>
+
+        {% endfor %}
+
+	</tr>
+    <tr class="{% if not form.errors %}collapse{% endif %} collapsible">
+        <td colspan="{{ form.fields|length|add:4 }}">&nbsp;</td>
+    </tr>
+
+</form>
