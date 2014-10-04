@@ -312,6 +312,14 @@ CONSTANCE_CONFIG = {
                                      u'considered informational.')),
 
 
+    # ——————————————————————————————————————————————————————————— Mail accounts
+
+
+    'MAIL_ACCOUNT_REFRESH_PERIOD': (3600*6, ugettext(u'Period after which '
+                                    u'IMAP accounts will be tested again '
+                                    u'for connection and mailbox listing.')),
+
+
     # ————————————————————————————————————————————————————————————— Check tasks
 
 
