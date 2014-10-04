@@ -380,3 +380,28 @@ header {
 
     display: none;
 }
+
+// —————————————————————————————————————————————————————————————— Mail accounts
+
+#mail-accounts,
+#mail-feeds,
+#mail-feed-rules {
+    table h3 {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    table tr.collapsible:last-of-type {
+        padding-bottom: 50px;
+    }
+
+    .form-group {
+        label {
+            margin-top: 9px;
+        }
+
+        .controls {
+            margin-top: 11px;
+        }
+    }
+}

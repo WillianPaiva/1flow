@@ -4,31 +4,37 @@
 	method="post" role="form"
 	>
 	{% csrf_token %}
-	<tr class="{% if not form.errors %}collapse{% endif %}" id="mailaccountform-collapsible">
+	<tr class="{% if not form.errors %}collapse{% endif %} collapsible">
+        <td colspan="{{ form.fields|length|add:4 }}"><h3>{% if create_first %}{% trans "Please create your first one:" %}{% else %}{% trans "Please fill parameters for a new mail account" %}{% endif %}</h3></td>
+    </tr>
+    <tr class="{% if not form.errors %}collapse{% endif %} collapsible">
+
         {% for field in form %}
-        	<td>
 
-        	{% if field.name == 'port' or field.name == 'use_ssl' %}
+        	<td {% if field.name == 'hostname' %}colspan="2"{% endif %}>
 
-            {% include "widgets/forms/field-generic.html" with field=field field_label_css_class='' field_input_css_class='' field_error_css_class='' field_help_css_class='' %}
+        	{% if field.name == 'use_ssl' %}
+
+            {% include "widgets/forms/field-generic-nohelp.html" with field=field field_label_css_class='col-sm-8' field_input_css_class='col-sm-1' %}
+
+            {% elif field.name == 'port' %}
+
+            {% include "widgets/forms/field-generic-nohelp.html" with field=field field_input_css_class='col-sm-6' %}
 
         	{% else %}
 
-            {% include "widgets/forms/field-generic.html" with field=field field_label_css_class='col-sm-5 right' field_input_css_class='col-sm-7' field_error_css_class='col-sm-7 col-sm-offset-5' field_help_css_class='col-sm-7 col-sm-offset-5' %}
+            {% include "widgets/forms/field-generic-label-as-placeholder.html" with field=field field_input_css_class=' ' field_error_css_class=' ' field_help_css_class=' ' %}
 
         	{% endif %}
-
 
             {% if forloop.last %}
 
             	</td>
-            	<td>
+            	<td {% if not create_first %}colspan="3"{% endif %}
+                    class="right">
 
-		      <div class="pull-right">
-
-		    	<input class="btn btn-primary" type="submit"
-		    		value="{% trans "Save" %}" />
-		      </div>
+    		    	<input class="btn btn-primary" type="submit"
+    		    		value="{% trans "Save" %}" />
 
             {% endif %}
 
@@ -36,4 +42,8 @@
 
         {% endfor %}
 	</tr>
+    <tr class="{% if not form.errors %}collapse{% endif %} collapsible">
+        <td colspan="{{ form.fields|length|add:4 }}">&nbsp;</td>
+    </tr>
+
 </form>

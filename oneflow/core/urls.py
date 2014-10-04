@@ -254,6 +254,26 @@ urlpatterns = patterns(
     #         views.MailAccountUpdateView.as_view())),
     #     name='mailaccount_update'),
 
+    url(_(ur'^mailfeed/?$'),
+        login_required(never_cache(
+            views.MailFeedListCreateView.as_view())),
+        name='mailfeed_list_create'),
+
+    url(_(ur'^mailfeed/(?P<pk>\d+)/delete/?$'),
+        login_required(never_cache(
+            views.MailFeedDeleteView.as_view())),
+        name='mailfeed_delete'),
+
+    url(_(ur'^mailfeed/(?P<mailfeed_pk>\d+)/rules/?$'),
+        login_required(never_cache(
+            views.MailFeedRuleListCreateView.as_view())),
+        name='mailfeedrule_list_create'),
+
+    url(_(ur'^mailfeed/(?P<mailfeed_pk>\d+)/rule/(?P<pk>\d+)/delete/?$'),
+        login_required(never_cache(
+            views.MailFeedRuleDeleteView.as_view())),
+        name='mailfeedrule_delete'),
+
     # •••••••••••••••••••••••••••••••••••••••••••••••••••••••••••  Google Reader
 
     url(_(ur'^grimport/(?:(?P<user_id>\d+)/)?$'),
