@@ -206,6 +206,8 @@ class Subscription(Document, DocumentHelperMixin):
             subscription.save()
 
         if background:
+            # HEADS UP: this task name will be registered later
+            # by the register_task_method() call.
             # 'True' is for the 'force' argument.
             subscription_check_reads_task.delay(subscription.id, True)
 
