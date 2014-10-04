@@ -1,0 +1,9 @@
+{% extends "widgets/forms/field-generic.html" %}
+
+{% block field_label %}{# intentionally empty, no label #}{% endblock field_label %}
+
+{% block field_input_field %}
+    {% render_field field class+="form-control full-width" placeholder=field.label %}
+{% endblock field_input_field %}
+
+{% block field_held_text %}{# No help, this is intended #}{% endblock field_held_text %}
