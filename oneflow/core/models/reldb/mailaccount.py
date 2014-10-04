@@ -22,17 +22,37 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 import imaplib
 import logging
 
+from constance import config
+
 from django.db import models
-# from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as __
 # from django.utils.text import slugify
+
+from ....base.fields import TextRedisDescriptor
+from ....base.utils import register_task_method
 
 from sparks.django.models import ModelDiffMixin
 
-from oneflow.base.utils.dateutils import now
+from oneflow.base.utils.dateutils import now, timedelta
 
 from common import long_in_the_past, DjangoUser  # , REDIS
 
 LOGGER = logging.getLogger(__name__)
+
+__all__ = [
+    'mailaccount_mailboxes_default',
+    'MailAccount',
+]
+
+
+def mailaccount_mailboxes_default(mailaccount):
+    """ Build a MailAccount mailboxes default value. """
+
+    try:
+        return mailaccount.imap_list_mailboxes(as_text=True)
+
+    except:
+        return u''
 
 
 class MailAccount(ModelDiffMixin):
@@ -41,6 +61,29 @@ class MailAccount(ModelDiffMixin):
 
     1flow create feeds from them.
     """
+
+    MAILBOXES_STRING_SEPARATOR = u'~|~'
+
+    MAILBOXES_BLACKLIST = (
+        'INBOX.Drafts',
+        'INBOX.Trash',
+        'INBOX.Sent Messages',
+        'INBOX.Sent',
+        'INBOX.Spam',
+        'INBOX.Junk',
+        'INBOX.INBOX.Junk',
+        'INBOX.Deleted Messages',
+
+        __(u'INBOX.Drafts'),
+        __(u'INBOX.Trash'),
+        __(u'INBOX.Sent Messages'),
+        __(u'INBOX.Sent'),
+        __(u'INBOX.Spam'),
+        __(u'INBOX.Junk'),
+        __(u'INBOX.INBOX.Junk'),
+        __(u'INBOX.Deleted Messages'),
+
+    )
 
     user = models.ForeignKey(DjangoUser)
     name = models.CharField(max_length=128, blank=True)
@@ -57,9 +100,49 @@ class MailAccount(ModelDiffMixin):
     conn_error = models.CharField(max_length=255, default=u'', blank=True)
     is_usable = models.BooleanField(default=True, blank=True)
 
+    _mailboxes_ = TextRedisDescriptor(
+        attr_name='ma.mb', default=mailaccount_mailboxes_default,
+        set_default=True)
+
     class Meta:
         app_label       = 'core'
         unique_together = ('user', 'hostname', 'username', )
+
+    @property
+    def mailboxes(self):
+        """ Return a list of mailboxes of the account.
+
+        If it was refreshed too long in the past, rebuild the list.
+        """
+        _mailboxes_ = self._mailboxes_
+
+        if not self.recently_usable or not _mailboxes_:
+            # HEADS UP: this task name will be registered later
+            # by the register_task_method() call.
+            mailaccount_update_mailboxes_task.delay(self.pk)
+
+        if not _mailboxes_:
+            return []
+
+        return _mailboxes_.split(self.MAILBOXES_STRING_SEPARATOR)
+
+    @property
+    def recently_usable(self):
+        """ Return True if the account has been tested/connected recently. """
+
+        return self.is_usable and (
+            now() - self.date_last_conn
+            < timedelta(seconds=config.MAIL_ACCOUNT_REFRESH_PERIOD))
+
+    def update_mailboxes(self):
+        """ Simply update the remote mailboxes names.
+
+        .. note:: this method is registered as a task in Celery.
+        """
+
+        self._mailboxes_ = mailaccount_mailboxes_default(self)
+
+        LOGGER.info(u'%s mailboxes list updated.', self)
 
     def save(self, *args, **kwargs):
         """ Automatically add a name/username if none is given. """
@@ -73,7 +156,9 @@ class MailAccount(ModelDiffMixin):
         if self.password is None:
             self.password = u''
 
+        # Keep them before save(), they will reset
         changed_fields = self.changed_fields
+        previous_pk = self.pk
 
         if 'hostname' in changed_fields \
             or 'username' in changed_fields \
@@ -82,7 +167,12 @@ class MailAccount(ModelDiffMixin):
                 or 'port' in changed_fields:
             self.reset_unusable(commit=False)
 
-        return super(MailAccount, self).save(*args, **kwargs)
+        super(MailAccount, self).save(*args, **kwargs)
+
+        # We must test the PK *after* save(), else the task
+        # in reset_unusable() will be run with pk = None…
+        if previous_pk is None:
+            self.reset_unusable()
 
     def __unicode__(self):
         """ OMG, that's __unicode__, pep257. """
@@ -112,6 +202,11 @@ class MailAccount(ModelDiffMixin):
         if commit:
             self.save()
 
+        # HEADS UP: this task name will be registered later
+        # by the register_task_method() call.
+        mailaccount_test_connection_task.apply_async(args=(self.pk, ),
+                                                     countdown=3)
+
     def mark_unusable(self, message, args=(), exc=None, commit=True):
         """ Mark account unsable with date & message, log exception if any. """
 
@@ -132,12 +227,25 @@ class MailAccount(ModelDiffMixin):
     def mark_usable(self, commit=True):
         """ Mark the account usable and clear error. """
 
+        LOGGER.info(u'%s is now usable.', self)
+
+        if self.is_usable:
+            start_task = False
+
+        else:
+            start_task = True
+
         self.date_last_conn = now()
         self.conn_error = u''
         self.is_usable = True
 
         if commit:
             self.save()
+
+        if start_task:
+            # HEADS UP: this task name will be registered later
+            # by the register_task_method() call.
+            mailaccount_update_mailboxes_task.delay(self.pk)
 
     def imap_connect(self):
         """ Return an IMAP mail connection, either SSL or not. """
@@ -177,9 +285,10 @@ class MailAccount(ModelDiffMixin):
     def test_connection(self, force=False):
         """ test connection and report any error. """
 
-        if self.is_usable and now() - self.date_last_conn < 3600 \
-                and not force:
+        if self.recently_usable and not force:
             return
+
+        LOGGER.info(u'Testing connection of %s', self)
 
         mail = self.imap_connect()
 
@@ -188,3 +297,44 @@ class MailAccount(ModelDiffMixin):
         self.imap_select(mail, u'INBOX')
 
         self.mark_usable()
+
+    def imap_list_mailboxes(self, mail=None, as_text=False):
+        """ List remote IMAP mailboxes.
+
+        .. note:: This method always connect,
+            regardless of :attr:`recently_usable`.
+        """
+
+        if mail is None:
+            mail = self.imap_connect()
+
+        self.imap_login(mail)
+
+        try:
+            result, data = mail.list()
+
+        except Exception as e:
+            self.mark_unusable(u'Could not list account mailboxes', exc=e)
+            raise
+
+        mailboxes = []
+
+        if result == 'OK':
+            for line in data:
+                mailbox = line.split(' "." ')[1].replace('"', '')
+
+                if mailbox not in self.MAILBOXES_BLACKLIST:
+                    mailboxes.append(mailbox)
+
+            if as_text:
+                return self.MAILBOXES_STRING_SEPARATOR.join(mailboxes)
+
+            self.mark_usable()
+
+            return mailboxes
+
+
+register_task_method(MailAccount, MailAccount.test_connection,
+                     globals(), u'swarm')
+register_task_method(MailAccount, MailAccount.update_mailboxes,
+                     globals(), u'low')
