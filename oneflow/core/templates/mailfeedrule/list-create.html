@@ -14,21 +14,48 @@
 	<div>
 	{% if mailfeedrule_list %}
 
-		<div class="actions pull-right">
-			<button id="form-collapser" class="btn btn-primary">{% trans "Add new" %}</button>
+		 <div class="actions pull-right">
+		 	<div class="btn-group very-muted">
+		 		{% blocktrans count counter=mailfeedrule_list|length %}
+		 		    {{ counter }} rule
+		 		{% plural %}
+					{{ counter }} rules
+		 		{% endblocktrans %}
+		 	</div>
+			<div class="btn-group" style="margin-left: 50px;">
+				<button id="form-collapser" class="btn btn-primary">{% trans "Add new" %}</button>
+			</div>
 		</div>
 
 		<h1>
-			<span>{% blocktrans with feed_name=mailfeed.name %}
+			<a href="{% url 'mailaccount_list_create' %}"
+				title="{% trans "Switch to mail accounts" %}"
+				data-toggle="tooltip"
+				class="popover-top"><i
+				class="icon icon-exchange"></i>
+			</a>
+
+			<span class="very-muted">&nbsp;&nbsp;
+			<i class="icon icon-angle-right"></i>
+			&nbsp;&nbsp;</span>
+
+			<a href="{% url 'mailfeed_list_create' %}"
+				title="{% trans "Back to mail feeds" %}"
+				data-toggle="tooltip"
+				class="popover-top"><i
+				class="icon icon-envelope"></i>
+			</a>
+
+			<span class="very-muted">&nbsp;&nbsp;
+			<i class="icon icon-angle-right"></i>
+			&nbsp;&nbsp;</span>
+
+			<span><i class="icon icon-cogs"></i>&nbsp;{% blocktrans with feed_name=mailfeed.name %}
 			    Rules for <strong>{{ feed_name }}</strong>
 			{% endblocktrans %}</span>
-			<small class="muted">({{ mailfeedrule_list|length }})</small>
-			<small><a href="{% url 'mailfeed_list_create' %}" class="btn btn-info btn-sm"><i class="icon icon-envelope"></i>&nbsp;&nbsp;{% trans "Back to mail feeds" %}</a></small>
 		</h1>
 
-		<p class="muted">{% trans "Rules can apply to all account (don't choose any)." %}</p>
-
-		<div class="spacer25"></div>
+		<div class="spacer50"></div>
 
 		<table class="table table-hover">
 		<thead>
@@ -36,12 +63,12 @@
 		  {% include "mailfeedrule/form.html" %}
 
 		  <tr>
-			{% sort_th "Account" 'account' %}
-			{% sort_th "Header" 'header_field' %}
-			{% sort_th "Custom" 'other_header' %}
-			{% sort_th "Match type" 'match_type' %}
-			{% sort_th "Value" 'match_value' %}
-			{% sort_th "Result" 'match_action' %}
+			{% sort_th _("Account") 'account' %}
+			{% sort_th _("Header") 'header_field' %}
+			{% sort_th _("Custom") 'other_header' %}
+			{% sort_th _("Match type") 'match_type' %}
+			{% sort_th _("Value") 'match_value' %}
+			{% sort_th _("Result") 'match_action' %}
 
 			<th class="centered">{% trans "Valid?" %}</th>
 			<th class="right">{% trans "Matches" %}</th>
@@ -67,7 +94,8 @@
 		</table>
 	{% else %}
 
-		<h2>{% blocktrans with feed_name=mailfeed.name %}
+		<h2><i class="icon icon-cogs"></i>&nbsp;
+			{% blocktrans with feed_name=mailfeed.name %}
 			    No rule yet for <strong>{{ feed_name }}</strong>.
 			{% endblocktrans %}</h2>
 
@@ -79,6 +107,11 @@
 			</tbody>
 		</table>
 	{% endif %}
+
+		<div class="spacer50"></div>
+
+		<p class="muted">{% trans "Rules can apply to all account: for that case, just don't choose any." %}</p>
+
 	</div>
 </div>
 {% endblock application_content %}
