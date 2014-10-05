@@ -391,6 +391,15 @@ header {
         margin-bottom: 0;
     }
 
+    h1 a {
+        &:link,
+        &:hover,
+        &:active,
+        &:visited {
+            text-decoration: none;
+        }
+    }
+
     table tr.collapsible:last-of-type {
         padding-bottom: 50px;
     }

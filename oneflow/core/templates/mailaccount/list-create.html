@@ -14,19 +14,37 @@
 	<div>
 	{% if mailaccount_list %}
 
-		<div class="actions pull-right">
-			<button id="form-collapser" class="btn btn-primary">{% trans "Add new" %}</button>
+		 <div class="actions pull-right">
+		 	<div class="btn-group very-muted">
+		 		{% blocktrans count counter=mailaccount_list|length %}
+		 		    {{ counter }} mail account
+		 		{% plural %}
+					{{ counter }} mail accounts
+		 		{% endblocktrans %}
+		 	</div>
+			<div class="btn-group" style="margin-left: 50px;">
+				<button id="form-collapser" class="btn btn-primary">{% trans "Add new" %}</button>
+			</div>
 		</div>
 
 		<h1>
-			<span>{% trans "Mail accounts" %}</span>
-			<small class="muted">({{ mailaccount_list|length }})</small>
-			<small><a href="{% url 'mailfeed_list_create' %}" class="btn btn-info btn-sm"><i class="icon icon-exchange"></i>&nbsp;&nbsp;{% trans "Switch to mail feeds" %}</a></small>
+			<a href="{% url 'mailfeed_list_create' %}"
+				title="{% trans "Switch to mail feeds" %}"
+				data-toggle="tooltip"
+				class="popover-top"><i
+				class="icon icon-envelope"></i>
+			</a>
+
+			<span class="very-muted">&nbsp;&nbsp;
+			<i class="icon icon-angle-left"></i>
+			<i class="icon icon-angle-right"></i>
+			&nbsp;&nbsp;</span>
+
+			<span><i class="icon icon-exchange"></i>&nbsp;
+			{% trans "Mail accounts" %}</span>
 		</h1>
 
-		<p class="muted">{% trans "Mail accounts allow the 1flow engine to access your e-mail box(es), even when you are not logged in. <strong>Note:</strong> <em>1flow only supports IMAP e-mail accounts.</em>" %}</p>
-
-		<div class="spacer25"></div>
+		<div class="spacer50"></div>
 
 		<table class="table table-hover">
 		<thead>
@@ -34,12 +52,12 @@
 		  {% include "mailaccount/form.html" %}
 
 		  <tr>
-			{% sort_th "Name" 'name' %}
+			{% sort_th _("Account name") 'name' %}
 			<th class="centered">{% trans "Status" %}</th>
-			{% sort_th "Hostname" 'hostname' %}
+			{% sort_th _("Hostname") 'hostname' %}
 			<th class="right">{% trans "SSL/TLS" %}</th>
 			<th>{% trans "Port" %}</th>
-			{% sort_th "Username" 'username' %}
+			{% sort_th _("Username") 'username' %}
 			<th>{% trans "password" %}</th>
 			<th class="right">{% trans "Feeds" %}</th>
 			<th class="right">{% trans "Mailboxes" %}</th>
@@ -71,7 +89,7 @@
 		</table>
 	{% else %}
 
-		<h2>{% blocktrans %}
+		<h2><i class="icon icon-exchange"></i>&nbsp;{% blocktrans %}
 		    No mail account yet.
 		{% endblocktrans %}</h2>
 
@@ -84,6 +102,11 @@
 		</table>
 
 	{% endif %}
+
+	<div class="spacer50"></div>
+	<p class="muted">{% trans "Mail accounts allow the 1flow engine to access your e-mail box(es), even when you are not logged in.<br /><strong>Note:</strong> <em>1flow only supports IMAP e-mail accounts.</em>" %}</p>
+
+
 	</div>
 </div>
 {% endblock application_content %}
