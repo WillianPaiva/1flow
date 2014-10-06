@@ -38,7 +38,7 @@ class MailFeedRuleListCreateView(mixins.ListCreateViewMixin,
     """ Mix create and list views for mail feeds. """
 
     model = models.MailFeedRule
-    default_sort_param = 'account'
+    default_sort_param = 'position'
     default_filter_param = 'all'
     form_class = forms.MailFeedRuleForm
     template_name = 'mailfeedrule/list-create.html'
