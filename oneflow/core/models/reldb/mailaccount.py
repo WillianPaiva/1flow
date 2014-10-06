@@ -22,10 +22,11 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 import imaplib
 import logging
 
+from collections import OrderedDict
 from constance import config
 
 from django.db import models
-from django.utils.translation import ugettext_lazy as __
+from django.utils.translation import ugettext_lazy as _
 # from django.utils.text import slugify
 
 from ....base.fields import TextRedisDescriptor
@@ -74,27 +75,39 @@ class MailAccount(ModelDiffMixin):
         'INBOX.INBOX.Junk',
         'INBOX.Deleted Messages',
 
-        __(u'INBOX.Drafts'),
-        __(u'INBOX.Trash'),
-        __(u'INBOX.Sent Messages'),
-        __(u'INBOX.Sent'),
-        __(u'INBOX.Spam'),
-        __(u'INBOX.Junk'),
-        __(u'INBOX.INBOX.Junk'),
-        __(u'INBOX.Deleted Messages'),
+        _(u'INBOX.Drafts'),
+        _(u'INBOX.Trash'),
+        _(u'INBOX.Sent Messages'),
+        _(u'INBOX.Sent'),
+        _(u'INBOX.Spam'),
+        _(u'INBOX.Junk'),
+        _(u'INBOX.INBOX.Junk'),
+        _(u'INBOX.Deleted Messages'),
 
     )
 
+    MAILBOXES_COMMON = OrderedDict((
+        (u'INBOX', _(u'Inbox')),
+    ))
+
+    # NOTE: MAILBOXES_BLACKLIST is in MailAccount.
+
     user = models.ForeignKey(DjangoUser)
-    name = models.CharField(max_length=128, blank=True)
+    name = models.CharField(verbose_name=_(u'Account name'),
+                            max_length=128, blank=True)
 
     # cf. http://en.wikipedia.org/wiki/Hostname
-    hostname = models.CharField(max_length=255)
+    hostname = models.CharField(verbose_name=_(u'Server hostname'),
+                                max_length=255)
 
-    use_ssl = models.BooleanField(default=True, blank=True)
-    port = models.IntegerField(null=True, blank=True)
-    username = models.CharField(max_length=255, blank=True)
-    password = models.CharField(max_length=255, default=u'', blank=True)
+    use_ssl = models.BooleanField(verbose_name=_(u'Use SSL/TLS?'),
+                                  default=True, blank=True)
+    port = models.IntegerField(verbose_name=_(u'Service port'),
+                               null=True, blank=True)
+    username = models.CharField(verbose_name=_(u'Username'),
+                                max_length=255, blank=True)
+    password = models.CharField(verbose_name=_(u'Password'),
+                                max_length=255, default=u'', blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_last_conn = models.DateTimeField(default=long_in_the_past)
     conn_error = models.CharField(max_length=255, default=u'', blank=True)

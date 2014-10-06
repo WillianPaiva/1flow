@@ -21,8 +21,11 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 import logging
 
 from django import forms
+from django.utils.translation import ugettext as _
 
-from ..models import MailFeedRule
+from ..models import MailAccount, MailFeedRule
+
+from oneflow.base.utils import get_common_values
 
 LOGGER = logging.getLogger(__name__)
 
@@ -101,4 +104,5 @@ class MailFeedRuleForm(forms.ModelForm):
     class Meta:
         model = MailFeedRule
         fields = ('account', 'header_field', 'other_header',
-                  'match_type', 'match_value', 'match_action', )
+                  'match_type', 'match_value', 'match_action',
+                  'finish_action', )
