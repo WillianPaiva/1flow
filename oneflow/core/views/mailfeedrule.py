@@ -86,6 +86,24 @@ class MailFeedRuleListCreateView(mixins.ListCreateViewMixin,
 #     success_url = reverse_lazy('mailfeed_index')
 
 
+class MailFeedRulePositionUpdateView(generic.UpdateView):
+
+    """ Simple view to update mail feed rule position.
+
+    .. todo:: if possible, refactor this for any kind
+        of model which as a position attribute.
+    """
+
+    model = models.MailFeedRule
+    form_class = forms.MailFeedRulePositionForm
+
+    def get_success_url(self):
+        """ Return to our mail feed rules list. """
+
+        return reverse('mailfeedrule_list_create',
+                       args=(self.kwargs['mailfeed_pk'], ))
+
+
 class MailFeedRuleDeleteView(generic.DeleteView):
 
     """ Delete a mail account. """

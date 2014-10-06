@@ -29,4 +29,4 @@ from .read import ReadShareForm  # NOQA
 
 from mailaccount import MailAccountForm  # NOQA
 from mailfeed import MailFeedForm  # NOQA
-from mailfeedrule import MailFeedRuleForm  # NOQA
+from mailfeedrule import MailFeedRuleForm, MailFeedRulePositionForm  # NOQA

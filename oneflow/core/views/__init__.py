@@ -278,7 +278,11 @@ def help(request):
 
 from mailaccount import MailAccountListCreateView, MailAccountDeleteView  # NOQA
 from mailfeed import MailFeedListCreateView, MailFeedDeleteView  # NOQA
-from mailfeedrule import MailFeedRuleListCreateView, MailFeedRuleDeleteView  # NOQA
+from mailfeedrule import (  # NOQA
+    MailFeedRuleListCreateView,
+    MailFeedRulePositionUpdateView,
+    MailFeedRuleDeleteView,
+)
 
 from folder import manage_folder, delete_folder  # NOQA
 

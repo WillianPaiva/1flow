@@ -106,3 +106,12 @@ class MailFeedRuleForm(forms.ModelForm):
         fields = ('account', 'header_field', 'other_header',
                   'match_type', 'match_value', 'match_action',
                   'finish_action', )
+
+
+class MailFeedRulePositionForm(forms.ModelForm):
+
+    """ A mail feed rule model form to update its position in list. """
+
+    class Meta:
+        model = MailFeedRule
+        fields = ('position', )
