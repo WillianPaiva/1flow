@@ -617,8 +617,29 @@ def read_status_css_styles():
 
 # —————————————————————————————————————————————————————————— Mail accounts tags
 
+
+@register.simple_tag
+def core_icon(klass_name):
+    """ Centralize all model icons and render them. """
+
+    return u'<i class="icon icon-{0} icon-fixed-width"></i>'.format({
+        'MailAccount': 'inbox',
+        'MailFeed': 'envelope',
+        'MailFeedRule': 'random',
+    }[klass_name])
+
+
 @register.simple_tag
 def mail_is_usable_to_icon(mailthing):
+    """ Render an icon with tooltip, given account state. """
+
+    # {% if mailaccount.is_usable %}
+    # {% mailfeed_rules_count mailaccount %}</td>
+    # <td class="right">{{ mailaccount.mailboxes|length }}</td>
+    # {% else %}
+    # <td></td>
+    # <td></td>
+    # {% endif %}
 
     template = (u'<span class="label label-{0}" title="{2}" '
                 u'data-toggle="tooltip" data-placement="top">'
