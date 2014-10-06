@@ -24,7 +24,7 @@ import logging
 from collections import OrderedDict
 
 from django.db import models
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 # from django.utils.translation import ugettext as _
 # from django.utils.text import slugify
@@ -41,8 +41,58 @@ class MailFeed(models.Model):
 
     """ Configuration of a mail-based 1flow feed. """
 
-    name = models.CharField(max_length=255)
+    MATCH_ACTION_CHOICES = OrderedDict((
+        (u'store', _(u'store email in the feed')),
+        (u'scrape', _(u'scrape email, extract links and fetch articles')),
+        (u'scroarpe',
+         _(u'do both, eg. store email and extract links / fetch articles')),
+    ))
+
+    FINISH_ACTION_CHOICES = OrderedDict((
+        (u'nothing', _(u'leave e-mail untouched')),
+        (u'markread', _(u'mark e-mail read')),
+        (u'delete', _(u'delete e-mail')),
+    ))
+
+    name = models.CharField(max_length=255, verbose_name=_(u'Feed name'))
     user = models.ForeignKey(DjangoUser)
+
+    match_action =  models.CharField(
+        verbose_name=_(u'Match action'),
+        max_length=10, default=u'store',
+        choices=tuple(MATCH_ACTION_CHOICES.items()),
+        help_text=_(u'Defines a global match action '
+                    u'for all rules of the feed. You '
+                    u'can override this value at the '
+                    u'rule level, only for the ones '
+                    u'you want.'))
+
+    finish_action =  models.CharField(
+        verbose_name=_(u'Finish action'),
+        max_length=10, default=u'nothing',
+        choices=tuple(FINISH_ACTION_CHOICES.items()),
+        help_text=_(u'Defines a global finish action '
+                    u'for all rules of the feed. You '
+                    u'can override this value at the '
+                    u'rule level, only for the ones '
+                    u'you want.'))
+
+    #
+    # HEADS UP: 20141004, these fields are not used yet in the engine.
+    #
+    scrape_whitelist = models.CharField(
+        null=True, blank=True, max_length=1024,
+        verbose_name=_(u'Scrape whitelist'),
+        help_text=_(u'Eventually refine URLs you want to scrape in '
+                    u'the email body. Type a list of valid URLs '
+                    u'patterns, and start with “re:” if you want '
+                    u'to use a regular expression.'))
+
+    scrape_blacklist = models.BooleanField(
+        default=True, blank=True,
+        verbose_name=_(u'Use scrape blacklist'),
+        help_text=_(u'Use 1flow adblocker to avoid scrapeing '
+                    u'email adds, unsubscribe links and the like.'))
 
     class Meta:
         app_label = 'core'
@@ -67,17 +117,11 @@ class MailFeedRule(models.Model):
     INPLACEEDIT_PARENTCHAIN = ('mailfeed', )
 
     HEADER_FIELD_CHOICES = OrderedDict((
-        (u'any', _(u'Any')),
         (u'subject', _(u'Subject')),
         (u'from', _(u'Sender')),
-        (u'to', _(u'Receipient (eg. To:, Cc: or Cci:)')),
+        (u'to', _(u'Receipient (To:, Cc: or Cci:)')),
         (u'list', _(u'Mailing-list')),
-        (u'other', _(u'Other header (please type)')),
-    ))
-
-    MAILBOX_CHOICES = OrderedDict((
-        (u'', _(u'All')),
-        (u'INBOX', _(u'Inbox')),
+        (u'other', _(u'Other header (please specify)')),
     ))
 
     MATCH_TYPE_CHOICES = OrderedDict((
@@ -92,40 +136,52 @@ class MailFeedRule(models.Model):
         (u're_match', _(u'Manual regular expression')),
     ))
 
-    MATCH_ACTION_CHOICES = OrderedDict((
-        (u'store', _(u'store email')),
-        (u'scrap', _(u'scrap email body')),
-    ))
-
     mailfeed = models.ForeignKey(MailFeed)
-    account = models.ForeignKey(MailAccount, null=True, blank=True)
-    # mailbox = models.CharField(max_length=255, default=u'INBOX',
-    #                           choices=tuple(MAILBOX_CHOICES.items()))
-    header_field = models.CharField(max_length=10, default=u'any',
-                                    choices=tuple(HEADER_FIELD_CHOICES.items()))
-    other_header = models.CharField(max_length=255, null=True, blank=True)
-    match_type = models.CharField(max_length=10, default=u'contains',
-                                  choices=tuple(MATCH_TYPE_CHOICES.items()))
-    match_value = models.CharField(default=u'', max_length=1024)
+    account = models.ForeignKey(MailAccount, null=True, blank=True,
+                                verbose_name=_(u'Mail account'),
+                                help_text=_(u"To apply this rule to all "
+                                            u"accounts, just don't choose "
+                                            u"any."))
+    mailbox = models.CharField(verbose_name=_(u'Mailbox'),
+                               max_length=255, default=u'INBOX',
+                               null=True, blank=True)
+    recurse_mailbox = models.BooleanField(verbose_name=_(u'Recurse mailbox'),
+                                          default=True, blank=True)
+    header_field = models.CharField(verbose_name=_(u'Header'),
+                                    max_length=10, default=u'any',
+                                    choices=tuple(HEADER_FIELD_CHOICES.items()),
+                                    help_text=_(u"E-mail field on which the "
+                                                u"match type is applied."))
+    other_header = models.CharField(verbose_name=_(u'Other header'),
+                                    max_length=255, null=True, blank=True,
+                                    help_text=_(u"Specify here if you chose "
+                                                u"“Other header” in previous "
+                                                u"field."))
+    match_type = models.CharField(verbose_name=_(u'Match type'),
+                                  max_length=10, default=u'contains',
+                                  choices=tuple(MATCH_TYPE_CHOICES.items()),
+                                  help_text=_(u"Operation applied on the "
+                                              u"header to compare with match "
+                                              u"value."))
+    match_value = models.CharField(verbose_name=_(u'Match value'),
+                                   default=u'', max_length=1024,
+                                   help_text=_(u"Examples: “Tweet de”, "
+                                               u"“Google Alert:”. Can be "
+                                               u"any text."))
 
-    match_action = models.CharField(max_length=10, default=u'store',
-                                    choices=tuple(MATCH_ACTION_CHOICES.items()))
+    match_action = models.CharField(
+        verbose_name=_(u'Action when matched'),
+        max_length=10, null=True, blank=True,
+        choices=tuple(MailFeed.MATCH_ACTION_CHOICES.items()),
+        help_text=_(u'Choose nothing to execute '
+                    u'action defined at the feed level.'))
 
-    #
-    # HEADS UP: 20141004, these fields are not used yet in the engine.
-    #
-    scrap_refine = models.CharField(null=True, blank=True, max_length=1024,
-                                    help_text=_(u'Eventually refine URLs you '
-                                                u'want to scrap in the email '
-                                                u'body. Type a list of valid '
-                                                u'URLs patterns, and start '
-                                                u'with “re:” if you want to '
-                                                u'use a regular expression.'))
-
-    scrap_adblock = models.BooleanField(default=True, blank=True,
-                                        help_text=_(u'Use 1flow adblocker to '
-                                                    u'avoid scrapping email '
-                                                    u'adds.'))
+    finish_action =  models.CharField(
+        verbose_name=_(u'Finish action'),
+        max_length=10, null=True, blank=True,
+        choices=tuple(MailFeed.FINISH_ACTION_CHOICES.items()),
+        help_text=_(u'Choose nothing to execute '
+                    u'action defined at the feed level.'))
 
     # Used to have many times the same rule in different feeds
     clone_of = models.ForeignKey('MailFeedRule', null=True, blank=True)
@@ -141,11 +197,14 @@ class MailFeedRule(models.Model):
             else _(u'account {0}').format(self.account),
             self.mailfeed,
             self.id,
-            _(u'{0} {1} “{2}” → {3}').format(
+            _(u'{0} {1} “{2}” → {3} → {4}').format(
                 self.other_header
                 if self.header_field == u'other'
                 else self.HEADER_FIELD_CHOICES[self.header_field],
                 self.MATCH_TYPE_CHOICES[self.match_type],
                 self.match_value,
-                self.MATCH_ACTION_CHOICES[self.match_action]
+                MailFeed.MATCH_ACTION_CHOICES.get(self.match_action,
+                                                  _(u'feed default')),
+                MailFeed.FINISH_ACTION_CHOICES.get(self.finish_action,
+                                                   _(u'feed default')),
             ))
