@@ -186,10 +186,11 @@ class MailFeedRule(models.Model):
 
     # Used to have many times the same rule in different feeds
     clone_of = models.ForeignKey('MailFeedRule', null=True, blank=True)
-    position = PositionField(collection='mailfeed', default=0)
+    position = PositionField(collection='mailfeed', default=0, blank=True)
 
     class Meta:
         app_label = 'core'
+        ordering = ('position', )
 
     def __unicode__(self):
         """ OMG, that's __unicode__, pep257. """
