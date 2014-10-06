@@ -5,7 +5,7 @@
 	>
 	{% csrf_token %}
 	<tr class="{% if not form.errors %}collapse{% endif %} collapsible">
-        <td colspan="{{ form.fields|length|add:4 }}"><h3>{% if create_first %}{% trans "Please create your first one:" %}{% else %}{% trans "Please fill parameters for a new mail account" %}{% endif %}</h3></td>
+        <td colspan="{{ form.fields|length|add:4 }}"><h3>{% if create_first %}{% trans "Please create your first one:" context "male" %}{% else %}{% trans "Please fill parameters for a new mail account" %}{% endif %}</h3></td>
     </tr>
     <tr class="{% if not form.errors %}collapse{% endif %} collapsible">
 
@@ -16,10 +16,6 @@
         	{% if field.name == 'use_ssl' %}
 
             {% include "widgets/forms/field-generic-nohelp.html" with field=field field_label_css_class='col-sm-8' field_input_css_class='col-sm-1' %}
-
-            {% elif field.name == 'port' %}
-
-            {% include "widgets/forms/field-generic-nohelp.html" with field=field field_input_css_class='col-sm-6' %}
 
         	{% else %}
 
