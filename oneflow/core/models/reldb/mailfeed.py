@@ -27,6 +27,8 @@ from positions import PositionField
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from sparks.django.models import ModelDiffMixin
+
 # from django.utils.translation import ugettext as _
 # from django.utils.text import slugify
 # from sparks.django.models import ModelDiffMixin
@@ -38,7 +40,7 @@ from mailaccount import MailAccount
 LOGGER = logging.getLogger(__name__)
 
 
-class MailFeed(models.Model):
+class MailFeed(ModelDiffMixin):
 
     """ Configuration of a mail-based 1flow feed. """
 
