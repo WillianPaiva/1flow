@@ -391,7 +391,8 @@ header {
         margin-bottom: 0;
     }
 
-    h1 a {
+    h1 a,
+    h2 a {
         &:link,
         &:hover,
         &:active,
