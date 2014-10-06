@@ -135,6 +135,15 @@ class MailFeed(ModelDiffMixin):
 
         return cls.objects.get(pk=int(stream_url.rsplit('/', 1)[-1]))
 
+    @property
+    def stream(self):
+        """ Return the 1flow stream associated with the current mail feed. """
+
+        # Imported here to avoid cycles.
+        from ..nonrel import Feed
+
+        return Feed.objects.get(url=self.stream_url)
+
     def __unicode__(self):
         """ OMG, that's __unicode__, pep257. """
 
@@ -258,10 +267,7 @@ def mailfeed_pre_save(instance, **kwargs):
         # work will be handled by post_save().
         return
 
-    # Imported here to avoid cycles.
-    from ..nonrel import Feed
-
-    feed = Feed.objects.get(url=instance.stream_url)
+    feed = instance.stream
 
     instance_name = instance.name
     update_feed = {}
