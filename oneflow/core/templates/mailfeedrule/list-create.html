@@ -62,14 +62,14 @@
 		  {% include "mailfeedrule/form.html" %}
 
 		  <tr>
-			{% sort_th _("Mail account") 'account' %}
-			{# {% sort_th _("Mailbox") 'mailbox' %} #}
-			{% sort_th _("Header") 'header_field' %}
-			{% sort_th _("Custom header") 'other_header' %}
-			{% sort_th _("Match type") 'match_type' %}
-			{% sort_th _("Value") 'match_value' %}
-			{% sort_th _("Result") 'match_action' %}
-			{% sort_th _("Finish") 'finish_action' %}
+			<th>{% trans "Mail account" %}</th>
+			{# <th>{% trans "Mailbox" %}</th> #}
+			<th>{% trans "Header" %}</th>
+			<th>{% trans "Custom header" %}</th>
+			<th>{% trans "Match type" %}</th>
+			<th>{% trans "Value" %}</th>
+			<th>{% trans "Result" %}</th>
+			<th>{% trans "Finish" %}</th>
 
 			<th class="centered">{% trans "Status" %}</th>
 			<th class="right">{% trans "Actions" %}</th>
