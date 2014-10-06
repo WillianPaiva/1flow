@@ -28,32 +28,31 @@
 		</div>
 
 		<h1>
-			<a href="{% url 'mailaccount_list_create' %}"
-				title="{% trans "Switch to mail accounts" %}"
-				data-toggle="tooltip"
-				class="popover-top"><i
-				class="icon icon-exchange"></i>
-			</a>
+			{% include "mailfeedrule/breadcrumbs.html" %}
 
-			<span class="very-muted">&nbsp;&nbsp;
-			<i class="icon icon-angle-right"></i>
-			&nbsp;&nbsp;</span>
-
-			<a href="{% url 'mailfeed_list_create' %}"
-				title="{% trans "Back to mail feeds" %}"
-				data-toggle="tooltip"
-				class="popover-top"><i
-				class="icon icon-envelope"></i>
-			</a>
-
-			<span class="very-muted">&nbsp;&nbsp;
-			<i class="icon icon-angle-right"></i>
-			&nbsp;&nbsp;</span>
-
-			<span><i class="icon icon-cogs"></i>&nbsp;{% blocktrans with feed_name=mailfeed.name %}
-			    Rules for <strong>{{ feed_name }}</strong>
+			<span>
+			{% core_icon 'MailFeedRule' %}&nbsp;
+			{% blocktrans with feed_name=mailfeed.name %}
+		    	Rules for <strong>{{ feed_name }}</strong>
 			{% endblocktrans %}</span>
 		</h1>
+
+		<div class="row">
+			<div class="col-md-4 right">
+				<h4 class="muted">{% trans "Global feed match action:" %}</h4>
+			</div>
+			<div class="col-md-8">
+			 <h4>{% inplace_edit "mailfeed.match_action" tag_name_cover:'span' %}</h4>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-4 right">
+				<h4 class="muted">{% trans "Global feed final action:" %}</h4>
+			</div>
+			<div class="col-md-8">
+			 <h4>{% inplace_edit "mailfeed.finish_action" tag_name_cover:'span' %}</h4>
+			</div>
+		</div>
 
 		<div class="spacer50"></div>
 
@@ -63,15 +62,16 @@
 		  {% include "mailfeedrule/form.html" %}
 
 		  <tr>
-			{% sort_th _("Account") 'account' %}
+			{% sort_th _("Mail account") 'account' %}
+			{# {% sort_th _("Mailbox") 'mailbox' %} #}
 			{% sort_th _("Header") 'header_field' %}
-			{% sort_th _("Custom") 'other_header' %}
+			{% sort_th _("Custom header") 'other_header' %}
 			{% sort_th _("Match type") 'match_type' %}
 			{% sort_th _("Value") 'match_value' %}
 			{% sort_th _("Result") 'match_action' %}
+			{% sort_th _("Finish") 'finish_action' %}
 
-			<th class="centered">{% trans "Valid?" %}</th>
-			<th class="right">{% trans "Matches" %}</th>
+			<th class="centered">{% trans "Status" %}</th>
 			<th class="right">{% trans "Actions" %}</th>
 		  </tr>
 		</thead>
@@ -79,25 +79,43 @@
 		{% for mailfeedrule in mailfeedrule_list %}
 			<tr>
 				<td>{% inplace_edit 'mailfeedrule.account' %}</td>
+				{# <td>{% inplace_edit 'mailfeedrule.mailbox' %}</td> #}
 				<td>{% inplace_edit 'mailfeedrule.header_field' %}</td>
-				<td>{% inplace_edit 'mailfeedrule.other_header' %}</td>
+				<td>{% if mailfeed.header_field != 'other' %}
+					<span class="very-muted">{% trans "not applicable" %}</span>
+					{% else %}
+					{% inplace_edit 'mailfeedrule.other_header' edit_empty_value=_('please edit') %}
+				{% endif %}</td>
 				<td>{% inplace_edit 'mailfeedrule.match_type' %}</td>
 				<td>{% inplace_edit 'mailfeedrule.match_value' %}</td>
-				<td>{% inplace_edit 'mailfeedrule.match_action' %}</td>
+				<td>{% inplace_edit 'mailfeedrule.match_action' edit_empty_value=_('global feed action') %}</td>
+				<td>{% inplace_edit 'mailfeedrule.finish_action' edit_empty_value=_('global feed action') %}</td>
+
 				<td class="centered">{#{% mail_is_usable_to_icon mailfeed %}#}TODO</td>
-				<td class="right">###</td>
-				{% url 'mailfeedrule_delete' mailfeed.pk mailfeedrule.pk as delete_url %}
-				<td class="right">{% include "widgets/delete-form-button.html" %}</td>
+
+
+				<td class="right">
+					{% url 'mailfeedrule_position' mailfeed.pk mailfeedrule.pk as position_url %}
+					{% include "widgets/position-buttons.html" with obj=mailfeedrule position_first=forloop.first position_last=forloop.last %}
+
+					{% url 'mailfeedrule_delete' mailfeed.pk mailfeedrule.pk as delete_url %}
+					{% include "widgets/delete-form-button.html" %}
+					</td>
 			</tr>
 		{% endfor %}
 		</tbody>
 		</table>
 	{% else %}
 
-		<h2><i class="icon icon-cogs"></i>&nbsp;
+		<h2>
+			{% include "mailfeedrule/breadcrumbs.html" %}
+
+			<span>
+			{% core_icon 'MailFeedRule' %}&nbsp;
 			{% blocktrans with feed_name=mailfeed.name %}
 			    No rule yet for <strong>{{ feed_name }}</strong>.
-			{% endblocktrans %}</h2>
+			{% endblocktrans %}</span>
+		</h2>
 
 		<div class="spacer50"></div>
 
@@ -110,7 +128,7 @@
 
 		<div class="spacer50"></div>
 
-		<p class="muted">{% trans "Rules can apply to all account: for that case, just don't choose any." %}</p>
+		<p class="muted">{% trans "Note: 1flow engine will <strong>recurse all mailboxes</strong> to look for mails to match rules on. This will eventually be customizable in the future." %}</p>
 
 	</div>
 </div>

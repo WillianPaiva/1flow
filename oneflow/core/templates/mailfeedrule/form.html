@@ -6,20 +6,19 @@
 	{% csrf_token %}
 
 	<tr class="{% if not form.errors %}collapse{% endif %} collapsible">
-        <td colspan="{{ form.fields|length|add:4 }}"><h3>{% if create_first %}{% trans "Please create your first one:" %}{% else %}{% trans "Please fill parameters for a new mail feed rule" %}{% endif %}</h3></td>
+        <td colspan="{{ form.fields|length|add:4 }}"><h3>{% if create_first %}{% trans "Please create your first one:"  context "female" %}{% else %}{% trans "Please fill parameters for a new mail feed rule" %}{% endif %}</h3></td>
     </tr>
     <tr class="{% if not form.errors %}collapse{% endif %} collapsible">
 
         {% for field in form %}
-        	<td {% if field.name == 'match_value' %}colspan="2"{% endif %}>
+        	<td>
 
             {% include "widgets/forms/field-generic.html" with field=field field_label_css_class='col-sm-12' field_input_css_class='col-sm-12' %}
 
             {% if forloop.last %}
 
             	</td>
-            	<td {% if not create_first %}colspan="2"{% endif %}
-            		class="right">
+            	<td class="right" colspan="2">
 
 			    	<input class="btn btn-primary" type="submit"
 			    		value="{% trans "Save" %}" />

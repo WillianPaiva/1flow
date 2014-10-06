@@ -29,10 +29,10 @@
 
 		<h1>
 			<a href="{% url 'mailfeed_list_create' %}"
-				title="{% trans "Switch to mail feeds" %}"
-				data-toggle="tooltip"
-				class="popover-top"><i
-				class="icon icon-envelope"></i>
+					title="{% trans "Switch to mail feeds" %}"
+					data-toggle="tooltip"
+					class="popover-top">
+				{% core_icon 'MailFeed' %}
 			</a>
 
 			<span class="very-muted">&nbsp;&nbsp;
@@ -40,8 +40,10 @@
 			<i class="icon icon-angle-right"></i>
 			&nbsp;&nbsp;</span>
 
-			<span><i class="icon icon-exchange"></i>&nbsp;
-			{% trans "Mail accounts" %}</span>
+			<span>
+				{% core_icon 'MailAccount' %}&nbsp;
+				{% trans "Mail accounts" %}
+			</span>
 		</h1>
 
 		<div class="spacer50"></div>
@@ -59,8 +61,6 @@
 			<th>{% trans "Port" %}</th>
 			{% sort_th _("Username") 'username' %}
 			<th>{% trans "password" %}</th>
-			<th class="right">{% trans "Feeds" %}</th>
-			<th class="right">{% trans "Mailboxes" %}</th>
 			<th class="right">{% trans "Actions" %}</th>
 		  </tr>
 		</thead>
@@ -71,16 +71,9 @@
 				<td class="centered">{% mail_is_usable_to_icon mailaccount %}</td>
 				<td>{% inplace_edit 'mailaccount.hostname' %}</td>
 				<td class="right">{% inplace_edit 'mailaccount.use_ssl' %}</td>
-				<td>{% inplace_edit 'mailaccount.port' %}</td>
+				<td>{% inplace_edit 'mailaccount.port' edit_empty_value=_('auto') %}</td>
 				<td>{% inplace_edit 'mailaccount.username' %}</td>
 				<td class="inplace-blurred">{% inplace_edit 'mailaccount.password' %}</td>
-				{% if mailaccount.is_usable %}
-				<td class="right">{% mailfeed_rules_count mailaccount %}</td>
-				<td class="right">{{ mailaccount.mailboxes|length }}</td>
-				{% else %}
-				<td></td>
-				<td></td>
-				{% endif %}
 				{% url 'mailaccount_delete' mailaccount.pk as delete_url %}
 				<td class="right">{% include "widgets/delete-form-button.html" %}</td>
 			</tr>
@@ -89,7 +82,7 @@
 		</table>
 	{% else %}
 
-		<h2><i class="icon icon-exchange"></i>&nbsp;{% blocktrans %}
+		<h2>{% core_icon 'MailAccount' %}&nbsp;{% blocktrans %}
 		    No mail account yet.
 		{% endblocktrans %}</h2>
 
