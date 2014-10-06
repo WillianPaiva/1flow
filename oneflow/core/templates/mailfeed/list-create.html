@@ -53,6 +53,7 @@
 		  <tr>
 			{% sort_th _("Feed name") 'name' %}
 			<th class="centered">{% trans "Status" %}</th>
+			{% sort_th _("Public") 'is_public' %}
 			<th>{% trans "Default action" %}</th>
 			<th>{% trans "Default finish" %}</th>
 			<th>{% trans "Rules" %}</th>
@@ -65,6 +66,7 @@
 				<td>{% inplace_edit 'mailfeed.name' %}</td>
 
 				<td class="centered">{#{% mail_is_usable_to_icon mailfeed %}#}TODO</td>
+				<td>{% inplace_edit 'mailfeed.is_public' autoSave="1" %}</td>
 
 				<td>{% inplace_edit 'mailfeed.match_action' %}</td>
 				<td>{% inplace_edit 'mailfeed.finish_action' %}</td>
