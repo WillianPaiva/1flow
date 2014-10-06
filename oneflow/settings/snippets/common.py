@@ -549,7 +549,7 @@ INPLACEEDIT_UNSAVED_TEXT = ugettext_lazy(u'You have unsaved changes')
 DEFAULT_INPLACE_EDIT_OPTIONS = {
     'auto_height': 1,            # be gentle, don't try to guess anything.
     'class_inplace': 'form',     # Be a little bootstrap compatible.
-    'tag_name_cover': 'div',     # Make the editables more clickable.
+    'tag_name_cover': 'span',     # Make the editables more clickable.
     '__widget_class': 'form-control',   # DOES NOT WORK, ISSUE Github #53
 }
 # modify the behavior of the DEFAULT_INPLACE_EDIT_OPTIONS usage, if True
