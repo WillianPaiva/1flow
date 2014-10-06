@@ -78,10 +78,10 @@
 		<tbody>
 		{% for mailfeedrule in mailfeedrule_list %}
 			<tr>
-				<td>{% inplace_edit 'mailfeedrule.account' %}</td>
+				<td>{% inplace_edit 'mailfeedrule.account' edit_empty_value=_('All') %}</td>
 				{# <td>{% inplace_edit 'mailfeedrule.mailbox' %}</td> #}
 				<td>{% inplace_edit 'mailfeedrule.header_field' %}</td>
-				<td>{% if mailfeed.header_field != 'other' %}
+				<td>{% if mailfeedrule.header_field != 'other' %}
 					<span class="very-muted">{% trans "not applicable" %}</span>
 					{% else %}
 					{% inplace_edit 'mailfeedrule.other_header' edit_empty_value=_('please edit') %}
