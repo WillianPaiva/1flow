@@ -269,6 +269,11 @@ urlpatterns = patterns(
             views.MailFeedRuleListCreateView.as_view())),
         name='mailfeedrule_list_create'),
 
+    url(_(ur'^mailfeed/(?P<mailfeed_pk>\d+)/rule/(?P<pk>\d+)/position/?$'),
+        login_required(never_cache(
+            views.MailFeedRulePositionUpdateView.as_view())),
+        name='mailfeedrule_position'),
+
     url(_(ur'^mailfeed/(?P<mailfeed_pk>\d+)/rule/(?P<pk>\d+)/delete/?$'),
         login_required(never_cache(
             views.MailFeedRuleDeleteView.as_view())),

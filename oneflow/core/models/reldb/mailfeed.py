@@ -22,6 +22,7 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 import logging
 
 from collections import OrderedDict
+from positions import PositionField
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -185,6 +186,7 @@ class MailFeedRule(models.Model):
 
     # Used to have many times the same rule in different feeds
     clone_of = models.ForeignKey('MailFeedRule', null=True, blank=True)
+    position = PositionField(collection='mailfeed', default=0)
 
     class Meta:
         app_label = 'core'
