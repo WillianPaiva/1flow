@@ -27,9 +27,76 @@ from ..models import MailFeedRule
 LOGGER = logging.getLogger(__name__)
 
 
+class GroupedMailboxChoiceField(forms.ChoiceField):
+
+    """ Artificially group mailboxes. Common ones, then for each account.
+
+    Reference: https://djangosnippets.org/snippets/1968/
+    """
+
+    def __init__(self, *args, **kwargs):
+        """ Initialize the choices with a MailAccount queryset. """
+
+        self.queryset = kwargs.pop('queryset')
+
+        LOGGER.info('GroupedMailboxChoiceField init with %s', self.queryset)
+
+        super(GroupedMailboxChoiceField, self).__init__(*args, **kwargs)
+
+    def _get_choices(self):
+        """ Exactly the same as ChoiceField, except returns new iterator. """
+
+        LOGGER.info('GroupedMailboxChoiceField get choices 1')
+
+        if hasattr(self, '_choices'):
+            return self._choices
+
+        LOGGER.info('GroupedMailboxChoiceField get choices 2')
+
+        return self.__iter__
+
+    choices = property(_get_choices, forms.ChoiceField._set_choices)
+
+    def __iter__(self):
+        """ Iterate mailboxes grouped. """
+
+        LOGGER.info('GroupedMailboxChoiceField ITER with: %s', self.queryset)
+
+        mailboxes_by_account = {
+            # Get a copy of mailboxes list so we can update them.
+            account: account.mailboxes[:]
+            for account in self.queryset.all()
+        }
+
+        common_names = get_common_values(
+            mailboxes_by_account,
+            (cmb[0] for cmb in MailAccount.MAILBOXES_COMMON)
+        )
+
+        yield (_(u'Common'), MailAccount.MAILBOXES_COMMON
+               + ((mbn, mbn) for mbn in common_names))
+
+        for account, mailboxes in mailboxes_by_account:
+            yield (account, [(mbn, mbn) for mbn in mailboxes])
+
+
 class MailFeedRuleForm(forms.ModelForm):
 
     """ A simple mail feed rule model form. """
+
+    def __init__(self, *args, **kwargs):
+        """ Hey pep257, that's an init method. """
+
+        # Not completely implemented yet
+        _dummy_ = kwargs.pop('user')
+        _dummy_
+
+        super(MailFeedRuleForm, self).__init__(*args, **kwargs)
+
+        # self.fields['mailbox'] = GroupedMailboxChoiceField(
+        #     queryset=MailAccount.objects.filter(user=user))
+        # self.fields['mailbox'] = forms.ChoiceField(
+        #     choices=MailAccount.MAILBOXES_COMMON.items())
 
     class Meta:
         model = MailFeedRule

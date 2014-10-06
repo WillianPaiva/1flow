@@ -50,6 +50,15 @@ class MailFeedRuleListCreateView(mixins.ListCreateViewMixin,
         return reverse('mailfeedrule_list_create',
                        args=(self.kwargs['mailfeed_pk'], ))
 
+    def get_form_kwargs(self):
+        """ Get the current user for the MailFeedRuleForm to get mailboxes. """
+
+        kwargs = super(MailFeedRuleListCreateView, self).get_form_kwargs()
+
+        kwargs.update({'user': self.request.user})
+
+        return kwargs
+
     def get_context_data(self, **kwargs):
         """ Add our mailfeed to the context. """
 
