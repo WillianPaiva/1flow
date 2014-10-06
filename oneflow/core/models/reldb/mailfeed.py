@@ -24,6 +24,7 @@ import logging
 from collections import OrderedDict
 from positions import PositionField
 
+from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -103,6 +104,35 @@ class MailFeed(ModelDiffMixin):
 
     class Meta:
         app_label = 'core'
+
+    @classmethod
+    def is_stream_url(self, url):
+        """ Return ``True`` if :param:`url` is a mail stream URL. """
+
+        return url.startswith(u'https://mailstream.{0}/'.format(
+                              settings.SITE_DOMAIN))
+
+    @property
+    def stream_url(self):
+        """ Return an URL suitable for use in our MongoDB Feed collection.
+
+        .. warning:: if you change the way ``stream_url`` is generated,
+            please update :meth:`queryset_from_stream_url` too.
+        """
+
+        return u'https://mailstream.{1}/{0}'.format(self.pk,
+                                                    settings.SITE_DOMAIN)
+
+    @classmethod
+    def get_from_stream_url(cls, stream_url):
+        """ Return a :class:`MailFeed` instance from a stream URL.
+
+        The purpose of this method is to rassemble the stream_url
+        creation/extraction processes in the current file, without
+        duplicating code elsewhere.
+        """
+
+        return cls.objects.get(pk=int(stream_url.rsplit('/', 1)[-1]))
 
     def __unicode__(self):
         """ OMG, that's __unicode__, pep257. """
