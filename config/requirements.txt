@@ -41,6 +41,7 @@ django-overextends==0.3.2
 django-pipeline==1.3.24
 django-pipeline-compass==0.1.5
 django-pipeline-compass-rubygem==0.1.8
+django-positions==0.5.1
 django-redis==3.6.1
 django-redisboard==0.2.7
 django-secure==1.0
