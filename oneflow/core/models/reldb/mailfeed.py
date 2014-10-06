@@ -27,7 +27,7 @@ from positions import PositionField
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.db.models.signals import pre_save, post_save
+from django.db.models.signals import pre_save, post_save, pre_delete
 
 from sparks.django.models import ModelDiffMixin
 
@@ -326,5 +326,26 @@ def mailfeed_post_save(instance, **kwargs):
         Subscription.subscribe_user_to_feed(instance.user.mongo,
                                             feed, background=True)
 
+
+def mailfeed_pre_delete(instance, **kwargs):
+    """ Close Feed when mail feed is deleted. """
+
+    feed = instance.stream
+
+    # Deleting everything without warning users
+    # seems not to be the best option for now.
+    #
+    # TODO: what if a creator wants to really delete
+    # the feed with its history, for privacy concerns?
+    #
+    # for subscription in feed.subscriptions:
+    #     subscription.delete()
+    # feed.delete()
+
+    feed.close(_(u'%s, creator of the mail feed, closed it.').format(
+               instance.user))
+
+
 post_save.connect(mailfeed_post_save, sender=MailFeed)
 pre_save.connect(mailfeed_pre_save, sender=MailFeed)
+pre_delete.connect(mailfeed_pre_delete, sender=MailFeed)
