@@ -68,7 +68,7 @@ class MailFeed(ModelDiffMixin):
 
     match_action =  models.CharField(
         verbose_name=_(u'Match action'),
-        max_length=10, default=u'store',
+        max_length=10, default=u'scrape',
         choices=tuple(MATCH_ACTION_CHOICES.items()),
         help_text=_(u'Defines a global match action '
                     u'for all rules of the feed. You '
@@ -78,7 +78,7 @@ class MailFeed(ModelDiffMixin):
 
     finish_action =  models.CharField(
         verbose_name=_(u'Finish action'),
-        max_length=10, default=u'nothing',
+        max_length=10, default=u'markread',
         choices=tuple(FINISH_ACTION_CHOICES.items()),
         help_text=_(u'Defines a global finish action '
                     u'for all rules of the feed. You '
