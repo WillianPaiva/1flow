@@ -27,6 +27,7 @@ from positions import PositionField
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.db.models.signals import pre_save, post_save
 
 from sparks.django.models import ModelDiffMixin
 
@@ -247,3 +248,77 @@ class MailFeedRule(models.Model):
                 MailFeed.FINISH_ACTION_CHOICES.get(self.finish_action,
                                                    _(u'feed default')),
             ))
+
+
+def mailfeed_pre_save(instance, **kwargs):
+    """ Create a MongoDB feed if mailfeed was just created. """
+
+    if not instance.pk:
+        # We are creating a mail feed; the dirty
+        # work will be handled by post_save().
+        return
+
+    # Imported here to avoid cycles.
+    from ..nonrel import Feed
+
+    feed = Feed.objects.get(url=instance.stream_url)
+
+    instance_name = instance.name
+    update_feed = {}
+    update_subscription = False
+
+    #
+    # HEADS UP: we treat feed & subscriptions differently, because
+    #           they both save() MailFeed instances. Given from where
+    #           the is coming, we must decouple the processing, else
+    #           the one not sending the save() will not be updated.
+    #
+    # HEADS UP: we use update() on MongoDB instances to avoid
+    #           post_save() signals cycles between three models.
+    #
+
+    if 'name' in instance.changed_fields:
+        update_subscription = True
+
+        if instance_name != feed.name:
+            update_feed['set__name'] = instance_name
+
+    if 'is_public' in instance.changed_fields \
+            and instance.is_public == feed.restricted:
+        update_feed['set__restricted'] = not instance.is_public
+
+    if update_feed:
+        feed.update(**update_feed)
+
+    if update_subscription:
+        for subscription in feed.subscriptions:
+            if subscription.user.django == instance.user \
+                    and subscription.name != instance_name:
+                # HEADS UP: we use update() to
+                # avoid post_save() signals cycles.
+                subscription.update(set__name=instance_name)
+
+
+def mailfeed_post_save(instance, **kwargs):
+    """ Create a MongoDB feed if mailfeed was just created. """
+
+    # LOGGER.info('MailFeed post save for %s: %s', instance, kwargs)
+
+    if kwargs.get('created', False):
+
+        # Imported here to avoid cycles.
+        from ..nonrel import Feed, Subscription
+
+        feed = Feed(name=instance.name,
+                    url=instance.stream_url,
+                    site_url=u'http://' + settings.SITE_DOMAIN,
+                    restricted=not instance.is_public,
+                    good_for_use=True).save()
+
+        LOGGER.info('Created Feed %s for MailFeed %s', feed, instance)
+
+        Subscription.subscribe_user_to_feed(instance.user.mongo,
+                                            feed, background=True)
+
+post_save.connect(mailfeed_post_save, sender=MailFeed)
+pre_save.connect(mailfeed_pre_save, sender=MailFeed)
