@@ -79,20 +79,27 @@
 		{% for mailfeedrule in mailfeedrule_list %}
 			<tr>
 				<td>{% inplace_edit 'mailfeedrule.account' edit_empty_value=_('All') %}</td>
+
 				{# <td>{% inplace_edit 'mailfeedrule.mailbox' %}</td> #}
+
 				<td>{% inplace_edit 'mailfeedrule.header_field' %}</td>
-				<td>{% if mailfeedrule.header_field != 'other' %}
-					<span class="very-muted">{% trans "not applicable" %}</span>
-					{% else %}
+				<td>
+				{% if mailfeedrule.header_field != 'other' %}
+					<span class="very-muted">
+						{% trans "not applicable" %}
+					</span>
+
+				{% else %}
 					{% inplace_edit 'mailfeedrule.other_header' edit_empty_value=_('please edit') %}
-				{% endif %}</td>
+
+				{% endif %}
+				</td>
 				<td>{% inplace_edit 'mailfeedrule.match_type' %}</td>
 				<td>{% inplace_edit 'mailfeedrule.match_value' %}</td>
 				<td>{% inplace_edit 'mailfeedrule.match_action' edit_empty_value=_('global feed action') %}</td>
 				<td>{% inplace_edit 'mailfeedrule.finish_action' edit_empty_value=_('global feed action') %}</td>
 
-				<td class="centered">{#{% mail_is_usable_to_icon mailfeed %}#}TODO</td>
-
+				<td class="centered">{#{% mail_is_usable_to_icon mailfeedrule %}#}TODO</td>
 
 				<td class="right">
 					{% url 'mailfeedrule_position' mailfeed.pk mailfeedrule.pk as position_url %}
