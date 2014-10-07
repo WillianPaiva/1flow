@@ -33,7 +33,7 @@ from mongoengine.fields import (IntField, StringField, URLField, BooleanField,
                                 ListField, ReferenceField, DateTimeField)
 from mongoengine.errors import ValidationError
 
-#from cache_utils.decorators import cached
+# from cache_utils.decorators import cached
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -58,7 +58,7 @@ from .common import (DocumentHelperMixin,
                      ORIGIN_TYPE_WEBIMPORT,
                      USER_FEEDS_SITE_URL,
                      SPECIAL_FEEDS_DATA)
-                     # CACHE_ONE_WEEK)
+# CACHE_ONE_WEEK)
 from .tag import Tag
 from .article import Article
 from .user import User
@@ -259,7 +259,7 @@ class Feed(Document, DocumentHelperMixin):
 
             # And not being duplicate of any other feed.
             & (Q(duplicate_of__exists=False) | Q(duplicate_of=None))
-            )
+        )
 
     @property
     def latest_article(self):
@@ -483,7 +483,7 @@ class Feed(Document, DocumentHelperMixin):
             else:
                 raise
 
-        except Exception, e:
+        except Exception as e:
             raise Exception(u'Unparsable feed {0}: {1}'.format(feed_url, e))
 
         else:
@@ -545,7 +545,7 @@ class Feed(Document, DocumentHelperMixin):
                         unicode(_(u'comments for')) in lower_title
                         or
                         unicode(_(u'comments on')) in lower_title
-                            ) and skip_comments:
+                    ) and skip_comments:
                         continue
 
                     yield link.get('href')
@@ -553,6 +553,7 @@ class Feed(Document, DocumentHelperMixin):
     @classmethod
     def signal_post_save_handler(cls, sender, document,
                                  created=False, **kwargs):
+        """ Do whatever useful on Feed.post_save(). """
 
         feed = document
 
@@ -578,6 +579,7 @@ class Feed(Document, DocumentHelperMixin):
         return option in self.options
 
     def reopen(self, commit=True):
+        """ Reopen the feed, clearing errors, date closed, etc. """
 
         self.errors[:]     = []
         self.closed        = False
@@ -588,6 +590,8 @@ class Feed(Document, DocumentHelperMixin):
         LOGGER.info(u'Feed %s has just beed re-opened.', self)
 
     def close(self, reason=None, commit=True):
+        """ Close the feed with or without a reason. """
+
         self.update(set__closed=True, set__date_closed=now(),
                     set__closed_reason=reason or u'NO REASON GIVEN')
 
@@ -870,6 +874,8 @@ class Feed(Document, DocumentHelperMixin):
         return created or (None if mutualized else False)
 
     def build_refresh_kwargs(self):
+        """ Return a kwargs suitable for internal feed refreshing methods. """
+
 
         kwargs = {}
 
@@ -970,7 +976,7 @@ class Feed(Document, DocumentHelperMixin):
             and len(parsed_feed.get('entries', [])) == 0 \
             and parsed_feed.get('version', u'') == u'' \
             and ('html' in parsed_feed.feed
-                 or not 'summary' in parsed_feed.feed
+                 or 'summary' not in parsed_feed.feed
                  or len(parsed_feed.feed.summary) > 2048):
 
             raise FeedIsHtmlPageException(u'URL leads to an HTML page, '
@@ -1087,7 +1093,7 @@ class Feed(Document, DocumentHelperMixin):
         try:
             feed_status = http_logger.log[-1]['status']
 
-        except IndexError, e:
+        except IndexError as e:
             # The website could not be reached? Network
             # unavailable? on my production server???
 
@@ -1107,8 +1113,8 @@ class Feed(Document, DocumentHelperMixin):
         try:
             Feed.check_feedparser_error(parsed_feed, self)
 
-        except Exception, e:
-            self.close(reason=str(e))
+        except Exception as e:
+            self.close(reason=unicode(e))
             return
 
         if feed_status == 304:
@@ -1235,7 +1241,7 @@ def User_received_items_feed_property_get(self):
                                       *SPECIAL_FEEDS_DATA['received_items'])
 
 
-#@cached(CACHE_ONE_WEEK)
+# @cached(CACHE_ONE_WEEK)
 def get_or_create_special_feed(user, url_template, default_name):
 
     try:
@@ -1264,7 +1270,7 @@ def get_or_create_special_feed(user, url_template, default_name):
                     site_url=USER_FEEDS_SITE_URL.format(user=user)).save()
 
         # This will be done in the subscription property. DRY.
-        #Subscription.subscribe_user_to_feed(user, feed)
+        # Subscription.subscribe_user_to_feed(user, feed)
 
 
 User.web_import_feed     = property(User_web_import_feed_property_get)
