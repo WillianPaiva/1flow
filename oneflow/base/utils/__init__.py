@@ -783,4 +783,4 @@ def list_chunks(lisT, chunks_len):
     """
 
     for i in xrange(0, len(lisT), chunks_len):
-            yield l[i:i + chunks_len]
+            yield lisT[i:i + chunks_len]
