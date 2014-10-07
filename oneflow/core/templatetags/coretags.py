@@ -600,10 +600,10 @@ def read_status_css_styles():
         future, the CSS are auto-generated from the list, in a “as DRY
         as possible” attitude.
 
-        .. warning:: ``display: inherit`` was making our ``<span>``s
-            display as block, thus I forced ``inline-block``. But it
-            could break things in the future if HTML structure changes
-            deeply.
+    .. warning:: ``display: inherit`` was making our ``<span>``s
+        display as block, thus I forced ``inline-block``. But it
+        could break things in the future if HTML structure changes
+        deeply.
     """
 
     return u' '.join((
@@ -641,31 +641,44 @@ def mail_is_usable_to_icon(mailthing):
     # <td></td>
     # {% endif %}
 
+    if isinstance(mailthing, models.MailAccount):
+        attr_name = 'is_usable'
+        err_attr  = 'conn_error'
+        message_ok = _(u'Account successfully working, tested {ago} ago.')
+        message_er = _(u'Account not working, tested {ago} ago. '
+                       u'Error reported: {err}')
+        ago = onef_naturaldelta(now() - mailthing.date_last_conn)
+    else:
+        attr_name = 'is_valid'
+        err_attr  = 'check_error'
+        message_ok = _(u'Rule validated successfully and will be '
+                       u'used for next fetch.')
+        message_er = _(u'Rule did not validate. Error reported: {err}')
+        ago = None
+
     template = (u'<span class="label label-{0}" title="{2}" '
                 u'data-toggle="tooltip" data-placement="top">'
                 u'<i class="icon icon-fixed-width icon-{1}"></i></span>')
 
-    if mailthing.is_usable:
-        return template.format(
-            'success', 'ok',
-            _(u'Account successfully working, tested {0} ago.').format(
-                onef_naturaldelta(now() - mailthing.date_last_conn)))
+    if getattr(mailthing, attr_name):
+        return template.format('success', 'ok', message_ok.format(ago=ago))
 
     else:
-        if mailthing.conn_error:
-            return template.format(
-                'danger', 'exclamation',
-                _(u'Account not working, tested {0} ago. '
-                  u'Error reported: {1}').format(
-                    onef_naturaldelta(now() - mailthing.date_last_conn),
-                    mailthing.conn_error))
+        error_text = getattr(mailthing, err_attr)
+
+        if error_text:
+            return template.format('danger', 'exclamation',
+                                   message_er.format(ago=ago, err=error_text))
         else:
-            return template.format(
-                'warning', 'question',
-                _(u'Account connectivity not tested yet'))
+            return template.format('warning', 'question',
+                                   _(u'Account connectivity not yet tested. '
+                                     u'Please wait a few seconds and reload '
+                                     u'the current page.'))
+
 
 @register.simple_tag
 def mailfeed_rules_count(mailaccount):
+    """ Return a count of rules applicable to a given account. """
 
     return (mailaccount.mailfeedrule_set.all().count()
             + models.MailFeedRule.objects.filter(account=None).count())
