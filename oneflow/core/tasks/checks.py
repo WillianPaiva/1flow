@@ -61,6 +61,7 @@ def global_checker_task(*args, **kwargs):
         global_duplicates_checker.si(),
         archive_documents.si(),
 
+        global_feeds_checker.si(),
         global_subscriptions_checker.si(),
         global_reads_checker.si(),
     )
@@ -70,7 +71,7 @@ def global_checker_task(*args, **kwargs):
 
 @task(queue='low')
 def global_feeds_checker():
-    """ Check all RSS feeds and they dependants. """
+    """ Check all RSS feeds and their dependants. Close them if needed. """
 
     def pretty_print_feed(feed):
 
