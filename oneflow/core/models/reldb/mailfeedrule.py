@@ -57,7 +57,7 @@ class MailFeedRule(ModelDiffMixin):
     HEADER_FIELD_CHOICES = OrderedDict((
         (u'subject', _(u'Subject')),
         (u'from', _(u'Sender')),
-        (u'to', _(u'Recipient (To:, Cc: or Cci:)')),
+        (u'to', _(u'Recipient (To:, Cc: or Bcc:)')),
         (u'list', _(u'Mailing-list')),
         (u'other', _(u'Other header (please specify)')),
     ))
