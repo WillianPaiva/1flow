@@ -24,4 +24,6 @@ from helpcontent import HelpContent  # NOQA
 
 from mailaccount import MailAccount  # NOQA
 
-from mailfeed import MailFeed, MailFeedRule  # NOQA
+from mailfeed import MailFeed  # NOQA
+
+from mailfeedrule import MailFeedRule  # NOQA
