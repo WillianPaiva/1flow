@@ -774,3 +774,13 @@ def get_common_values(orig_dikt, exclude_list=None, match_strict=False):
                             pass
 
     return common_names
+
+
+def list_chunks(lisT, chunks_len):
+    """ Split a :param:`lisT` in chunks of :param:`chunks_len`.
+
+    Cf. http://stackoverflow.com/q/312443/654755
+    """
+
+    for i in xrange(0, len(lisT), chunks_len):
+            yield l[i:i + chunks_len]
