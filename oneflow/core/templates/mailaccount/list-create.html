@@ -55,12 +55,13 @@
 
 		  <tr>
 			{% sort_th _("Account name") 'name' %}
-			<th class="centered">{% trans "Status" %}</th>
 			{% sort_th _("Hostname") 'hostname' %}
 			<th class="right">{% trans "SSL/TLS" %}</th>
 			<th>{% trans "Port" %}</th>
 			{% sort_th _("Username") 'username' %}
 			<th>{% trans "password" %}</th>
+
+			<th class="centered">{% trans "Status" %}</th>
 			<th class="right">{% trans "Actions" %}</th>
 		  </tr>
 		</thead>
@@ -68,12 +69,13 @@
 		{% for mailaccount in mailaccount_list %}
 			<tr>
 				<td>{% inplace_edit 'mailaccount.name' %}</td>
-				<td class="centered">{% mail_is_usable_to_icon mailaccount %}</td>
 				<td>{% inplace_edit 'mailaccount.hostname' %}</td>
 				<td class="right">{% inplace_edit 'mailaccount.use_ssl' %}</td>
 				<td>{% inplace_edit 'mailaccount.port' edit_empty_value=_('auto') %}</td>
 				<td>{% inplace_edit 'mailaccount.username' %}</td>
 				<td class="inplace-blurred">{% inplace_edit 'mailaccount.password' %}</td>
+
+				<td class="centered">{% mail_is_usable_to_icon mailaccount %}</td>
 				{% url 'mailaccount_delete' mailaccount.pk as delete_url %}
 				<td class="right">{% include "widgets/delete-form-button.html" %}</td>
 			</tr>
