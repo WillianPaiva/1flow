@@ -99,7 +99,7 @@
 				<td>{% inplace_edit 'mailfeedrule.match_action' edit_empty_value=_('global feed action') %}</td>
 				<td>{% inplace_edit 'mailfeedrule.finish_action' edit_empty_value=_('global feed action') %}</td>
 
-				<td class="centered">{#{% mail_is_usable_to_icon mailfeedrule %}#}TODO</td>
+				<td class="centered">{% mail_is_usable_to_icon mailfeedrule %}</td>
 
 				<td class="right">
 					{% url 'mailfeedrule_position' mailfeed.pk mailfeedrule.pk as position_url %}
