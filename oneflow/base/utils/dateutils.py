@@ -24,13 +24,14 @@
 
 import logging
 
+import email.utils as email_utils
 import time as pytime
 import datetime as pydatetime
 from humanize.i18n import django_language
 import humanize.time as humanize_time
 
 from django.conf import settings
-from django.utils.timezone import (is_aware, is_naive, # NOQA
+from django.utils.timezone import (is_aware, is_naive,  # NOQA
                                    make_aware, utc,
                                    now as dj_now)
 
@@ -116,8 +117,29 @@ class benchmark(object):
         return False
 
 
+def email_date_to_datetime_tz(email_date):
+    """ Return a datetime with TZ from an email “Date:” field.
+
+    Cf. http://stackoverflow.com/a/8339750/654755
+
+    Alternative to look at if problems:
+    http://stackoverflow.com/a/12160056/654755
+    """
+
+    msg_datetime = None
+
+    if email_date:
+        date_tuple = email_utils.parsedate_tz(email_date)
+
+        if date_tuple:
+            msg_datetime = datetime.datetime.fromtimestamp(
+                email_utils.mktime_tz(date_tuple))
+
+    return msg_datetime
+
+
 __all__ = ('today', 'timedelta', 'naturaltime', 'naturaldelta',
            'now', 'ftstamp', 'tzcombine', 'combine', 'time', 'datetime',
            'is_aware', 'is_naive',
            'until_tomorrow_delta', 'stats_datetime', 'benchmark',
-           'pytime', 'pydatetime')
+           'pytime', 'pydatetime', 'email_date_to_datetime_tz', )
