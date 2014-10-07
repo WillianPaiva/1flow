@@ -72,8 +72,15 @@ class MailAccount(ModelDiffMixin):
         'INBOX.Sent',
         'INBOX.Spam',
         'INBOX.Junk',
-        'INBOX.INBOX.Junk',
         'INBOX.Deleted Messages',
+
+        'INBOX.INBOX.Junk',
+        'INBOX.INBOX.Drafts',
+        'INBOX.INBOX.Sent',
+        'INBOX.INBOX.Trash',
+        'INBOX.INBOX.Sent Messages',
+        'INBOX.INBOX.Spam',
+        'INBOX.INBOX.Deleted Messages',
 
         _(u'INBOX.Drafts'),
         _(u'INBOX.Trash'),
@@ -81,9 +88,15 @@ class MailAccount(ModelDiffMixin):
         _(u'INBOX.Sent'),
         _(u'INBOX.Spam'),
         _(u'INBOX.Junk'),
-        _(u'INBOX.INBOX.Junk'),
         _(u'INBOX.Deleted Messages'),
 
+        _(u'INBOX.INBOX.Junk'),
+        _(u'INBOX.INBOX.Drafts'),
+        _(u'INBOX.INBOX.Sent'),
+        _(u'INBOX.INBOX.Trash'),
+        _(u'INBOX.INBOX.Sent Messages'),
+        _(u'INBOX.INBOX.Spam'),
+        _(u'INBOX.INBOX.Deleted Messages'),
     )
 
     MAILBOXES_COMMON = OrderedDict((
@@ -130,6 +143,9 @@ class MailAccount(ModelDiffMixin):
         If it was refreshed too long in the past, rebuild the list.
         """
         _mailboxes_ = self._mailboxes_
+
+        # LOGGER.debug(u'IMAP %s: mailboxes are %s in Redis.',
+        #              self, _mailboxes_)
 
         if not self.recently_usable or not _mailboxes_:
             # HEADS UP: this task name will be registered later
@@ -306,7 +322,8 @@ class MailAccount(ModelDiffMixin):
 
         self._mailboxes_ = mailaccount_mailboxes_default(self)
 
-        LOGGER.info(u'%s mailboxes list updated.', self)
+        LOGGER.info(u'IMAP %s: mailboxes list updated → %s',
+                    self, self.mailboxes)
 
     # ——————————————————————————————————————————————————————————— IMAP wrappers
 
@@ -340,6 +357,9 @@ class MailAccount(ModelDiffMixin):
             self.mark_unusable(u'Could not authenticate to IMAP server', exc=e)
             raise
 
+        LOGGER.debug(u'IMAP %s: successful login with username %s',
+                     self, self.username)
+
     def imap_select(self, imap_conn=None, mailbox_name=None):
         """ Select a mailbox on the remote server. """
 
@@ -359,6 +379,8 @@ class MailAccount(ModelDiffMixin):
             self.mark_unusable(u'Could not select mailbox %s',
                                args=(mailbox_name, ), exc=e)
             raise
+
+        LOGGER.debug(u'IMAP %s: selected mailbox %s', self, mailbox_name)
 
     def imap_close(self, imap_conn=None):
 
@@ -387,6 +409,8 @@ class MailAccount(ModelDiffMixin):
             pass
 
         imap_conn.logout()
+
+        LOGGER.debug(u'IMAP %s: successful logout.', self)
 
     def imap_list_mailboxes(self, imap_conn=None, as_text=False):
         """ List remote IMAP mailboxes.
