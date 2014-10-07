@@ -320,6 +320,10 @@ CONSTANCE_CONFIG = {
                                     u'for connection and mailbox listing.')),
 
 
+    'MAIL_IMAP_FETCH_MAX': (25, ugettext(u'When fetching e-mails from IMAP '
+                            u'accounts, how many should be downloaded at '
+                            u'each call.')),
+
     # ————————————————————————————————————————————————————————————— Check tasks
 
 
