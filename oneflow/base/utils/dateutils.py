@@ -132,7 +132,7 @@ def email_date_to_datetime_tz(email_date):
         date_tuple = email_utils.parsedate_tz(email_date)
 
         if date_tuple:
-            msg_datetime = datetime.datetime.fromtimestamp(
+            msg_datetime = pydatetime.datetime.fromtimestamp(
                 email_utils.mktime_tz(date_tuple))
 
     return msg_datetime
