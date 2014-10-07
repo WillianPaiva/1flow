@@ -121,6 +121,8 @@ class MailAccount(ModelDiffMixin):
         app_label       = 'core'
         unique_together = ('user', 'hostname', 'username', )
 
+    # —————————————————————————————————————————————————————————————— Properties
+
     @property
     def mailboxes(self):
         """ Return a list of mailboxes of the account.
@@ -147,15 +149,12 @@ class MailAccount(ModelDiffMixin):
             now() - self.date_last_conn
             < timedelta(seconds=config.MAIL_ACCOUNT_REFRESH_PERIOD))
 
-    def update_mailboxes(self):
-        """ Simply update the remote mailboxes names.
+    # —————————————————————————————————————————————————————————————————— Django
 
-        .. note:: this method is registered as a task in Celery.
-        """
+    def __unicode__(self):
+        """ OMG, that's __unicode__, pep257. """
 
-        self._mailboxes_ = mailaccount_mailboxes_default(self)
-
-        LOGGER.info(u'%s mailboxes list updated.', self)
+        return u'Mail account “{0}” of user {1}'.format(self.name, self.user)
 
     def save(self, *args, **kwargs):
         """ Automatically add a name/username if none is given. """
@@ -187,10 +186,24 @@ class MailAccount(ModelDiffMixin):
         if previous_pk is None:
             self.reset_unusable()
 
-    def __unicode__(self):
-        """ OMG, that's __unicode__, pep257. """
+    # —————————————————————————————————————————————————————————————————— Python
 
-        return u'Mail account “{0}” of user {1}'.format(self.name, self.user)
+    def __enter__(self, *args, **kwargs):
+
+        if not hasattr(self, '_imap_connection_'):
+            self._imap_connection_ = self.imap_connect()
+
+        self.imap_login()
+
+    def __exit__(self, *args, **kwargs):
+
+        if hasattr(self, '_imap_connection_') \
+                and self._imap_connection_ is not None:
+
+            self.imap_logout()
+            self._imap_connection_ = None
+
+    # ——————————————————————————————————————————————————————————————— Internals
 
     def get_port(self):
         """ Return the IMAP connection port, with default values if unset. """
@@ -260,6 +273,43 @@ class MailAccount(ModelDiffMixin):
             # by the register_task_method() call.
             mailaccount_update_mailboxes_task.delay(self.pk)
 
+    def test_connection(self, force=False):
+        """ Test connection and report any error.
+
+        This function does everything manually and independantly,
+        outside of the context processor, to be able to test
+        everything eventually while anything else is already running.
+        """
+
+        if self.recently_usable and not force:
+            return
+
+        LOGGER.info(u'Testing connection of %s', self)
+
+        conn = self.imap_connect()
+
+        self.imap_login(conn)
+
+        self.imap_select(conn, u'INBOX')
+
+        self.imap_close(conn)
+
+        self.imap_logout(conn)
+
+        self.mark_usable()
+
+    def update_mailboxes(self):
+        """ Simply update the remote mailboxes names.
+
+        .. note:: this method is registered as a task in Celery.
+        """
+
+        self._mailboxes_ = mailaccount_mailboxes_default(self)
+
+        LOGGER.info(u'%s mailboxes list updated.', self)
+
+    # ——————————————————————————————————————————————————————————— IMAP wrappers
+
     def imap_connect(self):
         """ Return an IMAP mail connection, either SSL or not. """
 
@@ -274,57 +324,85 @@ class MailAccount(ModelDiffMixin):
             self.mark_unusable(u'Could not connect to IMAP server', exc=e)
             raise
 
-    def imap_login(self, mail):
+    def imap_login(self, imap_conn=None):
         """ Perform the IMAP authentication. """
 
+        if imap_conn is None:
+            imap_conn = self._imap_connection_
+
+        if imap_conn is None:
+            raise RuntimeError('Not connected!')
+
         try:
-            mail.login(self.username, self.password)
+            imap_conn.login(self.username, self.password)
 
         except Exception as e:
             self.mark_unusable(u'Could not authenticate to IMAP server', exc=e)
             raise
 
-    def imap_select(self, mail, mailbox_name):
+    def imap_select(self, imap_conn=None, mailbox_name=None):
         """ Select a mailbox on the remote server. """
 
+        if imap_conn is None:
+            imap_conn = self._imap_connection_
+
+        if imap_conn is None:
+            raise RuntimeError('Not connected!')
+
+        if mailbox_name is None:
+            mailbox_name = u'INBOX'
+
         try:
-            mail.select(mailbox_name)
+            imap_conn.select(mailbox_name)
 
         except Exception as e:
             self.mark_unusable(u'Could not select mailbox %s',
                                args=(mailbox_name, ), exc=e)
             raise
 
-    def test_connection(self, force=False):
-        """ test connection and report any error. """
+    def imap_close(self, imap_conn=None):
 
-        if self.recently_usable and not force:
+        if imap_conn is None:
+            imap_conn = self._imap_connection_
+
+        if imap_conn is None:
+            raise RuntimeError('Not connected!')
+
+        imap_conn.close()
+
+    def imap_logout(self, imap_conn=None):
+
+        if imap_conn is None:
+            imap_conn = self._imap_connection_
+
+        if imap_conn is None:
+            # raise RuntimeError('Not connected!')
             return
 
-        LOGGER.info(u'Testing connection of %s', self)
+        try:
+            imap_conn.close()
 
-        mail = self.imap_connect()
+        except:
+            # There was no mailbox open.
+            pass
 
-        self.imap_login(mail)
+        imap_conn.logout()
 
-        self.imap_select(mail, u'INBOX')
-
-        self.mark_usable()
-
-    def imap_list_mailboxes(self, mail=None, as_text=False):
+    def imap_list_mailboxes(self, imap_conn=None, as_text=False):
         """ List remote IMAP mailboxes.
 
         .. note:: This method always connect,
             regardless of :attr:`recently_usable`.
         """
 
-        if mail is None:
-            mail = self.imap_connect()
+        if imap_conn is None:
+            imap_conn = self._imap_connection_
 
-        self.imap_login(mail)
+        if imap_conn is None:
+            raise RuntimeError('Not connected!')
 
         try:
-            result, data = mail.list()
+            result, data = imap_conn.list()
 
         except Exception as e:
             self.mark_unusable(u'Could not list account mailboxes', exc=e)
@@ -339,10 +417,10 @@ class MailAccount(ModelDiffMixin):
                 if mailbox not in self.MAILBOXES_BLACKLIST:
                     mailboxes.append(mailbox)
 
+            self.mark_usable()
+
             if as_text:
                 return self.MAILBOXES_STRING_SEPARATOR.join(mailboxes)
-
-            self.mark_usable()
 
             return mailboxes
 
