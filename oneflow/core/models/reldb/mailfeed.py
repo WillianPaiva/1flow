@@ -33,9 +33,9 @@ from sparks.django.models import ModelDiffMixin
 # from django.utils.translation import ugettext as _
 # from django.utils.text import slugify
 # from sparks.django.models import ModelDiffMixin
-# from oneflow.base.utils.dateutils import now
 
 from common import DjangoUser  # , REDIS
+# from mail_common import email_get_first_text_block
 
 LOGGER = logging.getLogger(__name__)
 
@@ -158,34 +158,122 @@ class MailFeed(ModelDiffMixin):
     def get_new_entries(self, **kwargs):
         """ Return new mails from the current feed. """
 
-        since = kwargs.get('modified')
-        entries = []
-
-        if self.account is None:
-            accounts = self.user.mailaccount_set.filter(is_usable=True)
-
-        else:
-            accounts = [self.account]
+        since = kwargs.get('since')
 
         feed_rules = tuple(
             self.mailfeedrule_set.filter(is_valid=True).order_by('position')
         )
 
-        for account in accounts:
+        usable_accounts = self.user.mailaccount_set.filter(is_usable=True)
+
+        rules_by_account = {account: [] for account in usable_accounts}
+
+        for rule in feed_rules:
+
+            if rule.account is None:
+                for account in usable_accounts:
+                    rules_by_account[account].append(rule)
+
+            else:
+                rules_by_account[rule.account].append(rule)
+
+        total_matched   = 0
+        total_unmatched = 0
+
+        for account in usable_accounts:
+
             with account:
-                # TODO: force account.update_mailboxes() ??
-                # TODO: implement self.mailboxes usage
+                account.update_mailboxes()
+
+                #
+                # TODO: implement rule.mailboxes specific usage here
+                #
+
+                account_matched   = 0
+                account_unmatched = 0
 
                 for mailbox_name in account.mailboxes:
-                    account.imap_select(mailbox_name)
 
-                    for message in account.imap_search(since=since):
-                        for rule in feed_rules:
+                    account.imap_select(mailbox_name=mailbox_name)
+
+                    mailbox_matched   = 0
+                    mailbox_unmatched = 0
+
+                    for message in account.imap_search_since(since=since):
+
+                        matched = False
+
+                        for rule in rules_by_account[account]:
 
                             if rule.match_message(message):
-                                entries.append(message)
+
+                                # if __debug__:
+                                #     LOGGER.debug(u'>>> MATCH #%s FOUND '
+                                #                  u'by rule #%s:\n'
+                                #                  u'   Subject: %s\n'
+                                #                  u'      From: %s\n'
+                                #                  u'      Date: %s\n'
+                                #                  u'      Body: %s…\n'
+                                #                  u'  %s\n',
+                                #                  mailbox_matched + 1, rule.pk,
+                                #                  message.get('subject'),
+                                #                  message.get('from'),
+                                #                  message.get('date'),
+                                #                  email_get_first_text_block(
+                                #                      message).strip().replace(
+                                #                      '\r', '').replace(
+                                #                      '\n', ' ')[:80],
+                                #                  rule)
+
+                                yield {
+                                    'email': message,
+                                    'date': message.get('date', None),
+                                    'meta': {
+                                        'processing': (rule.match_action
+                                                       or self.match_action),
+                                        'matched_rule': rule,
+                                    }
+                                }
+
+                                # First matching rule wins,
+                                # no need to test other.
+                                matched = True
                                 break
 
+                        if matched:
+                            mailbox_matched += 1
+
+                            #
+                            # TODO: implement final action
+                            #       via generator send back.
+                            #
+
+                        else:
+                            mailbox_unmatched += 1
+
+                    account_matched   += mailbox_matched
+                    account_unmatched += mailbox_unmatched
+
+                    account.imap_close()
+
+                    LOGGER.info(u'%s/%s email(s) matched %s in '
+                                u'mailbox %s of %s',
+                                mailbox_matched,
+                                mailbox_matched + mailbox_unmatched,
+                                rule, mailbox_name, account)
+
+            total_matched   += account_matched
+            total_unmatched += account_unmatched
+
+            LOGGER.info(u'%s/%s email(s) matched %s in %s',
+                        account_matched,
+                        account_matched + account_unmatched,
+                        rule, account)
+
+        LOGGER.info(u'%s/%s email(s) matched %s.',
+                    total_matched,
+                    total_matched + total_unmatched,
+                    rule)
 
 # ————————————————————————————————————————————————————————————————————— Signals
 
