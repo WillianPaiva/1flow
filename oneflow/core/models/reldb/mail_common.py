@@ -1,4 +1,23 @@
+# -*- coding: utf-8 -*-
+"""
+Copyright 2014 Olivier Cortès <oc@1flow.io>.
 
+This file is part of the 1flow project.
+
+1flow is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+
+1flow is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public
+License along with 1flow.  If not, see http://www.gnu.org/licenses/
+
+"""
 
 # No fear. See http://bit.ly/smtp-headers
 OTHER_VALID_HEADERS = (
@@ -168,3 +187,21 @@ BASE_HEADERS = {
     u'list': ('Mailing-list', 'List-ID',
               'X-Mailing-List', 'List-URL', ),
 }
+
+
+def email_get_first_text_block(email_message):
+    """ Get the first block of a mail.
+
+    This will always return the text/plain part,
+    even in the case of a multipart/form email.
+    """
+
+    maintype = email_message.get_content_maintype()
+
+    if maintype == 'multipart':
+        for part in email_message.get_payload():
+            if part.get_content_maintype() == 'text':
+                return part.get_payload()
+
+    elif maintype == 'text':
+        return email_message.get_payload()
