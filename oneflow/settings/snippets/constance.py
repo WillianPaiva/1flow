@@ -332,6 +332,18 @@ CONSTANCE_CONFIG = {
                             u'accounts, how many should be downloaded at '
                             u'each call.')),
 
+
+    'MAIL_IMAP_CACHE_MESSAGES': (True, ugettext(u'Cache all downloaded '
+                                 u'e-mails in Redis to speed up further '
+                                 u'fetches and mail feeds refreshes.')),
+
+
+    'MAIL_IMAP_CACHE_EXPIRY': (3600*24, ugettext(u'Make cached e-mails '
+                               u'expire after this amount of seconds to '
+                               u'avoid burning local instance memory and '
+                               u'disk.')),
+
+
     # ————————————————————————————————————————————————————————————— Check tasks
 
 
