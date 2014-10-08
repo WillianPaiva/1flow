@@ -57,6 +57,7 @@ from .common import (DocumentHelperMixin,
                      ORIGIN_TYPE_FEEDPARSER,
                      ORIGIN_TYPE_WEBIMPORT,
                      USER_FEEDS_SITE_URL,
+                     BAD_SITE_URL_BASE,
                      SPECIAL_FEEDS_DATA)
                      # CACHE_ONE_WEEK)
 from .tag import Tag
@@ -634,15 +635,15 @@ class Feed(Document, DocumentHelperMixin):
             site_url_error = e.errors.pop('site_url', None)
 
             if site_url_error is not None:
-                # Bad site URL, the feed is most probably totally unparsable.
-                # Close it. Admins will be warned about it via mail from a
-                # scheduled core task.
+                # Bad site URL. Not exactly harmfull, but not cool.
                 #
                 # WAS: if not 'bad_site_url' in self.mail_warned:
                 #           self.mail_warned.append('bad_site_url')
 
-                self.site_url = None
-                self.close('Bad site url: %s' % str(site_url_error))
+                self.site_url = BAD_SITE_URL_BASE + self.site_url
+
+                # Do not close the feed for that…
+                #self.close('Bad site url: %s' % str(site_url_error))
 
             # We pop() because any error will close the feed, whatever it is.
             url_error = e.errors.pop('url', None)
