@@ -35,6 +35,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from sparks.django.models import ModelDiffMixin
 
+import mail_common as common
 from mailaccount import MailAccount
 from mailfeed import MailFeed
 
@@ -74,161 +75,6 @@ class MailFeedRule(ModelDiffMixin):
         (u're_match', _(u'matches regular expression')),
         (u'nre_match', _(u'does not match reg. expr.')),
     ))
-
-    # No fear. See http://bit.ly/smtp-headers
-    OTHER_VALID_HEADERS = (
-        'DL-Expansion-History',
-        'Path',
-        'Received',
-        'Return-Path',
-        'NNTP-Posting-Host',
-        'Also-Control',
-        'Alternate-Recipient',
-        'Content-Disposition',
-        'Message-Context',
-        'Control',
-        'Disclose-Recipients',
-        'MIME-Version',
-        'Apparently-To',
-        'Approved',
-        'Approved-By',
-        'bcc',
-        'cc',
-        'Distribution',
-        'Fax',
-        'Telefax',
-        'For-Approval',
-        'For-Comment',
-        'For-Handling',
-        'Newsgroups',
-        'Originator',
-        'Originator-Info',
-        'Phone',
-        'Sender',
-        'To',
-        'X-Envelope-From',
-        'X-Envelope-To',
-        'Envelope-To',
-        'X-Face',
-        'X-RCPT-TO',
-        'X-Sender',
-        'X-X-Sender',
-        'Posted-To',
-        'X-Admin',
-        'Content-Return',
-        'Disposition-Notification-Options',
-        'Disposition-Notification-To',
-        'Errors-To',
-        'Return-Receipt-To',
-        'Read-Receipt-To',
-        'X-Confirm-reading-to',
-        'Return-Receipt-Requested',
-        'Registered-Mail-Reply-Requested-By',
-        'Followup-To',
-        'Generate-Delivery-Report',
-        'Original-Recipient',
-        'Prevent-NonDelivery-Report',
-        'Reply-To',
-        'Mail-Followup-To',
-        'Mail-Reply-To',
-        'Abuse-Reports-To',
-        'X-Complaints-To',
-        'X-Report-Abuse-To',
-        'Mail-Copies-To',
-        'X400-Content-Return',
-        'Article-Names',
-        'Article-Updates',
-        'Content-Alias',
-        'Content-Base',
-        'Content-ID',
-        'Content-Location',
-        'Delivered-To',
-        'X-Loop',
-        'In-Reply-To',
-        'Message-ID',
-        'Obsoletes',
-        'References',
-        'Replaces',
-        'See-Also',
-        'Supersedes',
-        'Translated-By',
-        'Translation-Of',
-        'X-UIDL',
-        'X-URI',
-        'X-URL',
-        'X-IMAP',
-        'Comments',
-        'Content-Description',
-        'Content-Identifier',
-        'Keywords',
-        'Organisation',
-        'Organization',
-        'Subject',
-        'Summary',
-        'Date',
-        'Delivery-Date',
-        'Expires',
-        'Expiry-Date',
-        'Reply-By',
-        'X-OriginalArrivalTime',
-        'Importance',
-        'Incomplete-Copy',
-        'PICS-Label',
-        'Precedence',
-        'Priority',
-        'Sensitivity',
-        'X-MSMail-Priority',
-        'X-Priority',
-        'Content-Language',
-        'Language',
-        'Content-Length',
-        'Lines',
-        'Content-Alternative',
-        'Content-Conversion',
-        'Conversion',
-        'Conversion-With-Loss',
-        'Content-Class',
-        'Content-Features',
-        'Content-SGML-Entity',
-        'Content-Transfer-Encoding',
-        'Content-Type',
-        'Encoding',
-        'Message-Type',
-        'X-MIME-Autoconverted',
-        'Resent-Reply-To:,',
-        'Resent-From',
-        'Resent-Sender',
-        'Resent-Date',
-        'Resent-To',
-        'Resent-cc',
-        'Resent-bcc',
-        'Resent-Message-ID',
-        'Content-MD5',
-        'Xref',
-        'Cancel-Lock',
-        'Cancel-Key',
-        'List-Archive',
-        'List-Digest',
-        'List-Help',
-        'List-ID',
-        'Mailing-List',
-        'X-Mailing-List',
-        'List-Owner',
-        'List-Post',
-        'List-Software',
-        'List-Subscribe',
-        'List-Unsubscribe',
-        'List-URL',
-        'X-Listserver',
-        'X-List-Host',
-        'Autoforwarded',
-        'Discarded-X400-IPMS-Extensions',
-        'Discarded-X400-MTS-Extensions',
-        'Fcc',
-        'Speech-Act',
-        'Status',
-        'X-No-Archive',
-    )
 
     mailfeed = models.ForeignKey(MailFeed)
     account = models.ForeignKey(MailAccount, null=True, blank=True,
@@ -396,7 +242,7 @@ class MailFeedRule(ModelDiffMixin):
             if other.strip().endswith(':'):
                 self.other_header = other = other.strip()[:-1]
 
-            if other not in self.OTHER_VALID_HEADERS:
+            if other.lower() not in common.OTHER_VALID_HEADERS_lower:
                 is_valid = False
                 self.check_error = _(u'Unrecognized header name “{0}”. Please '
                                      u'look at http://bit.ly/smtp-headers '
@@ -425,17 +271,14 @@ class MailFeedRule(ModelDiffMixin):
     def match_message(self, message):
         """ Return ``True`` if :param:`message` matches the current rule. """
 
-        HEADERS = {
-            u'subject': ('Subject', ),
-            u'from': ('From', 'Sender', 'X-Envelope-From',
-                      'X-Sender', 'X-X-Sender',
-                      'Reply-To', 'Mail-Reply-To',
-                      'Mail-Followup-To', ),
-            u'to': ('To', 'Cc', 'Bcc', 'Delivered-To', 'X-Loop', ),
-            u'list': ('Mailing-list', 'List-ID',
-                      'X-Mailing-List', 'List-URL', ),
-            u'other': (self.other_header, ),
-        }
+        def match_header(header, value):
+            if not self.match_case:
+                header = header.lower()
+
+            return self.operation(header, value)
+
+        HEADERS = common.BASE_HEADERS.copy()
+        HEADERS[u'other'] = self.other_header
 
         if self.match_case:
             value = self.match_value
