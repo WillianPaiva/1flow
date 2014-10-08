@@ -404,14 +404,19 @@ class MailAccount(ModelDiffMixin):
             mailbox_name = u'INBOX'
 
         try:
-            imap_conn.select(mailbox_name)
+            # OMG o_O http://bugs.python.org/issue13940
+            result, data = imap_conn.select('"' + mailbox_name + '"')
 
         except Exception as e:
             self.mark_unusable(u'Could not select mailbox %s',
                                args=(mailbox_name, ), exc=e)
             raise
 
-        LOGGER.debug(u'IMAP %s: selected mailbox %s', self, mailbox_name)
+        if result == 'OK':
+            # LOGGER.debug(u'IMAP %s: selected mailbox %s with %s mail(s)',
+            #             self, mailbox_name, data[0])
+
+            self._selected_mailbox_ = mailbox_name
 
     def imap_close(self, imap_conn=None):
 
@@ -422,6 +427,8 @@ class MailAccount(ModelDiffMixin):
             raise RuntimeError('Not connected!')
 
         imap_conn.close()
+
+        self._selected_mailbox_ = None
 
     def imap_logout(self, imap_conn=None):
 
