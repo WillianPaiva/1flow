@@ -116,6 +116,8 @@ CACHE_ONE_MONTH = CACHE_ONE_DAY * 30
 
 ARTICLE_ORPHANED_BASE = u'http://{0}/orphaned/article/'.format(
                         settings.SITE_DOMAIN)
+BAD_SITE_URL_BASE     = u'http://badsite.{0}/'.format(
+                        settings.SITE_DOMAIN)
 USER_FEEDS_SITE_URL   = u'http://{0}'.format(settings.SITE_DOMAIN
                                              ) + u'/user/{user.id}/'
 SPECIAL_FEEDS_DATA = {
