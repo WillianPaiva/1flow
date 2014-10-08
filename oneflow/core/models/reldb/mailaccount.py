@@ -66,6 +66,16 @@ class MailAccount(ModelDiffMixin):
     MAILBOXES_STRING_SEPARATOR = u'~|~'
 
     MAILBOXES_BLACKLIST = (
+        'Drafts',
+        'Trash',
+        'Sent Messages',
+        'Sent',
+        'Spam',
+        'Junk',
+        'Deleted Messages',
+        'Archive',
+        'Archives',
+
         'INBOX.Drafts',
         'INBOX.Trash',
         'INBOX.Sent Messages',
@@ -73,6 +83,8 @@ class MailAccount(ModelDiffMixin):
         'INBOX.Spam',
         'INBOX.Junk',
         'INBOX.Deleted Messages',
+        'INBOX.Archive',
+        'INBOX.Archives',
 
         'INBOX.INBOX.Junk',
         'INBOX.INBOX.Drafts',
@@ -81,6 +93,18 @@ class MailAccount(ModelDiffMixin):
         'INBOX.INBOX.Sent Messages',
         'INBOX.INBOX.Spam',
         'INBOX.INBOX.Deleted Messages',
+        'INBOX.INBOX.Archive',
+        'INBOX.INBOX.Archives',
+
+        _(u'Drafts'),
+        _(u'Trash'),
+        _(u'Sent Messages'),
+        _(u'Sent'),
+        _(u'Spam'),
+        _(u'Junk'),
+        _(u'Deleted Messages'),
+        _(u'Archive'),
+        _(u'Archives'),
 
         _(u'INBOX.Drafts'),
         _(u'INBOX.Trash'),
@@ -89,6 +113,8 @@ class MailAccount(ModelDiffMixin):
         _(u'INBOX.Spam'),
         _(u'INBOX.Junk'),
         _(u'INBOX.Deleted Messages'),
+        _(u'INBOX.Archive'),
+        _(u'INBOX.Archives'),
 
         _(u'INBOX.INBOX.Junk'),
         _(u'INBOX.INBOX.Drafts'),
@@ -97,6 +123,8 @@ class MailAccount(ModelDiffMixin):
         _(u'INBOX.INBOX.Sent Messages'),
         _(u'INBOX.INBOX.Spam'),
         _(u'INBOX.INBOX.Deleted Messages'),
+        _(u'INBOX.INBOX.Archive'),
+        _(u'INBOX.INBOX.Archives'),
     )
 
     MAILBOXES_COMMON = OrderedDict((
