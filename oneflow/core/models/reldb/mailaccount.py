@@ -353,8 +353,8 @@ class MailAccount(ModelDiffMixin):
 
         self._mailboxes_ = mailaccount_mailboxes_default(self)
 
-        LOGGER.info(u'IMAP %s: mailboxes list updated → %s',
-                    self, self.mailboxes)
+        LOGGER.debug(u'IMAP %s: mailboxes list updated → %s',
+                     self, u', '.join(self.mailboxes))
 
     # ——————————————————————————————————————————————————————————— IMAP wrappers
 
@@ -477,14 +477,24 @@ class MailAccount(ModelDiffMixin):
                 mailbox = line.split(' "." ')[1].replace('"', '')
 
                 if mailbox not in self.MAILBOXES_BLACKLIST:
-                    mailboxes.append(mailbox)
+
+                    subfolder = False
+
+                    for blacklisted in self.MAILBOXES_BLACKLIST:
+                        if mailbox.startswith(blacklisted + u'.'):
+                            subfolder = True
+                            break
+
+                    if not subfolder:
+                        mailboxes.append(mailbox)
 
             self.mark_usable()
 
             if as_text:
-                return self.MAILBOXES_STRING_SEPARATOR.join(mailboxes)
+                return self.MAILBOXES_STRING_SEPARATOR.join(sorted(mailboxes))
 
-            return mailboxes
+            return sorted(mailboxes)
+
 
 
 register_task_method(MailAccount, MailAccount.test_connection,
