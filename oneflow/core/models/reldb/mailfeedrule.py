@@ -152,6 +152,12 @@ class MailFeedRule(ModelDiffMixin):
 
         except AttributeError:
 
+            def mymethodcaller(name):
+                def caller(a, b):
+                    return getattr(a, name)(b)
+
+                return caller
+
             def ncontains(a, b):
                 return not operator.contains(a, b)
 
@@ -179,9 +185,9 @@ class MailFeedRule(ModelDiffMixin):
             OPERATIONS = {
                 u'contains': operator.contains,
                 u'ncontains': ncontains,
-                u'starts': operator.methodcaller('startswith'),
+                u'starts': mymethodcaller('startswith'),
                 u'nstarts': nstarts,
-                u'ends': operator.methodcaller('endsswith'),
+                u'ends': mymethodcaller('endswith'),
                 u'nends': nends,
                 u'equals': operator.eq,
                 u'nequals': operator.ne,
