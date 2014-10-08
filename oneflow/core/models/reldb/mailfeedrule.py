@@ -297,10 +297,39 @@ class MailFeedRule(ModelDiffMixin):
         for header_name in HEADERS[self.header_field]:
             header = message.get(header_name, '')
 
-            if not self.match_case:
-                header = header.lower()
+            if isinstance(header, list) or isinstance(header, tuple):
+                if len(header) > 2:
+                    for header_part in header:
+                        if isinstance(header, list) \
+                                or isinstance(header, tuple):
+                            header = u'{0} {1}'.format(*header_part)
 
-            if self.operation(header, value):
-                return True
+                            if match_header(header, value):
+                                return True
+
+                        else:
+                            if match_header(header_part, value):
+                                return True
+
+                else:
+                    if header[1].startswith(u'<'):
+                        # Here we've got [u'Olivier Cortès', '<oc@1flow.io>']
+                        # it's the same person; one test.
+
+                        header = u'{0} {1}'.format(*header)
+
+                        if match_header(header, value):
+                            return True
+
+                    else:
+                        # There we've got [u'Toto <n@t.com>', u'Tutu <m@t.com>']
+                        # They are 2 different persons and 2 tests.
+
+                        for header_part in header:
+                            if match_header(header_part, value):
+                                return True
+            else:
+                if match_header(header, value):
+                    return True
 
         return False
