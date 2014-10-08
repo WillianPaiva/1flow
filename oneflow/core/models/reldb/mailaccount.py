@@ -681,9 +681,6 @@ class MailAccount(ModelDiffMixin):
 
             email_message.replace_header(header, decoded_header)
 
-            # LOGGER.info(u'>>> %s: %s → %s', header, value,
-            #             email_message[header])
-
             # Now, prettify the date.
             email_datetime = email_message.get('date', None)
 
@@ -692,23 +689,6 @@ class MailAccount(ModelDiffMixin):
                 email_message.replace_header('date', msg_datetime)
 
         return email_message
-
-    def email_get_first_text_block(self, email_message):
-        """ Get the first block of a mail.
-
-        This will always return the text/plain part,
-        even in the case of a multipart/form email.
-        """
-
-        maintype = email_message.get_content_maintype()
-
-        if maintype == 'multipart':
-            for part in email_message.get_payload():
-                if part.get_content_maintype() == 'text':
-                    return part.get_payload()
-
-        elif maintype == 'text':
-            return email_message.get_payload()
 
 register_task_method(MailAccount, MailAccount.test_connection,
                      globals(), u'swarm')
