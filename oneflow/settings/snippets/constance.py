@@ -32,7 +32,11 @@ CONSTANCE_REDIS_PREFIX = 'c0s1f:'
 CONSTANCE_CHANGE_LIST_TEMPLATE = u'admin/constance_change_list.html'
 
 CONSTANCE_CONFIG = {
-
+    #
+    # HEADS UP: don't forget to update
+    #           oneflow/base/admin.py::ConstanceAdmin.fieldsets
+    #           to get the new values sorted in the admin.
+    #
     # ————————————————————————————————————————————————————————————— Staff stuff
 
 
