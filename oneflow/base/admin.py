@@ -110,6 +110,17 @@ ConstanceAdmin.fieldsets = (
             ),
         }),
 
+
+        (_(u'IMAP & e-Mail'), {
+            'classes': ('grp-collapse grp-open', ),
+            'fields': (
+                'MAIL_ACCOUNT_REFRESH_PERIOD',
+                'MAIL_IMAP_FETCH_MAX',
+                'MAIL_IMAP_CACHE_MESSAGES',
+                'MAIL_IMAP_CACHE_EXPIRY',
+            ),
+        }),
+
         (_(u'Article fetching & parsing'), {
             'classes': ('grp-collapse grp-closed', ),
             'fields': (
