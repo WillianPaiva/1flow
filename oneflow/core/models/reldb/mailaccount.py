@@ -18,6 +18,11 @@ You should have received a copy of the GNU Affero General Public
 License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
+import operator
+
+from datetime import datetime
+from email import message_from_string
+from email.header import decode_header
 
 import imaplib
 import logging
@@ -30,13 +35,15 @@ from django.utils.translation import ugettext_lazy as _
 # from django.utils.text import slugify
 
 from ....base.fields import TextRedisDescriptor
-from ....base.utils import register_task_method
+from ....base.utils import register_task_method, list_chunks
 
 from sparks.django.models import ModelDiffMixin
 
-from oneflow.base.utils.dateutils import now, timedelta
+from oneflow.base.utils.dateutils import (now, timedelta,
+                                          email_date_to_datetime_tz)
 
-from common import long_in_the_past, DjangoUser  # , REDIS
+from common import REDIS, long_in_the_past, DjangoUser
+import mail_common as common
 
 LOGGER = logging.getLogger(__name__)
 
@@ -193,6 +200,17 @@ class MailAccount(ModelDiffMixin):
             now() - self.date_last_conn
             < timedelta(seconds=config.MAIL_ACCOUNT_REFRESH_PERIOD))
 
+    @property
+    def common_headers(self):
+        try:
+            return self._common_headers_
+
+        except AttributeError:
+            self._common_headers_ = reduce(operator.add,
+                                           common.BASE_HEADERS.values())
+
+            return self._common_headers_
+
     # —————————————————————————————————————————————————————————————————— Django
 
     def __unicode__(self):
@@ -251,6 +269,16 @@ class MailAccount(ModelDiffMixin):
         #    raise e_typ, e_val, trcbak
 
     # ——————————————————————————————————————————————————————————————— Internals
+
+    def redis_key(self, thing):
+        """ Create a unique key for the current account and a message UID. """
+
+        if isinstance(thing, datetime):
+            return u'ma:{0}:{1}:{2}'.format(self.pk,
+                                            self._selected_mailbox_,
+                                            unicode(thing))
+
+        return u'ma:{0}:{1}'.format(self.pk, thing)
 
     def get_port(self):
         """ Return the IMAP connection port, with default values if unset. """
@@ -495,7 +523,192 @@ class MailAccount(ModelDiffMixin):
 
             return sorted(mailboxes)
 
+    def imap_search_since(self, imap_conn=None, since=None):
+        """ Search for messages in the currently selected mailbox. """
 
+        if imap_conn is None:
+            imap_conn = self._imap_connection_
+
+        if imap_conn is None:
+            raise RuntimeError('Not connected!')
+
+        def search_since(since):
+
+            result, data = imap_conn.uid('search', None,
+                                         '(SENTSINCE {date})'.format(
+                                             date=since.strftime("%d-%b-%Y")))
+
+            if result == 'OK':
+                if data == ['']:
+                    # No new mail since ``since``…
+                    LOGGER.debug(u'IMAP %s: no new mail since %s', self, since)
+                    return
+
+                    # Search for all mail instead?
+                    # result, data = imap_conn.uid('search', None, "ALL")
+
+                else:
+                    return data[0]
+
+            else:
+                LOGGER.error(u'IMAP %s: could not search '
+                             u'emails since %s (%s)',
+                             self, since, data)
+                return
+
+        cache_expiry_time = config.MAIL_IMAP_CACHE_EXPIRY
+
+        if config.MAIL_IMAP_CACHE_MESSAGES:
+
+            redis_key = self.redis_key(since)
+
+            email_ids_as_string = REDIS.get(redis_key)
+
+            if email_ids_as_string is None:
+
+                email_ids_as_string = search_since(since)
+
+                if email_ids_as_string is None:
+                    return
+
+                else:
+                    REDIS.setex(redis_key,
+                                cache_expiry_time,
+                                email_ids_as_string)
+
+        else:
+            email_ids_as_string = search_since(since)
+
+            if email_ids_as_string is None:
+                return
+
+        email_ids = list(list_chunks(email_ids_as_string.split(),
+                                     config.MAIL_IMAP_FETCH_MAX))
+
+        LOGGER.debug(u'IMAP %s: %s emails to fetch in %s.', self,
+                     sum(len(x) for x in email_ids), self._selected_mailbox_)
+
+        for emails_ids_chunk in email_ids:
+
+            if config.MAIL_IMAP_CACHE_MESSAGES:
+
+                for msg_uid in emails_ids_chunk:
+
+                    redis_key = self.redis_key(msg_uid)
+
+                    msg = REDIS.get(redis_key)
+
+                    if msg is None:
+                        result, data = imap_conn.uid('fetch',
+                                                     msg_uid,
+                                                     '(RFC822)')
+                        if result == 'OK':
+
+                            for raw_data in data:
+
+                                if len(raw_data) == 1:
+                                    continue
+
+                                msg = raw_data[1]
+
+                                REDIS.setex(redis_key,
+                                            cache_expiry_time,
+                                            msg)
+                                break
+
+                        else:
+                            LOGGER.error(u'IMAP %s: could not fetch '
+                                         u'email with UID %s (%s)',
+                                         self, msg_uid, data)
+
+                    yield self.email_prettify_raw_message(msg)
+
+            else:
+                # LOGGER.debug(u'IMAP %s: fetching uids %s.',
+                #             self, ','.join(emails_ids_chunk))
+
+                result, data = imap_conn.uid('fetch',
+                                             ','.join(emails_ids_chunk),
+                                             '(RFC822)')
+
+                if result == 'OK':
+                    for raw_data in data:
+                        if len(raw_data) == 1:
+                            continue
+
+                        yield self.email_prettify_raw_message(raw_data[1])
+
+    # —————————————————————————————————————————————————————————————————— E-mail
+
+    def email_prettify_raw_message(self, raw_message):
+        """ Make a raw IMAP message usable from Python code.
+
+        Eg. decode headers and prettify everything that can be.
+        """
+
+        email_message = message_from_string(raw_message)
+
+        for header in self.common_headers:
+            try:
+                value = email_message[header]
+
+            except KeyError:
+                continue
+
+            if value is None or not value:
+                continue
+
+            header_values = decode_header(value)
+
+            if len(header_values) > 1:
+                decoded_header = []
+
+                for string, charset in header_values:
+                    if charset:
+                        decoded_header.append(string.decode(charset))
+
+                    else:
+                        decoded_header.append(string)
+
+            else:
+                string, charset = header_values[0]
+
+                if charset:
+                    decoded_header = string.decode(charset)
+
+                else:
+                    decoded_header = string
+
+            email_message.replace_header(header, decoded_header)
+
+            # LOGGER.info(u'>>> %s: %s → %s', header, value,
+            #             email_message[header])
+
+            # Now, prettify the date.
+            email_datetime = email_message.get('date', None)
+
+            if not isinstance(email_datetime, datetime):
+                msg_datetime = email_date_to_datetime_tz(email_datetime)
+                email_message.replace_header('date', msg_datetime)
+
+        return email_message
+
+    def email_get_first_text_block(self, email_message):
+        """ Get the first block of a mail.
+
+        This will always return the text/plain part,
+        even in the case of a multipart/form email.
+        """
+
+        maintype = email_message.get_content_maintype()
+
+        if maintype == 'multipart':
+            for part in email_message.get_payload():
+                if part.get_content_maintype() == 'text':
+                    return part.get_payload()
+
+        elif maintype == 'text':
+            return email_message.get_payload()
 
 register_task_method(MailAccount, MailAccount.test_connection,
                      globals(), u'swarm')
