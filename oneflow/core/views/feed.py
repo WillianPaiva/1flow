@@ -70,10 +70,14 @@ def add_feed(request, feed_url, subscribe=True):
             feeds = Feed.create_feeds_from_url(feed_url)
 
         except FeedIsHtmlPageException:
-            feed_exc = _(u'The website at {0} does not seem '
-                         u'to provide any feed.').format(feed_url)
+            LOGGER.exception('Potential feed at %s does not provide '
+                             u'any RSS/Atom', feed_url)
+            feed_exc = _(u'The website at {0} does not '
+                         u'provide any RSS/Atom feed.').format(feed_url)
 
         except Exception as e:
+            LOGGER.exception('Exception occured while creating feed from %s',
+                             feed_url)
             feed_exc = _(u'Could not create any feed from '
                          u'URL {0}: {1}').format(feed_url, e)
 
