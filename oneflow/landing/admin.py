@@ -25,7 +25,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib import admin as django_admin
 import mongoadmin as admin
 
-from sparks.django.admin import languages, truncate_field
+from sparks.django.utils import languages, truncate_field
 
 from .models import LandingContent, LandingUser
 from ..base.admin import CSVAdminMixin
