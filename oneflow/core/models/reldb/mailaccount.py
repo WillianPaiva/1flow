@@ -585,20 +585,20 @@ class MailAccount(ModelDiffMixin):
         email_ids = list(list_chunks(email_ids_as_string.split(),
                                      config.MAIL_IMAP_FETCH_MAX))
 
-        LOGGER.debug(u'IMAP %s: %s emails to fetch in %s.', self,
-                     sum(len(x) for x in email_ids), self._selected_mailbox_)
+        if not config.MAIL_IMAP_CACHE_MESSAGES:
+            LOGGER.debug(u'IMAP %s: %s emails to fetch in %s.', self,
+                         sum(len(x) for x in email_ids),
+                         self._selected_mailbox_)
 
         for emails_ids_chunk in email_ids:
 
             if config.MAIL_IMAP_CACHE_MESSAGES:
 
                 for msg_uid in emails_ids_chunk:
-
                     redis_key = self.redis_key(msg_uid)
+                    message   = REDIS.get(redis_key)
 
-                    msg = REDIS.get(redis_key)
-
-                    if msg is None:
+                    if message is None:
                         result, data = imap_conn.uid('fetch',
                                                      msg_uid,
                                                      '(RFC822)')
@@ -609,11 +609,11 @@ class MailAccount(ModelDiffMixin):
                                 if len(raw_data) == 1:
                                     continue
 
-                                msg = raw_data[1]
+                                message = raw_data[1]
 
                                 REDIS.setex(redis_key,
                                             cache_expiry_time,
-                                            msg)
+                                            message)
                                 break
 
                         else:
@@ -621,11 +621,11 @@ class MailAccount(ModelDiffMixin):
                                          u'email with UID %s (%s)',
                                          self, msg_uid, data)
 
-                    yield self.email_prettify_raw_message(msg)
+                    yield self.email_prettify_raw_message(message)
 
             else:
-                # LOGGER.debug(u'IMAP %s: fetching uids %s.',
-                #             self, ','.join(emails_ids_chunk))
+                # Without the cache, we fetch in
+                # chunks to lower network overhead.
 
                 result, data = imap_conn.uid('fetch',
                                              ','.join(emails_ids_chunk),
