@@ -239,13 +239,16 @@ class MailAccount(ModelDiffMixin):
 
         self.imap_login()
 
-    def __exit__(self, *args, **kwargs):
+    def __exit__(self, e_typ, e_val, trcbak):
 
         if hasattr(self, '_imap_connection_') \
                 and self._imap_connection_ is not None:
 
             self.imap_logout()
             self._imap_connection_ = None
+
+        # if all((e_typ, e_val, trcbak)):
+        #    raise e_typ, e_val, trcbak
 
     # ——————————————————————————————————————————————————————————————— Internals
 
