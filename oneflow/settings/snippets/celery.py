@@ -128,6 +128,10 @@ CELERYBEAT_SCHEDULE = {
         'task': 'oneflow.core.tasks.refresh_all_feeds',
         'schedule': crontab(hour='*', minute='*'),
     },
+    'refresh-all-mailaccounts': {
+        'task': 'oneflow.core.tasks.refresh_all_mailaccounts',
+        'schedule': crontab(hour='*/4', minute='4'),
+    },
 
     'global-checker-task': {
         'task': 'oneflow.core.tasks.global_checker_task',

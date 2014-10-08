@@ -28,7 +28,7 @@ from celery import task
 
 from django.utils.translation import ugettext_lazy as _
 
-from ..models import Feed, feed_refresh_task
+from ..models import MailAccount, Feed, feed_refresh_task
 
 from oneflow.base.utils import RedisExpiringLock
 from oneflow.base.utils.dateutils import (now, today, timedelta,
@@ -146,6 +146,51 @@ def refresh_all_feeds(limit=None, force=False):
 
         LOGGER.info(u'Launched %s refreshes out of %s feed(s) checked.',
                     count, feeds.count())
+
+
+@task(queue='high')
+def refresh_all_mailaccounts(force=False):
+    """ Check all unusable e-mail accounts. """
+
+    if config.MAIL_ACCOUNT_REFRESH_DISABLED:
+        # Do not raise any .retry(), this is a scheduled task.
+        LOGGER.warning(u'E-mail accounts check disabled in configuration.')
+        return
+
+    accounts = MailAccount.objects.filter(is_usable=False)
+
+    my_lock = RedisExpiringLock('check_email_accounts',
+                                expire_time=30 * (accounts.count() + 2))
+
+    if not my_lock.acquire():
+        if force:
+            my_lock.release()
+            my_lock.acquire()
+            LOGGER.warning(_(u'Forcing check of email accounts…'))
+
+        else:
+            # Avoid running this task over and over again in the queue
+            # if the previous instance did not yet terminate. Happens
+            # when scheduled task runs too quickly.
+            LOGGER.warning(u'refresh_all_mailaccounts() is already locked, '
+                           u'aborting.')
+            return
+
+    with benchmark('refresh_all_mailaccounts()'):
+
+        try:
+            for account in accounts:
+                try:
+                    account.test_connection()
+                    account.update_mailboxes()
+
+                except:
+                    pass
+        finally:
+            my_lock.release()
+
+        LOGGER.info(u'Launched %s checks out of %s feed(s) checked.',
+                    accounts.count(), MailAccount.objects.all().count())
 
 
 @task(queue='low')
