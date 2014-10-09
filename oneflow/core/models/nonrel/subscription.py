@@ -44,6 +44,8 @@ from .folder import Folder
 from .user import User
 from .feed import Feed
 
+from ..reldb import MailFeed
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -168,6 +170,17 @@ class Subscription(Document, DocumentHelperMixin):
                 # by the register_task_method() call.
                 subscription_post_create_task.delay(subscription.id)  # NOQA
 
+        else:
+            if subscription.feed.is_mailfeed:
+                mailfeed = MailFeed.get_from_stream_url(subscription.feed.url)
+
+                if subscription.user.django == mailfeed.user:
+                    # HEADS UP: we use save() to forward the
+                    # name change to the Feed instance without
+                    # duplicating the code here.
+                    mailfeed.name = subscription.name
+                    mailfeed.save()
+
     def post_create_task(self):
         """ Method meant to be run from a celery task. """
 
@@ -206,6 +219,8 @@ class Subscription(Document, DocumentHelperMixin):
             subscription.save()
 
         if background:
+            # HEADS UP: this task name will be registered later
+            # by the register_task_method() call.
             # 'True' is for the 'force' argument.
             subscription_check_reads_task.delay(subscription.id, True)
 

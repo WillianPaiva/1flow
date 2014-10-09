@@ -30,7 +30,6 @@ import os
 import sys
 import warnings
 
-
 from django.core.urlresolvers import reverse_lazy
 from django.utils.translation import ugettext_lazy
 
@@ -38,7 +37,7 @@ from django.utils.translation import ugettext_lazy
 ugettext = lambda s: s
 
 # This is imported here to benefit to all other included snippets.
-from sparks import platform # NOQA
+from sparks import platform  # NOQA
 
 # We need to go down 2 times because the starting point of these settings is
 # `project/settings/__init__.py`, instead of good old `project/settings.py`.
@@ -486,6 +485,7 @@ INSTALLED_APPS = [
     'south_admin',
     #'maintenancemode', — not needed at all, the middleware is sufficient.
     'transmeta',
+    'sorting_bootstrap',
 
     # Order matters for inplace & friends.
     'inplaceeditform_bootstrap',
@@ -512,8 +512,7 @@ INSTALLED_APPS = [
     # `infinite_pagination` doesn't work on MongoEngine QuerySet.
     #'infinite_pagination',
 
-    # We don't use `mathfilters` as of 20130831.
-    #'mathfilters',
+    'mathfilters',
 
     'widget_tweaks',
     'oneflow.base',
@@ -549,7 +548,7 @@ INPLACEEDIT_UNSAVED_TEXT = ugettext_lazy(u'You have unsaved changes')
 DEFAULT_INPLACE_EDIT_OPTIONS = {
     'auto_height': 1,            # be gentle, don't try to guess anything.
     'class_inplace': 'form',     # Be a little bootstrap compatible.
-    'tag_name_cover': 'div',     # Make the editables more clickable.
+    'tag_name_cover': 'span',     # Make the editables more clickable.
     '__widget_class': 'form-control',   # DOES NOT WORK, ISSUE Github #53
 }
 # modify the behavior of the DEFAULT_INPLACE_EDIT_OPTIONS usage, if True
@@ -733,12 +732,12 @@ SOCIAL_AUTH_PIPELINE = (
     'social_auth.backends.pipeline.user.update_user_details',
 
     #'oneflow.core.social_pipeline.check_1flow_requirements',
-    'oneflow.core.social_pipeline.get_social_avatar',
+    'sparks.django.social_pipeline.get_social_avatar',
 
     # Given the current configuration, we do allow any user to register,
     # or not. In both cases, we create the account, but will deactivate
     # it if registration is disabled.
-    'oneflow.core.social_pipeline.throttle_new_user_accounts',
+    'sparks.django.social_pipeline.throttle_new_user_accounts',
 )
 
 # —————————————————————————————————————————————————————————————— 1flow settings

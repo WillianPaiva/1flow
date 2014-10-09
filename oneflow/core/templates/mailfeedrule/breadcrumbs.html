@@ -1,0 +1,12 @@
+			{% include "mailfeed/breadcrumbs.html" %}
+
+			<a href="{% url 'mailfeed_list_create' %}"
+					title="{% trans "Back to mail feeds" %}"
+					data-toggle="tooltip"
+					class="popover-top">
+				{% core_icon 'MailFeed' %}
+			</a>
+
+			<span class="very-muted">&nbsp;&nbsp;
+			<i class="icon icon-angle-right"></i>
+			&nbsp;&nbsp;</span>

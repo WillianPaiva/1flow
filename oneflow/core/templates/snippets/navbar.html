@@ -67,7 +67,7 @@
             {% endif %}
 
               <li class="divider"></li>
-              <!--<li><a href="{% url 'signout' %}">{% trans 'Sign Out' %}</a></li>-->
+              {# django-user account NEEDS a POST form. <li><a href="{% url 'signout' %}">{% trans 'Sign Out' %}</a></li> #}
               <li><form id="signout-from-menu-form" method="POST" class="form"
                   action="{% url "signout" %}">
                 {% csrf_token %}</form><a href="#"
@@ -167,35 +167,32 @@
                 data-toggle="popover" data-placement="bottom"
                 data-original-title="System Informations" data-html="true"
                 data-content="
-              <table class='table table-hover table-stripped table-condensed'>
-                <!--<thead>
-                  <tr>
-                    <th>Setting</th>
-                    <th>Value</th>
-                  </tr>
-                </thead>-->
-                <tbody>
-                  <tr>
-                    <td>PostgreSQL</td>
-                    <td>{{settings.DATABASES.default.HOST}}
-                      <strong>{{settings.DATABASES.default.NAME}}</strong></td>
-                  </tr>
-                  <tr>
-                    <td>MongoDB</td>
-                    <td>{{settings.MONGODB_HOST}}
-                      <strong>{{settings.MONGODB_NAME}}</strong></td>
-                  </tr>
-                  <tr>
-                    <td>Mongo Archive</td>
-                    <td>{{settings.MONGODB_HOST_ARCHIVE}}
-                      <strong>{{settings.MONGODB_NAME_ARCHIVE}}</strong></td>
-                  </tr>
-                  <tr>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>"
+                  <div class='row'>
+                    <div class='col-xs-4'>PostgreSQL</div>
+                    <div class='col-xs-6'>{{settings.DATABASES.default.HOST}}
+                      <strong>{{settings.DATABASES.default.NAME}}</strong></div>
+                  </div>
+                  <div class='spacer15'></div>
+
+                  <div class='row'>
+                    <div class='col-xs-4'>MongoDB</div>
+                    <div class='col-xs-6'>{{settings.MONGODB_HOST}}
+                      <strong>{{settings.MONGODB_NAME}}</strong></div>
+                  </div>
+                  <div class='spacer15'></div>
+
+                  <div class='row'>
+                    <div class='col-xs-4'>Mongo Archive</div>
+                    <div class='col-xs-6'>{{settings.MONGODB_HOST_ARCHIVE}}
+                      <strong>{{settings.MONGODB_NAME_ARCHIVE}}</strong></div>
+                  </div>
+                  <div class='spacer15'></div>
+                  <div>
+                    <div class='col-xs-12'>
+                    <a class='btn btn-info btn-block centered' href='{% url 'admin_status' %}'>{% trans "System statistics" %}</a>
+                    </div>
+                  </div>
+              "
                 >v{{ VERSION }}</a></li>
 
                 <script type="text/javascript">

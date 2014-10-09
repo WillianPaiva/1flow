@@ -32,7 +32,11 @@ CONSTANCE_REDIS_PREFIX = 'c0s1f:'
 CONSTANCE_CHANGE_LIST_TEMPLATE = u'admin/constance_change_list.html'
 
 CONSTANCE_CONFIG = {
-
+    #
+    # HEADS UP: don't forget to update
+    #           oneflow/base/admin.py::ConstanceAdmin.fieldsets
+    #           to get the new values sorted in the admin.
+    #
     # ————————————————————————————————————————————————————————————— Staff stuff
 
 
@@ -310,6 +314,34 @@ CONSTANCE_CONFIG = {
                                      u'below which a paragraph does not '
                                      u'have enough data (words) to be '
                                      u'considered informational.')),
+
+
+    # ——————————————————————————————————————————————————————————— Mail accounts
+
+    'MAIL_ACCOUNT_REFRESH_DISABLED': (False, ugettext(u'Disable or not the '
+                                      u'periodic check of all unusable mail '
+                                      u'accounts.')),
+
+
+    'MAIL_ACCOUNT_REFRESH_PERIOD': (3600*6, ugettext(u'Period after which '
+                                    u'IMAP accounts will be tested again '
+                                    u'for connection and mailbox listing.')),
+
+
+    'MAIL_IMAP_FETCH_MAX': (25, ugettext(u'When fetching e-mails from IMAP '
+                            u'accounts, how many should be downloaded at '
+                            u'each call.')),
+
+
+    'MAIL_IMAP_CACHE_MESSAGES': (True, ugettext(u'Cache all downloaded '
+                                 u'e-mails in Redis to speed up further '
+                                 u'fetches and mail feeds refreshes.')),
+
+
+    'MAIL_IMAP_CACHE_EXPIRY': (3600*24, ugettext(u'Make cached e-mails '
+                               u'expire after this amount of seconds to '
+                               u'avoid burning local instance memory and '
+                               u'disk.')),
 
 
     # ————————————————————————————————————————————————————————————— Check tasks

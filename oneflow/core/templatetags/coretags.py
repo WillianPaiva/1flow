@@ -1,47 +1,41 @@
 # -*- coding: utf-8 -*-
 """
-    Copyright 2013-2014 Olivier Cortès <oc@1flow.io>
+Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
-    This file is part of the 1flow project.
+This file is part of the 1flow project.
 
-    1flow is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation, either version 3 of
-    the License, or (at your option) any later version.
+1flow is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
 
-    1flow is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
+1flow is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU Affero General Public
-    License along with 1flow.  If not, see http://www.gnu.org/licenses/
+You should have received a copy of the GNU Affero General Public
+License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
-import re
 import logging
 import difflib
 import mistune
-
-from math import pow
 
 from constance import config
 from markdown_deux import markdown as mk2_markdown
 
 from django import template
-#from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _, pgettext_lazy
-
-#from cache_utils.decorators import cached
 
 from ...base.templatetags.base_utils import get_view_name
 from ...base.utils.dateutils import (now, today,
                                      naturaldelta as onef_naturaldelta)
 
-from ..models.nonrel import Read, CONTENT_TYPE_MARKDOWN  # , CACHE_ONE_WEEK
+from oneflow.core import models   # , CACHE_ONE_WEEK
 
 from ..context_processors import content_types
 
@@ -49,62 +43,16 @@ LOGGER = logging.getLogger(__name__)
 
 register = template.Library()
 
-# http://www.christianfaur.com/color/
-# http://www.christianfaur.com/color/Site/Picking%20Colors.html
-#
-# And then: http://stackoverflow.com/q/3116260/654755
-# http://ux.stackexchange.com/q/8297
-letters_colors = {
-    u'a': ((0, 0, 180), u'rgba(0, 0, 180, 1)', u'blue'),
-    u'b': ((175, 13, 102), u'rgba(175, 13, 102, 1)', u'red-violet'),
-    u'c': ((146, 248, 70), u'rgba(146, 248, 70, 1)', u'green-yellow'),
-    u'd': ((255, 200, 47), u'rgba(255, 200, 47, 1)', u'yellow-orange'),
-    u'e': ((255, 118, 0), u'rgba(255, 118, 0, 1)', u'orange'),
-
-    # Original f & g, not used because grey means "disabled"
-    # and G is not visible enough when opacity < 1.
-    #
-    #    u'f': ((185, 185, 185), u'rgba(185, 185, 185, 1)', u'light-gray'),
-    #    u'g': ((235, 235, 222), u'rgba(235, 235, 222, 1)', u'off-white'),
-    #
-    # Instead, we use w & y colors, which are the most near on the graph.
-
-    u'f': ((255, 152, 213), u'rgba(255, 152, 213, 1)', u'pink'),
-    u'g': ((175, 200, 74), u'rgba(175, 200, 74, 1)', u'olive-green'),
-    u'h': ((100, 100, 100), u'rgba(100, 100, 100, 1)', u'gray'),
-    u'i': ((255, 255, 0), u'rgba(255, 255, 0, 1)', u'yellow'),
-    u'j': ((55, 19, 112), u'rgba(55, 19, 112, 1)', u'dark-purple'),
-    u'k': ((255, 255, 150), u'rgba(255, 255, 150, 1)', u'light-yellow'),
-    u'l': ((202, 62, 94), u'rgba(202, 62, 94, 1)', u'dark-pink'),
-    u'm': ((205, 145, 63), u'rgba(205, 145, 63, 1)', u'dark-orange'),
-    u'n': ((12, 75, 100), u'rgba(12, 75, 100, 1)', u'teal'),
-    u'o': ((255, 0, 0), u'rgba(255, 0, 0, 1)', u'red'),
-    u'p': ((175, 155, 50), u'rgba(175, 155, 50, 1)', u'dark-yellow'),
-    u'q': ((0, 0, 0), u'rgba(0, 0, 0, 1)', u'black'),
-    u'r': ((37, 70, 25), u'rgba(37, 70, 25, 1)', u'dark-green'),
-    u's': ((121, 33, 135), u'rgba(121, 33, 135, 1)', u'purple'),
-    u't': ((83, 140, 208), u'rgba(83, 140, 208, 1)', u'light-blue'),
-    u'u': ((0, 154, 37), u'rgba(0, 154, 37, 1)', u'green'),
-    u'v': ((178, 220, 205), u'rgba(178, 220, 205, 1)', u'cyan'),
-    u'w': ((255, 152, 213), u'rgba(255, 152, 213, 1)', u'pink'),
-    u'x': ((0, 0, 74), u'rgba(0, 0, 74, 1)', u'dark blue'),
-    u'y': ((175, 200, 74), u'rgba(175, 200, 74, 1)', u'olive-green'),
-    u'z': ((63, 25, 12), u'rgba(63, 25, 12, 1)', u'red-brown'),
-}
-
-html_letters_re = re.compile(ur'[^\w]', re.UNICODE | re.IGNORECASE)
-
-
 reading_lists = {
 
     'web_import': (_(u'Imported elements'),
-                   #tooltip_both,
+                   # tooltip_both,
                    _(u'You have {0} newly imported items.'),
-                   #tooltip_unread
+                   # tooltip_unread
                    _(u'You have {0} newly imported items, out of {1} so far'),
-                   #tooltip_all,
+                   # tooltip_all,
                    _(u'You imported {0} web items so far'),
-                   #tooltip_none
+                   # tooltip_none
                    _(u'You did not import anything until now'),
                    ),
 
@@ -203,7 +151,7 @@ def read_status_css(read):
 
     css = []
 
-    for attr in Read.get_status_attributes():
+    for attr in models.Read.get_status_attributes():
         css.append(attr if getattr(read, attr) else (u'not_' + attr))
 
     return u' '.join(css)
@@ -456,7 +404,7 @@ def system_announcements(user):
 @register.simple_tag
 def read_action_toggle_url(read):
 
-    any_key = Read.get_status_attributes()[0]
+    any_key = models.Read.get_status_attributes()[0]
     url_base = reverse('toggle', kwargs={'klass': 'Read',
                        'oid': read.id, 'key': any_key}).replace(
         any_key, u'@@KEY@@')
@@ -467,7 +415,7 @@ def read_action_toggle_url(read):
 #@cached(CACHE_ONE_WEEK)
 def article_full_content_display(article):
 
-    if article.content_type == CONTENT_TYPE_MARKDOWN:
+    if article.content_type == models.CONTENT_TYPE_MARKDOWN:
 
         if len(article.content) > config.READ_ARTICLE_MIN_LENGTH:
 
@@ -555,7 +503,7 @@ def article_excerpt_content_display(article):
     # to be sure WE are not cut down by repressive laws from another age.
     #
 
-    if article.content_type == CONTENT_TYPE_MARKDOWN:
+    if article.content_type == models.CONTENT_TYPE_MARKDOWN:
 
         try:
             # Save it for next time / user to cool CPU usage.    save=True
@@ -609,7 +557,7 @@ def read_action(article, action_name, with_text=True, popover_direction=None):
             'with_text': with_text,
             'popover_direction': popover_direction or 'top',
             'action_name': action_name,
-            'action_data': Read.status_data.get(action_name),
+            'action_data': models.Read.status_data.get(action_name),
             'popover_class': '' if with_text else 'popover-tooltip',
             'js_func': "toggle_status(event, '{0}', '{1}')".format(
                        article.id, action_name)
@@ -642,7 +590,7 @@ def read_action_status(action_name, with_text=False):
     return {
         'with_text': with_text,
         'action_name': action_name,
-        'action_data': Read.status_data.get(action_name),
+        'action_data': models.Read.status_data.get(action_name),
     }
 
 
@@ -652,10 +600,10 @@ def read_status_css_styles():
         future, the CSS are auto-generated from the list, in a “as DRY
         as possible” attitude.
 
-        .. warning:: ``display: inherit`` was making our ``<span>``s
-            display as block, thus I forced ``inline-block``. But it
-            could break things in the future if HTML structure changes
-            deeply.
+    .. warning:: ``display: inherit`` was making our ``<span>``s
+        display as block, thus I forced ``inline-block``. But it
+        could break things in the future if HTML structure changes
+        deeply.
     """
 
     return u' '.join((
@@ -664,98 +612,73 @@ def read_status_css_styles():
                      u'.not_{0} .action-mark-not_{0}{{display:none}} '
                      u'.not_{0} .action-mark-{0}{{display:inline-block}}'
                      ).format(status)
-                     for status in Read.status_data.keys()
-                     if 'list_url' in Read.status_data[status])
+                     for status in models.Read.status_data.keys()
+                     if 'list_url' in models.Read.status_data[status])
+
+# —————————————————————————————————————————————————————————— Mail accounts tags
 
 
 @register.simple_tag
-def html_first_letters(name, number=1):
+def core_icon(klass_name):
+    """ Centralize all model icons and render them. """
 
-    try:
-        # Try to get the capitalized letters to make a nice name.
-        capitalized = ''.join(c for c in name if c.isupper() or c.isdigit())
+    return u'<i class="icon icon-{0} icon-fixed-width"></i>'.format({
+        'MailAccount': 'inbox',
+        'MailFeed': 'envelope',
+        'MailFeedRule': 'random',
+    }[klass_name])
 
-    except:
-        # If that fails, just start with the full name.
-        cleaned = html_letters_re.sub(u'', name)
+
+@register.simple_tag
+def mail_is_usable_to_icon(mailthing):
+    """ Render an icon with tooltip, given account state. """
+
+    # {% if mailaccount.is_usable %}
+    # {% mailfeed_rules_count mailaccount %}</td>
+    # <td class="right">{{ mailaccount.mailboxes|length }}</td>
+    # {% else %}
+    # <td></td>
+    # <td></td>
+    # {% endif %}
+
+    if isinstance(mailthing, models.MailAccount):
+        attr_name = 'is_usable'
+        err_attr  = 'conn_error'
+        message_ok = _(u'Account successfully working, tested {ago} ago.')
+        message_er = _(u'Account not working, tested {ago} ago. '
+                       u'Error reported: {err}')
+        ago = onef_naturaldelta(now() - mailthing.date_last_conn)
+    else:
+        attr_name = 'is_valid'
+        err_attr  = 'check_error'
+        message_ok = _(u'Rule validated successfully and will be '
+                       u'used for next fetch.')
+        message_er = _(u'Rule did not validate. Error reported: {err}')
+        ago = None
+
+    template = (u'<span class="label label-{0}" title="{2}" '
+                u'data-toggle="tooltip" data-placement="top">'
+                u'<i class="icon icon-fixed-width icon-{1}"></i></span>')
+
+    if getattr(mailthing, attr_name):
+        return template.format('success', 'ok', message_ok.format(ago=ago))
 
     else:
-        caplen = len(capitalized)
+        error_text = getattr(mailthing, err_attr)
 
-        # If it succeeded, make sure we have enough letters
-        if caplen > 0:
-
-            # If we don't have enough letters, take
-            # what's left after the last capital.
-            if caplen < number:
-                capitalized += name[name.index(capitalized[-1]) + 1:]
-
-            cleaned = html_letters_re.sub(u'', capitalized)
-
+        if error_text:
+            return template.format('danger', 'exclamation',
+                                   message_er.format(ago=ago, err=error_text))
         else:
-            cleaned = html_letters_re.sub(u'', name)
-
-    if len(cleaned) == 0:
-        number = 3
-        cleaned   = u';-)'
-
-    if number > len(cleaned):
-        number = 1
-
-    try:
-        return cleaned[:number].title()
-
-    except:
-        # OMG… Unicode characters everywhere…
-        return cleaned[:number]
+            return template.format('warning', 'question',
+                                   _(u'Account connectivity not yet tested. '
+                                     u'Please wait a few seconds and reload '
+                                     u'the current page.'))
 
 
 @register.simple_tag
-def html_background_color_for_name(name, opacity=1):
+def mailfeed_rules_count(mailaccount):
+    """ Return a count of rules applicable to a given account. """
 
-    name = html_letters_re.sub(u'', name)
-
-    try:
-        letter = name[0].lower()
-
-    except:
-        # OMG… Unicode characters everywhere…
-        letter = u'a'
-
-    try:
-        return letters_colors[letter][1].replace(u', 1)',
-                                                 u', {0})'.format(opacity))
-
-    except:
-        # Still, some unicode characters can
-        # lower() but are not in the table.
-        return letters_colors[u'a'][1].replace(u', 1)',
-                                               u', {0})'.format(opacity))
-
-
-@register.simple_tag
-def html_foreground_color_for_name(name):
-    """ TODO: pre-compute these values for our colors. """
-
-    name = html_letters_re.sub(u'', name)
-
-    try:
-        letter = name[0].lower()
-
-    except:
-        # OMG… Unicode characters everywhere…
-        letter = u'a'
-
-    try:
-        R, G, B = letters_colors[letter][0]
-
-    except:
-        # Still, some unicode characters can
-        # lower() but are not in the table.
-        R, G, B = letters_colors[u'a'][0]
-
-    Y = (0.2126 * pow(R / 255, 2.2)
-         + 0.7151 * pow(G / 255, 2.2)
-         + 0.0721 * pow(B / 255, 2.2))
-
-    return u'white' if Y <= 0.18 else u'black'
+    return (mailaccount.mailfeedrule_set.all().count()
+            + models.MailFeedRule.objects.filter(account=None).count())

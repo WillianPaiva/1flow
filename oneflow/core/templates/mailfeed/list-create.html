@@ -1,0 +1,121 @@
+{% extends 'home.html' %}
+{% load sorting_tags %}
+
+{% block title %}{% trans "Mail feeds" %}{% endblock title %}
+{% block body_id %}mail-feeds{% endblock body_id %}
+
+{% block application_content %}
+
+{% inplace_static %}
+
+<div class="spacer50"></div>
+
+<div class="row">
+	<div>
+	{% if mailfeed_list %}
+
+		 <div class="pull-right">
+		 	<div class="btn-group very-muted">
+		 		{% blocktrans count counter=mailfeed_list|length %}
+		 		    {{ counter }} mail feed
+		 		{% plural %}
+					{{ counter }} mail feeds
+		 		{% endblocktrans %}
+		 	</div>
+			<div class="btn-group" style="margin-left: 50px;">
+				<button id="form-collapser" class="btn btn-primary">{% trans "Add new" %}</button>
+			</div>
+		</div>
+
+		<h1>
+			<a href="{% url 'mailaccount_list_create' %}"
+					title="{% trans "Switch to mail accounts" %}"
+					data-toggle="tooltip"
+					class="popover-top">
+				{% core_icon 'MailAccount' %}
+			</a>
+
+			<span class="very-muted">&nbsp;&nbsp;
+			<i class="icon icon-angle-right"></i>
+			&nbsp;&nbsp;</span>
+
+			<span>{% core_icon 'MailFeed' %}&nbsp;
+			{% trans "Mail feeds" %}</span>
+		</h1>
+
+		<div class="spacer50"></div>
+
+		<table class="table table-hover">
+		<thead>
+
+		  {% include "mailfeed/form.html" %}
+
+		  <tr>
+			{% sort_th _("Feed name") 'name' %}
+			<th class="centered">{% trans "Status" %}</th>
+			{% sort_th _("Public") 'is_public' %}
+			<th>{% trans "Default action" %}</th>
+			<th>{% trans "Default finish" %}</th>
+			<th>{% trans "Rules" %}</th>
+			<th class="right">{% trans "Actions" %}</th>
+		  </tr>
+		</thead>
+		<tbody>
+		{% for mailfeed in mailfeed_list %}
+			<tr>
+				<td>{% inplace_edit 'mailfeed.name' %}</td>
+
+				<td class="centered">{#{% mail_is_usable_to_icon mailfeed %}#}TODO</td>
+				<td>{% inplace_edit 'mailfeed.is_public' autoSave="1" %}</td>
+
+				<td>{% inplace_edit 'mailfeed.match_action' %}</td>
+				<td>{% inplace_edit 'mailfeed.finish_action' %}</td>
+
+				<td><a href="{% url 'mailfeedrule_list_create' mailfeed.pk %}"
+					class="btn btn-primary btn-xs">
+						{% core_icon 'MailFeedRule' %}&nbsp;
+						{% trans "Manage" %}
+					</a>
+				</td>
+
+				<td class="right">
+					{% url 'mailfeed_delete' mailfeed.pk as delete_url %}
+					{% include "widgets/delete-form-button.html" %}
+				</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+		</table>
+	{% else %}
+
+		<h2>
+			{% include "mailfeedrule/breadcrumbs.html" %}
+
+			<span>
+			{% core_icon 'MailFeed' %}&nbsp;{% blocktrans %}
+			    No mail feed yet.
+			{% endblocktrans %}</span>
+		</h2>
+
+		<div class="spacer50"></div>
+
+		<table class="table">
+			<tbody>
+				{% include "mailfeed/form.html" with create_first=1 %}
+			</tbody>
+		</table>
+	{% endif %}
+
+	<div class="spacer50"></div>
+	<p class="muted">{% trans "Mail feeds are sets of rules defining how to examine your e-mail box(es) contents. When e-mails match any rule of a feed, 1flow will either store the whole email in the feed, or can scrap their bodies, looking for links to fetch external articles in the feed.</em>" %}</p>
+
+	</div>
+</div>
+{% endblock application_content %}
+
+{% block extrajs_footer %}
+    {{ block.super }}
+
+	{% include "snippets/mail-collapse-js-glue.html" with focus_name='id_name' object_list=mailfeed_list %}
+
+{% endblock extrajs_footer %}

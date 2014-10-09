@@ -1,27 +1,27 @@
 # -*- coding: utf-8 -*-
 """
-    Copyright 2013-2014 Olivier Cortès <oc@1flow.io>
+Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
-    This file is part of the 1flow project.
+This file is part of the 1flow project.
 
-    1flow is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation, either version 3 of
-    the License, or (at your option) any later version.
+1flow is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
 
-    1flow is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
+1flow is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU Affero General Public
-    License along with 1flow.  If not, see http://www.gnu.org/licenses/
+You should have received a copy of the GNU Affero General Public
+License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
 from django.conf.urls import patterns, url
 from django.views.generic import TemplateView
-#from django.views.decorators.csrf import csrf_exempt
+# from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.cache import cache_page, never_cache
 from django.utils.translation import ugettext_lazy as _, pgettext_lazy
 from django.contrib.auth.decorators import login_required
@@ -81,8 +81,7 @@ for url_trans, url_untrans in (
         url(attrval.get('list_url').replace(u'$', type_url),
             login_required(never_cache(
                 getattr(views, 'read_{0}_feed_with_endless_pagination'.format(
-                    attrval.get('view_name'))))
-            ),
+                    attrval.get('view_name'))))),
             name=u'read_' + attrval.get('view_name') + suffix)
         for attrkey, attrval
         in Read.status_data.items()
@@ -110,8 +109,11 @@ urlpatterns = patterns(
     url(_(ur'^preferences/$'), login_required(never_cache(views.preferences)),
         name='preferences'),
 
-    url(_(ur'^profile/$'), login_required(never_cache(views.profile)),
-        name='profile'),
+    url(_(ur'^status/?$'),
+        staff_member_required(never_cache(views.admin_status)),
+        name='admin_status'),
+
+    # —————————————————————————————————————————————————————————— Article & Read
 
     url(_(ur'^read/all/$'), never_cache(views.read_with_endless_pagination),
         name='read_all', kwargs={'all': True}),
@@ -239,6 +241,49 @@ urlpatterns = patterns(
 
     url(_(ur'^signin_error/$'), TemplateView.as_view(
         template_name='signin_error.html'), name='signin_error'),
+
+    # ——————————————————————————————————————————————————————————— Mail accounts
+
+    url(_(ur'^mailaccount/?$'),
+        login_required(never_cache(
+            views.MailAccountListCreateView.as_view())),
+        name='mailaccount_list_create'),
+
+    url(_(ur'^mailaccount/(?P<pk>\d+)/delete/?$'),
+        login_required(never_cache(
+            views.MailAccountDeleteView.as_view())),
+        name='mailaccount_delete'),
+
+    # No need, we've got inplace-edit for this purpose.
+    # url(r'^mailaccount/(?P<pk>\d+)/$',
+    #     login_required(never_cache(
+    #         views.MailAccountUpdateView.as_view())),
+    #     name='mailaccount_update'),
+
+    url(_(ur'^mailfeed/?$'),
+        login_required(never_cache(
+            views.MailFeedListCreateView.as_view())),
+        name='mailfeed_list_create'),
+
+    url(_(ur'^mailfeed/(?P<pk>\d+)/delete/?$'),
+        login_required(never_cache(
+            views.MailFeedDeleteView.as_view())),
+        name='mailfeed_delete'),
+
+    url(_(ur'^mailfeed/(?P<mailfeed_pk>\d+)/rules/?$'),
+        login_required(never_cache(
+            views.MailFeedRuleListCreateView.as_view())),
+        name='mailfeedrule_list_create'),
+
+    url(_(ur'^mailfeed/(?P<mailfeed_pk>\d+)/rule/(?P<pk>\d+)/position/?$'),
+        login_required(never_cache(
+            views.MailFeedRulePositionUpdateView.as_view())),
+        name='mailfeedrule_position'),
+
+    url(_(ur'^mailfeed/(?P<mailfeed_pk>\d+)/rule/(?P<pk>\d+)/delete/?$'),
+        login_required(never_cache(
+            views.MailFeedRuleDeleteView.as_view())),
+        name='mailfeedrule_delete'),
 
     # •••••••••••••••••••••••••••••••••••••••••••••••••••••••••••  Google Reader
 

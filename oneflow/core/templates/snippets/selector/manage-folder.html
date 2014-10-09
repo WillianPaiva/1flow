@@ -23,7 +23,7 @@
                     {% include "widgets/forms/field-generic-unstyled.html" with field=form.parent %}
 
                     {# This one is not really a textarea, but we use the display organization to make help_text fit nicely. BTW, widget-tweaks is kind enough to make any of our field templates work with any kind of field. This is a feature, and works because our templates are widget-agnostic. #}
-                    {% include "widgets/forms/field-generic-nohelp.html" with field=form.subscriptions %}
+                    {% include "widgets/forms/field-generic-fullwidth-nohelp.html" with field=form.subscriptions %}
 
                     {% if folder %}
                     <hr />

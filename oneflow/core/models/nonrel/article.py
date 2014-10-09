@@ -37,7 +37,7 @@ from random import randrange
 from constance import config
 from markdown_deux import markdown as mk2_markdown
 
-#from xml.sax import SAXParseException
+# from xml.sax import SAXParseException
 
 from celery import chain as tasks_chain
 from celery.exceptions import SoftTimeLimitExceeded
@@ -140,7 +140,7 @@ class Article(Document, DocumentHelperMixin):
                            help_text=_(u'In case of a multi-pages article, '
                                        u'other pages URLs will be here.'))
     # not yet.
-    #short_url  = URLField(unique=True, verbose_name=_(u'1flow URL'))
+    # short_url  = URLField(unique=True, verbose_name=_(u'1flow URL'))
 
     is_restricted = BooleanField(default=False, verbose_name=_(u'restricted'),
                                  help_text=_(u'This article comes from a paid '
@@ -716,11 +716,13 @@ class Article(Document, DocumentHelperMixin):
 
         if fpod:
             if self.tags == [] and 'tags' in fpod:
-                tags = list(Tag.get_tags_set((t['term']
-                            # Sometimes, t['term'] can be None.
-                            # http://dev.1flow.net/webapps/1flow/group/4082/
-                            for t in fpod['tags'] if t['term'] is not None),
-                    origin=self))
+                tags = list(
+                    Tag.get_tags_set((
+                        t['term']
+                        # Sometimes, t['term'] can be None.
+                        # http://dev.1flow.net/webapps/1flow/group/4082/
+                        for t in fpod['tags'] if t['term'] is not None),
+                        origin=self))
 
                 self.update_tags(tags, initial=True, need_reload=False)
                 self.safe_reload()
@@ -804,7 +806,7 @@ class Article(Document, DocumentHelperMixin):
                     self.save()
 
             # We don't care anymore, it's already in another database.
-            #self.offload_attribute('feedparser_original_data')
+            # self.offload_attribute('feedparser_original_data')
 
         self.original_data.update(set__feedparser_processed=True)
 
@@ -1057,7 +1059,7 @@ class Article(Document, DocumentHelperMixin):
 
         # No more needed now that Markdown
         # contents are generated asynchronously.
-        #self.prefill_cache()
+        # self.prefill_cache()
 
     def prefill_cache(self):
         """
@@ -1078,7 +1080,7 @@ class Article(Document, DocumentHelperMixin):
 
         # build a fake permissions object for the template to be happy.
         perms = SimpleObject()
-        #perms.core = SimpleObject()
+        # perms.core = SimpleObject()
 
         context = {
             'article': self,
@@ -1114,13 +1116,13 @@ class Article(Document, DocumentHelperMixin):
         # else:
         #     languages = [self.language]
         #
-        #if languages == set():
+        # if languages == set():
         #    languages = dj_langs
 
         # TODO: with Django 1.6, check if cache is already present or not:
         # https://docs.djangoproject.com/en/dev/topics/cache/#django.core.cache.utils.make_template_fragment_key # NOQA
 
-        #for full_text_value in (True, False):
+        # for full_text_value in (True, False):
         #    context['perms'].core.can_read_full_text = full_text_value
 
         for lang in languages:
@@ -1150,7 +1152,7 @@ class Article(Document, DocumentHelperMixin):
         # at least in iframe mode. Thus, we do not consider no-content
         # to mean “bad article”. 20140405.
         #
-        #if self.content_type not in CONTENT_TYPES_FINAL:
+        # if self.content_type not in CONTENT_TYPES_FINAL:
         #    return False
 
         return True
@@ -1193,7 +1195,7 @@ class Article(Document, DocumentHelperMixin):
             LOGGER.info(u'Article %s image already found.', self)
             return True
 
-        if not self.content_type in (CONTENT_TYPE_MARKDOWN, ):
+        if self.content_type not in (CONTENT_TYPE_MARKDOWN, ):
             LOGGER.warning(u'Article %s is not in Markdown format, '
                            u'aborting image lookup.', self)
             return True
@@ -1275,7 +1277,7 @@ class Article(Document, DocumentHelperMixin):
         """ Try to find a “next page” link in the partial content given as
             parameter. """
 
-        #soup = BeautifulSoup(from_content)
+        # soup = BeautifulSoup(from_content)
 
         return None
 
@@ -1351,12 +1353,14 @@ class Article(Document, DocumentHelperMixin):
                     content, encoding = self.prepare_content_text(url=self.url)
 
                 except:
-                    LOGGER.exception(u'Could not extract title of article %s', self)
+                    LOGGER.exception(u'Could not extract title of article %s',
+                                     self)
 
         old_title = self.title
 
         try:
-            self.title = BeautifulSoup(content).find('title').contents[0].strip()
+            self.title = BeautifulSoup(content).find('title'
+                                                     ).contents[0].strip()
 
         except:
             LOGGER.exception(u'Could not extract title of article %s', self)
@@ -1450,7 +1454,7 @@ class Article(Document, DocumentHelperMixin):
 
                 self.content_type = CONTENT_TYPE_BOOKMARK
 
-            #elif parts_nr < 5:
+            # elif parts_nr < 5:
                 # TODO: find a way to ask the user to choose if he wanted
                 # to bookmark the website or just fetch the content.
 
@@ -1715,7 +1719,7 @@ class Article(Document, DocumentHelperMixin):
                 self.content_type = CONTENT_TYPE_MARKDOWN
 
             # Disabled until more love is put inside.
-            #self.find_image(commit=False, force=force)
+            # self.find_image(commit=False, force=force)
 
             if commit:
                 self.save()
