@@ -590,7 +590,6 @@ from preferences import (  # NOQA
     preferences,
     set_preference,
     preference_toggle,
-    toggle,
 )
 
 from google_reader import (  # NOQA
