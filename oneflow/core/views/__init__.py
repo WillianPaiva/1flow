@@ -313,7 +313,7 @@ def admin_status(request):
             mountpoint = fields[1]
             fstype = fields[2]
 
-            if not all and fstype not in phydevs and device in dev_done:
+            if (not all and fstype not in phydevs) or device in dev_done:
                 continue
 
             if device == 'none':
