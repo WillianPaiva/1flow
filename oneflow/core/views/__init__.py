@@ -382,7 +382,7 @@ def admin_status(request):
     except KeyError:
         # MongoDB 2.4
         mongo_mount_point = find_mount_point(
-            command_line_ops['parsed']['dbath'])
+            command_line_ops['parsed']['dbpath'])
 
     tmp_statvfs = os.statvfs(mongo_mount_point)
 
