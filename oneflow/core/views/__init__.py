@@ -374,8 +374,15 @@ def admin_status(request):
     host_infos       = mongodb.command('hostInfo')
     server_status    = mongodb.command('serverStatus')
 
-    mongo_mount_point = find_mount_point(
-        command_line_ops['parsed']['storage']['dbPath'])
+    try:
+        # MongoDB 2.6
+        mongo_mount_point = find_mount_point(
+            command_line_ops['parsed']['storage']['dbPath'])
+
+    except KeyError:
+        # MongoDB 2.4
+        mongo_mount_point = find_mount_point(
+            command_line_ops['parsed']['dbath'])
 
     tmp_statvfs = os.statvfs(mongo_mount_point)
 
