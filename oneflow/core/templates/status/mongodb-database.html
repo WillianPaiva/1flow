@@ -2,6 +2,43 @@
 
 <h2>{% blocktrans with dbname=dbstats.db %}Database <strong>{{dbname }}</strong>{% endblocktrans %}</h2>
 
+
+{% if host_infos %}
+
+<div class="row">
+	<div class="col-xs-6 right muted">
+		{% trans "hostname:" %}<br />
+		{% trans "OS:" %}<br />
+		{% trans "architecture:" %}
+	</div>
+	<div class="col-xs-6 strong">
+		{{ host_infos.system.hostname }}<br />
+		{{ host_infos.os.name }} {{ host_infos.os.version }}<br />
+		{{ host_infos.system.cpuArch }}{% if host_infos.system.numaEnabled %}{% trans "with NUMA" %}{% endif %}
+		({% spaceless %}
+		{% blocktrans count counter=host_infos.system.numCores %}
+			{{ counter }} core
+		{% plural %}
+			{{ counter }} cores
+		{% endblocktrans %}
+		{% endspaceless %})
+	</div>
+</div>
+
+{% else %}
+
+<div class="row">
+	<div class="col-xs-12 muted">
+		{% trans "Hosted on the same physical machine." %}<br />
+		&nbsp;<br />
+		&nbsp;<br />
+	</div>
+</div>
+
+
+{% endif %}
+
+
 <div class="row">
 	<div class="jumbotron">
 		<div class="row">

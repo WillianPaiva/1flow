@@ -23,6 +23,8 @@ import os
 import psutil
 import pymongo
 import logging
+import platform
+
 from collections import OrderedDict, namedtuple
 
 from django.http import (
@@ -36,6 +38,7 @@ from django.shortcuts import render, redirect
 from django.template import add_to_builtins
 
 from sparks.django.utils import HttpResponseTemporaryServerError
+from sparks.fabric import is_localhost
 
 from ..forms import WebPagesImportForm
 
@@ -291,8 +294,10 @@ def admin_status(request):
 
     def disk_partitions(all=False):
         """Return all mountd partitions as a nameduple.
+
         If all == False return phyisical partitions only.
         """
+
         phydevs = []
         f = open("/proc/filesystems", "r")
 
@@ -351,11 +356,12 @@ def admin_status(request):
             path = os.path.dirname(path)
         return path
 
-    client = pymongo.MongoClient()
-
     # ——————————————————————————————————————————————————————————— Main database
 
-    mongodb = getattr(client, settings.MONGODB_NAME)
+    main_client = pymongo.MongoClient(settings.MONGODB_HOST,
+                                      settings.MONGODB_PORT)
+
+    mongodb = getattr(main_client, settings.MONGODB_NAME)
 
     mongodbstats = mongodb.command('dbstats')
 
@@ -365,7 +371,13 @@ def admin_status(request):
 
     # ———————————————————————————————————————————————————————— Archive database
 
-    archivedb = getattr(client, settings.MONGODB_NAME_ARCHIVE)
+    if settings.MONGODB_HOST != settings.MONGODB_HOST_ARCHIVE:
+        archive_client = pymongo.MongoClient(settings.MONGODB_HOST_ARCHIVE,
+                                             settings.MONGODB_PORT_ARCHIVE)
+    else:
+        archive_client = main_client
+
+    archivedb = getattr(archive_client, settings.MONGODB_NAME_ARCHIVE)
 
     archivedbstats = archivedb.command('dbstats')
 
@@ -375,21 +387,38 @@ def admin_status(request):
 
     # —————————————————————————————————————————————————————————— Admin database
 
-    admindb = pymongo.MongoClient().admin
+    admin_maindb       = main_client.admin
+    cmd_line_ops_main  = admin_maindb.command('getCmdLineOpts')
+    server_status_main = admin_maindb.command('serverStatus')
 
-    command_line_ops = admindb.command('getCmdLineOpts')
-    host_infos       = mongodb.command('hostInfo')
-    server_status    = mongodb.command('serverStatus')
+    if is_localhost(settings.MONGODB_HOST):
+        host_infos_main = None
+
+    else:
+        host_infos_main = admin_maindb.command('hostInfo')
+
+    if settings.MONGODB_HOST != settings.MONGODB_HOST_ARCHIVE:
+
+        admin_archivedb        = archive_client.admin
+        cmd_line_ops_archive  = admin_archivedb.command('getCmdLineOpts')
+        host_infos_archive    = admin_archivedb.command('hostInfo')
+        server_status_archive = admin_archivedb.command('serverStatus')
+
+    else:
+        cmd_line_ops_archive = \
+            host_infos_archive = server_status_archive = None
+
+    # TODO: rework for multiple hosts —————————————————————————————————————————
 
     try:
         # MongoDB 2.6
         mongo_mount_point = find_mount_point(
-            command_line_ops['parsed']['storage']['dbPath'])
+            cmd_line_ops_main['parsed']['storage']['dbPath'])
 
     except KeyError:
         # MongoDB 2.4
         mongo_mount_point = find_mount_point(
-            command_line_ops['parsed']['dbpath'])
+            cmd_line_ops_main['parsed']['dbpath'])
 
     tmp_statvfs = os.statvfs(mongo_mount_point)
 
@@ -409,6 +438,7 @@ def admin_status(request):
     #       inactive=1401483264, buffers=40718336L, cached=1716883456)
 
     psutil_vm = psutil.virtual_memory()
+
     memory = {
         'raw': psutil_vm,
         'active_pct': psutil_vm.active * 100.0 / psutil_vm.total,
@@ -430,20 +460,40 @@ def admin_status(request):
         memory['cached_pct'] = memory['cached_pct'] - (
             memory['used_pct'] - 100.0)
 
+    # END: rework —————————————————————————————————————————————————————————————
+
     # ———————————————————————————————————————————————————————————————— Cleanups
 
-    if host_infos['os']['name'].startswith('NAME="'):
-        host_infos['os']['name'] = host_infos['os']['name'][6:-1]
+    for host_infos in (host_infos_main, host_infos_archive, ):
+        if host_infos is None:
+            continue
+
+        if host_infos['os']['name'].startswith('NAME="'):
+            host_infos['os']['name'] = host_infos['os']['name'][6:-1]
 
     return render(request, 'status/index.html', {
         'mongodbstats': mongodbstats,
         'mongodbcollstats': mongodbcollstats,
         'archivedbstats': archivedbstats,
         'archivedbcollstats': archivedbcollstats,
-        'host_infos': host_infos,
-        'server_status': server_status,
-        'command_line_ops': command_line_ops,
+        'host_infos_main': host_infos_main,
+        'host_infos_archive': host_infos_archive,
+        'server_status_main': server_status_main,
+        'server_status_archive': server_status_archive,
+        'cmd_line_ops_main': cmd_line_ops_main,
+        'cmd_line_ops_archive': cmd_line_ops_archive,
         'mongo_statvfs': mongo_statvfs,
+        'host_infos': {
+            'system': {
+                'hostname': platform.node(),
+                'cpuArch': platform.machine(),
+                'numCores': psutil.cpu_count(),
+            },
+            'os': {
+                'name': platform.system(),
+                'version': platform.release(),
+            }
+        },
         'memory': memory,
         'partitions': {
             part: disk_usage(part.mountpoint)
