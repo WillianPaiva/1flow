@@ -37,7 +37,6 @@ from ..forms import (
     SelectorPreferencesForm,
     StaffPreferencesForm,
 )
-from ...base.utils.dateutils import now
 
 LOGGER = logging.getLogger(__name__)
 User = get_user_model()
@@ -145,56 +144,3 @@ def preference_toggle(request, base, sub):
 
     else:
         return set_preference(request, base, sub, value)
-
-
-def toggle(request, klass, oid, key):
-    """ Toggle any object property, given its a boolean on the DB side. """
-
-    #
-    # TODO: push notifications on error to the user.
-    #
-
-    try:
-        obj = globals()[klass].get_or_404(oid)
-
-    except:
-        return HttpResponseTemporaryServerError()
-
-    if not obj.check_owner(request.user.mongo):
-        return HttpResponseForbidden(u'Not owner')
-
-    try:
-        new_value = not getattr(obj, key)
-        setattr(obj, key, new_value)
-
-    except:
-        msg = (u'Unable to toggle %s of %s', key, obj)
-        LOGGER.exception(*msg)
-        return HttpResponseTemporaryServerError(msg[0] % msg[1:])
-
-    else:
-        if key.startswith('is_'):
-            date_attr = 'date_' + key[3:]
-
-            if hasattr(obj, date_attr):
-                setattr(obj, date_attr, now())
-
-        try:
-            getattr(obj, key + '_changed')()
-
-        except AttributeError:
-            pass
-
-        except:
-            LOGGER.exception(u'Unhandled exception while running '
-                             u', %s.%s_changed() on %s.',
-                             obj.__class__.__name__, key, obj)
-
-        obj.save()
-
-    if request.is_ajax():
-        return HttpResponse(u'DONE.')
-
-    else:
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER',
-                                    reverse('home')))
