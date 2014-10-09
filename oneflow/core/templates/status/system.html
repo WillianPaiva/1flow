@@ -1,6 +1,6 @@
 {% load mathfilters %}
 
-<h2>{% trans "Host information" %}</h2>
+<h2>{% trans "Web server information" %}</h2>
 <div class="row">
 	<div class="col-xs-4 col-sm-2 right muted">
 		{% trans "hostname:" %}<br />
@@ -9,7 +9,7 @@
 	</div>
 	<div class="col-xs-6 col-sm-8 strong">
 		{{ host_infos.system.hostname }}<br />
-		{{ host_infos.os.name }}, {{ host_infos.os.version }}<br />
+		{{ host_infos.os.name }} {{ host_infos.os.version }}<br />
 		{{ host_infos.system.cpuArch }}{% if host_infos.system.numaEnabled %}{% trans "with NUMA" %}{% endif %}
 		({% spaceless %}
 		{% blocktrans count counter=host_infos.system.numCores %}
