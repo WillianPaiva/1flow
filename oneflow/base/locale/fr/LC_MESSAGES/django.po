@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-06 15:52+0200\n"
+"POT-Creation-Date: 2014-10-09 12:19+0200\n"
 "PO-Revision-Date: 2014-10-06 11:27+0009\n"
 "Last-Translator: Olivier Cortes <karmak23@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,45 +46,49 @@ msgstr "Listes de lecture"
 msgid "RSS feed refreshing"
 msgstr "Rafraîchissement des flux RSS"
 
-#: admin.py:113
+#: admin.py:114
+msgid "IMAP & e-Mail"
+msgstr ""
+
+#: admin.py:124
 msgid "Article fetching & parsing"
 msgstr ""
 
-#: admin.py:129
+#: admin.py:140
 msgid "Logins & registration"
 msgstr ""
 
-#: admin.py:139
+#: admin.py:150
 msgid "Site theme & CDNs"
 msgstr ""
 
-#: admin.py:149
+#: admin.py:160
 msgid "User support"
 msgstr ""
 
-#: admin.py:158
+#: admin.py:169
 msgid "Check tasks"
 msgstr ""
 
-#: admin.py:167
+#: admin.py:178
 #, fuzzy
 msgid "Dangerous or debug"
 msgstr "Zone rouge"
 
-#: admin.py:174
+#: admin.py:185
 msgid "Google Reader (obsolete)"
 msgstr ""
 
-#: admin.py:303
+#: admin.py:314
 #, python-format
 msgid "Export selected %(verbose_name_plural)s to CSV"
 msgstr "Exporter les %(verbose_name_plural)s sélectionnés en CSV"
 
-#: admin.py:333
+#: admin.py:344
 msgid "Groups"
 msgstr "Groupes"
 
-#: admin.py:338
+#: admin.py:349
 msgid "Full name"
 msgstr "Nom complet"
 
@@ -821,7 +825,7 @@ msgstr "Profil"
 msgid "External accounts"
 msgstr "Comptes externes"
 
-#: templates/profile/index.html:34
+#: templates/profile/index.html:33
 msgid "Manage e-mail accounts"
 msgstr "Gestion des comptes e-mail"
 

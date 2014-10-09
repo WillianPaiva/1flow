@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-06 15:52+0200\n"
-"PO-Revision-Date: 2014-10-06 15:56+0009\n"
+"POT-Creation-Date: 2014-10-09 12:19+0200\n"
+"PO-Revision-Date: 2014-10-09 12:28+0009\n"
 "Last-Translator: Olivier Cortes <karmak23@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -121,7 +121,7 @@ msgid "Superuser?"
 msgstr "Super-utilisateur ?"
 
 #: admin.py:350 models/nonrel/article.py:172 models/nonrel/read.py:163
-#: models/nonrel/subscription.py:116
+#: models/nonrel/subscription.py:118
 msgid "Tags"
 msgstr "Tags"
 
@@ -163,19 +163,19 @@ msgstr "Article"
 msgid "Subscriptions"
 msgstr "Abonnements"
 
-#: admin.py:599
+#: admin.py:598
 msgid "ID"
 msgstr "ID"
 
-#: admin.py:612
+#: admin.py:611
 msgid "URLs"
 msgstr "URLs"
 
-#: admin.py:626
+#: admin.py:625
 msgid "Dupe of"
 msgstr "Dupe de"
 
-#: admin.py:638
+#: admin.py:637
 #, python-brace-format
 msgid ""
 "<span title=\"Last 3 errors:\n"
@@ -184,64 +184,64 @@ msgstr ""
 "<span title=\"3 dernières erreurs :\n"
 "{0}\" style=\"cursor: pointer\">{1} erreur(s)</span>"
 
-#: admin.py:641
+#: admin.py:640
 #, python-brace-format
 msgid "{0}: {1}"
 msgstr "{0} : {1}"
 
-#: admin.py:647
+#: admin.py:646
 msgid "Errors"
 msgstr "Erreurs"
 
-#: admin.py:655
+#: admin.py:654
 msgid "Restr.?"
 msgstr "Restr. ?"
 
-#: admin.py:663
+#: admin.py:662
 msgid "Sys?"
 msgstr "Sys ?"
 
-#: admin.py:671
+#: admin.py:670
 msgid "Shown?"
 msgstr "Affiché ?"
 
-#: admin.py:679
+#: admin.py:678
 msgid "Recent"
 msgstr "Récents"
 
-#: admin.py:686
+#: admin.py:685
 msgid "Total"
 msgstr "Total"
 
-#: admin.py:697
+#: admin.py:696
 msgid "Latest"
 msgstr "Derniers"
 
-#: admin.py:705
+#: admin.py:704
 msgid "Added"
 msgstr "Ajouté(e)"
 
-#: admin.py:716
+#: admin.py:715
 msgid "Interval"
 msgstr "Intervalle"
 
-#: admin.py:725
+#: admin.py:724
 msgid "never"
 msgstr "jamais"
 
-#: admin.py:730
+#: admin.py:729
 msgid "Refreshed"
 msgstr "Rafraîchi(e)"
 
-#: admin.py:737
+#: admin.py:736
 msgid "Subs."
 msgstr "Sous…"
 
-#: admin.py:754
+#: admin.py:753
 msgid "The feed is open"
 msgstr "Le flux est ouvert"
 
-#: admin.py:756
+#: admin.py:755
 msgid "Run?"
 msgstr "Actif ?"
 
@@ -284,162 +284,167 @@ msgid "^preferences/$"
 msgstr "^preferences/$"
 
 #: urls.py:112
+#, fuzzy
+msgid "^status/?$"
+msgstr "^etatgr/$"
+
+#: urls.py:118
 msgid "^read/all/$"
 msgstr "^lire/tous/$"
 
-#: urls.py:115
+#: urls.py:121
 msgid "^read/meta/([0-9a-f]{24,24})/$"
 msgstr "^lire/meta/([0-9a-f]{24,24})/$"
 
-#: urls.py:119
+#: urls.py:125
 msgid "^read/$"
 msgstr "^lire/$"
 
-#: urls.py:123
+#: urls.py:129
 msgid "^article/([0-9a-f]{24,24})/$"
 msgstr "^article/([0-9a-f]{24,24})/$"
 
-#: urls.py:128
+#: urls.py:134
 msgid "^article/image/([0-9a-f]{24,24})/$"
 msgstr "^article/image/([0-9a-f]{24,24})/$"
 
-#: urls.py:138
+#: urls.py:144
 msgid "^read/([0-9a-f]{24,24})/$"
 msgstr "^lire/([0-9a-f]{24,24})/$"
 
-#: urls.py:142
+#: urls.py:148
 msgid "^share/([0-9a-f]{24,24})/$"
 msgstr "^partager/([0-9a-f]{24,24})/$"
 
-#: urls.py:149
+#: urls.py:155
 msgid "^json/user-address-book/$"
 msgstr "^json/user-address-book/$"
 
-#: urls.py:153
+#: urls.py:159
 msgid "^selector/$"
 msgstr "^selecteur/$"
 
-#: urls.py:157
+#: urls.py:163
 msgid "^folder/new/(?P<parent>[0-9a-f]{24,24})/$"
 msgstr "^dossier/nouveau/(?P<parent>[0-9a-f]{24,24})/$"
 
-#: urls.py:161
+#: urls.py:167
 msgid "^folder/new/$"
 msgstr "^dossier/nouveau/$"
 
-#: urls.py:165
+#: urls.py:171
 msgid "^folder/(?P<folder>(?:[0-9a-f]{24,24})+)/delete$"
 msgstr "^dossier/(?P<folder>(?:[0-9a-f]{24,24})+)/supprimer$"
 
-#: urls.py:169
+#: urls.py:175
 msgid "^folder/(?P<folder>(?:[0-9a-f]{24,24})+)$"
 msgstr "^dossier/(?P<folder>(?:[0-9a-f]{24,24})+)$"
 
-#: urls.py:175
+#: urls.py:181
 msgid "^feed/add/nosub/(.*)$"
 msgstr "^flux/ajouter/pasdab/(.*)$"
 
-#: urls.py:179
+#: urls.py:185
 msgid "^feed/add/(.*)$"
 msgstr "^flux/ajouter/(.*)$"
 
-#: urls.py:184
+#: urls.py:190
 msgid "^subscription/new/$"
 msgstr "^abonnement/nouveau/$"
 
-#: urls.py:192
+#: urls.py:198
 msgid "^json/feeds-completer/$"
 msgstr "^json/feeds-completer/$"
 
-#: urls.py:197
+#: urls.py:203
 msgid "^subscription/(?P<subscription>(?:[0-9a-f]{24,24})+)/cancel$"
 msgstr "^abonnement/(?P<subscription>(?:[0-9a-f]{24,24})+)/resilier$"
 
-#: urls.py:201
+#: urls.py:207
 msgid "^subscription/(?P<subscription>(?:[0-9a-f]{24,24})+)/cancel/do$"
 msgstr "^abonnement/(?P<subscription>(?:[0-9a-f]{24,24})+)/resilier/vraiment$"
 
-#: urls.py:205
+#: urls.py:211
 msgid "^subscription/(?P<subscription>(?:[0-9a-f]{24,24})+)$"
 msgstr "^abonnement/(?P<subscription>(?:[0-9a-f]{24,24})+)$"
 
-#: urls.py:209
+#: urls.py:215
 msgid "^import/contacts/$"
 msgstr "^importer/contacts/$"
 
-#: urls.py:219
+#: urls.py:225
 msgid "^import/url/(.*)$"
 msgstr "^importer/url/(.*)$"
 
-#: urls.py:223
+#: urls.py:229
 msgid "^status/article/([0-9a-f]{24,24})/$"
 msgstr "^etat/article/([0-9a-f]{24,24})/$"
 
-#: urls.py:227
+#: urls.py:233
 msgid "^webimport/$"
 msgstr "^import-web/$"
 
-#: urls.py:231
+#: urls.py:237
 msgid "^(?P<klass>\\w+)/(?P<oid>\\w+)/toggle/(?P<key>\\w+.\\w+)/?$"
 msgstr "^(?P<klass>\\w+)/(?P<oid>\\w+)/toggle/(?P<key>\\w+.\\w+)/?$"
 
-#: urls.py:234
+#: urls.py:240
 msgid "^help/$"
 msgstr "^aide/$"
 
-#: urls.py:236
+#: urls.py:242
 msgid "^signin_error/$"
 msgstr "^erreur_connexion/$"
 
-#: urls.py:241
+#: urls.py:247
 #, fuzzy
 msgid "^mailaccount/?$"
 msgstr "Comptes de réseaux sociaux"
 
-#: urls.py:246
+#: urls.py:252
 msgid "^mailaccount/(?P<pk>\\d+)/delete/?$"
 msgstr ""
 
-#: urls.py:257
+#: urls.py:263
 msgid "^mailfeed/?$"
 msgstr ""
 
-#: urls.py:262
+#: urls.py:268
 #, fuzzy
 msgid "^mailfeed/(?P<pk>\\d+)/delete/?$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: urls.py:267
+#: urls.py:273
 #, fuzzy
 msgid "^mailfeed/(?P<mailfeed_pk>\\d+)/rules/?$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: urls.py:272
+#: urls.py:278
 #, fuzzy
 msgid "^mailfeed/(?P<mailfeed_pk>\\d+)/rule/(?P<pk>\\d+)/position/?$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: urls.py:277
+#: urls.py:283
 msgid "^mailfeed/(?P<mailfeed_pk>\\d+)/rule/(?P<pk>\\d+)/delete/?$"
 msgstr ""
 
-#: urls.py:284
+#: urls.py:290
 msgid "^grimport/(?:(?P<user_id>\\d+)/)?$"
 msgstr "^importgr/(?:(?P<user_id>\\d+)/)?$"
 
-#: urls.py:287
+#: urls.py:293
 msgid "^grstop/(?P<user_id>\\d+)/$"
 msgstr "^stopgr/(?P<user_id>\\d+)/$"
 
-#: urls.py:290
+#: urls.py:296
 msgid "^grtoggle/(?P<user_id>\\d+)/$"
 msgstr "^basculergr/(?P<user_id>\\d+)/$"
 
-#: urls.py:293
+#: urls.py:299
 msgid "^grstatus/$"
 msgstr "^etatgr/$"
 
-#: urls.py:298
+#: urls.py:304
 msgid "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
@@ -531,7 +536,7 @@ msgstr "Un dossier de premier niveau avec ce nom existe déjà."
 msgid "A folder by that name already exists at the same place."
 msgstr "Un dossier portant le même nom existe déjà au même endroit."
 
-#: forms/selector.py:255 models/nonrel/subscription.py:121
+#: forms/selector.py:255 models/nonrel/subscription.py:123
 msgid "Folders"
 msgstr "Dossiers"
 
@@ -617,7 +622,7 @@ msgstr ""
 "Dans le cas d'un article multi-pages, les URLs des pages supplémentaires "
 "sont là."
 
-#: models/nonrel/article.py:145 models/nonrel/feed.py:145
+#: models/nonrel/article.py:145 models/nonrel/feed.py:148
 msgid "restricted"
 msgstr "restreint"
 
@@ -796,32 +801,32 @@ msgstr "Lier un auteur internet à un utilisateur 1flow."
 msgid " (unsure)"
 msgstr "(non confirmé)"
 
-#: models/nonrel/common.py:123
+#: models/nonrel/common.py:125
 #, python-brace-format
 msgid "Items sent by {0}"
 msgstr "Éléments envoyés par {0}"
 
-#: models/nonrel/common.py:125
+#: models/nonrel/common.py:127
 #, python-brace-format
 msgid "Imported items of {0}"
 msgstr "Éléments importés de {0}"
 
-#: models/nonrel/common.py:127
+#: models/nonrel/common.py:129
 #, python-brace-format
 msgid "Inbox of {0}"
 msgstr "Boîte de réception de {0}"
 
-#: models/nonrel/common.py:203
+#: models/nonrel/common.py:205
 #, python-brace-format
 msgid "{0} #{1} not found"
 msgstr "{0} #{1} introuvable"
 
-#: models/nonrel/common.py:207
+#: models/nonrel/common.py:209
 #, python-brace-format
 msgid "{0}({1}) not found"
 msgstr "{0}({1}) introuvable"
 
-#: models/nonrel/common.py:458 models/nonrel/common.py:491
+#: models/nonrel/common.py:460 models/nonrel/common.py:493
 #, python-brace-format
 msgid ""
 "{0} is already in the parent chain of {1}. Setting the later parent of the "
@@ -830,19 +835,19 @@ msgstr ""
 "{0} est déjà dans la chaine de parents de {1}. Enregistrer ce dernier comme "
 "parent du premier cité provoquerait un cycle et ce n'est pas autorisé."
 
-#: models/nonrel/feed.py:121 models/nonrel/tag.py:49
+#: models/nonrel/feed.py:124 models/nonrel/tag.py:49
 msgid "name"
 msgstr "nom"
 
-#: models/nonrel/feed.py:122
+#: models/nonrel/feed.py:125
 msgid "url"
 msgstr "url"
 
-#: models/nonrel/feed.py:125
+#: models/nonrel/feed.py:128
 msgid "web site"
 msgstr "site web"
 
-#: models/nonrel/feed.py:126
+#: models/nonrel/feed.py:129
 msgid ""
 "Website public URL, linked to the globe icon in the source selector. This is"
 " not the XML feed URL."
@@ -850,16 +855,16 @@ msgstr ""
 "URL publique du site web, liée à l'icone « globe » dans le sélecteur de "
 "sources. Ce n'est PAS l'adresse du flux XML."
 
-#: models/nonrel/feed.py:129 models/nonrel/tag.py:50
+#: models/nonrel/feed.py:132 models/nonrel/tag.py:50
 #: models/nonrel/website.py:56
 msgid "slug"
 msgstr "slug"
 
-#: models/nonrel/feed.py:131
+#: models/nonrel/feed.py:134
 msgid "tags"
 msgstr "tags"
 
-#: models/nonrel/feed.py:132
+#: models/nonrel/feed.py:135
 msgid ""
 "This tags are used only when articles from this feed have no tags already. "
 "They are assigned to new subscriptions too."
@@ -867,11 +872,11 @@ msgstr ""
 "Ces tags sont assignés aux nouveaux articles quand ils n'en ont pas eux-"
 "mêmes. Aux nouveaux abonnements aussi."
 
-#: models/nonrel/feed.py:138
+#: models/nonrel/feed.py:141
 msgid "Languages"
 msgstr "Langues"
 
-#: models/nonrel/feed.py:140
+#: models/nonrel/feed.py:143
 msgid ""
 "Set this to more than one language to help article language detection if "
 "none is set in articles."
@@ -879,22 +884,22 @@ msgstr ""
 "Activez une ou plusieurs langues qui aideront à détecter la langue des "
 "articles s'ils n'en ont pas."
 
-#: models/nonrel/feed.py:144
+#: models/nonrel/feed.py:147
 msgid "date added"
 msgstr "date d'ajout"
 
-#: models/nonrel/feed.py:146
+#: models/nonrel/feed.py:149
 msgid ""
 "Is this feed available only to paid subscribers on its publisher's web site?"
 msgstr ""
 "Le flux est-il accessible seulement aux abonnés payants sur le site "
 "d'origine qui le propose ?"
 
-#: models/nonrel/feed.py:149
+#: models/nonrel/feed.py:152
 msgid "closed"
 msgstr "fermé"
 
-#: models/nonrel/feed.py:150
+#: models/nonrel/feed.py:153
 msgid ""
 "Indicate that the feed is not fetched anymore (see “closed_reason” for why)."
 " /!\\ WARNING: do not just tick the checkbox; there is a programmatic "
@@ -904,27 +909,27 @@ msgstr ""
 " /!\\ ATTENTION : ne cochez pas simplement la case, il y a une procédure "
 "programmée pour fermer proprement un flux."
 
-#: models/nonrel/feed.py:157
+#: models/nonrel/feed.py:160
 msgid "date closed"
 msgstr "date de fermeture"
 
-#: models/nonrel/feed.py:158
+#: models/nonrel/feed.py:161
 msgid "closed reason"
 msgstr "raison de la fermeture"
 
-#: models/nonrel/feed.py:161
+#: models/nonrel/feed.py:164
 msgid "fetch interval"
 msgstr "intervalle de récupération"
 
-#: models/nonrel/feed.py:162
+#: models/nonrel/feed.py:165
 msgid "last fetch"
 msgstr "dernière récupération"
 
-#: models/nonrel/feed.py:167
+#: models/nonrel/feed.py:170
 msgid "fetch limit"
 msgstr "limite de récupération"
 
-#: models/nonrel/feed.py:168
+#: models/nonrel/feed.py:171
 #, python-format
 msgid ""
 "The maximum number of articles that can be fetched from the feed in "
@@ -932,27 +937,27 @@ msgid ""
 "from real-life results."
 msgstr ""
 
-#: models/nonrel/feed.py:176
+#: models/nonrel/feed.py:179
 msgid "last etag"
 msgstr "dernier Etag"
 
-#: models/nonrel/feed.py:177 views/folder.py:76
+#: models/nonrel/feed.py:180 views/folder.py:76
 msgid "modified"
 msgstr "modifié"
 
-#: models/nonrel/feed.py:183
+#: models/nonrel/feed.py:186
 msgid "Notes"
 msgstr "Notes"
 
-#: models/nonrel/feed.py:184
+#: models/nonrel/feed.py:187
 msgid "Internal notes for 1flow staff related to this feed."
 msgstr "Notes internes au personnel de 1flow, à propos de ce flux."
 
-#: models/nonrel/feed.py:187
+#: models/nonrel/feed.py:190
 msgid "Shown in selector"
 msgstr "Affiché dans le sélecteur"
 
-#: models/nonrel/feed.py:189
+#: models/nonrel/feed.py:192
 msgid ""
 "Make this feed available to new subscribers in the selector wizard. Without "
 "this, the user can still subscribe but he must know it and manually enter "
@@ -962,11 +967,11 @@ msgstr ""
 "recherche. Sans celà, les utilisateurs peuvent toujours s'abonner, mais il "
 "leur faut connaître et saisir l'adresse exacte du flux. "
 
-#: models/nonrel/feed.py:195
+#: models/nonrel/feed.py:198
 msgid "Thumbnail URL"
 msgstr "URL de vignette"
 
-#: models/nonrel/feed.py:196
+#: models/nonrel/feed.py:199
 msgid ""
 "Full URL of the thumbnail displayed in the feed selector. Can be hosted "
 "outside of 1flow."
@@ -974,47 +979,47 @@ msgstr ""
 "URL complète de la vignette affichée dans le sélecteur. Peut être hébergée "
 "en dehors de 1flow."
 
-#: models/nonrel/feed.py:200
+#: models/nonrel/feed.py:203
 msgid "Description (FR)"
 msgstr "Description (FR)"
 
-#: models/nonrel/feed.py:201
+#: models/nonrel/feed.py:204
 msgid "Public description of the feed in French language. As Markdown."
 msgstr ""
 "Description publique du flux en langue française. Apparaîtra dans le "
 "sélecteur. En Markdown."
 
-#: models/nonrel/feed.py:204
+#: models/nonrel/feed.py:207
 msgid "Description (EN)"
 msgstr "Description (EN)"
 
-#: models/nonrel/feed.py:205
+#: models/nonrel/feed.py:208
 msgid "Public description of the feed in English language. As Markdown."
 msgstr "Public description of the feed in English language. As Markdown."
 
-#: models/nonrel/feed.py:328 models/nonrel/folder.py:115
+#: models/nonrel/feed.py:331 models/nonrel/folder.py:115
 #, python-brace-format
 msgid "{0} (#{1})"
 msgstr "{0} (#{1})"
 
-#: models/nonrel/feed.py:541
+#: models/nonrel/feed.py:544
 msgid "comments feed"
 msgstr "flux de commentaires"
 
-#: models/nonrel/feed.py:543
+#: models/nonrel/feed.py:546
 msgid "comments for"
 msgstr "commentaires pour "
 
-#: models/nonrel/feed.py:545
+#: models/nonrel/feed.py:548
 msgid "comments on"
 msgstr "commentaires sur "
 
-#: models/nonrel/feed.py:730
+#: models/nonrel/feed.py:757
 #, python-brace-format
 msgid "Imported item from {0}"
 msgstr "Élément importé depuis {0}"
 
-#: models/nonrel/folder.py:78 models/nonrel/subscription.py:112
+#: models/nonrel/folder.py:78 models/nonrel/subscription.py:114
 msgid "Name"
 msgstr "Nom"
 
@@ -1739,6 +1744,7 @@ msgid "^read/archived/$"
 msgstr "^lire/archives/$"
 
 #: models/nonrel/read.py:295 models/nonrel/read.py:299
+#: models/reldb/mailaccount.py:113
 msgid "Archive"
 msgstr "Archiver"
 
@@ -2335,17 +2341,17 @@ msgstr ""
 msgid "very quick (<1 min)"
 msgstr "très bref (<1 min)"
 
-#: models/nonrel/subscription.py:117
+#: models/nonrel/subscription.py:119
 msgid "Tags that will be applied to new reads in this subscription."
 msgstr ""
 "Tags qui seront appliqués automatiquement à toute nouvelle lecture de cet "
 "abonnement."
 
-#: models/nonrel/subscription.py:122
+#: models/nonrel/subscription.py:124
 msgid "Folder(s) in which this subscription appears."
 msgstr "Dossier(s) dans lesquel(s) cet abonnement apparaît."
 
-#: models/nonrel/subscription.py:156
+#: models/nonrel/subscription.py:158
 #, python-brace-format
 msgid "{0}+{1} (#{2})"
 msgstr "{0}+{1} (#{2})"
@@ -2420,11 +2426,11 @@ msgstr ""
 msgid "(dupe of #%s)"
 msgstr "(duplicata de #%s)"
 
-#: models/reldb/__init__.py:40
+#: models/reldb/helpcontent.py:40
 msgid "Help section label"
 msgstr "Label de section d'aide"
 
-#: models/reldb/__init__.py:42
+#: models/reldb/helpcontent.py:42
 msgid ""
 "Any text. Will NOT show anywhere, but is used to distinguish sections from "
 "one another."
@@ -2432,146 +2438,243 @@ msgstr ""
 "N'importe quel texte (mais doit être unique). Il N'APPARAIT NULLE PART, mais"
 " est simplement utilisé pour distinguer les sections les unes des autres."
 
-#: models/reldb/__init__.py:46
+#: models/reldb/helpcontent.py:46
 msgid "Ordering"
 msgstr "Ordre d'apparition"
 
-#: models/reldb/__init__.py:47
+#: models/reldb/helpcontent.py:47
 msgid "An integer that will be used to order help sections on the help page."
 msgstr ""
 "Un nombre entier positif qui sera utilisé pour ordonner les sections dans la"
 " page d'aide."
 
-#: models/reldb/__init__.py:51
+#: models/reldb/helpcontent.py:51
 msgid "is this help section currently displayed on the website?"
 msgstr ""
 "Cette section est-elle affichée ? (décocher pour rédiger une section "
 "tranquillement avant de la mettre en ligne)"
 
-#: models/reldb/__init__.py:54
+#: models/reldb/helpcontent.py:54
 msgid "Help section name"
 msgstr "Nom de section d'aide"
 
-#: models/reldb/__init__.py:55
+#: models/reldb/helpcontent.py:55
 msgid "Any text. Will be the title of the help section."
 msgstr "Le titre de la section. Du texte, quoi."
 
-#: models/reldb/__init__.py:57
+#: models/reldb/helpcontent.py:57
 msgid "Help section content"
 msgstr "Contenu de la section d'aide"
 
-#: models/reldb/__init__.py:58
+#: models/reldb/helpcontent.py:58
 msgid "Any text. Entered as Markdown."
 msgstr ""
 "Du texte, en markdown. Je crois qu'il y a une limite à 4096 caractères, mais"
 " je ne suis pas sûr…"
 
-#: models/reldb/__init__.py:63
+#: models/reldb/helpcontent.py:63
 #, python-brace-format
 msgid "{field_name}: {truncated_field_value}"
 msgstr "{field_name} : {truncated_field_value}"
 
-#: models/reldb/__init__.py:77
+#: models/reldb/helpcontent.py:77
 msgid "Help section"
 msgstr "Section d'aide"
 
-#: models/reldb/__init__.py:78
+#: models/reldb/helpcontent.py:78
 msgid "Help contents"
 msgstr "Contenu de l'aide"
 
-#: models/reldb/mailaccount.py:78
+#: models/reldb/mailaccount.py:106
+#, fuzzy
+msgid "Drafts"
+msgstr "Brouillons"
+
+#: models/reldb/mailaccount.py:107
+#, fuzzy
+msgid "Trash"
+msgstr "Corbeille"
+
+#: models/reldb/mailaccount.py:108
+#, fuzzy
+msgid "Sent Messages"
+msgstr "Message envoyés"
+
+#: models/reldb/mailaccount.py:109
+msgid "Sent"
+msgstr "Envoyés"
+
+#: models/reldb/mailaccount.py:110
+msgid "Spam"
+msgstr "Spam"
+
+#: models/reldb/mailaccount.py:111
+msgid "Junk"
+msgstr "Pourriel"
+
+#: models/reldb/mailaccount.py:112
+#, fuzzy
+msgid "Deleted Messages"
+msgstr "Messages supprimés"
+
+#: models/reldb/mailaccount.py:114
+#, fuzzy
+msgid "Archives"
+msgstr "Archiver"
+
+#: models/reldb/mailaccount.py:116
 msgid "INBOX.Drafts"
 msgstr "Brouillons"
 
-#: models/reldb/mailaccount.py:79
+#: models/reldb/mailaccount.py:117
 msgid "INBOX.Trash"
 msgstr "Corbeille"
 
-#: models/reldb/mailaccount.py:80
+#: models/reldb/mailaccount.py:118
 msgid "INBOX.Sent Messages"
 msgstr "Message envoyés"
 
-#: models/reldb/mailaccount.py:81
+#: models/reldb/mailaccount.py:119
 msgid "INBOX.Sent"
 msgstr "Envoyés"
 
-#: models/reldb/mailaccount.py:82
+#: models/reldb/mailaccount.py:120
 msgid "INBOX.Spam"
 msgstr "SPAM"
 
-#: models/reldb/mailaccount.py:83
+#: models/reldb/mailaccount.py:121
 msgid "INBOX.Junk"
 msgstr "Spam"
 
-#: models/reldb/mailaccount.py:84
-msgid "INBOX.INBOX.Junk"
-msgstr "Spam"
-
-#: models/reldb/mailaccount.py:85
+#: models/reldb/mailaccount.py:122
 msgid "INBOX.Deleted Messages"
 msgstr "Messages supprimés"
 
-#: models/reldb/mailaccount.py:90 templates/snippets/selector/selector.html:9
+#: models/reldb/mailaccount.py:123
+#, fuzzy
+msgid "INBOX.Archive"
+msgstr "Archiver"
+
+#: models/reldb/mailaccount.py:124
+#, fuzzy
+msgid "INBOX.Archives"
+msgstr "Archiver"
+
+#: models/reldb/mailaccount.py:126
+msgid "INBOX.INBOX.Junk"
+msgstr "Spam"
+
+#: models/reldb/mailaccount.py:127
+#, fuzzy
+msgid "INBOX.INBOX.Drafts"
+msgstr "Brouillons"
+
+#: models/reldb/mailaccount.py:128
+#, fuzzy
+msgid "INBOX.INBOX.Sent"
+msgstr "Spam"
+
+#: models/reldb/mailaccount.py:129
+#, fuzzy
+msgid "INBOX.INBOX.Trash"
+msgstr "Corbeille"
+
+#: models/reldb/mailaccount.py:130
+#, fuzzy
+msgid "INBOX.INBOX.Sent Messages"
+msgstr "Message envoyés"
+
+#: models/reldb/mailaccount.py:131
+#, fuzzy
+msgid "INBOX.INBOX.Spam"
+msgstr "SPAM"
+
+#: models/reldb/mailaccount.py:132
+#, fuzzy
+msgid "INBOX.INBOX.Deleted Messages"
+msgstr "Messages supprimés"
+
+#: models/reldb/mailaccount.py:133
+#, fuzzy
+msgid "INBOX.INBOX.Archive"
+msgstr "Spam"
+
+#: models/reldb/mailaccount.py:134
+#, fuzzy
+msgid "INBOX.INBOX.Archives"
+msgstr "Spam"
+
+#: models/reldb/mailaccount.py:138 templates/snippets/selector/selector.html:9
 msgid "Inbox"
 msgstr "Boîte de réception"
 
-#: models/reldb/mailaccount.py:96 templates/mailaccount/list-create.html:57
+#: models/reldb/mailaccount.py:144 templates/mailaccount/list-create.html:57
 msgid "Account name"
 msgstr "Nom du compte"
 
-#: models/reldb/mailaccount.py:100
+#: models/reldb/mailaccount.py:148
 msgid "Server hostname"
 msgstr "Nom d'hote"
 
-#: models/reldb/mailaccount.py:103
+#: models/reldb/mailaccount.py:151
 msgid "Use SSL/TLS?"
 msgstr "SSL/TLS ?"
 
-#: models/reldb/mailaccount.py:105
+#: models/reldb/mailaccount.py:153
 msgid "Service port"
 msgstr "Port"
 
-#: models/reldb/mailaccount.py:107 templates/mailaccount/list-create.html:62
+#: models/reldb/mailaccount.py:155 templates/mailaccount/list-create.html:61
 msgid "Username"
 msgstr "Identifiant"
 
-#: models/reldb/mailaccount.py:109
+#: models/reldb/mailaccount.py:157
 msgid "Password"
 msgstr "Mot de passe"
 
-#: models/reldb/mailfeed.py:46
+#: models/reldb/mailfeed.py:48
 msgid "store email in the feed"
 msgstr "stocker l'e-mail dans le flux"
 
-#: models/reldb/mailfeed.py:47
+#: models/reldb/mailfeed.py:49
 msgid "scrape email, extract links and fetch articles"
 msgstr "inspecter l'email, extraire les liens et récupérer les articles"
 
-#: models/reldb/mailfeed.py:49
+#: models/reldb/mailfeed.py:51
 msgid "do both, eg. store email and extract links / fetch articles"
 msgstr "les deux : stocker le mail et extraire les liens / articles"
 
-#: models/reldb/mailfeed.py:53
+#: models/reldb/mailfeed.py:55
 msgid "leave e-mail untouched"
 msgstr "ne pas toucher à l'e-mail"
 
-#: models/reldb/mailfeed.py:54
+#: models/reldb/mailfeed.py:56
 msgid "mark e-mail read"
 msgstr "marquer l'e-mail lu"
 
-#: models/reldb/mailfeed.py:55
+#: models/reldb/mailfeed.py:57
 msgid "delete e-mail"
 msgstr "supprimer l'e-mail"
 
-#: models/reldb/mailfeed.py:58 templates/mailfeed/list-create.html:54
+#: models/reldb/mailfeed.py:60 templates/mailfeed/list-create.html:54
 msgid "Feed name"
 msgstr "Nom du flux"
 
-#: models/reldb/mailfeed.py:62
+#: models/reldb/mailfeed.py:62 templates/mailfeed/list-create.html:56
+#, fuzzy
+msgid "Public"
+msgstr "URL publique"
+
+#: models/reldb/mailfeed.py:64
+#, fuzzy
+msgid "Can other 1flow users subscribe to this feed?"
+msgstr "Notes internes au personnel de 1flow, à propos de ce flux."
+
+#: models/reldb/mailfeed.py:68
 msgid "Match action"
 msgstr "Action si correspondance"
 
-#: models/reldb/mailfeed.py:65
+#: models/reldb/mailfeed.py:71
 msgid ""
 "Defines a global match action for all rules of the feed. You can override "
 "this value at the rule level, only for the ones you want."
@@ -2579,11 +2682,11 @@ msgstr ""
 "Définit une action globale pour toutes les règles du flux. Vous pouvez "
 "l'outrepasser au niveau des règles individuelles."
 
-#: models/reldb/mailfeed.py:72 models/reldb/mailfeed.py:181
+#: models/reldb/mailfeed.py:78 models/reldb/mailfeedrule.py:124
 msgid "Finish action"
 msgstr "Action de terminaison"
 
-#: models/reldb/mailfeed.py:75
+#: models/reldb/mailfeed.py:81
 msgid ""
 "Defines a global finish action for all rules of the feed. You can override "
 "this value at the rule level, only for the ones you want."
@@ -2591,173 +2694,217 @@ msgstr ""
 "Définit une action globale de terminaison pour toutes les règles du flux. "
 "Vous pouvez l'outrepasser au niveau des règles individuelles."
 
-#: models/reldb/mailfeed.py:86
+#: models/reldb/mailfeed.py:92
 msgid "Scrape whitelist"
 msgstr "Liste blanche d'inspection"
 
-#: models/reldb/mailfeed.py:87
+#: models/reldb/mailfeed.py:93
 msgid ""
 "Eventually refine URLs you want to scrape in the email body. Type a list of "
 "valid URLs patterns, and start with “re:” if you want to use a regular "
 "expression."
 msgstr ""
 
-#: models/reldb/mailfeed.py:94
+#: models/reldb/mailfeed.py:100
 msgid "Use scrape blacklist"
 msgstr "Utiliser la liste-noire ?"
 
-#: models/reldb/mailfeed.py:95
+#: models/reldb/mailfeed.py:101
 msgid ""
 "Use 1flow adblocker to avoid scrapeing email adds, unsubscribe links and the"
 " like."
 msgstr ""
 
-#: models/reldb/mailfeed.py:121
+#: models/reldb/mailfeed.py:364
+#, python-format
+msgid "%s, creator of the mail feed, closed it."
+msgstr ""
+
+#: models/reldb/mailfeedrule.py:59
 msgid "Subject"
 msgstr "Sujet"
 
-#: models/reldb/mailfeed.py:122
+#: models/reldb/mailfeedrule.py:60
 msgid "Sender"
 msgstr "Expéditeur"
 
-#: models/reldb/mailfeed.py:123
-msgid "Receipient (To:, Cc: or Cci:)"
+#: models/reldb/mailfeedrule.py:61
+#, fuzzy
+msgid "Recipient (To:, Cc: or Bcc:)"
 msgstr "Destinataire (À:, Cc: ou Cci:)"
 
-#: models/reldb/mailfeed.py:124
+#: models/reldb/mailfeedrule.py:62
 msgid "Mailing-list"
 msgstr "Liste de diffusion"
 
-#: models/reldb/mailfeed.py:125
+#: models/reldb/mailfeedrule.py:63
 msgid "Other header (please specify)"
 msgstr "Autre en-tête (spécifiez SVP)"
 
-#: models/reldb/mailfeed.py:129
+#: models/reldb/mailfeedrule.py:67
 msgid "contains"
 msgstr "contient"
 
-#: models/reldb/mailfeed.py:130
+#: models/reldb/mailfeedrule.py:68
 msgid "does not contain"
 msgstr "ne contient pas"
 
-#: models/reldb/mailfeed.py:131
+#: models/reldb/mailfeedrule.py:69
 msgid "starts with"
 msgstr "commence par"
 
-#: models/reldb/mailfeed.py:132
+#: models/reldb/mailfeedrule.py:70
 msgid "does not start with"
 msgstr "ne commence pas par"
 
-#: models/reldb/mailfeed.py:133
+#: models/reldb/mailfeedrule.py:71
 msgid "ends with"
 msgstr "Se termine par"
 
-#: models/reldb/mailfeed.py:134
+#: models/reldb/mailfeedrule.py:72
 msgid "does not end with"
 msgstr "ne se termine pas par"
 
-#: models/reldb/mailfeed.py:135
+#: models/reldb/mailfeedrule.py:73
 msgid "strictly equals"
 msgstr "est strictement égal à"
 
-#: models/reldb/mailfeed.py:136
+#: models/reldb/mailfeedrule.py:74
 msgid "is not equal to"
 msgstr "n'est pas égal à"
 
-#: models/reldb/mailfeed.py:137
-msgid "Manual regular expression"
+#: models/reldb/mailfeedrule.py:75
+#, fuzzy
+msgid "matches regular expression"
 msgstr "Expression rationelle manuelle"
 
-#: models/reldb/mailfeed.py:142 templates/mailfeedrule/list-create.html:65
+#: models/reldb/mailfeedrule.py:76
+msgid "does not match reg. expr."
+msgstr "ne correspond pas à l'expr. ratio."
+
+#: models/reldb/mailfeedrule.py:81 templates/mailfeedrule/list-create.html:65
 msgid "Mail account"
 msgstr "Compte e-mail"
 
-#: models/reldb/mailfeed.py:143
+#: models/reldb/mailfeedrule.py:82
 msgid "To apply this rule to all accounts, just don't choose any."
 msgstr "Pour appliquer cette règle à tous les comptes, n'en choisissez pas."
 
-#: models/reldb/mailfeed.py:146
+#: models/reldb/mailfeedrule.py:85
 msgid "Mailbox"
 msgstr "Boite e-mail"
 
-#: models/reldb/mailfeed.py:149
+#: models/reldb/mailfeedrule.py:88
 msgid "Recurse mailbox"
 msgstr "Recherche récursive"
 
-#: models/reldb/mailfeed.py:151 templates/mailfeedrule/list-create.html:67
+#: models/reldb/mailfeedrule.py:90 templates/mailfeedrule/list-create.html:67
 msgid "Header"
 msgstr "En-tête"
 
-#: models/reldb/mailfeed.py:154
+#: models/reldb/mailfeedrule.py:93
 msgid "E-mail field on which the match type is applied."
 msgstr "En-tête de l'e-mail sur lequel la correspondance est appliquée"
 
-#: models/reldb/mailfeed.py:156
+#: models/reldb/mailfeedrule.py:95
 msgid "Other header"
 msgstr "En-tête personnalisé"
 
-#: models/reldb/mailfeed.py:158
+#: models/reldb/mailfeedrule.py:97
 msgid "Specify here if you chose “Other header” in previous field."
 msgstr "Spécifiez ici si vous avez précédemment choisi « autre en-tête »."
 
-#: models/reldb/mailfeed.py:161 templates/mailfeedrule/list-create.html:69
+#: models/reldb/mailfeedrule.py:100 templates/mailfeedrule/list-create.html:69
 msgid "Match type"
 msgstr "Opération"
 
-#: models/reldb/mailfeed.py:164
+#: models/reldb/mailfeedrule.py:103
 msgid "Operation applied on the header to compare with match value."
 msgstr "Opération utilisée pour comparer votre valeur à celle de l'en-tête."
 
-#: models/reldb/mailfeed.py:167
+#: models/reldb/mailfeedrule.py:106
+#, fuzzy
+msgid "Match case"
+msgstr "Correspondance"
+
+#: models/reldb/mailfeedrule.py:108
+msgid "Do we care about uppercase and lowercase characters?"
+msgstr "Les caractères majuscules et minuscules sont-ils importants ?"
+
+#: models/reldb/mailfeedrule.py:110
 msgid "Match value"
 msgstr "Correspondance"
 
-#: models/reldb/mailfeed.py:169
+#: models/reldb/mailfeedrule.py:112
 msgid "Examples: “Tweet de”, “Google Alert:”. Can be any text."
 msgstr "Exemples : « Tweet de », « Alertes Google : ». N'importe quel texte."
 
-#: models/reldb/mailfeed.py:174
+#: models/reldb/mailfeedrule.py:117
 msgid "Action when matched"
 msgstr "Action sur corresp."
 
-#: models/reldb/mailfeed.py:177 models/reldb/mailfeed.py:184
+#: models/reldb/mailfeedrule.py:120 models/reldb/mailfeedrule.py:127
 msgid "Choose nothing to execute action defined at the feed level."
 msgstr ""
 "Ne choisissez rien pour utiliser l'action globale définie au niveau du flux."
 
-#: models/reldb/mailfeed.py:197
+#: models/reldb/mailfeedrule.py:133
+msgid "Checked and valid"
+msgstr "Vérifiée et validé"
+
+#: models/reldb/mailfeedrule.py:207
 #, python-brace-format
 msgid "Rule #{2}: {3}, applied to {0} for MailFeed {1}"
 msgstr "Règle #{2} : {3}, appliquée à {0} pour flux de mail {1}"
 
-#: models/reldb/mailfeed.py:198
+#: models/reldb/mailfeedrule.py:208
 msgid "all accounts"
 msgstr "tous les comptes"
 
-#: models/reldb/mailfeed.py:199
+#: models/reldb/mailfeedrule.py:209
 #, python-brace-format
 msgid "account {0}"
 msgstr "compte {0}"
 
-#: models/reldb/mailfeed.py:202
+#: models/reldb/mailfeedrule.py:212
 #, python-brace-format
 msgid "{0} {1} “{2}” → {3} → {4}"
 msgstr "{0} {1} « {2} » → {3} → {4}"
 
-#: models/reldb/mailfeed.py:209 models/reldb/mailfeed.py:211
+#: models/reldb/mailfeedrule.py:219 models/reldb/mailfeedrule.py:221
 msgid "feed default"
 msgstr "directive du flux"
+
+#: models/reldb/mailfeedrule.py:253
+#, python-brace-format
+msgid ""
+"Unrecognized header name “{0}”. Please look at http://bit.ly/smtp-headers to"
+" find a list of valid headers. Perhaps just a typo?"
+msgstr ""
+"Nom d'en-tête « {0} » invalide. Merci de regarder à l'adresse http://bit.ly"
+"/smtp-headers (en anglais), vous y trouverez une liste d'en-têtes valides. "
+"Ça ne serait pas juste une faute de frappe ?"
+
+#: models/reldb/mailfeedrule.py:264
+#, fuzzy, python-brace-format
+msgid "Invalid regular expression “{0}”: {1}"
+msgstr "Expression rationelle manuelle"
 
 #: tasks/__init__.py:81
 msgid "Forcing all feed refresh…"
 msgstr "Déclenchement forcé du rafraîchissement de tous les flux…"
 
-#: tasks/checks.py:124
+#: tasks/__init__.py:169
+#, fuzzy
+msgid "Forcing check of email accounts…"
+msgstr "Basculer vers les comptes e-mail"
+
+#: tasks/checks.py:125
 #, python-brace-format
 msgid "Reminder: {0} feed(s) closed in last {1} day(s)"
 msgstr "Rappel : {0} flux fermé(s) ce(s) {1} dernier(s) jour(s)"
 
-#: tasks/checks.py:126
+#: tasks/checks.py:127
 #, python-brace-format
 msgid ""
 "\n"
@@ -2973,7 +3120,7 @@ msgstr "Contribuez"
 msgid "Donate:"
 msgstr "Donnez :"
 
-#: templates/help.html:3 templates/snippets/navbar.html:234
+#: templates/help.html:3 templates/snippets/navbar.html:231
 msgid "Features"
 msgstr "Fonctionnalités"
 
@@ -3247,29 +3394,29 @@ msgid "Switch to mail feeds"
 msgstr "Basculer vers les flux de mails"
 
 #: templates/mailaccount/list-create.html:58
+msgid "Hostname"
+msgstr "Nom d'hote"
+
+#: templates/mailaccount/list-create.html:59
+msgid "SSL/TLS"
+msgstr "SSL/TLS"
+
+#: templates/mailaccount/list-create.html:60
+msgid "Port"
+msgstr "Port"
+
+#: templates/mailaccount/list-create.html:62
+msgid "password"
+msgstr "mot de passe"
+
+#: templates/mailaccount/list-create.html:64
 #: templates/mailfeed/list-create.html:55
 #: templates/mailfeedrule/list-create.html:74
 msgid "Status"
 msgstr "État"
 
-#: templates/mailaccount/list-create.html:59
-msgid "Hostname"
-msgstr "Nom d'hote"
-
-#: templates/mailaccount/list-create.html:60
-msgid "SSL/TLS"
-msgstr "SSL/TLS"
-
-#: templates/mailaccount/list-create.html:61
-msgid "Port"
-msgstr "Port"
-
-#: templates/mailaccount/list-create.html:63
-msgid "password"
-msgstr "mot de passe"
-
-#: templates/mailaccount/list-create.html:64
-#: templates/mailfeed/list-create.html:59
+#: templates/mailaccount/list-create.html:65
+#: templates/mailfeed/list-create.html:60
 #: templates/mailfeedrule/list-create.html:75
 msgid "Actions"
 msgstr "Actions"
@@ -3278,7 +3425,7 @@ msgstr "Actions"
 msgid "auto"
 msgstr "auto"
 
-#: templates/mailaccount/list-create.html:85
+#: templates/mailaccount/list-create.html:87
 msgid ""
 "\n"
 "\t\t    No mail account yet.\n"
@@ -3287,7 +3434,7 @@ msgstr ""
 "\n"
 "Pas encore de compte e-mail."
 
-#: templates/mailaccount/list-create.html:100
+#: templates/mailaccount/list-create.html:102
 msgid ""
 "Mail accounts allow the 1flow engine to access your e-mail box(es), even "
 "when you are not logged in.<br /><strong>Note:</strong> <em>1flow only "
@@ -3330,23 +3477,23 @@ msgstr[1] ""
 msgid "Switch to mail accounts"
 msgstr "Basculer vers les comptes e-mail"
 
-#: templates/mailfeed/list-create.html:56
+#: templates/mailfeed/list-create.html:57
 msgid "Default action"
 msgstr "Action par défaut"
 
-#: templates/mailfeed/list-create.html:57
+#: templates/mailfeed/list-create.html:58
 msgid "Default finish"
 msgstr "Terminaison par défaut"
 
-#: templates/mailfeed/list-create.html:58
+#: templates/mailfeed/list-create.html:59
 msgid "Rules"
 msgstr "Règles"
 
-#: templates/mailfeed/list-create.html:75
+#: templates/mailfeed/list-create.html:77
 msgid "Manage"
 msgstr "Gérer"
 
-#: templates/mailfeed/list-create.html:93
+#: templates/mailfeed/list-create.html:95
 msgid ""
 "\n"
 "\t\t\t    No mail feed yet.\n"
@@ -3355,7 +3502,7 @@ msgstr ""
 "\n"
 "Pas encore de flux d'e-mails."
 
-#: templates/mailfeed/list-create.html:108
+#: templates/mailfeed/list-create.html:110
 msgid ""
 "Mail feeds are sets of rules defining how to examine your e-mail box(es) "
 "contents. When e-mails match any rule of a feed, 1flow will either store the"
@@ -3438,20 +3585,25 @@ msgstr "Résultat"
 msgid "Finish"
 msgstr "Terminaison"
 
-#: templates/mailfeedrule/list-create.html:85
+#: templates/mailfeedrule/list-create.html:81
+#: templates/navbars/read-endless.html:33
+msgid "All"
+msgstr "Tout"
+
+#: templates/mailfeedrule/list-create.html:89
 msgid "not applicable"
 msgstr "non applicable"
 
-#: templates/mailfeedrule/list-create.html:87
+#: templates/mailfeedrule/list-create.html:93
 msgid "please edit"
 msgstr "éditez SVP"
 
-#: templates/mailfeedrule/list-create.html:91
-#: templates/mailfeedrule/list-create.html:92
+#: templates/mailfeedrule/list-create.html:99
+#: templates/mailfeedrule/list-create.html:100
 msgid "global feed action"
 msgstr "action par défaut"
 
-#: templates/mailfeedrule/list-create.html:115
+#: templates/mailfeedrule/list-create.html:122
 #, python-format
 msgid ""
 "\n"
@@ -3461,14 +3613,15 @@ msgstr ""
 "\n"
 "Pas encore de règle pour <strong>%(feed_name)s</strong>."
 
-#: templates/mailfeedrule/list-create.html:131
+#: templates/mailfeedrule/list-create.html:138
 msgid ""
-"Note: 1flow engine will <strong>recurse all mailboxes</strong> to look for "
-"mails to match rules on. This will eventually be customizable in the future."
+"<p>Notes:</p><ul><li><strong>all mailboxes</strong> except some specific "
+"ones (<em>Drafts</em>, <em>Sent</em>, <em>Trash</em>, <em>Spam</em>…) will "
+"be recursed to search matching e-mails.</li><li>All rules are applied "
+"<strong>case insensitive</strong>, even regular "
+"expressions.</li></ul><p>These points will eventually be customizable in the"
+" future.</p>"
 msgstr ""
-"Note : le moteur 1flow <strong>examine récursivement toutes les boites aux "
-"lettres</strong> à la recherche d\"e-mails pour exécuter les règles. Ceci "
-"sera éventuellement personnalisable dans le futur."
 
 #: templates/navbars/read-endless.html:8
 msgid "Jump to:"
@@ -3479,10 +3632,6 @@ msgstr "Raccourcis :"
 #: templates/snippets/selector/selector.html:4
 msgid "Reading lists"
 msgstr "Listes de lecture"
-
-#: templates/navbars/read-endless.html:33
-msgid "All"
-msgstr "Tout"
 
 #: templates/navbars/read-endless.html:38 templatetags/coretags.py:75
 msgid "Funbox"
@@ -3703,11 +3852,15 @@ msgstr "Pressez Shift-Alt-F pour activer"
 msgid "Maintenance"
 msgstr "Maintenance"
 
-#: templates/snippets/navbar.html:240
+#: templates/snippets/navbar.html:192
+msgid "System statistics"
+msgstr "Statistiques système"
+
+#: templates/snippets/navbar.html:237
 msgid "About"
 msgstr "À propos"
 
-#: templates/snippets/navbar.html:241
+#: templates/snippets/navbar.html:238
 msgid "Contact"
 msgstr "Contact"
 
@@ -4835,6 +4988,143 @@ msgstr "(À votre prochaine connexion, vous serez amené(e) directement là-bas)
 msgid "Start adding some sources to read news from"
 msgstr "Commençons par ajouter des sources d'informations"
 
+#: templates/status/index.html:2
+msgid "Instance status and statistics"
+msgstr "État et statistiques de l'instance"
+
+#: templates/status/index.html:7
+msgid "1flow instance status and statistics"
+msgstr "État et statistiques de l'instance 1flow"
+
+#: templates/status/index.html:11
+msgid "Redis"
+msgstr "Redis"
+
+#: templates/status/index.html:14
+msgid "PostgreSQL"
+msgstr "PostgreSQL"
+
+#: templates/status/index.html:17
+msgid "MongoDB"
+msgstr "MongoDB"
+
+#: templates/status/index.html:20
+#, fuzzy
+msgid "System"
+msgstr "Groupe système ?"
+
+#: templates/status/mongodb-database.html:3
+#, fuzzy, python-format
+msgid "Database <strong>%(dbname)s</strong>"
+msgstr ""
+"\n"
+"Règles pour <strong>%(feed_name)s</strong>"
+
+#: templates/status/mongodb-database.html:9
+msgid "occupied space"
+msgstr "espace occupé"
+
+#: templates/status/mongodb-database.html:10
+msgid "data size"
+msgstr "taille des données"
+
+#: templates/status/mongodb-database.html:11
+#, fuzzy
+msgid "collections"
+msgstr "Actions"
+
+#: templates/status/mongodb-database.html:12
+msgid "total objects"
+msgstr "objets totaux"
+
+#: templates/status/mongodb-database.html:13
+#, python-format
+msgid "index size<br /><span class='muted'>(%% of data size)</span>"
+msgstr ""
+"taille des index<br /><span class='muted'>(%% de la taille des "
+"données)</span>"
+
+#: templates/status/mongodb-database.html:30
+msgid "data size:"
+msgstr "taille des données :"
+
+#: templates/status/system.html:3
+#, fuzzy
+msgid "Host information"
+msgstr "Informations d'admin."
+
+#: templates/status/system.html:6
+#, fuzzy
+msgid "hostname:"
+msgstr "Nom d'hote"
+
+#: templates/status/system.html:7
+msgid "OS:"
+msgstr "Système d'exploitation :"
+
+#: templates/status/system.html:8
+msgid "architecture:"
+msgstr "Architecture :"
+
+#: templates/status/system.html:13
+msgid "with NUMA"
+msgstr "avec NUMA"
+
+#: templates/status/system.html:15
+#, fuzzy, python-format
+msgid ""
+"\n"
+"\t\t\t%(counter)s core\n"
+"\t\t"
+msgid_plural ""
+"\n"
+"\t\t\t%(counter)s cores\n"
+"\t\t"
+msgstr[0] ""
+"\n"
+"%(counter)s règle"
+msgstr[1] ""
+"\n"
+"%(counter)s règles"
+
+#: templates/status/system.html:24
+msgid "Used memories"
+msgstr "Utilisation des mémoires"
+
+#: templates/status/system.html:27
+msgid "RAM"
+msgstr "RAM"
+
+#: templates/status/system.html:33
+#, python-format
+msgid "Active memory: %(percent)s%% (%(value)s)"
+msgstr "Mémoire active : %(percent)s%% (%(value)s)"
+
+#: templates/status/system.html:38
+#, python-format
+msgid "Inactive memory: %(percent)s%% (%(value)s)"
+msgstr "Mémoire inactive : %(percent)s%% (%(value)s)"
+
+#: templates/status/system.html:43
+#, python-format
+msgid "Buffers: %(percent)s%% (%(value)s)"
+msgstr "Tampons : %(percent)s%% (%(value)s)"
+
+#: templates/status/system.html:48
+#, python-format
+msgid "Cache: %(percent)s%% (%(value)s)"
+msgstr "Cache : %(percent)s%% (%(value)s)"
+
+#: templates/status/system.html:54 templates/status/system.html.py:80
+#, python-format
+msgid "Free: %(percent)s%% (%(value)s)"
+msgstr "Libre : %(percent)s%% (%(value)s)"
+
+#: templates/status/system.html:74
+#, python-format
+msgid "Used space on %(mntpt)s: %(percent)s%% (%(value)s)"
+msgstr "Espace utilisé sur %(mntpt)s : %(percent)s%% (%(value)s)"
+
 #: templates/widgets/delete-form-button.html:5
 msgid "delete this entry"
 msgstr "supprimer cette entrée"
@@ -5022,19 +5312,32 @@ msgctxt "awesome-font icon name"
 msgid "exchange"
 msgstr "exchange"
 
-#: templatetags/coretags.py:651
-#, python-brace-format
-msgid "Account successfully working, tested {0} ago."
+#: templatetags/coretags.py:647
+#, fuzzy, python-brace-format
+msgid "Account successfully working, tested {ago} ago."
 msgstr "Compte pleinement fonctionnel, testé il y a {0}."
 
-#: templatetags/coretags.py:658
-#, python-brace-format
-msgid "Account not working, tested {0} ago. Error reported: {1}"
+#: templatetags/coretags.py:648
+#, fuzzy, python-brace-format
+msgid "Account not working, tested {ago} ago. Error reported: {err}"
 msgstr "Compte non fonctionnel, testé il y a {0}. Erreur remontée : {1}"
 
-#: templatetags/coretags.py:665
-msgid "Account connectivity not tested yet"
-msgstr "Connectivité du compte non testée"
+#: templatetags/coretags.py:654
+msgid "Rule validated successfully and will be used for next fetch."
+msgstr "La règle a été validée et sera utilisée aux exécutions suivantes."
+
+#: templatetags/coretags.py:656
+#, python-brace-format
+msgid "Rule did not validate. Error reported: {err}"
+msgstr "La règle n'a pu être validée. Erreur remontée : {err}"
+
+#: templatetags/coretags.py:674
+msgid ""
+"Account connectivity not yet tested. Please wait a few seconds and reload "
+"the current page."
+msgstr ""
+"Connectivité du compte non testée. Merci d'attendre quelques secondes, puis "
+"rechargez la page."
 
 #: views/feed.py:61
 #, python-brace-format
@@ -5046,12 +5349,12 @@ msgstr "URL {0} mal-formée"
 msgid "Very malformed url {0}"
 msgstr "URL {0} très mal-formée"
 
-#: views/feed.py:73
-#, python-brace-format
-msgid "The website at {0} does not seem to provide any feed."
+#: views/feed.py:75
+#, fuzzy, python-brace-format
+msgid "The website at {0} does not provide any RSS/Atom feed."
 msgstr "Le site web {0} semble ne proposer aucun flux."
 
-#: views/feed.py:77
+#: views/feed.py:81
 #, python-brace-format
 msgid "Could not create any feed from URL {0}: {1}"
 msgstr "Impossible de créer un flux à partir de l'adresse {0} : {1}"
@@ -5188,6 +5491,17 @@ msgstr ""
 msgid "Subscription <em>{0}</em> successfully cancelled."
 msgstr "Abonnement <em>{0}</em> résilié avec succès."
 
+#~ msgid ""
+#~ "Note: 1flow engine will <strong>recurse all mailboxes</strong> to look for "
+#~ "mails to match rules on. This will eventually be customizable in the future."
+#~ msgstr ""
+#~ "Note : le moteur 1flow <strong>examine récursivement toutes les boites aux "
+#~ "lettres</strong> à la recherche d\"e-mails pour exécuter les règles. Ceci "
+#~ "sera éventuellement personnalisable dans le futur."
+
+#~ msgid "Account connectivity not tested yet"
+#~ msgstr "Connectivité du compte non testée"
+
 #~ msgid "Any"
 #~ msgstr "N'importe lequel"
 
@@ -5256,9 +5570,6 @@ msgstr "Abonnement <em>{0}</em> résilié avec succès."
 #~ msgid "Friends"
 #~ msgstr "Amis"
 
-#~ msgid "System group?"
-#~ msgstr "Groupe système ?"
-
 #~ msgid ""
 #~ "\n"
 #~ "Welcome to 1flow help center. If you don't find the answer you need here, please [contact us](#reaching-us) before calling the fire brigade.\n"
@@ -5322,12 +5633,6 @@ msgstr "Abonnement <em>{0}</em> résilié avec succès."
 
 #~ msgid "Super-user access"
 #~ msgstr "Accès super-utilisateur"
-
-#~ msgid "PostgreSQL"
-#~ msgstr "PostgreSQL"
-
-#~ msgid "MongoDB"
-#~ msgstr "MongoDB"
 
 #~ msgid "Currently associated"
 #~ msgstr "Actuellement associés"
@@ -5839,9 +6144,6 @@ msgstr "Abonnement <em>{0}</em> résilié avec succès."
 
 #~ msgid "Starring a document marks it as read"
 #~ msgstr "Sélectionner un document le marque aussi comme lu"
-
-#~ msgid "Admin. informations"
-#~ msgstr "Informations d'admin."
 
 #~ msgid "%s: %s"
 #~ msgstr "%s : %s"
