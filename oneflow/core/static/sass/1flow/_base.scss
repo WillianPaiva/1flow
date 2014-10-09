@@ -277,16 +277,25 @@ img.centered {
 }
 
 .muted {
-  color: $gray;
+  color: $grayLight;
 }
 
 .very-muted {
   color: $grayLighter;
 }
 
+.strong {
+  font-weight: bolder;
+}
+
+.bigger {
+  font-size: 120%;
+}
+
 .inline {
   display: inline;
 }
+
 .small {
   font-size: 80%;
 }

@@ -1,0 +1,38 @@
+{% load mathfilters %}
+
+<h2>{% blocktrans with dbname=dbstats.db %}Database <strong>{{dbname }}</strong>{% endblocktrans %}</h2>
+
+<div class="row">
+	<div class="jumbotron">
+		<div class="row">
+			<div class="col-xs-6">
+				{% trans "occupied space" %}<br />
+				{% trans "data size" %}<br />
+				{% trans "collections" %}<br />
+				{% trans "total objects" %}<br />
+				{% trans "index size<br /><span class='muted'>(% of data size)</span>" %}<br />
+			</div>
+			<div class="col-xs-6">
+				<strong>{{ dbstats.fileSize|naturalsize }}</strong><br />
+				{{ dbstats.storageSize|naturalsize }} <span class="muted">({{ dbstats.storageSize|mul:100.0|div:dbstats.fileSize|floatformat:-1 }}%)</span><br />
+				{{ dbstats.collections }}<br />
+				{{ dbstats.objects }}<br />
+				{{ dbstats.indexSize|naturalsize }} <span class="muted">({{ dbstats.indexSize|mul:100.0|div:dbstats.storageSize|floatformat:-1 }}%)<br />
+			</div>
+		</div>
+	</div>
+</div>
+
+{% for collname, collinfo in collstats.items %}
+<div class="row">
+	<div class="col-xs-5 right">
+		<h3>{{ collname|title }}</h3>
+		<p>{% trans "data size:" %} <strong>{{ collinfo.storageSize|naturalsize }}</strong><br />
+		<span class="very-muted">{{ collinfo.storageSize|mul:100.0|div:dbstats.storageSize|floatformat:-1 }}%</span></p>
+	</div>
+	<div class="col-xs-7">
+		<div class="spacer30"></div>
+	{{ collinfo.count }} item(s) in collection<br />
+	</div>
+</div>
+{% endfor %}

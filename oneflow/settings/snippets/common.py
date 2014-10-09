@@ -512,8 +512,7 @@ INSTALLED_APPS = [
     # `infinite_pagination` doesn't work on MongoEngine QuerySet.
     #'infinite_pagination',
 
-    # We don't use `mathfilters` as of 20130831.
-    #'mathfilters',
+    'mathfilters',
 
     'widget_tweaks',
     'oneflow.base',

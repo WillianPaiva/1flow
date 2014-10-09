@@ -19,7 +19,11 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
+import os
+import psutil
+import pymongo
 import logging
+from collections import namedtuple
 
 from django.http import (
     HttpResponsePermanentRedirect,
@@ -272,6 +276,166 @@ def help(request):
 
     return render(request, u'help.html', {'help_sections': help_sections})
 
+
+def admin_status(request):
+    """ Create the admin status page. Long and expensive, but informational.
+
+    References:
+        Stackoverflow questions, a lot.
+        Free/total space: http://stackoverflow.com/q/4260116/654755
+        Disk partitions: http://stackoverflow.com/a/6397492/654755
+    """
+
+    disk_ntuple = namedtuple('partition', 'device mountpoint fstype')
+    usage_ntuple = namedtuple('usage', 'total used free percent')
+
+    def disk_partitions(all=False):
+        """Return all mountd partitions as a nameduple.
+        If all == False return phyisical partitions only.
+        """
+        phydevs = []
+        f = open("/proc/filesystems", "r")
+
+        for line in f:
+            if not line.startswith("nodev"):
+                phydevs.append(line.strip())
+
+        retlist = []
+        f = open('/etc/mtab', "r")
+
+        for line in f:
+            if not all and line.startswith('none'):
+                continue
+
+            fields = line.split()
+            device = fields[0]
+            mountpoint = fields[1]
+            fstype = fields[2]
+
+            if not all and fstype not in phydevs:
+                continue
+
+            if device == 'none':
+                device = ''
+
+            ntuple = disk_ntuple(device, mountpoint, fstype)
+
+            retlist.append(ntuple)
+        return retlist
+
+    def disk_usage(path):
+        """Return disk usage associated with path."""
+        st = os.statvfs(path)
+        free = (st.f_bavail * st.f_frsize)
+        total = (st.f_blocks * st.f_frsize)
+        used = (st.f_blocks - st.f_bfree) * st.f_frsize
+        try:
+            percent = (float(used) / total) * 100
+
+        except ZeroDivisionError:
+            percent = 0
+
+        # NB: the percentage is -5% than what shown by df due to
+        # reserved blocks that we are currently not considering:
+        # http://goo.gl/sWGbH
+        return usage_ntuple(total, used, free, round(percent, 1))
+
+    def find_mount_point(path):
+        path = os.path.abspath(path)
+        while not os.path.ismount(path):
+            path = os.path.dirname(path)
+        return path
+
+    client = pymongo.MongoClient()
+
+    # ——————————————————————————————————————————————————————————— Main database
+
+    mongodb = getattr(client, settings.MONGODB_NAME)
+
+    mongodbstats = mongodb.command('dbstats')
+
+    mongodbcollstats = {collname: mongodb.command('collStats', collname)
+                        for collname in sorted(mongodb.collection_names())}
+
+    # ———————————————————————————————————————————————————————— Archive database
+
+    archivedb = getattr(client, settings.MONGODB_NAME_ARCHIVE)
+
+    archivedbstats = archivedb.command('dbstats')
+
+    archivedbcollstats = {collname: archivedb.command('collStats', collname)
+                          for collname in sorted(archivedb.collection_names())}
+
+    # —————————————————————————————————————————————————————————— Admin database
+
+    admindb = pymongo.MongoClient().admin
+
+    command_line_ops = admindb.command('getCmdLineOpts')
+    host_infos       = mongodb.command('hostInfo')
+    server_status    = mongodb.command('serverStatus')
+
+    mongo_mount_point = find_mount_point(
+        command_line_ops['parsed']['storage']['dbPath'])
+
+    tmp_statvfs = os.statvfs(mongo_mount_point)
+
+    mongo_statvfs = {
+        # Size of filesystem in bytes
+        'f_blocks': tmp_statvfs.f_frsize * tmp_statvfs.f_blocks,
+
+        # Actual number of free bytes
+        'f_bfree': tmp_statvfs.f_frsize * tmp_statvfs.f_bfree,
+
+        # Number of free bytes that ordinary users
+        'f_bavail': tmp_statvfs.f_frsize * tmp_statvfs.f_bavail,
+    }
+
+    # svmem(total=8289701888L, available=1996591104L, percent=75.9,
+    #       used=8050712576L, free=238989312L, active=6115635200,
+    #       inactive=1401483264, buffers=40718336L, cached=1716883456)
+
+    psutil_vm = psutil.virtual_memory()
+    memory = {
+        'raw': psutil_vm,
+        'active_pct': psutil_vm.active * 100.0 / psutil_vm.total,
+        'inactive_pct': psutil_vm.inactive * 100.0 / psutil_vm.total,
+        'buffers_pct': psutil_vm.buffers * 100.0 / psutil_vm.total,
+        'cached_pct': (psutil_vm.cached * 100.0 / psutil_vm.total),
+    }
+
+    memory['used_pct'] = (
+        memory['active_pct']
+        + memory['inactive_pct']
+        + memory['buffers_pct']
+        + memory['cached_pct']
+    )
+
+    if memory['used_pct'] > 100:
+        # Sometimes, the total is > 100 (I've
+        # seen 105.xxx many times while developing).
+        memory['cached_pct'] = memory['cached_pct'] - (
+            memory['used_pct'] - 100.0)
+
+    # ———————————————————————————————————————————————————————————————— Cleanups
+
+    if host_infos['os']['name'].startswith('NAME="'):
+        host_infos['os']['name'] = host_infos['os']['name'][6:-1]
+
+    return render(request, 'status/index.html', {
+        'mongodbstats': mongodbstats,
+        'mongodbcollstats': mongodbcollstats,
+        'archivedbstats': archivedbstats,
+        'archivedbcollstats': archivedbcollstats,
+        'host_infos': host_infos,
+        'server_status': server_status,
+        'command_line_ops': command_line_ops,
+        'mongo_statvfs': mongo_statvfs,
+        'memory': memory,
+        'partitions': {
+            part: disk_usage(part.mountpoint)
+            for part in disk_partitions()
+        },
+    })
 
 # ——————————————————————————————————————————————————————————————— Views imports
 

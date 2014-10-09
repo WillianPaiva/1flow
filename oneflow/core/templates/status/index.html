@@ -1,0 +1,53 @@
+{% extends 'home.html' %}
+{% block title %}{% trans "Instance status and statistics" %}{% endblock title %}
+{% block body_id %}status{% endblock body_id %}
+
+{% block application_content %}
+
+	<h1>{% trans "1flow instance status and statistics" %}</h1>
+
+    <ul class="nav nav-tabs" id="status-tabs">
+        <li class="secondary-nav">
+        	<a data-toggle="tab" href="#redis">{% trans "Redis" %}</a>
+    	</li>
+        <li class="secondary-nav">
+        	<a data-toggle="tab" href="#postgresql">{% trans "PostgreSQL" %}</a>
+    	</li>
+        <li class="secondary-nav">
+        	<a data-toggle="tab" href="#mongodb">{% trans "MongoDB" %}</a>
+    	</li>
+        <li class="secondary-nav active">
+        	<a data-toggle="tab" href="#system">{% trans "System" %}</a>
+    	</li>
+    </ul>
+
+	<div class="tab-content">
+		<div class="tab-pane fade in active" id="system">
+			<div class="spacer25"></div>
+			{% include "status/system.html" %}
+		</div>
+		<div class="tab-pane fade" id="mongodb">
+			<div class="spacer25"></div>
+			{% include "status/mongodb.html" %}
+		</div>
+		<div class="tab-pane fade" id="postgresql">
+			<div class="spacer25"></div>
+			{% include "status/postgresql.html" %}
+		</div>
+		<div class="tab-pane fade" id="redis">
+			<div class="spacer25"></div>
+			{% include "status/redis.html" %}
+		</div>
+	</div>
+
+{% endblock application_content %}
+
+
+{% block extrajs_footer %}
+    {{ block.super }}
+	{% compressed_js 'core' %}
+	<script type="text/javascript">
+	{% include "snippets/bootstrap-nav-hash-update.js.html" %}
+	</script>
+{% endblock extrajs_footer %}
+
