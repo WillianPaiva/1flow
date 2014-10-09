@@ -23,7 +23,7 @@ import os
 import psutil
 import pymongo
 import logging
-from collections import namedtuple
+from collections import OrderedDict, namedtuple
 
 from django.http import (
     HttpResponsePermanentRedirect,
@@ -354,8 +354,9 @@ def admin_status(request):
 
     mongodbstats = mongodb.command('dbstats')
 
-    mongodbcollstats = {collname: mongodb.command('collStats', collname)
-                        for collname in sorted(mongodb.collection_names())}
+    mongodbcollstats = OrderedDict(
+        (collname, mongodb.command('collStats', collname))
+        for collname in sorted(mongodb.collection_names()))
 
     # ———————————————————————————————————————————————————————— Archive database
 
@@ -363,8 +364,9 @@ def admin_status(request):
 
     archivedbstats = archivedb.command('dbstats')
 
-    archivedbcollstats = {collname: archivedb.command('collStats', collname)
-                          for collname in sorted(archivedb.collection_names())}
+    archivedbcollstats = OrderedDict(
+        (collname, archivedb.command('collStats', collname))
+        for collname in sorted(archivedb.collection_names()))
 
     # —————————————————————————————————————————————————————————— Admin database
 
