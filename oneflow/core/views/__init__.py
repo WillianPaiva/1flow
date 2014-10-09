@@ -302,6 +302,7 @@ def admin_status(request):
 
         retlist = []
         f = open('/etc/mtab', "r")
+        dev_done = []
 
         for line in f:
             if not all and line.startswith('none'):
@@ -312,15 +313,19 @@ def admin_status(request):
             mountpoint = fields[1]
             fstype = fields[2]
 
-            if not all and fstype not in phydevs:
+            if not all and fstype not in phydevs and device in dev_done:
                 continue
 
             if device == 'none':
                 device = ''
 
-            ntuple = disk_ntuple(device, mountpoint, fstype)
+            retlist.append(disk_ntuple(device, mountpoint, fstype))
 
-            retlist.append(ntuple)
+            # Avoid doing devices twice. This happens in LXCs with bind mounts.
+            # All we need is that / is mounted before other for it to show
+            # instead of them. Hoppefully, it should always be the case ;-)
+            dev_done.append(device)
+
         return retlist
 
     def disk_usage(path):
