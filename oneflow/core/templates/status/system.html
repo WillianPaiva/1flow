@@ -1,0 +1,91 @@
+{% load mathfilters %}
+
+<h2>{% trans "Host information" %}</h2>
+<div class="row">
+	<div class="col-xs-4 col-sm-2 right muted">
+		{% trans "hostname:" %}<br />
+		{% trans "OS:" %}<br />
+		{% trans "architecture:" %}
+	</div>
+	<div class="col-xs-6 col-sm-8 strong">
+		{{ host_infos.system.hostname }}<br />
+		{{ host_infos.os.name }}, {{ host_infos.os.version }}<br />
+		{{ host_infos.system.cpuArch }}{% if host_infos.system.numaEnabled %}{% trans "with NUMA" %}{% endif %}
+		({% spaceless %}
+		{% blocktrans count counter=host_infos.system.numCores %}
+			{{ counter }} core
+		{% plural %}
+			{{ counter }} cores
+		{% endblocktrans %}
+		{% endspaceless %})
+	</div>
+</div>
+
+<h2>{% trans "Used memories" %}</h2>
+<div class="row">
+	<div class="col-xs-2 right muted">
+		{% trans "RAM" %}
+	</div>
+	<div class="col-xs-8 col-sm-9">
+		<div class="progress">
+		  <div class="progress-bar progress-bar-danger popover-top"
+		  		data-toggle="tooltip"
+		  		title="{% blocktrans with percent=memory.active_pct|floatformat:-1 value=memory.raw.active|naturalsize %}Active memory: {{ percent }}% ({{ value}}){% endblocktrans %}"
+		  		style="width: {{ memory.active_pct|safe }}%">
+		  </div>
+		  <div class="progress-bar progress-bar-warning popover-top"
+		  		data-toggle="tooltip"
+		  		title="{% blocktrans with percent=memory.inactive_pct|floatformat:-1 value=memory.raw.inactive|naturalsize %}Inactive memory: {{ percent }}% ({{ value}}){% endblocktrans %}"
+		  		style="width: {{ memory.inactive_pct|safe }}%">
+		  </div>
+		  <div class="progress-bar progress-bar-info popover-top"
+		  		data-toggle="tooltip"
+		  		title="{% blocktrans with percent=memory.buffers_pct|floatformat:-1 value=memory.raw.buffers|naturalsize %}Buffers: {{ percent }}% ({{ value}}){% endblocktrans %}"
+		  		style="width: {{ memory.buffers_pct|safe }}%">
+		  </div>
+		  <div class="progress-bar progress-bar-success popover-top"
+		  		data-toggle="tooltip"
+		  		title="{% blocktrans with percent=memory.cached_pct|floatformat:-1 value=memory.raw.cached|naturalsize %}Cache: {{ percent }}% ({{ value}}){% endblocktrans %}"
+		  		style="width: {{ memory.cached_pct|safe }}%">
+		  </div>
+		  {% if memory.used_pct < 100 %}
+		  <div class="progress-bar popover-top"
+		  		data-toggle="tooltip"
+		  		title="{% blocktrans with percent=memory.free_pct|floatformat:-1 value=memory.raw.free|naturalsize %}Free: {{ percent }}% ({{ value}}){% endblocktrans %}"
+		  		style="width: {{ memory.free_pct|safe }}%">
+		  </div>
+		  {% endif %}
+		</div>
+	</div>
+	<div class="col-xs-2 col-sm-1">
+		{{ memory.raw.total|naturalsize }}
+	</div>
+</div>
+
+{% for partition, partinfo in partitions.items %}
+<div class="row">
+	<div class="col-xs-2 right strong">
+		{{ partition.mountpoint }}
+	</div>
+	<div class="col-xs-8 col-sm-9">
+		<div class="progress">
+		  <div class="progress-bar popover-top"
+		  		data-toggle="tooltip"
+		  		title="{% blocktrans with percent=partinfo.percent|floatformat:-1 value=partinfo.used|naturalsize mntpt=partition.mountpoint %}Used space on {{mntpt}}: {{ percent }}% ({{ value}}){% endblocktrans %}"
+		  		style="width: {{ partinfo.percent|safe }}%">
+		  </div>
+		  {% if partinfo.percent < 99 %}
+		  <div class="progress-bar progress-bar-info popover-top"
+		  		data-toggle="tooltip"
+		  		title="{% blocktrans with percent=100.0|sub:partinfo.percent|floatformat:-1 value=partinfo.free|naturalsize %}Free: {{ percent }}% ({{ value}}){% endblocktrans %}"
+		  		style="width: {{ 100.0|sub:partinfo.percent|safe }}%">
+		  </div>
+		  {% endif %}
+
+		</div>
+	</div>
+	<div class="col-xs-2 col-sm-1">
+		{{ partinfo.total|naturalsize }}
+	</div>
+</div>
+{% endfor %}

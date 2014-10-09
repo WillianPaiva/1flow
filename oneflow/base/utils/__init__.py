@@ -1,21 +1,21 @@
 # -*- coding: utf-8 -*-
 """
-    Copyright 2012-2014 Olivier Cortès <oc@1flow.io>
+Copyright 2012-2014 Olivier Cortès <oc@1flow.io>.
 
-    This file is part of the 1flow project.
+This file is part of the 1flow project.
 
-    1flow is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation, either version 3 of
-    the License, or (at your option) any later version.
+1flow is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
 
-    1flow is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
+1flow is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU Affero General Public
-    License along with 1flow.  If not, see http://www.gnu.org/licenses/
+You should have received a copy of the GNU Affero General Public
+License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
@@ -101,12 +101,25 @@ def register_task_method(klass, meth, module_globals,
         exported_name = u'{0}_task'.format(
             task_name.lower().replace('.', '_'))
 
-    @task(name=task_name, queue=queue, default_retry_delay=default_retry_delay)
-    def task_func(object_id, *args, **kwargs):
+    if issubclass(klass, models.Model):
 
-        objekt = klass.objects.get(id=object_id)
+        @task(name=task_name, queue=queue,
+              default_retry_delay=default_retry_delay)
+        def task_func(object_pk, *args, **kwargs):
 
-        return getattr(objekt, meth.im_func.func_name)(*args, **kwargs)
+            objekt = klass.objects.get(pk=object_pk)
+
+            return getattr(objekt, meth.im_func.func_name)(*args, **kwargs)
+
+    else:
+
+        @task(name=task_name, queue=queue,
+              default_retry_delay=default_retry_delay)
+        def task_func(object_id, *args, **kwargs):
+
+            objekt = klass.objects.get(id=object_id)
+
+            return getattr(objekt, meth.im_func.func_name)(*args, **kwargs)
 
     # Export the new task in the current module.
     module_globals[exported_name] = task_func
@@ -714,3 +727,60 @@ def word_match_consecutive_once(term, word):
             return False
 
     return True
+
+
+def get_common_values(orig_dikt, exclude_list=None, match_strict=False):
+    """ Return a list of common elements in dict values.
+
+    We assume that:
+
+    - dictionnary values are lists. The function will alter them in a copy,
+      but for easiness of first implementation, we will not try turn every
+      kind of iterable into a mutable one.
+    - finding an element in another list is enough to consider it “common”.
+      Doing a strict intersection is left as an exercise when we need it,
+      with the :param:`match_strict` parameter.
+
+
+    .. warning:: as of 20141006, this function is not tested; the feature
+        that relied on it has been postponed.
+    """
+
+    if exclude_list is None:
+        exclude_list = ()
+
+    common_names = set()
+
+    for pivot_key, pivot_values in orig_dikt.copy().items():
+
+        for current_item_name in pivot_values:
+            if current_item_name in exclude_list:
+                continue
+
+            for account, mailboxes in orig_dikt:
+                if account == pivot_key:
+                    continue
+
+                if current_item_name in mailboxes:
+                    common_names.add(current_item_name)
+
+                    for remacct, remmb in orig_dikt.items():
+                        try:
+                            remmb.remove(current_item_name)
+
+                        except:
+                            # It is likely that many accounts have
+                            # different mailboxes structure.
+                            pass
+
+    return common_names
+
+
+def list_chunks(lisT, chunks_len):
+    """ Split a :param:`lisT` in chunks of :param:`chunks_len`.
+
+    Cf. http://stackoverflow.com/q/312443/654755
+    """
+
+    for i in xrange(0, len(lisT), chunks_len):
+            yield lisT[i:i + chunks_len]

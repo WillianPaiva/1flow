@@ -169,6 +169,24 @@ class OwnerOrSuperuserEditAdaptor(object):
     """
 
     @classmethod
+    def obj_parent_chain(cls, obj, parent_chain):
+        """ Return the last object of the parent-children chain.
+
+        Eg. if we are authorizing on a class Child which has a Parent
+        which has a GrandParent (which has a `.user` attribute), do
+        equivalent of returning child.parent.grandparent.user, whatever
+        the nesting level the chain is.
+        """
+
+        current_obj = obj
+
+        for chain_node in parent_chain + ('user', ):
+            current_obj = getattr(current_obj, chain_node)
+
+        return current_obj
+
+
+    @classmethod
     def can_edit(cls, adaptor_field):
 
         user = adaptor_field.request.user
@@ -185,7 +203,14 @@ class OwnerOrSuperuserEditAdaptor(object):
                 if isinstance(obj, models.Model):
                     # We are editing a Django model. A user can be
                     # editing his own account, or one of its objects.
-                    return user == obj or user == obj.user
+                    if hasattr(obj, 'INPLACEEDIT_PARENTCHAIN'):
+                        pobj = cls.obj_parent_chain(
+                            obj, obj.INPLACEEDIT_PARENTCHAIN)
+
+                        return user == pobj
+
+                    else:
+                        return user == obj or user == obj.user
 
                 else:
                     # We are editing a MongoDB Document. Either the it's
@@ -196,7 +221,8 @@ class OwnerOrSuperuserEditAdaptor(object):
                     # relation is not a real "ownership" but a simple
                     # N-N relation).
                     try:
-                        return user == obj.django or user.mongo == obj.owner
+                        return user == obj.django \
+                            or user.mongo == obj.owner
 
                     except AttributeError:
                         # We don't try/except this one: it can crash with

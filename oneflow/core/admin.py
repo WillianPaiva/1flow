@@ -37,8 +37,7 @@ from writingfield import FullScreenTextarea
 
 from .models.nonrel import (Tag, Feed, Article, Read, CONTENT_TYPE_MARKDOWN,
                             User as MongoUser, Group as MongoGroup)
-from .models.reldb import HelpContent
-
+from .models.reldb import HelpContent, MailAccount, MailFeed, MailFeedRule
 from django.contrib import admin
 import mongoadmin
 from mongodbforms import DocumentForm
@@ -520,11 +519,10 @@ class FeedAdminForm(DocumentForm):
 
 
 class FeedAdmin(mongoadmin.DocumentAdmin):
-
     class Media:
         css = {
             'all': (
-                '//netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.min.css', # NOQA
+                '//netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.min.css',  # NOQA
             )
         }
 
@@ -760,3 +758,7 @@ class FeedAdmin(mongoadmin.DocumentAdmin):
 
 
 admin.site.register(Feed, FeedAdmin)
+
+admin.site.register(MailAccount)
+admin.site.register(MailFeed)
+admin.site.register(MailFeedRule)

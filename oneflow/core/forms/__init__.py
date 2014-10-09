@@ -1,30 +1,32 @@
 # -*- coding: utf-8 -*-
 """
-    Copyright 2013-2014 Olivier Cortès <oc@1flow.io>
+Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
-    This file is part of the 1flow project.
+This file is part of the 1flow project.
 
-    1flow is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation, either version 3 of
-    the License, or (at your option) any later version.
+1flow is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
 
-    1flow is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
+1flow is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU Affero General Public
-    License along with 1flow.  If not, see http://www.gnu.org/licenses/
+You should have received a copy of the GNU Affero General Public
+License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
-from .preferences import (HomePreferencesForm, ReadPreferencesForm,
+from .preferences import (HomePreferencesForm, ReadPreferencesForm,  # NOQA
                           SelectorPreferencesForm, StaffPreferencesForm)
 
-from .selector import (ManageFolderForm, ManageSubscriptionForm,
+from .selector import (ManageFolderForm, ManageSubscriptionForm,  # NOQA
                        AddSubscriptionForm, WebPagesImportForm)
 
-from .user import FullUserCreationForm, UserProfileEditForm
+from .read import ReadShareForm  # NOQA
 
-from .read import ReadShareForm
+from mailaccount import MailAccountForm  # NOQA
+from mailfeed import MailFeedForm  # NOQA
+from mailfeedrule import MailFeedRuleForm, MailFeedRulePositionForm  # NOQA

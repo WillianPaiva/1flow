@@ -260,12 +260,40 @@ img.centered {
   cursor: help;
 }
 
+.inplace-blurred {
+  .textinplaceedit {
+    filter: url("/static/img/filters.svg#blur3px");
+    @include filter(blur(3px));
+  }
+}
+
+.inplaceedit.enable {
+  &:hover {
+    background-color: rgba(255, 226, 193, 1) !important;
+    padding: 5px 10px;
+    margin: -5px -10px;
+    border-radius: 5px;
+  }
+}
+
 .muted {
-  color: $gray;
+  color: $grayLight;
 }
 
 .very-muted {
   color: $grayLighter;
+}
+
+.strong {
+  font-weight: bolder;
+}
+
+.bigger {
+  font-size: 120%;
+}
+
+.inline {
+  display: inline;
 }
 
 .small {

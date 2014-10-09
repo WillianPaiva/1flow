@@ -1,22 +1,21 @@
 # -*- coding: utf-8 -*-
 """
-    Copyright 2013-2014 Olivier Cortès <oc@1flow.io>
+Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
-    This file is part of the 1flow project.
+This file is part of the 1flow project.
 
-    1flow is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation, either version 3 of
-    the License, or (at your option) any later version.
+1flow is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
 
-    1flow is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
+1flow is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU Affero General Public
-    License along with 1flow.  If not, see http://www.gnu.org/licenses/
-
+You should have received a copy of the GNU Affero General Public
+License along with 1flow.  If not, see http://www.gnu.org/licenses/
 """
 
 import logging
@@ -24,9 +23,10 @@ import logging
 from tastypie_mongoengine.resources import MongoEngineResource
 from tastypie_mongoengine.fields import ReferencedListField, ReferenceField
 
-from tastypie.resources import ALL
+from tastypie.resources import ModelResource, ALL
 from tastypie.fields import CharField
 
+from models.reldb import MailAccount, MailFeed, MailFeedRule
 from .models.nonrel import (Feed, Subscription,
                             Article, Read,
                             Author, Preferences)
@@ -36,6 +36,54 @@ from ..base.api import (UserResource,
                         UserObjectsOnlyAuthorization, )
 
 LOGGER = logging.getLogger(__name__)
+
+
+# ———————————————————————————————————————————————————————— Relational resources
+
+class MailAccountResource(ModelResource):
+
+    class Meta:
+        queryset = MailAccount.objects.all()
+
+        # Ember-data expect the following 2 directives
+        always_return_data = True
+        allowed_methods    = ('get', 'post', 'put', 'delete')
+
+        # These are specific to 1flow functionnals.
+        authentication     = SessionAndApiKeyAuthentications()
+        authorization      = UserObjectsOnlyAuthorization()
+
+
+class MailFeedResource(ModelResource):
+
+    class Meta:
+        queryset = MailFeed.objects.all()
+
+        # Ember-data expect the following 2 directives
+        always_return_data = True
+        allowed_methods    = ('get', 'post', 'put', 'delete')
+
+        # These are specific to 1flow functionnals.
+        authentication     = SessionAndApiKeyAuthentications()
+        authorization      = UserObjectsOnlyAuthorization()
+
+
+class MailFeedRuleResource(ModelResource):
+
+    class Meta:
+        queryset = MailFeedRule.objects.all()
+
+        # Ember-data expect the following 2 directives
+        always_return_data = True
+        allowed_methods    = ('get', 'post', 'put', 'delete')
+
+        # These are specific to 1flow functionnals.
+        authentication     = SessionAndApiKeyAuthentications()
+        authorization      = UserObjectsOnlyAuthorization(
+            parent_chain=['account'])
+
+
+# ——————————————————————————————————————————————————————————— MongoDB resources
 
 
 class FeedResource(MongoEngineResource):
@@ -53,6 +101,7 @@ class FeedResource(MongoEngineResource):
 
 
 class SubscriptionResource(MongoEngineResource):
+
     feed_id = ReferenceField(FeedResource, 'feed')
 
     class Meta:
@@ -81,7 +130,7 @@ class AuthorResource(MongoEngineResource):
         ordering           = ALL
         # These are specific to 1flow functionnals.
         authentication     = SessionAndApiKeyAuthentications()
-        #authorization      = UserObjectsOnlyAuthorization()
+        # authorization      = UserObjectsOnlyAuthorization()
 
 
 class ArticleResource(MongoEngineResource):
@@ -106,7 +155,7 @@ class ArticleResource(MongoEngineResource):
 
         # These are specific to 1flow functionnals.
         authentication     = SessionAndApiKeyAuthentications()
-        #authorization      = UserObjectsOnlyAuthorization()
+        # authorization      = UserObjectsOnlyAuthorization()
 
 
 class ReadResource(MongoEngineResource):
@@ -114,7 +163,7 @@ class ReadResource(MongoEngineResource):
     user_id    = ReferenceField(UserResource, 'user')
 
     class Meta:
-        #queryset = Read.objects.filter(date_read=now)
+        # queryset = Read.objects.filter(date_read=now)
         queryset = Read.objects.all()
 
         # Ember-data expect the following 2 directives
@@ -149,6 +198,8 @@ class PreferencesResource(MongoEngineResource):
         authorization      = UserObjectsOnlyAuthorization()
 
 
-__all__ = ('SubscriptionResource',
+__all__ = ('MailAccountResource', 'MailFeedResource',
+           'MailFeedRuleResource',
+           'SubscriptionResource',
            'ReadResource', 'ArticleResource',
            'AuthorResource', 'PreferencesResource')

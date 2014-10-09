@@ -137,6 +137,15 @@ section {}
     //border-top: 1px solid beige;
 }
 
+.nav #system-informations .popover {
+    width: 300px;
+    height: 260px;
+
+    a {
+        color: white;
+    }
+}
+
 .footer-title {
     margin-top: 0;
     margin-bottom: 0;
@@ -205,6 +214,25 @@ header {
                 @include border-radius(100px);
             }
         }
+    }
+
+    #danger-zone h1,
+    #external-accounts h1 {
+        margin: 10px 0;
+    }
+
+    #danger-zone {
+
+        text-align: center;
+
+        background-color: #ffdddd;
+        border-radius: 10px;
+        padding: 20px;
+
+        h1 {
+            color: $red-blood;
+        }
+
     }
 }
 
@@ -360,4 +388,39 @@ header {
     // we have our own loader, which is wayyyyyy cooler.
 
     display: none;
+}
+
+// —————————————————————————————————————————————————————————————— Mail accounts
+
+#mail-accounts,
+#mail-feeds,
+#mail-feed-rules {
+    table h3 {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    h1 a,
+    h2 a {
+        &:link,
+        &:hover,
+        &:active,
+        &:visited {
+            text-decoration: none;
+        }
+    }
+
+    table tr.collapsible:last-of-type {
+        padding-bottom: 50px;
+    }
+
+    .form-group {
+        label {
+            margin-top: 9px;
+        }
+
+        .controls {
+            margin-top: 11px;
+        }
+    }
 }
