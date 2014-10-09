@@ -109,6 +109,12 @@ urlpatterns = patterns(
     url(_(ur'^preferences/$'), login_required(never_cache(views.preferences)),
         name='preferences'),
 
+    url(_(ur'^status/?$'),
+        staff_member_required(never_cache(views.admin_status)),
+        name='admin_status'),
+
+    # —————————————————————————————————————————————————————————— Article & Read
+
     url(_(ur'^read/all/$'), never_cache(views.read_with_endless_pagination),
         name='read_all', kwargs={'all': True}),
 
