@@ -137,6 +137,15 @@ section {}
     //border-top: 1px solid beige;
 }
 
+.nav #system-informations .popover {
+    width: 300px;
+    height: 260px;
+
+    a {
+        color: white;
+    }
+}
+
 .footer-title {
     margin-top: 0;
     margin-bottom: 0;
