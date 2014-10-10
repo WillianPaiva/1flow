@@ -83,11 +83,40 @@ __all__ = [
 # ————————————— issue https://code.google.com/p/feedparser/issues/detail?id=404
 
 
-import dateutil
+import dateutil.parser
+import dateutil.tz
 
 
 def dateutilDateHandler(aDateString):
-    return dateutil.parser.parse(aDateString).utctimetuple()
+    default_datetime = now()
+
+    try:
+        return dateutil.parser.parse(aDateString).utctimetuple()
+
+    except:
+        pass
+
+    try:
+        return dateutil.parser.parse(aDateString, ignoretz=True).utctimetuple()
+
+    except:
+        pass
+
+    try:
+        return dateutil.parser.parse(aDateString,
+                                     default=default_datetime).utctimetuple()
+
+    except:
+        LOGGER.exception(u'Could not parse date string “%s” with '
+                         u'custom dateutil parser.', aDateString)
+        # If dateutil fails and raises an exception, this produces
+        # http://dev.1flow.net/1flow/1flow/group/30087/
+        # and the whole chain crashes, whereas
+        # https://pythonhosted.org/feedparser/date-parsing.html#registering-a-third-party-date-handler  # NOQA
+        # states any exception is silently ignored.
+        # Obviously it's not the case.
+        return None
+
 
 feedparser.registerDateHandler(dateutilDateHandler)
 
@@ -669,7 +698,7 @@ class Feed(Document, DocumentHelperMixin):
                 self.site_url = BAD_SITE_URL_BASE + self.site_url
 
                 # Do not close the feed for that…
-                #self.close('Bad site url: %s' % str(site_url_error))
+                # self.close('Bad site url: %s' % str(site_url_error))
 
             # We pop() because any error will close the feed, whatever it is.
             url_error = e.errors.pop('url', None)
@@ -876,7 +905,6 @@ class Feed(Document, DocumentHelperMixin):
 
     def build_refresh_kwargs(self):
         """ Return a kwargs suitable for internal feed refreshing methods. """
-
 
         kwargs = {}
 
