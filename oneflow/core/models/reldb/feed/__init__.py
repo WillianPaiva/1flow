@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
+Copyright 2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
 
@@ -19,19 +19,6 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
+from base import BaseFeed  # NOQA
 
-from helpcontent import HelpContent  # NOQA
-
-from mailaccount import MailAccount  # NOQA
-
-from userimport import UserImport  # NOQA
-
-from tag import SimpleTag  # NOQA
-
-from feed import BaseFeed, RssAtomFeed  # NOQA
-
-from mailfeed import MailFeed  # NOQA
-
-from mailfeedrule import MailFeedRule  # NOQA
-
-from index import IndexNode, RemoteModel  # NOQA
+from rssatom import RssAtomFeed  # NOQA
