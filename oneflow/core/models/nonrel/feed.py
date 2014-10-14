@@ -25,6 +25,7 @@ import feedparser
 
 from statsd import statsd
 from constance import config
+from collections import OrderedDict
 
 from xml.sax import SAXParseException
 
@@ -54,6 +55,11 @@ from .common import (DocumentHelperMixin,
                      FeedIsHtmlPageException,
                      FeedFetchException,
                      CONTENT_NOT_PARSED,
+                     CONTENT_TYPE_MARKDOWN,
+                     CONTENT_TYPE_HTML,
+                     CONTENT_TYPE_IMAGE,
+                     CONTENT_TYPE_VIDEO,
+                     CONTENT_TYPE_BOOKMARK,
                      ORIGIN_TYPE_FEEDPARSER,
                      ORIGIN_TYPE_WEBIMPORT,
                      USER_FEEDS_SITE_URL,
@@ -1305,3 +1311,95 @@ def get_or_create_special_feed(user, url_template, default_name):
 User.web_import_feed     = property(User_web_import_feed_property_get)
 User.sent_items_feed     = property(User_sent_items_feed_property_get)
 User.received_items_feed = property(User_received_items_feed_property_get)
+
+
+# ——————————————————————————————————————————————————————————————————————— Utils
+
+
+def feed_export_content_classmethod(cls, since):
+    """ Pull articles & feeds since :param:`param` and return them in a dict.
+
+        if a feed has no new article, it's not represented at all. The returned
+        dict is suitable to be converted to JSON.
+    """
+
+    def content_type(content_type):
+
+        if content_type == CONTENT_TYPE_MARKDOWN:
+            return u'markdown'
+
+        if content_type == CONTENT_TYPE_HTML:
+            return u'html'
+
+        if content_type == CONTENT_TYPE_IMAGE:
+            return u'image'
+
+        if content_type == CONTENT_TYPE_VIDEO:
+            return u'video'
+
+        if content_type == CONTENT_TYPE_BOOKMARK:
+            return u'bookmark'
+
+    active_feeds = Feed.objects.filter(closed=False,
+                                       is_internal=False).no_cache()
+    active_feeds_count = active_feeds.count()
+
+    exported_feeds = []
+    total_exported_articles_count = 0
+
+    if active_feeds_count:
+        LOGGER.info(u'Starting feeds/articles export procedure with %s '
+                    u'active feeds…', active_feeds_count)
+    else:
+        LOGGER.warning(u'Not running export procedure, we have '
+                       u'no active feed. Is this possible?')
+        return
+
+    for feed in active_feeds:
+        new_articles = feed.good_articles.filter(date_published__gte=since)
+        new_articles_count = new_articles.count()
+
+        if not new_articles_count:
+            continue
+
+        exported_articles = []
+
+        for article in new_articles:
+            exported_articles.append(OrderedDict(
+                id=unicode(article.id),
+                title=article.title,
+                pages_url=[article.url],
+                image_url=article.image_url,
+                excerpt=article.excerpt,
+                content=article.content,
+                content_type=content_type(article.content_type),
+                date_published=article.date_published,
+                authors=[unicode(a) for a in article.authors],
+                date_updated=None,
+                language=article.language,
+                text_direction=article.text_direction,
+                tags=[t.name for t in article.tags],
+            ))
+
+        exported_articles_count = len(exported_articles)
+        total_exported_articles_count += exported_articles_count
+
+        exported_feeds.append(OrderedDict(
+            id=unicode(feed.id),
+            name=feed.name,
+            url=feed.url,
+            tags=[t.name for t in feed.tags],
+            articles=exported_articles
+        ))
+
+        LOGGER.info(u'%s articles exported in feed %s.',
+                    exported_articles_count, feed)
+
+    exported_feeds_count = len(exported_feeds)
+
+    LOGGER.info(u'%s feeds and %s total articles exported.',
+                exported_feeds_count, total_exported_articles_count)
+
+    return exported_feeds
+
+setattr(Feed, 'export_content', classmethod(feed_export_content_classmethod))
