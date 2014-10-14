@@ -275,6 +275,7 @@ class MailFeed(ModelDiffMixin):
                     total_matched + total_unmatched,
                     rule)
 
+
 # ————————————————————————————————————————————————————————————————————— Signals
 
 

@@ -285,7 +285,7 @@ urlpatterns = patterns(
             views.MailFeedRuleDeleteView.as_view())),
         name='mailfeedrule_delete'),
 
-    # •••••••••••••••••••••••••••••••••••••••••••••••••••••••••••  Google Reader
+    # ——————————————————————————————————————————————————————————  Google Reader
 
     url(_(ur'^grimport/(?:(?P<user_id>\d+)/)?$'),
         login_required(views.google_reader_import),
@@ -299,11 +299,13 @@ urlpatterns = patterns(
     url(_(ur'^grstatus/$'), login_required(views.google_reader_import_status),
         name='google_reader_import_status'),
 
-    # •••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••• Staff only
+    # —————————————————————————————————————————————————————————————— Staff only
 
     url(_(ur'^feed/(?P<feed_id>\w+)/close/toggle/$'),
         staff_member_required(views.feed_closed_toggle),
         name='feed_closed_toggle'),
+
+    # ——————————————————————————————————————————————————————————— Read patterns
 
     *read_patterns
 )

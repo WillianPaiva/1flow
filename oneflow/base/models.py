@@ -1,31 +1,35 @@
 # -*- coding: utf-8 -*-
 """
+Copyright 2012-2014 Olivier Cortès <oc@1flow.io>.
 
-    The :class:`User` and :class:`UserManager` classes can completely and
-    transparently replace the one from Django.
+____________________________________________________________________
 
-    We don't use the `username` attribute, but it is implemented as a
-    readonly property, returning the `email`, which we use as required
-    user name field.
 
-    ____________________________________________________________________
+The :class:`User` and :class:`UserManager` classes can completely and
+transparently replace the one from Django.
 
-    Copyright 2012-2014 Olivier Cortès <oc@1flow.io>
+We don't use the `username` attribute, but it is implemented as a
+readonly property, returning the `email`, which we use as required
+user name field.
 
-    This file is part of the 1flow project.
+____________________________________________________________________
 
-    1flow is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation, either version 3 of
-    the License, or (at your option) any later version.
+Copyright 2012-2014 Olivier Cortès <oc@1flow.io>
 
-    1flow is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
+This file is part of the 1flow project.
 
-    You should have received a copy of the GNU Affero General Public
-    License along with 1flow.  If not, see http://www.gnu.org/licenses/
+1flow is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+
+1flow is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public
+License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
@@ -46,7 +50,7 @@ from ..base.utils.dateutils import now
 LOGGER = logging.getLogger(__name__)
 
 
-# ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••• Classes
+# —————————————————————————————————————————————————————————————————————— Models
 
 
 class EmailContent(models.Model):
@@ -69,9 +73,11 @@ class EmailContent(models.Model):
 
 
 class UserManager(BaseUserManager):
-    """ This is a free adaptation of
-        https://github.com/django/django/blob/master/django/contrib/auth/models.py  # NOQA
-        as of 20130526. """
+    """ This is a free adaptation of Django's user manager.
+
+        See https://github.com/django/django/blob/master/django/contrib/auth/models.py  # NOQA
+        as of 20130526.
+    """
 
     def create_user(self, username, email, password=None, **extra_fields):
         """ Creates and saves a User with the given username,
@@ -150,6 +156,9 @@ class User(AbstractBaseUser, PermissionsMixin, AbstractUserProfile):
         return self.username
 
     # NOTE: self.email_user() comes from the AbstractUserProfile class
+
+
+# ————————————————————————————————————————————————————————— Permission adapters
 
 
 class OwnerOrSuperuserEditAdaptor(object):
