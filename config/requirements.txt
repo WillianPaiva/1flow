@@ -109,5 +109,7 @@ simplejson==3.4.0
 South==0.8.4
 sphinx-me==0.2.1
 statsd==2.1.2
+ua-parser==0.3.5
 urlparse2==1.1.1
+user-agents==0.3.0
 uWSGI==2.0.6
