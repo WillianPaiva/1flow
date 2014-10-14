@@ -39,14 +39,16 @@ from django.conf import settings
 from django.shortcuts import render, redirect
 from django.template import add_to_builtins
 
+from sparks.django.http import JsonResponse, human_user_agent
 from sparks.django.utils import HttpResponseTemporaryServerError
 from sparks.fabric import is_localhost
 
 from oneflow.base.utils.dateutils import now
+from oneflow.base.utils.decorators import token_protected
 
 from ..forms import WebPagesImportForm
 
-from ..models.nonrel import Article, Read, CONTENT_TYPES_FINAL
+from ..models.nonrel import Article, Read, Feed, CONTENT_TYPES_FINAL
 from ..models.reldb import HelpContent
 
 from ..gr_import import GoogleReaderImport
@@ -558,6 +560,37 @@ def admin_status(request):
             for part in disk_partitions()
         },
     })
+
+
+@token_protected
+def export_content(request, **kwargs):
+
+    since = kwargs.get('since')
+    format = request.GET.get('format', 'json')
+
+    if format == 'json':
+
+        try:
+            content = {
+                'result': 'OK',
+                'data': Feed.export_content(since),
+            }
+
+        except Exception as e:
+            LOGGER.exception(u'Could not export content')
+
+            content = {
+                'result': 'ERR',
+                'data': unicode(e),
+            }
+
+        if human_user_agent(request):
+            return JsonResponse(content, indent=2)
+
+        return JsonResponse(content)
+
+    else:
+        return HttpResponseBadRequest(u'Unknown format “%s”' % format)
 
 # ——————————————————————————————————————————————————————————————— Views imports
 

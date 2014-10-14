@@ -305,6 +305,12 @@ urlpatterns = patterns(
         staff_member_required(views.feed_closed_toggle),
         name='feed_closed_toggle'),
 
+    # ———————————————————————————————————————————————————————————— JSON exports
+
+    url(_(ur'^export/(?P<since>[^/]+)/(?P<token>\w{32,32})/?$'),
+        views.export_content,
+        name='export_content'),
+
     # ——————————————————————————————————————————————————————————— Read patterns
 
     *read_patterns
