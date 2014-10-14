@@ -5,8 +5,8 @@
     notify({text: "{% spaceless %}
         {% if created %}
 
-        {% blocktrans with count=created|length %}
-            Successfully launched import of {{count}} web page(s).
+        {% blocktrans with count=created %}
+            Successfully launched import of {{count}} elements(s). You can follow the status in your import history.
         {% endblocktrans %}
 
         {% else %}

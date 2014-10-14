@@ -23,7 +23,9 @@ from .preferences import (HomePreferencesForm, ReadPreferencesForm,  # NOQA
                           SelectorPreferencesForm, StaffPreferencesForm)
 
 from .selector import (ManageFolderForm, ManageSubscriptionForm,  # NOQA
-                       AddSubscriptionForm, WebPagesImportForm)
+                       AddSubscriptionForm, )
+
+from .importers import WebPagesImportForm  # NOQA
 
 from .read import ReadShareForm  # NOQA
 

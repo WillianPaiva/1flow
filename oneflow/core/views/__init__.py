@@ -256,14 +256,19 @@ def toggle(request, klass, oid, key):
 def import_web_url(request, url):
     """ Import an URL from the web (can be anything). """
 
-    form = WebPagesImportForm({'urls': url}, request=request)
+    form = WebPagesImportForm({'urls': url})
 
     article = None
 
     if form.is_valid():
-        created, failed = form.save()
+        imp_ = form.save(request.user)
 
-        article = created[0]
+        try:
+            article = Article.objects.get(url=imp_.results['created'][0])
+
+        except:
+            # Not yet created…
+            article = Article.objects.get(url=url)
 
         # Just in case the item was previously
         # here (from another user, or the same).
@@ -311,19 +316,17 @@ def import_web_pages(request):
         return HttpResponseBadRequest('This request needs Ajax')
 
     if request.POST:
-        form = WebPagesImportForm(request.POST,
-                                  # This is our own kwargs parameter.
-                                  request=request)
+        form = WebPagesImportForm(request.POST)
 
         if form.is_valid():
-            created, failed = form.save()
+            imp_ = form.save(request.user)
 
         #
         # TODO: return a JSON when request comes from browser extensions.
         #
         return render(request,
                       'snippets/selector/import-web-items-result.html',
-                      {'created': created, 'failed': failed})
+                      {'created': imp_.lines})
 
     else:
         form = WebPagesImportForm()
