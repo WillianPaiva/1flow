@@ -577,10 +577,12 @@ def export_content(request, **kwargs):
             }
 
         except Exception as e:
-            LOGGER.exception(u'Could not export content')
+            LOGGER.exception(u'Could not export content',
+                             exc_info=True, extra={'request': request,})
 
             content = {
                 'result': 'ERR',
+                'sentry_id': request.sentry['id'],
                 'data': unicode(e),
             }
 
