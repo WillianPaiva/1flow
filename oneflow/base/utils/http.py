@@ -20,12 +20,13 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 import re
 
-UTM_RE  = re.compile(ur'[&]?utm_[^=]+(=[^&]*)?', re.I)
-XTOR_RE = re.compile(ur'[&#]?xtor(=[^&]*)?', re.I)
-EQL_RE  = re.compile(ur'[#&?]=[^&]+', re.I)
-LAST_RE = re.compile(ur'[?&#=]*$', re.I)
-GGL_RE  = re.compile(ur'^[htps]+://[\w.]*google.com/'
-                     ur'url\?[\w=&]+url=([^&]+)[\w=&]+', re.I)
+UTM_RE    = re.compile(ur'[&]?utm_[^=]+(=[^&]*)?', re.I)
+XTOR_RE   = re.compile(ur'[&#]?xtor(=[^&]*)?', re.I)
+EQL_RE    = re.compile(ur'[#&?]=[^&]+', re.I)
+LAST_RE   = re.compile(ur'[?&#=]*$', re.I)
+TUMBLR_RE = re.compile(ur'#_=_$', re.I)
+GGL_RE    = re.compile(ur'^[htps]+://[\w.]*google.com/'
+                       ur'url\?[\w=&]+url=([^&]+)[\w=&]+', re.I)
 
 __all__ = ('clean_url', 'clean_google_url', 'clean_marketing_url', )
 
@@ -47,11 +48,13 @@ def clean_google_url(url):
 def clean_marketing_url(url):
     """ Remove all ``utm_*`` ad-related stuff, and more. """
 
-    return LAST_RE.sub(
-        u'', EQL_RE.sub(
-            u'', UTM_RE.sub(
-                u'', XTOR_RE.sub(
-                    u'', url
+    return TUMBLR_RE.sub(
+        u'', LAST_RE.sub(
+            u'', EQL_RE.sub(
+                u'', UTM_RE.sub(
+                    u'', XTOR_RE.sub(
+                        u'', url
+                    )
                 )
             )
         )
