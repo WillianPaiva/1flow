@@ -567,6 +567,7 @@ def admin_status(request):
 
 @token_protected
 def export_content(request, **kwargs):
+    """ Export recent feeds/articles as JSON. """
 
     since = kwargs.get('since')
     format = request.GET.get('format', 'json')
@@ -581,7 +582,7 @@ def export_content(request, **kwargs):
 
         except Exception as e:
             LOGGER.exception(u'Could not export content',
-                             exc_info=True, extra={'request': request,})
+                             exc_info=True, extra={'request': request})
 
             content = {
                 'result': 'ERR',
