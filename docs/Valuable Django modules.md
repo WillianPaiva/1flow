@@ -1,4 +1,7 @@
 
+Please read https://github.com/vinta/awesome-python
+
+
 For our models
 https://github.com/chrisglass/django_polymorphic
 
