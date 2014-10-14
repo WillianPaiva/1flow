@@ -36,7 +36,7 @@ from django.utils.datastructures import SortedDict
 
 from django.contrib import admin
 
-from .models import EmailContent, User
+import models
 
 from sparks.django.utils import languages, truncate_field
 
@@ -348,7 +348,7 @@ class OneFlowUserAdmin(UserAdmin, CSVAdminMixin):
 
     full_name_display.short_description = _(u'Full name')
 
-admin.site.register(User, OneFlowUserAdmin)
+admin.site.register(models.User, OneFlowUserAdmin)
 
 try:
     admin.site.unregister(DjangoUser)
@@ -371,6 +371,7 @@ if settings.FULL_ADMIN:
     for attr, attr_name in zip(subject_fields_names,
                                subject_fields_displays):
         setattr(EmailContentAdmin, attr_name,
-                truncate_field(EmailContent, attr))
+                truncate_field(models.EmailContent, attr))
 
-    admin.site.register(EmailContent, EmailContentAdmin)
+    admin.site.register(models.EmailContent, EmailContentAdmin)
+
