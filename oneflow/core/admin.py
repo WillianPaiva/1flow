@@ -37,7 +37,8 @@ from writingfield import FullScreenTextarea
 
 from .models.nonrel import (Tag, Feed, Article, Read, CONTENT_TYPE_MARKDOWN,
                             User as MongoUser, Group as MongoGroup)
-from .models.reldb import HelpContent, MailAccount, MailFeed, MailFeedRule
+from .models.reldb import (HelpContent, UserImport,
+                           MailAccount, MailFeed, MailFeedRule)
 from django.contrib import admin
 import mongoadmin
 from mongodbforms import DocumentForm
@@ -762,3 +763,5 @@ admin.site.register(Feed, FeedAdmin)
 admin.site.register(MailAccount)
 admin.site.register(MailFeed)
 admin.site.register(MailFeedRule)
+
+admin.site.register(UserImport)
