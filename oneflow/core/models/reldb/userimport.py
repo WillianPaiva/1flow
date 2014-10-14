@@ -395,5 +395,11 @@ def userimport_post_save(instance, **kwargs):
         # the register_task_method call below.
         userimport_run_task.delay(instance.id)  # NOQA
 
+    elif instance.status == UserImport.STATUS_NEW:
+        # relaunch the importer task.
+
+        # HEADS UP: this task is declared by
+        # the register_task_method call below.
+        userimport_run_task.delay(instance.id)  # NOQA
 
 post_save.connect(userimport_post_save, sender=UserImport)
