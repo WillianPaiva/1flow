@@ -35,6 +35,7 @@ from django.utils.datastructures import SortedDict
 
 
 from django.contrib import admin
+from mptt.admin import MPTTModelAdmin
 
 import models
 
@@ -354,6 +355,29 @@ try:
     admin.site.unregister(DjangoUser)
 except:
     pass
+
+
+class ConfigurationAdmin(MPTTModelAdmin):
+
+    """ Configuration admin class. """
+
+    mptt_level_indent = 20
+    mptt_indent_field = "name"
+
+    list_display = ('parent', 'name', 'is_active', 'value', 'notes', )
+    list_display_links = ('name', 'value', )
+    list_filter = ('is_active', )
+    # ordering = ('name', 'parent', )
+    # date_hierarchy = 'date_joined'
+    search_fields = ('name', 'value', 'notes', )
+    change_list_template = "admin/change_list_filter_sidebar.html"
+    change_list_filter_template = "admin/filter_listing.html"
+
+    # Don't display the UserProfile inline, this will conflict with the
+    # post_save() signal in profiles.models. There is a race condition…
+    # inlines = [] if UserProfile is None else [UserProfileInline, ]
+
+admin.site.register(models.Configuration, ConfigurationAdmin)
 
 
 if settings.FULL_ADMIN:
