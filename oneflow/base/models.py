@@ -44,6 +44,8 @@ from django.contrib.auth.models import (BaseUserManager,
                                         PermissionsMixin)
 from django.utils.translation import ugettext_lazy as _
 
+from mptt.models import MPTTModel, TreeForeignKey
+
 from ..profiles.models import AbstractUserProfile
 from ..base.utils.dateutils import now
 
@@ -156,6 +158,55 @@ class User(AbstractBaseUser, PermissionsMixin, AbstractUserProfile):
         return self.username
 
     # NOTE: self.email_user() comes from the AbstractUserProfile class
+
+
+class Configuration(MPTTModel):
+
+    """ Hierarchical key/value (de-)activable configuration system. """
+
+    name = models.CharField(verbose_name=_(u'Name'),
+                            max_length=128, unique=True)
+    value = models.TextField(verbose_name=_(u'Value'),
+                             null=True, blank=True)
+    notes = models.TextField(verbose_name=_(u'Notes'),
+                             null=True, blank=True)
+
+    is_active = models.BooleanField(verbose_name=_(u'Is active'),
+                                    default=True, blank=True)
+
+    parent   = TreeForeignKey('self', null=True, blank=True,
+                              related_name='children')
+
+    class Meta:
+        app_label = 'base'
+        verbose_name = _(u'Configuration')
+        verbose_name_plural = _(u'Configurations')
+
+    def __unicode__(self):
+        return self.name
+
+    @classmethod
+    def check_token(cls, token):
+        """ Check if a token is valid or not.
+
+        The method will lookup configuration records which icontain ``token``
+        in their name, with the exact value of :param:`token`, and which are
+        currently active.
+        """
+
+        try:
+            cls.objects.get(name__icontains='token',
+                            value=token, is_active=True)
+
+        except cls.DoesNotExist:
+            return False
+
+        except:
+            LOGGER.exception('Exception occured while checking token')
+            return False
+
+        else:
+            return True
 
 
 # ————————————————————————————————————————————————————————— Permission adapters
