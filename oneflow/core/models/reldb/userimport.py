@@ -26,12 +26,16 @@ from collections import OrderedDict
 from jsonfield import JSONField
 from dateutil import parser as date_parser
 
+
 # from django.conf import settings
 from django.core.validators import URLValidator
 from django.db import models
 from django.db.models.signals import post_save
 # from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.messages import constants
+
+from async_messages import message_user
 
 from oneflow.base.utils import register_task_method
 from oneflow.base.utils.dateutils import now
@@ -75,9 +79,6 @@ class UserImport(models.Model):
 
     urls = models.TextField(verbose_name=_(u'Web addresses'))
     lines = models.IntegerField(verbose_name=_(u'lines'), default=0)
-
-    messages = JSONField(load_kwargs={'object_pairs_hook': OrderedDict},
-                         null=True, blank=True)
     results = JSONField(load_kwargs={'object_pairs_hook': OrderedDict},
                         null=True, blank=True)
 
@@ -110,17 +111,6 @@ class UserImport(models.Model):
         for attr_name, attr_value in self.__dict__.items():
             if attr_name.startswith('guess_and_import_'):
                 yield attr_value
-
-    def append_message(self, message):
-        """ Append a message to our list. """
-
-        messages = self.messages
-
-        messages.append(message)
-
-        self.messages = messages
-
-        self.save()
 
     def validate_url(self, url):
         """ Validate an URL. """
@@ -196,7 +186,9 @@ class UserImport(models.Model):
             if attr_name not in first_object:
                 return False
 
-        self.append_message(_(u'Readability JSON export format detected.'))
+        message_user(self.user,
+                     _(u'Readability JSON export format detected.'),
+                     constants.INFO)
 
         for readability_object in readability_json:
 
@@ -298,6 +290,16 @@ class UserImport(models.Model):
                 Subscription.subscribe_user_to_feed(self.user.mongo, feed,
                                                     background=True)
 
+                if created:
+                    message_user(self.user,
+                                 _(u'Successfully subscribed to new feed '
+                                   u'“{0}”. Thank you!').format(feed.name),
+                                 constants.INFO)
+                else:
+                    message_user(self.user,
+                                 _(u'Successfully subscribed to feed '
+                                   u'“{0}”.').format(feed.name),
+                                 constants.INFO)
             return
 
         # ———————————————————————————————————————————— Try to create an article
@@ -329,6 +331,11 @@ class UserImport(models.Model):
             # though everything is really OK in the database and
             # in the reading lists.
             self._import_created_['articles'].append(url)
+
+            message_user(self.user,
+                         _(u'Successfully imported article '
+                           u'“{0}”.').format(article.title),
+                         constants.INFO)
 
             return article
 
