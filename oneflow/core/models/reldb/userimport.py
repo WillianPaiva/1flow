@@ -328,7 +328,7 @@ class UserImport(models.Model):
             # Which can be very confusing to the end-user, even
             # though everything is really OK in the database and
             # in the reading lists.
-            self._import_created_['articles'].append(article)
+            self._import_created_['articles'].append(url)
 
             return article
 
