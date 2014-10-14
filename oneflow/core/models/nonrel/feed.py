@@ -70,7 +70,8 @@ from .tag import Tag
 from .article import Article
 from .user import User
 
-from ..reldb import MailFeed
+from ..reldb.mailfeed import MailFeed
+
 
 LOGGER                = logging.getLogger(__name__)
 feedparser.USER_AGENT = settings.DEFAULT_USER_AGENT

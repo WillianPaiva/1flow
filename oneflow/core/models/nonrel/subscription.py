@@ -44,7 +44,7 @@ from .folder import Folder
 from .user import User
 from .feed import Feed
 
-from ..reldb import MailFeed
+from ..reldb.mailfeed import MailFeed
 
 LOGGER = logging.getLogger(__name__)
 
