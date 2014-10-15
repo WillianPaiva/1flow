@@ -48,7 +48,7 @@ from oneflow.base.utils.decorators import token_protected
 
 from ..forms import WebPagesImportForm
 
-from ..models.nonrel import Article, Read, Feed, CONTENT_TYPES_FINAL
+from ..models.nonrel import Article, Read, Feed, Folder, CONTENT_TYPES_FINAL
 from ..models.reldb import HelpContent
 
 from ..gr_import import GoogleReaderImport
@@ -571,13 +571,16 @@ def export_content(request, **kwargs):
 
     since = kwargs.get('since')
     format = request.GET.get('format', 'json')
+    folder_id = kwargs.get('folder_id', None)
+
+    folder = None if folder_id is None else Folder.get_or_404(folder_id)
 
     if format == 'json':
 
         try:
             content = {
                 'result': 'OK',
-                'data': Feed.export_content(since),
+                'data': Feed.export_content(since, folder=folder),
             }
 
         except Exception as e:

@@ -311,8 +311,13 @@ urlpatterns = patterns(
 
     # ———————————————————————————————————————————————————————————— JSON exports
 
+    url(_(ur'^export/folder/(?P<folder_id>\w{24,24})/'
+          ur'(?P<since>[^/]+)/(?P<token>\w{32,32})/?$'),
+        never_cache(views.export_content),
+        name='export_folder_content'),
+
     url(_(ur'^export/(?P<since>[^/]+)/(?P<token>\w{32,32})/?$'),
-        views.export_content,
+        never_cache(views.export_content),
         name='export_content'),
 
     # ——————————————————————————————————————————————————————————— Read patterns

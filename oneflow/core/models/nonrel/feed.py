@@ -1321,7 +1321,7 @@ User.received_items_feed = property(User_received_items_feed_property_get)
 # ——————————————————————————————————————————————————————————————————————— Utils
 
 
-def feed_export_content_classmethod(cls, since):
+def feed_export_content_classmethod(cls, since, folder=None):
     """ Pull articles & feeds since :param:`param` and return them in a dict.
 
         if a feed has no new article, it's not represented at all. The returned
@@ -1362,9 +1362,18 @@ def feed_export_content_classmethod(cls, since):
         if content_type == CONTENT_TYPE_BOOKMARK:
             return u'bookmark'
 
-    active_feeds = Feed.objects.filter(closed=False,
-                                       is_internal=False).no_cache()
-    active_feeds_count = active_feeds.count()
+    if folder is None:
+        active_feeds = Feed.objects.filter(closed=False,
+                                           is_internal=False).no_cache()
+        active_feeds_count = active_feeds.count()
+
+    else:
+        # Avoid import cycle…
+        from subscription import Subscription
+
+        subscriptions = Subscription.objects.filter(folders=folder).no_cache()
+        active_feeds = [s.feed for s in subscriptions if not s.feed.closed]
+        active_feeds_count = len(active_feeds)
 
     exported_feeds = []
     total_exported_articles_count = 0
