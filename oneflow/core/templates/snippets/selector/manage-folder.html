@@ -29,12 +29,15 @@
                     <hr />
                     <div class="row">
                         <div class="col-md-3">
-                            <br />
-                            <a href="{% url 'delete_folder' folder=folder.id %}" class="btn btn-danger">{% trans "Delete this folder" %}</a>
+                            <div class="spacer10"></div>
+                            <a href="{% url 'delete_folder' folder=folder.id %}" class="btn btn-warning">{% trans "Delete this folder" %}</a>
+                            <div class="spacer10"></div>
+                            <a href="{% url 'purge_folder' folder=folder.id %}" class="btn btn-danger">{% trans "Purge this folder" %}</a>
 
                         </div>
                         <div class="col-md-9">{% blocktrans %}
-                        If you delete this folder, all its subfolders will be moved one level up in the folder hierarchy. All its direct subscriptions will be moved to “unclassified”. Subscriptions in its subfolders will not be affected.
+                        If you <em>delete</em> this folder, all its subfolders will be moved one level up in the folder hierarchy. All its direct subscriptions will be moved to “unclassified”. Subscriptions in its subfolders will not be affected.<br ><br />
+                        If you <em>purge</em> it, <strong>everything inside will be deleted</strong> (and subscriptions cancelled). Use with caution, there is no confirmation.
                     {% endblocktrans %}</div>
                     </div>
                     {% endif %}
