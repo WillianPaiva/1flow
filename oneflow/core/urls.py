@@ -172,6 +172,10 @@ urlpatterns = patterns(
         login_required(never_cache(views.delete_folder)),
         name='delete_folder'),
 
+    url(_(ur'^folder/(?P<folder>(?:[0-9a-f]{24,24})+)/purge$'),
+        login_required(never_cache(views.delete_folder)),
+        name='purge_folder', kwargs={'purge': True}),
+
     url(_(ur'^folder/(?P<folder>(?:[0-9a-f]{24,24})+)$'),
         login_required(never_cache(views.manage_folder)),
         name='edit_folder'),
