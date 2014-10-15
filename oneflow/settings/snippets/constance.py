@@ -47,6 +47,11 @@ CONSTANCE_CONFIG = {
                               u'disabling this does not prevent any malicious '
                               u'code which bypasses this configuration flag.')),
 
+    # ————————————————————————————————————————————————————————— Interface stuff
+
+
+    'INTERFACE_SHOW_EXPORT_IDS': (False, ugettext(u'Show IDs everywhere for '
+                                  u'easy export links creation.')),
 
     # ———————————————————————————————————————————————————— System announcements
 

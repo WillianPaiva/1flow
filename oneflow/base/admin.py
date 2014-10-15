@@ -111,7 +111,6 @@ ConstanceAdmin.fieldsets = (
             ),
         }),
 
-
         (_(u'IMAP & e-Mail'), {
             'classes': ('grp-collapse grp-open', ),
             'fields': (
@@ -180,6 +179,7 @@ ConstanceAdmin.fieldsets = (
             'classes': ('grp-collapse grp-closed', ),
             'fields': (
                 'STAFF_HAS_FULL_ACCESS',
+                'INTERFACE_SHOW_EXPORT_IDS',
             ),
         }),
 
