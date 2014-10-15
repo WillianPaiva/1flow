@@ -233,8 +233,16 @@ ul.social-auth {
     text-align: center;
 }
 
+.left {
+  text-align: left;
+}
+
 .right {
   text-align: right;
+}
+
+.justify {
+  text-align: justify;
 }
 
 .nowrap {
@@ -274,6 +282,10 @@ img.centered {
     margin: -5px -10px;
     border-radius: 5px;
   }
+}
+
+.strike {
+  text-decoration: line-through;
 }
 
 .muted {
