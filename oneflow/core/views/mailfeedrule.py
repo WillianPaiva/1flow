@@ -86,7 +86,8 @@ class MailFeedRuleListCreateView(mixins.ListCreateViewMixin,
 #     success_url = reverse_lazy('mailfeed_index')
 
 
-class MailFeedRulePositionUpdateView(generic.UpdateView):
+class MailFeedRulePositionUpdateView(mixins.OwnerQuerySetMixin,
+                                     generic.UpdateView):
 
     """ Simple view to update mail feed rule position.
 
@@ -96,6 +97,7 @@ class MailFeedRulePositionUpdateView(generic.UpdateView):
 
     model = models.MailFeedRule
     form_class = forms.MailFeedRulePositionForm
+    ownerqueryset_filter = 'mailfeed__user'
 
     def get_success_url(self):
         """ Return to our mail feed rules list. """
@@ -104,11 +106,13 @@ class MailFeedRulePositionUpdateView(generic.UpdateView):
                        args=(self.kwargs['mailfeed_pk'], ))
 
 
-class MailFeedRuleDeleteView(generic.DeleteView):
+class MailFeedRuleDeleteView(mixins.OwnerQuerySetMixin,
+                             generic.DeleteView):
 
     """ Delete a mail account. """
 
     model = models.MailFeedRule
+    ownerqueryset_filter = 'mailfeed__user'
 
     def get_success_url(self):
         """ Return to our mail feed rules list. """

@@ -58,7 +58,7 @@ class MailFeed(ModelDiffMixin):
     ))
 
     name = models.CharField(max_length=255, verbose_name=_(u'Feed name'))
-    user = models.ForeignKey(DjangoUser)
+    user = models.ForeignKey(DjangoUser, verbose_name=_(u'Creator'))
     is_public = models.BooleanField(verbose_name=_(u'Public'),
                                     default=True, blank=True,
                                     help_text=_(u'Can other 1flow users '

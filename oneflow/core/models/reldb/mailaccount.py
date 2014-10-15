@@ -140,7 +140,7 @@ class MailAccount(ModelDiffMixin):
 
     # NOTE: MAILBOXES_BLACKLIST is in MailAccount.
 
-    user = models.ForeignKey(DjangoUser)
+    user = models.ForeignKey(DjangoUser, verbose_name=_(u'Creator'))
     name = models.CharField(verbose_name=_(u'Account name'),
                             max_length=128, blank=True)
 
