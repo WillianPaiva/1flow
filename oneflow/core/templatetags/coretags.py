@@ -692,7 +692,14 @@ def mailfeed_rules_count(mailaccount):
 @register.inclusion_tag('snippets/history/userimport-feeds.html')
 def userimport_feeds_details(user, feeds_urls):
 
-    feeds = [models.Feed.objects.get(url=url) for url in feeds_urls]
+    feeds = []
+
+    for url in feeds_urls:
+        try:
+            feeds.append(models.Feed.objects.get(url=url))
+
+        except:
+            LOGGER.exception(u'Could not get feed with URL %s', url)
 
     subscriptions = []
 
@@ -702,7 +709,8 @@ def userimport_feeds_details(user, feeds_urls):
             subscriptions.append(user.subscriptions.get(feed=feed))
 
         except:
-            LOGGER.exception('WOW')
+            LOGGER.exception(u'Could not get subscription with feed %s '
+                             u'for user %s', feed, user)
 
         else:
             feeds.remove(feed)
@@ -716,7 +724,14 @@ def userimport_feeds_details(user, feeds_urls):
 @register.inclusion_tag('snippets/history/userimport-articles.html')
 def userimport_articles_details(user, articles_urls):
 
-    articles = [models.Article.objects.get(url=url) for url in articles_urls]
+    articles = []
+
+    for url in articles_urls:
+        try:
+            articles.append(models.Article.objects.get(url=url))
+
+        except:
+            LOGGER.exception(u'Could not get article with URL %s', url)
 
     reads = []
 
@@ -726,7 +741,8 @@ def userimport_articles_details(user, articles_urls):
             reads.append(user.reads.get(article=article))
 
         except:
-            LOGGER.exception('WOW')
+            LOGGER.exception(u'Could not get read with article %s for user %s',
+                             article, user)
 
         else:
             articles.remove(article)
