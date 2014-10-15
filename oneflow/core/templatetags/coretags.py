@@ -615,6 +615,7 @@ def read_status_css_styles():
                      for status in models.Read.status_data.keys()
                      if 'list_url' in models.Read.status_data[status])
 
+
 # —————————————————————————————————————————————————————————— Mail accounts tags
 
 
@@ -626,6 +627,8 @@ def core_icon(klass_name):
         'MailAccount': 'inbox',
         'MailFeed': 'envelope',
         'MailFeedRule': 'random',
+        'Profile': 'user',
+        'HistoryEntry': 'book',
     }[klass_name])
 
 
@@ -682,3 +685,53 @@ def mailfeed_rules_count(mailaccount):
 
     return (mailaccount.mailfeedrule_set.all().count()
             + models.MailFeedRule.objects.filter(account=None).count())
+
+
+# ————————————————————————————————————————————————————————————— History entries
+
+@register.inclusion_tag('snippets/history/userimport-feeds.html')
+def userimport_feeds_details(user, feeds_urls):
+
+    feeds = [models.Feed.objects.get(url=url) for url in feeds_urls]
+
+    subscriptions = []
+
+    # HEADS UP: copy[:], else the remove() gives half the results
+    for feed in feeds[:]:
+        try:
+            subscriptions.append(user.subscriptions.get(feed=feed))
+
+        except:
+            LOGGER.exception('WOW')
+
+        else:
+            feeds.remove(feed)
+
+    return {
+        'subscriptions': subscriptions,
+        'feeds': feeds,
+    }
+
+
+@register.inclusion_tag('snippets/history/userimport-articles.html')
+def userimport_articles_details(user, articles_urls):
+
+    articles = [models.Article.objects.get(url=url) for url in articles_urls]
+
+    reads = []
+
+    # HEADS UP: copy[:], else the remove() gives half the results
+    for article in articles[:]:
+        try:
+            reads.append(user.reads.get(article=article))
+
+        except:
+            LOGGER.exception('WOW')
+
+        else:
+            articles.remove(article)
+
+    return {
+        'reads': reads,
+        'articles': articles,
+    }
