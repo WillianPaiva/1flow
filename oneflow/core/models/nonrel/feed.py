@@ -60,8 +60,12 @@ from .common import (DocumentHelperMixin,
                      CONTENT_TYPE_IMAGE,
                      CONTENT_TYPE_VIDEO,
                      CONTENT_TYPE_BOOKMARK,
+                     # ORIGIN_TYPE_NONE,
                      ORIGIN_TYPE_FEEDPARSER,
                      ORIGIN_TYPE_WEBIMPORT,
+                     ORIGIN_TYPE_GOOGLE_READER,
+                     ORIGIN_TYPE_TWITTER,
+                     ORIGIN_TYPE_EMAIL_FEED,
                      USER_FEEDS_SITE_URL,
                      BAD_SITE_URL_BASE,
                      SPECIAL_FEEDS_DATA)
@@ -1324,6 +1328,23 @@ def feed_export_content_classmethod(cls, since):
         dict is suitable to be converted to JSON.
     """
 
+    def origin_type(origin_type):
+
+        if origin_type in (ORIGIN_TYPE_FEEDPARSER,
+                           ORIGIN_TYPE_GOOGLE_READER):
+            return u'rss'
+
+        if origin_type == ORIGIN_TYPE_TWITTER:
+            return u'twitter'
+
+        if origin_type == ORIGIN_TYPE_EMAIL_FEED:
+            return u'email'
+
+        # implicit:
+        # if origin_type == (ORIGIN_TYPE_NONE,
+        #                   ORIGIN_TYPE_WEBIMPORT):
+        return u'web'
+
     def content_type(content_type):
 
         if content_type == CONTENT_TYPE_MARKDOWN:
@@ -1373,8 +1394,10 @@ def feed_export_content_classmethod(cls, since):
                 image_url=article.image_url,
                 excerpt=article.excerpt,
                 content=article.content,
+                media=origin_type(article.origin_type),
                 content_type=content_type(article.content_type),
                 date_published=article.date_published,
+
                 authors=[unicode(a) for a in article.authors],
                 date_updated=None,
                 language=article.language,
