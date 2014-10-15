@@ -31,6 +31,8 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 # from django.db.models.signals import pre_save, post_save, pre_delete
 
+# from polymorphic import PolymorphicModel
+
 from sparks.django.models import ModelDiffMixin
 
 # from django.utils.translation import ugettext as _
@@ -96,6 +98,8 @@ def basefeed_subscriptions_count_default(feed, *args, **kwargs):
     return feed.subscriptions.count()
 
 
+# class BaseFeed(PolymorphicModel, ModelDiffMixin):
+
 class BaseFeed(ModelDiffMixin):
 
     """ Base 1flow feed, abstract class.
@@ -135,17 +139,15 @@ class BaseFeed(ModelDiffMixin):
 
     date_created   = models.DateTimeField(auto_now_add=True, default=now,
                                           verbose_name=_(u'date created'))
-    is_internal    = models.BooleanField(default=False)
+    is_internal    = models.BooleanField(verbose_name=_(u'Internal'),
+                                         blank=True, default=False)
     is_restricted  = models.BooleanField(
         default=False, verbose_name=_(u'restricted'), blank=True,
         help_text=_(u'Is this feed available only to paid subscribers on its '
                     u'publisher\'s web site?'))
-    is_closed = models.BooleanField(
-        default=False, verbose_name=_(u'closed'), blank=True,
-        help_text=_(u'Indicate that the feed is not fetched anymore (see '
-                    u'“closed_reason” for why). /!\\ WARNING: do not just '
-                    u'tick the checkbox; there is a programmatic procedure '
-                    u'to close a feed properly.'))
+    is_active = models.BooleanField(
+        verbose_name=_(u'active'), default=True, blank=True,
+        help_text=_(u'Is the feed refreshed or dead?'))
     date_closed    = models.DateTimeField(verbose_name=_(u'date closed'),
                                           null=True, blank=True)
     closed_reason  = models.TextField(verbose_name=_(u'closed reason'),

@@ -24,6 +24,8 @@ from helpcontent import HelpContent  # NOQA
 
 from mailaccount import MailAccount  # NOQA
 
+from history import HistoryEntry  # NOQA
+
 from userimport import UserImport  # NOQA
 
 from tag import SimpleTag  # NOQA

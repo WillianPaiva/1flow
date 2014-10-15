@@ -26,7 +26,6 @@ from collections import OrderedDict
 from jsonfield import JSONField
 from dateutil import parser as date_parser
 
-
 # from django.conf import settings
 from django.core.validators import URLValidator
 from django.db import models
@@ -40,7 +39,8 @@ from async_messages import message_user
 from oneflow.base.utils import register_task_method
 from oneflow.base.utils.dateutils import now
 
-from common import DjangoUser  # , REDIS
+from history import HistoryEntry
+
 from ..nonrel import Article, Read, Feed, FeedIsHtmlPageException, Subscription
 
 
@@ -50,9 +50,14 @@ LOGGER = logging.getLogger(__name__)
 __all__ = ['UserImport', ]
 
 
-class UserImport(models.Model):
+class UserImport(HistoryEntry):
 
     """ Keep trace of user imports, and run them in background tasks. """
+
+    class Meta:
+        app_label = 'core'
+        verbose_name = _(u'User import')
+        verbose_name_plural = _(u'User imports')
 
     STATUS_NEW = 0
     STATUS_RUNNING = 1
@@ -66,9 +71,6 @@ class UserImport(models.Model):
         (STATUS_FAILED, _(u'failed')),
     ))
 
-    user = models.ForeignKey(DjangoUser, verbose_name=_(u'Owner'))
-    date_created = models.DateTimeField(auto_now_add=True, default=now,
-                                        verbose_name=_(u'date created'))
     date_started = models.DateTimeField(null=True, blank=True,
                                         verbose_name=_(u'date started'))
     date_finished = models.DateTimeField(null=True, blank=True,
@@ -81,11 +83,6 @@ class UserImport(models.Model):
     lines = models.IntegerField(verbose_name=_(u'lines'), default=0)
     results = JSONField(load_kwargs={'object_pairs_hook': OrderedDict},
                         null=True, blank=True)
-
-    class Meta:
-        app_label = 'core'
-        verbose_name = _(u'User import')
-        verbose_name_plural = _(u'User imports')
 
     def __unicode__(self):
         """ Unicode, pep257. """
@@ -221,7 +218,7 @@ class UserImport(models.Model):
                     article.save()
 
                 read = article.reads.get(
-                    subscriptions=self.user.web_import_subscription)
+                    subscriptions=self.user.mongo.web_import_subscription)
 
                 # About parsing dates:
                 # http://stackoverflow.com/q/127803/654755
@@ -306,19 +303,20 @@ class UserImport(models.Model):
 
         try:
             article, created = \
-                self.user.web_import_feed.create_article_from_url(url)
+                self.user.mongo.web_import_feed.create_article_from_url(url)
+
+            # Keep the read accessible over time.
+            LOGGER.warning(u'TODO: make sure import_one_article_from_url() has '
+                           u'no race condition when marking new read archived.')
+
+            read = Read.objects.get(article=article, user=self.user.mongo)
+            read.mark_archived()
 
         except Exception as e:
             LOGGER.exception(u'Could not create article from URL %s', url)
             self._import_failed_.append((url, unicode(e)))
 
         else:
-            # Keep the read accessible over time.
-            LOGGER.warning(u'TODO: make sure import_one_article_from_url() has '
-                           u'no race condition when marking new read archived.')
-            read = Read.objects.get(article=article, user=self.user)
-            read.mark_archived()
-
             # We append "None" if the article was not created but
             # already exists. This is intended, for the view to
             # count them as "correctly imported" to the end-user.
