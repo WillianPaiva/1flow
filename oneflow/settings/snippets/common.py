@@ -464,6 +464,7 @@ INSTALLED_APPS = [
     'raven.contrib.django.raven_compat',
     'django.contrib.auth',
     'account',
+    'polymorphic',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     #'django.contrib.sites',
