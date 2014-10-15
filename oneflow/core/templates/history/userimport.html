@@ -1,0 +1,97 @@
+
+<ul class='list-unstyled' id="historyentry-{{ historyentry.id }}">
+
+{% if historyentry.status == 0 %}
+
+	<li>
+		{% blocktrans count counter=historyentry.lines %}
+		   An import of {{ counter }} item has not yet started
+		{% plural %}
+		   An import of {{ counter }} items has not yet started
+		{% endblocktrans %}
+	</li>
+
+{% elif historyentry.status == 1 %}
+
+	<li>
+		{% blocktrans count counter=historyentry.lines %}
+		   An import of {{ counter }} item is running in the background
+		{% plural %}
+		   An import of {{ counter }} items is running in the background
+		{% endblocktrans %}
+	</li>
+
+{% else %}
+
+	{% if historyentry.results.created.articles %}
+		<li>
+			<a data-toggle="collapse" data-parent="#historyentry-{{ historyentry.id }}" href="#historyentry-{{ historyentry.id }}-collapse-articles">
+
+			{% blocktrans count counter=historyentry.results.created.articles|length %}
+			   {{ counter }} web item imported
+			{% plural %}
+				{{ counter }} web items imported
+			{% endblocktrans %}
+
+			</a>
+
+	    	<div id="historyentry-{{ historyentry.id }}-collapse-articles"
+	    	class="collapse userimport-content">
+	    	<blockquote>
+			{% userimport_articles_details user.mongo historyentry.results.created.articles %}
+			</blockquote>
+			</div>
+		</li>
+	{% endif %}
+
+	{% if historyentry.results.created.feeds %}
+		<li>
+
+		<a data-toggle="collapse" data-parent="#historyentry-{{ historyentry.id }}" href="#historyentry-{{ historyentry.id }}-collapse-feeds">
+		{% blocktrans count counter=historyentry.results.created.feeds|length %}
+		   Subscribed to {{ counter }} RSS/Atom feed
+		{% plural %}
+			Subscribed to {{ counter }} RSS/Atom feeds
+		{% endblocktrans %}
+        </a>
+
+	    <div id="historyentry-{{ historyentry.id }}-collapse-feeds"
+	    	class="collapse">
+    	<blockquote>
+
+		{% userimport_feeds_details user.mongo historyentry.results.created.feeds %}
+		</blockquote>
+
+		</div>
+		</li>
+	{% endif %}
+
+	{% if historyentry.results.failed %}
+		<li>
+		<a data-toggle="collapse" data-parent="#historyentry-{{ historyentry.id }}" href="#historyentry-{{ historyentry.id }}-collapse-failed">
+		{% blocktrans count counter=historyentry.results.failed|length %}
+		   {{ counter }} item failed to import
+		{% plural %}
+			{{ counter }} items failed to import
+		{% endblocktrans %}
+		</a>
+	    <div id="historyentry-{{ historyentry.id }}-collapse-failed"
+	    	class="collapse">
+    	<blockquote>
+			<ul>
+			{% for what, reason in historyentry.results.failed %}
+
+				<li><strong>{{ what }}</strong><br /><blockquote><code>{{ reason }}</code></blockquote></li>
+
+			{% endfor %}
+			</ul>
+		</blockquote>
+		</div>
+
+		</li>
+	{% endif %}
+
+{% endif %}
+
+
+</ul>

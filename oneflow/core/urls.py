@@ -303,6 +303,18 @@ urlpatterns = patterns(
     url(_(ur'^grstatus/$'), login_required(views.google_reader_import_status),
         name='google_reader_import_status'),
 
+    # ————————————————————————————————————————————————————————————————— History
+
+    url(_(ur'^history/$'),
+        login_required(never_cache(
+                       views.HistoryEntryListView.as_view())),
+        name='historyentry_list'),
+
+    url(_(ur'^history/(?P<pk>\d+)/delete/?$'),
+        login_required(never_cache(
+                       views.HistoryEntryDeleteView.as_view())),
+        name='historyentry_delete'),
+
     # —————————————————————————————————————————————————————————————— Staff only
 
     url(_(ur'^feed/(?P<feed_id>\w+)/close/toggle/$'),

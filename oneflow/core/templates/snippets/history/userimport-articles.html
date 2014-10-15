@@ -1,0 +1,20 @@
+
+{% if reads %}
+	<h4>{% trans "Still in your database" %}</h4>
+	<ul>
+	{% for read in reads %}
+		<li><a href='{% url 'read_one' read.id %}'>{{ read.article.title }}</a></li>
+	{% endfor %}
+	</ul>
+{% endif %}
+
+{% if articles %}
+	<h4>{% trans "Not in your database anymore" %}</h4>
+	<ul>
+	{% for article in articles %}
+			<li><a href='{{ article.url }}'>{{ article.title }}</a></li>
+
+	{% endfor %}
+	</ul>
+{% endif %}
+

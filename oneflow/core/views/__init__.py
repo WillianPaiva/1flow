@@ -603,6 +603,7 @@ def export_content(request, **kwargs):
 
 # ——————————————————————————————————————————————————————————————— Views imports
 
+from history import HistoryEntryListView, HistoryEntryDeleteView  # NOQA
 
 from mailaccount import MailAccountListCreateView, MailAccountDeleteView  # NOQA
 from mailfeed import MailFeedListCreateView, MailFeedDeleteView  # NOQA
