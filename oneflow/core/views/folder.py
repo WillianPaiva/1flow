@@ -33,7 +33,7 @@ from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
 
 from ..forms import ManageFolderForm
-from ..models.nonrel import Folder, TreeCycleException
+from ..models.nonrel import Folder, folder_purge_task, TreeCycleException
 
 LOGGER = logging.getLogger(__name__)
 User = get_user_model()
@@ -109,13 +109,30 @@ def manage_folder(request, **kwargs):
                   {'form': form, 'folder': folder})
 
 
-def delete_folder(request, folder):
+def delete_folder(request, folder, purge=False):
     """ Delete a folder. """
 
     folder = Folder.get_or_404(folder)
 
     if request.user.is_superuser or folder.owner == request.user.mongo:
-        folder.delete()
+
+        if purge:
+            messages.info(request,
+                          _(u'Purging folder <em>{0}</em>, '
+                            u'subfolders and subscriptions in the '
+                            u'background…').format(folder.name),
+                          extra_tags=u'safe')
+
+            folder_purge_task.delay(folder.id)
+
+        else:
+            folder.delete()
+
+            messages.info(request,
+                          _(u'Folder <em>{0}</em>, deleted.').format(
+                              folder.name),
+                          extra_tags=u'safe')
+
         return redirect('source_selector')
 
     return HttpResponseForbidden()

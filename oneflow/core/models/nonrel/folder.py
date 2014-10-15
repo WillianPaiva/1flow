@@ -30,6 +30,7 @@ from mongoengine.errors import NotUniqueError, ValidationError, DoesNotExist
 from django.utils.translation import ugettext_lazy as _
 
 from ....base.fields import IntRedisDescriptor
+from ....base.utils import register_task_method
 
 from .common import (DocumentHelperMixin, DocumentTreeMixin,
                      PseudoQuerySet, lowername)
@@ -38,7 +39,7 @@ from .user import User
 LOGGER = logging.getLogger(__name__)
 
 
-__all__ = ('Folder',
+__all__ = ['Folder',
 
            # Make these accessible to compute them from `DocumentHelperMixin`.
            'folder_all_articles_count_default',
@@ -46,7 +47,7 @@ __all__ = ('Folder',
            'folder_unread_articles_count_default',
            'folder_archived_articles_count_default',
            'folder_bookmarked_articles_count_default',
-           )
+           ]
 
 
 def folder_all_articles_count_default(folder, *args, **kwargs):
@@ -252,6 +253,22 @@ class Folder(Document, DocumentHelperMixin, DocumentTreeMixin):
 
         return children
 
+    def purge(self):
+        """ Remove a folder and all its content (subfolders, subscriptions). """
+
+        for child in self.children:
+            child.purge()
+            child.delete()
+
+        for subscription in self.owner.subscriptions.filter(folders=self):
+            # Don't delete subscription if present in another folder, in case
+            # user has activated the multi-folder subscriptions preference.
+            if len(subscription.folders) == 1:
+                subscription.delete()
+
+        self.delete()
+
+register_task_method(Folder, Folder.purge, globals(), u'low')
 
 # ————————————————————————————————————————————————————————— external properties
 #                                            Defined here to avoid import loops
