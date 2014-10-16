@@ -562,6 +562,7 @@ class MailAccount(ModelDiffMixin):
                              self, since, data)
                 return
 
+        ids_expiry_time = config.MAIL_IMAP_CACHE_IDS_EXPIRY
         cache_expiry_time = config.MAIL_IMAP_CACHE_EXPIRY
 
         if config.MAIL_IMAP_CACHE_MESSAGES:
@@ -579,7 +580,7 @@ class MailAccount(ModelDiffMixin):
 
                 else:
                     REDIS.setex(redis_key,
-                                cache_expiry_time,
+                                ids_expiry_time,
                                 email_ids_as_string)
 
         else:
