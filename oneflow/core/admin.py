@@ -760,9 +760,44 @@ class FeedAdmin(mongoadmin.DocumentAdmin):
 
 admin.site.register(Feed, FeedAdmin)
 
+# —————————————————————————————————————————————————————————————————— PostgreSQL
+
 admin.site.register(MailAccount)
 admin.site.register(MailFeed)
-admin.site.register(MailFeedRule)
+
+
+class MailFeedRuleAdmin(admin.ModelAdmin):
+
+    """ MailFeedRule admin class. """
+
+    list_display = ('id', 'get_mailfeed__name', 'get_mailfeed__user',
+                    'group',  'account',
+                    'header_field', 'match_type', 'match_value', )
+    list_display_links = ('id', 'get_mailfeed__name',
+                          'get_mailfeed__user', 'group', )
+    list_filter = ('group', )
+    # ordering = ('name', 'parent', )
+    # date_hierarchy = 'date_joined'
+    change_list_template = "admin/change_list_filter_sidebar.html"
+    change_list_filter_template = "admin/filter_listing.html"
+
+    # Don't display the UserProfile inline, this will conflict with the
+    # post_save() signal in profiles.models. There is a race condition…
+    # inlines = [] if UserProfile is None else [UserProfileInline, ]
+
+    def get_mailfeed__name(self, obj):
+        return obj.mailfeed.name
+
+    get_mailfeed__name.short_description = _(u'Mail feed')
+    get_mailfeed__name.admin_order_field = 'mailfeed__name'
+
+    def get_mailfeed__user(self, obj):
+        return obj.mailfeed.user.username
+
+    get_mailfeed__user.short_description = _(u'User')
+    get_mailfeed__user.admin_order_field = 'mailfeed__user__username'
+
+admin.site.register(MailFeedRule, MailFeedRuleAdmin)
 
 admin.site.register(HistoryEntry)
 admin.site.register(UserImport)
