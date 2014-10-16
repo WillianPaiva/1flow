@@ -62,6 +62,8 @@ class MailFeed(ModelDiffMixin):
         (u'any', _(u'Any rule matches')),
     ))
 
+    RULES_OPERATION_DEFAULT = u'any'
+
     name = models.CharField(max_length=255, verbose_name=_(u'Feed name'))
     user = models.ForeignKey(DjangoUser, verbose_name=_(u'Creator'))
     is_public = models.BooleanField(verbose_name=_(u'Public'),
@@ -89,9 +91,9 @@ class MailFeed(ModelDiffMixin):
                     u'rule level, only for the ones '
                     u'you want.'))
 
-    rules_operation =  models.CharField(
+    rules_operation = models.CharField(
         verbose_name=_(u'Rules operation'),
-        max_length=10, default=u'any',
+        max_length=10, default=RULES_OPERATION_DEFAULT,
         choices=tuple(RULES_OPERATION_CHOICES.items()),
         help_text=_(u'Condition between rules or rules groups.'))
 
