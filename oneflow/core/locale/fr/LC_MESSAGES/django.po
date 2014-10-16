@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-16 14:20+0200\n"
-"PO-Revision-Date: 2014-10-16 15:23+0009\n"
+"POT-Creation-Date: 2014-10-16 17:39+0200\n"
+"PO-Revision-Date: 2014-10-16 17:46+0009\n"
 "Last-Translator: Olivier Cortes <karmak23@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -152,7 +152,7 @@ msgstr "<span title=\"{0}\" style=\"cursor: pointer; font-size: 300%;\">••�
 msgid "URL err."
 msgstr "Erreur d'URL"
 
-#: admin.py:459
+#: admin.py:459 admin.py:797
 msgid "User"
 msgstr "Utilisateur"
 
@@ -246,6 +246,10 @@ msgstr "Le flux est ouvert"
 msgid "Run?"
 msgstr "Actif ?"
 
+#: admin.py:791
+msgid "Mail feed"
+msgstr "Flux de mails"
+
 #: urls.py:52
 msgctxt "part of url regex"
 msgid "feed"
@@ -285,9 +289,8 @@ msgid "^preferences/$"
 msgstr "^preferences/$"
 
 #: urls.py:112
-#, fuzzy
 msgid "^status/?$"
-msgstr "^etatgr/$"
+msgstr "^etat/?$"
 
 #: urls.py:118
 msgid "^read/all/$"
@@ -403,9 +406,8 @@ msgid "^signin_error/$"
 msgstr "^erreur_connexion/$"
 
 #: urls.py:251
-#, fuzzy
 msgid "^mailaccount/?$"
-msgstr "Comptes de réseaux sociaux"
+msgstr "^comptemail/?$"
 
 #: urls.py:256
 msgid "^mailaccount/(?P<pk>\\d+)/delete/?$"
@@ -413,7 +415,7 @@ msgstr ""
 
 #: urls.py:267
 msgid "^mailfeed/?$"
-msgstr ""
+msgstr "^fluxmail/?$"
 
 #: urls.py:272
 #, fuzzy
@@ -431,48 +433,53 @@ msgid "^mailfeed/(?P<mailfeed_pk>\\d+)/rule/(?P<pk>\\d+)/position/?$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
 #: urls.py:287
+#, fuzzy
+msgid "^mailfeed/(?P<mailfeed_pk>\\d+)/rule/(?P<pk>\\d+)/group/?$"
+msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
+
+#: urls.py:292
 msgid "^mailfeed/(?P<mailfeed_pk>\\d+)/rule/(?P<pk>\\d+)/delete/?$"
 msgstr ""
 
-#: urls.py:294
+#: urls.py:299
 msgid "^grimport/(?:(?P<user_id>\\d+)/)?$"
 msgstr "^importgr/(?:(?P<user_id>\\d+)/)?$"
 
-#: urls.py:297
+#: urls.py:302
 msgid "^grstop/(?P<user_id>\\d+)/$"
 msgstr "^stopgr/(?P<user_id>\\d+)/$"
 
-#: urls.py:300
+#: urls.py:305
 msgid "^grtoggle/(?P<user_id>\\d+)/$"
 msgstr "^basculergr/(?P<user_id>\\d+)/$"
 
-#: urls.py:303
+#: urls.py:308
 msgid "^grstatus/$"
 msgstr "^etatgr/$"
 
-#: urls.py:308
-msgid "^history/$"
-msgstr ""
-
 #: urls.py:313
+msgid "^history/$"
+msgstr "^historique/$"
+
+#: urls.py:318
 #, fuzzy
 msgid "^history/(?P<pk>\\d+)/delete/?$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: urls.py:320
+#: urls.py:325
 msgid "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: urls.py:326
+#: urls.py:331
 msgid ""
 "^export/folder/(?P<folder_id>\\w{24,24})/(?P<since>[^/]+)/(?P<token>\\w{32,32})/?$"
 msgstr ""
 
-#: urls.py:331
+#: urls.py:336
 msgid "^export/(?P<since>[^/]+)/(?P<token>\\w{32,32})/?$"
 msgstr ""
 
-#: forms/mailfeedrule.py:79
+#: forms/mailfeedrule.py:82
 msgid "Common"
 msgstr "Communes"
 
@@ -2688,7 +2695,7 @@ msgstr "Spam"
 msgid "Inbox"
 msgstr "Boîte de réception"
 
-#: models/reldb/mailaccount.py:143 models/reldb/mailfeed.py:67
+#: models/reldb/mailaccount.py:143 models/reldb/mailfeed.py:68
 #: models/reldb/feed/combined.py:45
 msgid "Creator"
 msgstr "Créateur"
@@ -2749,29 +2756,25 @@ msgstr "Toutes les règles doivent correspondre"
 msgid "Any rule matches"
 msgstr "N'importe laquelle des règles correspond"
 
-#: models/reldb/mailfeed.py:63
-msgid "All messages"
-msgstr "Tous les messages (pas besoin de règle)"
-
-#: models/reldb/mailfeed.py:66 models/reldb/feed/combined.py:44
+#: models/reldb/mailfeed.py:67 models/reldb/feed/combined.py:44
 #: templates/mailfeed/list-create.html:54
 msgid "Feed name"
 msgstr "Nom du flux"
 
-#: models/reldb/mailfeed.py:68 templates/mailfeed/list-create.html:56
+#: models/reldb/mailfeed.py:69 templates/mailfeed/list-create.html:56
 msgid "Public"
 msgstr "Public"
 
-#: models/reldb/mailfeed.py:70 models/reldb/feed/combined.py:48
+#: models/reldb/mailfeed.py:71 models/reldb/feed/combined.py:48
 #, fuzzy
 msgid "Can other 1flow users subscribe to this feed?"
 msgstr "Notes internes au personnel de 1flow, à propos de ce flux."
 
-#: models/reldb/mailfeed.py:74
+#: models/reldb/mailfeed.py:75
 msgid "Match action"
 msgstr "Action si correspondance"
 
-#: models/reldb/mailfeed.py:77
+#: models/reldb/mailfeed.py:78
 msgid ""
 "Defines a global match action for all rules of the feed. You can override "
 "this value at the rule level, only for the ones you want."
@@ -2779,12 +2782,12 @@ msgstr ""
 "Définit une action globale pour toutes les règles du flux. Vous pouvez "
 "l'outrepasser au niveau des règles individuelles."
 
-#: models/reldb/mailfeed.py:84 models/reldb/mailfeedrule.py:126
+#: models/reldb/mailfeed.py:85 models/reldb/mailfeedrule.py:135
 #: models/reldb/feed/combinedrule.py:133
 msgid "Finish action"
 msgstr "Action de terminaison"
 
-#: models/reldb/mailfeed.py:87
+#: models/reldb/mailfeed.py:88
 msgid ""
 "Defines a global finish action for all rules of the feed. You can override "
 "this value at the rule level, only for the ones you want."
@@ -2792,36 +2795,36 @@ msgstr ""
 "Définit une action globale de terminaison pour toutes les règles du flux. "
 "Vous pouvez l'outrepasser au niveau des règles individuelles."
 
-#: models/reldb/mailfeed.py:94
+#: models/reldb/mailfeed.py:95
 msgid "Rules operation"
 msgstr "Opération sur les règles"
 
-#: models/reldb/mailfeed.py:97
+#: models/reldb/mailfeed.py:98
 msgid "Condition between rules or rules groups."
 msgstr "Condition entre les règles"
 
-#: models/reldb/mailfeed.py:104
+#: models/reldb/mailfeed.py:105
 msgid "Scrape whitelist"
 msgstr "Liste blanche d'inspection"
 
-#: models/reldb/mailfeed.py:105
+#: models/reldb/mailfeed.py:106
 msgid ""
 "Eventually refine URLs you want to scrape in the email body. Type a list of "
 "valid URLs patterns, and start with “re:” if you want to use a regular "
 "expression."
 msgstr ""
 
-#: models/reldb/mailfeed.py:112
+#: models/reldb/mailfeed.py:113
 msgid "Use scrape blacklist"
 msgstr "Utiliser la liste-noire ?"
 
-#: models/reldb/mailfeed.py:113
+#: models/reldb/mailfeed.py:114
 msgid ""
 "Use 1flow adblocker to avoid scrapeing email adds, unsubscribe links and the"
 " like."
 msgstr ""
 
-#: models/reldb/mailfeed.py:377
+#: models/reldb/mailfeed.py:378
 #, python-format
 msgid "%s, creator of the mail feed, closed it."
 msgstr ""
@@ -2886,102 +2889,114 @@ msgstr "Correspond à l'expression rationelle"
 msgid "does not match reg. expr."
 msgstr "ne correspond pas à l'expr. ratio."
 
-#: models/reldb/mailfeedrule.py:83 templates/mailfeedrule/list-create.html:65
+#: models/reldb/mailfeedrule.py:81
+msgid "Rules group"
+msgstr "Groupe de règles"
+
+#: models/reldb/mailfeedrule.py:85
+msgid "Rules group operation"
+msgstr "Opération sur les règles du groupe"
+
+#: models/reldb/mailfeedrule.py:88
+msgid "Condition between rules of this group."
+msgstr "Condition entre les règles de ce groupe"
+
+#: models/reldb/mailfeedrule.py:92 templates/mailfeedrule/list-create.html:73
 msgid "Mail account"
 msgstr "Compte e-mail"
 
-#: models/reldb/mailfeedrule.py:84
+#: models/reldb/mailfeedrule.py:93
 msgid "To apply this rule to all accounts, just don't choose any."
 msgstr "Pour appliquer cette règle à tous les comptes, n'en choisissez pas."
 
-#: models/reldb/mailfeedrule.py:87
+#: models/reldb/mailfeedrule.py:96
 msgid "Mailbox"
 msgstr "Boite e-mail"
 
-#: models/reldb/mailfeedrule.py:90
+#: models/reldb/mailfeedrule.py:99
 msgid "Recurse mailbox"
 msgstr "Recherche récursive"
 
-#: models/reldb/mailfeedrule.py:92 templates/mailfeedrule/list-create.html:67
+#: models/reldb/mailfeedrule.py:101 templates/mailfeedrule/list-create.html:75
 msgid "Header"
 msgstr "En-tête"
 
-#: models/reldb/mailfeedrule.py:95 models/reldb/feed/combinedrule.py:107
+#: models/reldb/mailfeedrule.py:104 models/reldb/feed/combinedrule.py:107
 msgid "E-mail field on which the match type is applied."
 msgstr "En-tête de l'e-mail sur lequel la correspondance est appliquée"
 
-#: models/reldb/mailfeedrule.py:97
+#: models/reldb/mailfeedrule.py:106
 msgid "Other header"
 msgstr "En-tête personnalisé"
 
-#: models/reldb/mailfeedrule.py:99
+#: models/reldb/mailfeedrule.py:108
 msgid "Specify here if you chose “Other header” in previous field."
 msgstr "Spécifiez ici si vous avez précédemment choisi « autre en-tête »."
 
-#: models/reldb/mailfeedrule.py:102 models/reldb/feed/combinedrule.py:109
-#: templates/mailfeedrule/list-create.html:69
+#: models/reldb/mailfeedrule.py:111 models/reldb/feed/combinedrule.py:109
+#: templates/mailfeedrule/list-create.html:77
 msgid "Match type"
 msgstr "Opération"
 
-#: models/reldb/mailfeedrule.py:105 models/reldb/feed/combinedrule.py:112
+#: models/reldb/mailfeedrule.py:114 models/reldb/feed/combinedrule.py:112
 msgid "Operation applied on the header to compare with match value."
 msgstr "Opération utilisée pour comparer votre valeur à celle de l'en-tête."
 
-#: models/reldb/mailfeedrule.py:108 models/reldb/feed/combinedrule.py:115
+#: models/reldb/mailfeedrule.py:117 models/reldb/feed/combinedrule.py:115
 msgid "Match case"
 msgstr "Tenir compte de la casse"
 
-#: models/reldb/mailfeedrule.py:110 models/reldb/feed/combinedrule.py:117
+#: models/reldb/mailfeedrule.py:119 models/reldb/feed/combinedrule.py:117
 msgid "Do we care about uppercase and lowercase characters?"
 msgstr "Les caractères majuscules et minuscules sont-ils importants ?"
 
-#: models/reldb/mailfeedrule.py:112 models/reldb/feed/combinedrule.py:119
+#: models/reldb/mailfeedrule.py:121 models/reldb/feed/combinedrule.py:119
 msgid "Match value"
 msgstr "Correspondance"
 
-#: models/reldb/mailfeedrule.py:114 models/reldb/feed/combinedrule.py:121
+#: models/reldb/mailfeedrule.py:123 models/reldb/feed/combinedrule.py:121
 msgid "Examples: “Tweet de”, “Google Alert:”. Can be any text."
 msgstr "Exemples : « Tweet de », « Alertes Google : ». N'importe quel texte."
 
-#: models/reldb/mailfeedrule.py:119 models/reldb/feed/combinedrule.py:126
+#: models/reldb/mailfeedrule.py:128 models/reldb/feed/combinedrule.py:126
 msgid "Action when matched"
 msgstr "Action sur corresp."
 
-#: models/reldb/mailfeedrule.py:122 models/reldb/mailfeedrule.py:129
+#: models/reldb/mailfeedrule.py:131 models/reldb/mailfeedrule.py:138
 #: models/reldb/feed/combinedrule.py:129 models/reldb/feed/combinedrule.py:136
 msgid "Choose nothing to execute action defined at the feed level."
 msgstr ""
 "Ne choisissez rien pour utiliser l'action globale définie au niveau du flux."
 
-#: models/reldb/mailfeedrule.py:136 models/reldb/feed/combinedrule.py:142
+#: models/reldb/mailfeedrule.py:145 models/reldb/feed/combinedrule.py:142
 msgid "Checked and valid"
 msgstr "Vérifiée et validé"
 
-#: models/reldb/mailfeedrule.py:210 models/reldb/feed/combinedrule.py:216
+#: models/reldb/mailfeedrule.py:219 models/reldb/feed/combinedrule.py:216
 #, python-brace-format
 msgid "Rule #{2}: {3}, applied to {0} for MailFeed {1}"
 msgstr "Règle #{2} : {3}, appliquée à {0} pour flux de mail {1}"
 
-#: models/reldb/mailfeedrule.py:211 models/reldb/feed/combinedrule.py:217
+#: models/reldb/mailfeedrule.py:220 models/reldb/feed/combinedrule.py:217
 msgid "all accounts"
 msgstr "tous les comptes"
 
-#: models/reldb/mailfeedrule.py:212 models/reldb/feed/combinedrule.py:218
+#: models/reldb/mailfeedrule.py:221 models/reldb/feed/combinedrule.py:218
 #, python-brace-format
 msgid "account {0}"
 msgstr "compte {0}"
 
-#: models/reldb/mailfeedrule.py:215 models/reldb/feed/combinedrule.py:221
+#: models/reldb/mailfeedrule.py:224 models/reldb/feed/combinedrule.py:221
 #, python-brace-format
 msgid "{0} {1} “{2}” → {3} → {4}"
 msgstr "{0} {1} « {2} » → {3} → {4}"
 
-#: models/reldb/mailfeedrule.py:222 models/reldb/mailfeedrule.py:224
+#: models/reldb/mailfeedrule.py:231 models/reldb/mailfeedrule.py:233
 #: models/reldb/feed/combinedrule.py:228 models/reldb/feed/combinedrule.py:230
 msgid "feed default"
 msgstr "directive du flux"
 
-#: models/reldb/mailfeedrule.py:256 models/reldb/feed/combinedrule.py:262
+#: models/reldb/mailfeedrule.py:265 models/reldb/feed/combinedrule.py:262
 #, python-brace-format
 msgid ""
 "Unrecognized header name “{0}”. Please look at http://bit.ly/smtp-headers to"
@@ -2991,7 +3006,7 @@ msgstr ""
 "/smtp-headers (en anglais), vous y trouverez une liste d'en-têtes valides. "
 "Ça ne serait pas juste une faute de frappe ?"
 
-#: models/reldb/mailfeedrule.py:267 models/reldb/feed/combinedrule.py:273
+#: models/reldb/mailfeedrule.py:276 models/reldb/feed/combinedrule.py:273
 #, python-brace-format
 msgid "Invalid regular expression “{0}”: {1}"
 msgstr "Expression rationnelle « {0} » invalide : {1}"
@@ -3034,7 +3049,7 @@ msgstr "date de terminaison"
 
 #: models/reldb/userimport.py:78 templates/mailaccount/list-create.html:64
 #: templates/mailfeed/list-create.html:55
-#: templates/mailfeedrule/list-create.html:74
+#: templates/mailfeedrule/list-create.html:82
 msgid "Status"
 msgstr "État"
 
@@ -3697,7 +3712,7 @@ msgstr "Date"
 
 #: templates/history/list.html:53 templates/mailaccount/list-create.html:65
 #: templates/mailfeed/list-create.html:60
-#: templates/mailfeedrule/list-create.html:75
+#: templates/mailfeedrule/list-create.html:83
 msgid "Actions"
 msgstr "Actions"
 
@@ -4008,41 +4023,45 @@ msgstr "Action par défaut si correspondance :"
 msgid "Global feed final action:"
 msgstr "Action de terminaison par défaut :"
 
-#: templates/mailfeedrule/list-create.html:68
+#: templates/mailfeedrule/list-create.html:58
+msgid "Inter-rule/groups operation:"
+msgstr "Opération entre les règles / les groupes :"
+
+#: templates/mailfeedrule/list-create.html:76
 msgid "Custom header"
 msgstr "En-tête personnalisé"
 
-#: templates/mailfeedrule/list-create.html:70
+#: templates/mailfeedrule/list-create.html:78
 msgid "Value"
 msgstr "Valeur"
 
-#: templates/mailfeedrule/list-create.html:71
+#: templates/mailfeedrule/list-create.html:79
 msgid "Result"
 msgstr "Résultat"
 
-#: templates/mailfeedrule/list-create.html:72
+#: templates/mailfeedrule/list-create.html:80
 msgid "Finish"
 msgstr "Terminaison"
 
-#: templates/mailfeedrule/list-create.html:81
+#: templates/mailfeedrule/list-create.html:90
 #: templates/navbars/read-endless.html:33
 msgid "All"
 msgstr "Tout"
 
-#: templates/mailfeedrule/list-create.html:89
+#: templates/mailfeedrule/list-create.html:99
 msgid "not applicable"
 msgstr "non applicable"
 
-#: templates/mailfeedrule/list-create.html:93
+#: templates/mailfeedrule/list-create.html:103
 msgid "please edit"
 msgstr "éditez SVP"
 
-#: templates/mailfeedrule/list-create.html:99
-#: templates/mailfeedrule/list-create.html:100
+#: templates/mailfeedrule/list-create.html:109
+#: templates/mailfeedrule/list-create.html:110
 msgid "global feed action"
 msgstr "action par défaut"
 
-#: templates/mailfeedrule/list-create.html:122
+#: templates/mailfeedrule/list-create.html:135
 #, python-format
 msgid ""
 "\n"
@@ -4052,7 +4071,7 @@ msgstr ""
 "\n"
 "Pas encore de règle pour <strong>%(feed_name)s</strong>."
 
-#: templates/mailfeedrule/list-create.html:138
+#: templates/mailfeedrule/list-create.html:151
 msgid ""
 "<p>Notes:</p><ul><li><strong>all mailboxes</strong> except some specific "
 "ones (<em>Drafts</em>, <em>Sent</em>, <em>Trash</em>, <em>Spam</em>…) will "
@@ -4775,12 +4794,12 @@ msgid "in"
 msgstr "dans"
 
 #: templates/snippets/read/read-action-original.html:2
-#: templatetags/coretags.py:477
+#: templatetags/coretags.py:518
 msgid "Display on the original website"
 msgstr "Afficher sur le site d'origine"
 
 #: templates/snippets/read/read-action-original.html:5
-#: templatetags/coretags.py:479
+#: templatetags/coretags.py:520
 msgid "Read original"
 msgstr "Voir l'original"
 
@@ -5592,6 +5611,15 @@ msgstr "Espace utilisé sur %(mntpt)s : %(percent)s%% (%(value)s)"
 msgid "delete this entry"
 msgstr "supprimer cette entrée"
 
+#: templates/widgets/group-buttons.html:27
+#: templates/widgets/group-buttons.html:40
+msgid "Merge with previous entry/group"
+msgstr "Grouper avec la règle / le groupe précédent"
+
+#: templates/widgets/group-buttons.html:53
+msgid "Merge with next entry/group"
+msgstr "Grouper avec la règle ou le groupe suivant"
+
 #: templates/widgets/position-buttons.html:7
 msgid "Move this entry up"
 msgstr "Déplacer vers le haut"
@@ -5717,7 +5745,7 @@ msgstr "Vous avez {0} articles contenant des citations"
 msgid "You have {0} articles marked as knowledge"
 msgstr "Vous avez {0} éléments marqués comme savoir ou connaissance"
 
-#: templatetags/coretags.py:116
+#: templatetags/coretags.py:157
 msgid ""
 "Feature coming soon. More information on the 1flow blog "
 "http://blog.1flow.io/ or Twitter @1flow_io."
@@ -5725,76 +5753,85 @@ msgstr ""
 "Fonctionnalité en cours de développement. Plus d'informations sur le blog "
 "1flow http://blog.1flow.io/ ou sur Twitter @1flow_io."
 
-#: templatetags/coretags.py:138
+#: templatetags/coretags.py:179
 msgid "Search in folder…"
 msgstr "Rechercher dans le dossier…"
 
-#: templatetags/coretags.py:141
+#: templatetags/coretags.py:182
 msgid "Search in feed…"
 msgstr "Rechercher dans le flux…"
 
-#: templatetags/coretags.py:143
+#: templatetags/coretags.py:184
 msgid "Search…"
 msgstr "Rechercher…"
 
-#: templatetags/coretags.py:280
+#: templatetags/coretags.py:321
 msgid "You have nothing in this list yet."
 msgstr "Vous n'avez rien dans cette liste"
 
-#: templatetags/coretags.py:325
+#: templatetags/coretags.py:366
 msgid "M+"
 msgstr "M+"
 
-#: templatetags/coretags.py:330
+#: templatetags/coretags.py:371
 msgid "k+"
 msgstr "k+"
 
-#: templatetags/coretags.py:345
+#: templatetags/coretags.py:386
 #, python-brace-format
 msgid "{0} articles"
 msgstr "{0} articles"
 
-#: templatetags/coretags.py:571 templatetags/coretags.py:573
+#: templatetags/coretags.py:612 templatetags/coretags.py:614
 msgid "Convert to full-text"
 msgstr "Convertir en plein-texte"
 
-#: templatetags/coretags.py:572
+#: templatetags/coretags.py:613
 msgid "Switch back to original"
 msgstr "Revenir à l'original"
 
-#: templatetags/coretags.py:574
+#: templatetags/coretags.py:615
 msgid "View original"
 msgstr "Voir l'original"
 
-#: templatetags/coretags.py:575
+#: templatetags/coretags.py:616
 msgid "converted"
 msgstr "converti"
 
-#: templatetags/coretags.py:577 templatetags/coretags.py:579
+#: templatetags/coretags.py:618 templatetags/coretags.py:620
 msgctxt "awesome-font icon name"
 msgid "exchange"
 msgstr "exchange"
 
-#: templatetags/coretags.py:650
+#: templatetags/coretags.py:692
+msgid "Any matching rule in the group will do it. Click to change."
+msgstr "N'importe laquelle des règles du groupe suffit. Cliquez pour changer."
+
+#: templatetags/coretags.py:693
+msgid "All rules of the group must match. Click to change."
+msgstr ""
+"Toutes les règles du groupe doivent être validées. Cliquez pour changer."
+
+#: templatetags/coretags.py:712
 #, python-brace-format
 msgid "Account successfully working, tested {ago} ago."
 msgstr "Compte pleinement fonctionnel, testé il y a {ago}."
 
-#: templatetags/coretags.py:651
+#: templatetags/coretags.py:713
 #, python-brace-format
 msgid "Account not working, tested {ago} ago. Error reported: {err}"
 msgstr "Compte non fonctionnel, testé il y a {ago}. Erreur remontée : {err}"
 
-#: templatetags/coretags.py:657
+#: templatetags/coretags.py:719
 msgid "Rule validated successfully and will be used for next fetch."
 msgstr "La règle a été validée et sera utilisée aux exécutions suivantes."
 
-#: templatetags/coretags.py:659
+#: templatetags/coretags.py:721
 #, python-brace-format
 msgid "Rule did not validate. Error reported: {err}"
 msgstr "La règle n'a pu être validée. Erreur remontée : {err}"
 
-#: templatetags/coretags.py:677
+#: templatetags/coretags.py:739
 msgid ""
 "Account connectivity not yet tested. Please wait a few seconds and reload "
 "the current page."
@@ -5966,6 +6003,9 @@ msgstr ""
 #, python-brace-format
 msgid "Subscription <em>{0}</em> successfully cancelled."
 msgstr "Abonnement <em>{0}</em> résilié avec succès."
+
+#~ msgid "All messages"
+#~ msgstr "Tous les messages (pas besoin de règle)"
 
 #~ msgid ""
 #~ "Note: 1flow engine will <strong>recurse all mailboxes</strong> to look for "
