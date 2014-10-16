@@ -28,6 +28,8 @@ from positions import PositionField
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+# from mptt.models import MPTTModel, TreeForeignKey
+
 # from django.utils.translation import ugettext as _
 # from django.utils.text import slugify
 # from sparks.django.models import ModelDiffMixin
@@ -75,6 +77,15 @@ class MailFeedRule(ModelDiffMixin):
         (u're_match', _(u'matches regular expression')),
         (u'nre_match', _(u'does not match reg. expr.')),
     ))
+
+    group = models.IntegerField(verbose_name=_(u'Rules group'),
+                                null=True, blank=True)
+
+    group_operation =  models.CharField(
+        verbose_name=_(u'Rules group operation'),
+        max_length=10, default=u'any', blank=True, null=True,
+        choices=tuple(MailFeed.RULES_OPERATION_CHOICES.items()),
+        help_text=_(u'Condition between rules of this group.'))
 
     mailfeed = models.ForeignKey(MailFeed)
     account = models.ForeignKey(MailAccount, null=True, blank=True,
@@ -129,14 +140,15 @@ class MailFeedRule(ModelDiffMixin):
 
     # Used to have many times the same rule in different feeds
     clone_of = models.ForeignKey('MailFeedRule', null=True, blank=True)
-    position = PositionField(collection='mailfeed', default=0, blank=True)
+    position = PositionField(collection=('mailfeed', 'group', ),
+                             default=0, blank=True)
     is_valid = models.BooleanField(verbose_name=_(u'Checked and valid'),
                                    default=True, blank=True)
     check_error = models.CharField(max_length=255, default=u'', blank=True)
 
     class Meta:
         app_label = 'core'
-        ordering = ('position', )
+        ordering = ('group', 'position', )
 
     @property
     def operation(self):

@@ -57,6 +57,11 @@ class MailFeed(ModelDiffMixin):
         (u'delete', _(u'delete e-mail')),
     ))
 
+    RULES_OPERATION_CHOICES = OrderedDict((
+        (u'all', _(u'All rules must match')),
+        (u'any', _(u'Any rule matches')),
+    ))
+
     name = models.CharField(max_length=255, verbose_name=_(u'Feed name'))
     user = models.ForeignKey(DjangoUser, verbose_name=_(u'Creator'))
     is_public = models.BooleanField(verbose_name=_(u'Public'),
@@ -83,6 +88,12 @@ class MailFeed(ModelDiffMixin):
                     u'can override this value at the '
                     u'rule level, only for the ones '
                     u'you want.'))
+
+    rules_operation =  models.CharField(
+        verbose_name=_(u'Rules operation'),
+        max_length=10, default=u'any',
+        choices=tuple(RULES_OPERATION_CHOICES.items()),
+        help_text=_(u'Condition between rules or rules groups.'))
 
     #
     # HEADS UP: 20141004, these fields are not used yet in the engine.
