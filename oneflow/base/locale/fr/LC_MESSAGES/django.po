@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-09 12:19+0200\n"
+"POT-Creation-Date: 2014-10-16 14:20+0200\n"
 "PO-Revision-Date: 2014-10-06 11:27+0009\n"
 "Last-Translator: Olivier Cortes <karmak23@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,30 +19,30 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Translated-Using: django-rosetta 0.7.4\n"
 
-#: admin.py:49
+#: admin.py:50
 #, fuzzy
 msgid "Worker control & maintenance mode"
 msgstr "En maintenance"
 
-#: admin.py:56
+#: admin.py:57
 #, fuzzy
 msgid "User announcements"
 msgstr "Annonces ?"
 
-#: admin.py:66
+#: admin.py:67
 #, fuzzy
 msgid "Staff announcements"
 msgstr "Annonces ?"
 
-#: admin.py:77
+#: admin.py:78
 msgid "Plain documents"
 msgstr ""
 
-#: admin.py:84
+#: admin.py:85
 msgid "Reading lists"
 msgstr "Listes de lecture"
 
-#: admin.py:94
+#: admin.py:95
 msgid "RSS feed refreshing"
 msgstr "Rafraîchissement des flux RSS"
 
@@ -75,20 +75,20 @@ msgstr ""
 msgid "Dangerous or debug"
 msgstr "Zone rouge"
 
-#: admin.py:185
+#: admin.py:186
 msgid "Google Reader (obsolete)"
 msgstr ""
 
-#: admin.py:314
+#: admin.py:315
 #, python-format
 msgid "Export selected %(verbose_name_plural)s to CSV"
 msgstr "Exporter les %(verbose_name_plural)s sélectionnés en CSV"
 
-#: admin.py:344
+#: admin.py:345
 msgid "Groups"
 msgstr "Groupes"
 
-#: admin.py:349
+#: admin.py:350
 msgid "Full name"
 msgstr "Nom complet"
 
@@ -108,91 +108,118 @@ msgstr "Confirmation"
 msgid "Enter the same password as above, for verification."
 msgstr ""
 
-#: models.py:55
+#: models.py:61
 msgid "Email name"
 msgstr "Nom du mail"
 
-#: models.py:57
+#: models.py:63
 msgid "Email subject"
 msgstr "Sujet du mail"
 
-#: models.py:58
+#: models.py:64
 msgid "Email body"
 msgstr "Corps du mail"
 
-#: models.py:61
+#: models.py:67
 #, python-brace-format
 msgid "{field_name}: {truncated_field_value}"
 msgstr "{field_name} : {truncated_field_value}"
 
-#: models.py:67
+#: models.py:73
 msgid "Email content"
 msgstr "Contenu d'email"
 
-#: models.py:68
+#: models.py:74
 msgid "Emails contents"
 msgstr "Contenus d'emails"
 
-#: models.py:110
+#: models.py:118
 msgid "User name"
 msgstr "Nom d'utilisateur"
 
-#: models.py:112
+#: models.py:120
 msgid "Required. letters, digits, and \"@+-_\"."
 msgstr "Obligatoire. Lettres, chiffres et « @*-_ »."
 
-#: models.py:114
+#: models.py:122
 msgid "email address"
 msgstr "adresse e-mail"
 
-#: models.py:116
+#: models.py:124
 msgid "Any valid email address."
 msgstr "N'importe quelle adresse valide"
 
-#: models.py:117
+#: models.py:125
 msgid "first name"
 msgstr "prénom"
 
-#: models.py:118
+#: models.py:126
 msgid "last name"
 msgstr "nom"
 
-#: models.py:119
+#: models.py:127
 msgid "staff status"
 msgstr "Staff"
 
-#: models.py:120
+#: models.py:128
 msgid "Designates whether the user can log into this admin site."
 msgstr ""
 "Indique si l'utilisateur peut se connecter sur l'interface d'administration."
 
-#: models.py:123
+#: models.py:131
 msgid "active"
 msgstr "actif"
 
-#: models.py:124
+#: models.py:132
 msgid ""
 "Designates whether this user should be treated as active. Unselect this "
 "instead of deleting accounts."
 msgstr ""
 "Indique si le compte est utilisable. Évite de devoir supprimer le compte."
 
-#: models.py:128
+#: models.py:136
 msgid "date joined"
 msgstr "Date d'inscription"
 
-#: models.py:136
+#: models.py:144
 msgid "user"
 msgstr "utilisateur"
 
-#: models.py:137
+#: models.py:145
 msgid "users"
 msgstr "utilisateurs"
 
-#: models.py:140
+#: models.py:148
 #, python-brace-format
 msgid "/users/{username}/"
 msgstr "/utilisateurs/{username}/"
+
+#: models.py:167 templates/admin/constance_change_list.html:36
+msgid "Name"
+msgstr "Nom"
+
+#: models.py:169 templates/admin/constance_change_list.html:38
+msgid "Value"
+msgstr "Valeur"
+
+#: models.py:171
+msgid "Notes"
+msgstr ""
+
+#: models.py:174
+#, fuzzy
+msgid "Is active"
+msgstr "actif"
+
+#: models.py:182
+#, fuzzy
+msgid "Configuration"
+msgstr "Problème de configuration"
+
+#: models.py:183
+#, fuzzy
+msgid "Configurations"
+msgstr "Problème de configuration"
 
 #: urls.py:34
 #, fuzzy
@@ -752,17 +779,9 @@ msgstr ""
 msgid "[%(site_name)s] Password reset"
 msgstr "[%(site_name)s] ré-initialisation de votre mot de passe"
 
-#: templates/admin/constance_change_list.html:36
-msgid "Name"
-msgstr "Nom"
-
 #: templates/admin/constance_change_list.html:37
 msgid "Default"
 msgstr "Défaut"
-
-#: templates/admin/constance_change_list.html:38
-msgid "Value"
-msgstr "Valeur"
 
 #: templates/admin/constance_change_list.html:39
 msgid "Is modified"
