@@ -673,6 +673,27 @@ def core_icon(klass_name):
     }[klass_name])
 
 
+@register.filter
+def operation_to_icon(ope):
+    """ Return an icon for the current operation. """
+
+    return {
+        u'any': 'ok',
+        u'all': 'plus',
+    }[ope]
+
+
+@register.filter
+def operation_to_switch_text(ope):
+    """ Return a text for the current operation. """
+
+    return {
+        u'any':
+            _(u'Any matching rule in the group will do it. Click to change.'),
+        u'all': _(u'All rules of the group must match. Click to change.'),
+    }[ope]
+
+
 @register.simple_tag
 def mail_is_usable_to_icon(mailthing):
     """ Render an icon with tooltip, given account state. """
