@@ -524,7 +524,11 @@ class MailAccount(ModelDiffMixin):
             return sorted(mailboxes)
 
     def imap_search_since(self, imap_conn=None, since=None):
-        """ Search for messages in the currently selected mailbox. """
+        """ Search for messages in the currently selected mailbox.
+
+        If :param:`since` is ``None``, all mails will be returned. Prepare
+        yourself for an expensive operation.
+        """
 
         if imap_conn is None:
             imap_conn = self._imap_connection_
@@ -534,18 +538,20 @@ class MailAccount(ModelDiffMixin):
 
         def search_since(since):
 
-            result, data = imap_conn.uid('search', None,
-                                         '(SENTSINCE {date})'.format(
-                                             date=since.strftime("%d-%b-%Y")))
+            if since is None:
+                # We have no date, search for all mail.
+                result, data = imap_conn.uid('search', None, "ALL")
+
+            else:
+                result, data = imap_conn.uid(
+                    'search', None, '(SENTSINCE {date})'.format(
+                        date=since.strftime("%d-%b-%Y")))
 
             if result == 'OK':
                 if data == ['']:
                     # No new mail since ``since``…
                     LOGGER.debug(u'IMAP %s: no new mail since %s', self, since)
                     return
-
-                    # Search for all mail instead?
-                    # result, data = imap_conn.uid('search', None, "ALL")
 
                 else:
                     return data[0]
