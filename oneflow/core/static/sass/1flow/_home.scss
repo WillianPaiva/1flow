@@ -401,6 +401,32 @@ header {
         margin-bottom: 0;
     }
 
+    .group-identifier {
+        // margins are dependent from bootstrap table CSS.
+        margin-top: -8px;
+        margin-bottom: -9px;
+        float: left;
+        height: 40px;
+        margin-right: 10px;
+        min-width: 5px !important;
+
+        button {
+            margin: 8px 8px 0;
+        }
+
+    }
+
+    .group-first {
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+    }
+
+    .group-last {
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+    }
+
     h1 a,
     h2 a {
         &:link,
