@@ -609,6 +609,10 @@ class MailAccount(ModelDiffMixin):
                                                      msg_uid,
                                                      '(RFC822)')
                         if result == 'OK':
+                            if len(data) == 1 and data[0] is None:
+                                # Cached message ID corresponds
+                                # to nothing on the server.
+                                continue
 
                             for raw_data in data:
 
