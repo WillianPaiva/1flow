@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-10-16 14:20+0200\n"
-"PO-Revision-Date: 2014-10-16 14:39+0009\n"
+"PO-Revision-Date: 2014-10-16 15:23+0009\n"
 "Last-Translator: Olivier Cortes <karmak23@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -2743,7 +2743,7 @@ msgstr "supprimer l'e-mail"
 
 #: models/reldb/mailfeed.py:61
 msgid "All rules must match"
-msgstr "Toutes les règles doivent correspondrent"
+msgstr "Toutes les règles doivent correspondre"
 
 #: models/reldb/mailfeed.py:62
 msgid "Any rule matches"
@@ -3146,7 +3146,7 @@ msgstr "Restreint"
 
 #: models/reldb/feed/combinedrule.py:67
 msgid "Title or tags"
-msgstr ""
+msgstr "Titre ou mots-clefs"
 
 #: models/reldb/feed/combinedrule.py:70
 msgid "content"
@@ -3674,10 +3674,10 @@ msgid_plural ""
 "\t\t \t\t"
 msgstr[0] ""
 "\n"
-"%(counter)s entrées"
+"%(counter)s entrée"
 msgstr[1] ""
 "\n"
-"%(counter)s entrée"
+"%(counter)s entrées"
 
 #: templates/history/list.html:26
 msgid "Clear"
@@ -3722,10 +3722,10 @@ msgid_plural ""
 "\t\t"
 msgstr[0] ""
 "\n"
-"L'import de %(counter)s éléments n'a pas encore démarré"
+"L'import d'%(counter)s élément n'a pas encore démarré"
 msgstr[1] ""
 "\n"
-"L'import d'%(counter)s élément n'a pas encore démarré"
+"L'import de %(counter)s éléments n'a pas encore démarré"
 
 #: templates/history/userimport.html:17
 #, python-format
@@ -3739,10 +3739,10 @@ msgid_plural ""
 "\t\t"
 msgstr[0] ""
 "\n"
-"L'import d'%(counter)s élément est en cours à l'arrière-plan. Jusqu'à présent :"
+"L'import de %(counter)s éléments est en cours à l'arrière-plan. Jusqu'à présent :"
 msgstr[1] ""
 "\n"
-"L'import de %(counter)s éléments est en cours à l'arrière-plan. Jusqu'à présent :"
+"L'import d'%(counter)s élément est en cours à l'arrière-plan. Jusqu'à présent :"
 
 #: templates/history/userimport.html:30
 #, python-format
@@ -3756,10 +3756,10 @@ msgid_plural ""
 "\t\t"
 msgstr[0] ""
 "\n"
-"%(counter)s éléments web importés"
+"%(counter)s élément web importé"
 msgstr[1] ""
 "\n"
-"%(counter)s élément web importé"
+"%(counter)s éléments web importés"
 
 #: templates/history/userimport.html:51
 #, python-format
@@ -3773,10 +3773,10 @@ msgid_plural ""
 "\t"
 msgstr[0] ""
 "\n"
-"Abonné à %(counter)s flux RSS/Atom"
+"Abonné(e) à %(counter)s flux RSS/Atom"
 msgstr[1] ""
 "\n"
-"Abonné à %(counter)s flux RSS/Atom"
+"Abonné(e) à %(counter)s flux RSS/Atom"
 
 #: templates/history/userimport.html:72
 #, python-format
@@ -3790,10 +3790,10 @@ msgid_plural ""
 "\t"
 msgstr[0] ""
 "\n"
-"%(counter)s éléments n'ont pas pu être importés"
+"%(counter)s élément n'a pas pu être importé"
 msgstr[1] ""
 "\n"
-"%(counter)s élément n'a pas pu être importé"
+"%(counter)s éléments n'ont pas pu être importés"
 
 #: templates/mailaccount/form.html:8 templates/mailfeed/form.html:9
 msgctxt "male"
