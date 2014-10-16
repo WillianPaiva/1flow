@@ -18,12 +18,15 @@ You should have received a copy of the GNU Affero General Public
 License along with 1flow.  If not, see http://www.gnu.org/licenses/
 """
 
+import random
 import logging
+
+from constance import config
 
 from django import forms
 from django.utils.translation import ugettext as _
 
-from ..models import MailAccount, MailFeedRule
+from ..models import MailAccount, MailFeed, MailFeedRule
 
 from oneflow.base.utils import get_common_values
 
@@ -115,3 +118,105 @@ class MailFeedRulePositionForm(forms.ModelForm):
     class Meta:
         model = MailFeedRule
         fields = ('position', )
+
+
+class MailFeedRuleGroupForm(forms.ModelForm):
+
+    """ A mail feed rule model form to update its group. """
+
+    merge_with = forms.ModelChoiceField(queryset=MailFeedRule.objects.none(),
+                                        required=False)
+    split = forms.BooleanField(required=False)
+
+    switch = forms.BooleanField(required=False)
+
+    class Meta:
+        model = MailFeedRule
+        fields = ()
+
+    def __init__(self, *args, **kwargs):
+        """ Refine the ``merge_with`` QS to the current mailfeed's rules. """
+
+        super(MailFeedRuleGroupForm, self).__init__(*args, **kwargs)
+
+        self.fields['merge_with'].queryset = MailFeedRule.objects.filter(
+            mailfeed=self.instance.mailfeed)
+
+    def save(self):
+        """ Do the merge/split operation silently and automatically. """
+
+        def get_random_number(exclude_from):
+
+            while 1:
+                number = random.randint(1, max_val)
+
+                if number not in exclude_from:
+                    return number
+
+        super(MailFeedRuleGroupForm, self).save()
+
+        instance = self.instance
+        merge_with = self.cleaned_data['merge_with']
+        split = self.cleaned_data['split']
+        switch = self.cleaned_data['switch']
+
+        if split is True:
+            group = instance.group
+
+            instance.group = None
+            instance.group_operation = None
+            instance.save()
+
+            try:
+                remaining = self.fields['merge_with'].queryset.get(group=group)
+
+            except MailFeedRule.MultipleObjectsReturned:
+                # Still more than one remaining. Leave
+                # them untouched, they are still a group.
+                pass
+
+            else:
+                remaining.group = None
+                remaining.group_operation = None
+                remaining.save()
+
+        elif switch is True:
+            operation = instance.group_operation
+
+            operations = MailFeed.RULES_OPERATION_CHOICES.keys()
+
+            next_operation = operations[
+                (operations.index(operation) + 1) % len(operations)
+            ]
+
+            self.fields['merge_with'].queryset.filter(
+                group=instance.group).update(group_operation=next_operation)
+
+        else:
+            if merge_with.group is None:
+                # create a random group number
+
+                max_val = abs(config.MAIL_RULES_GROUPS_MAX) * 3
+
+                exclude_from = [self.fields['merge_with'].queryset.distinct(
+                                'group').values_list('group', flat=True)]
+
+                try:
+                    exclude_from.remove(None)
+
+                except:
+                    pass
+
+                merge_with.group = instance.group = \
+                    get_random_number(exclude_from)
+                merge_with.group_operation = instance.group_operation = \
+                    MailFeed.RULES_OPERATION_DEFAULT
+
+            else:
+                # we are merging with an existing group
+
+                instance.group = merge_with.group
+                instance.group_operation = merge_with.group_operation
+
+            merge_with.save()
+            instance.save()

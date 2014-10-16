@@ -606,10 +606,13 @@ def export_content(request, **kwargs):
 from history import HistoryEntryListView, HistoryEntryDeleteView  # NOQA
 
 from mailaccount import MailAccountListCreateView, MailAccountDeleteView  # NOQA
+
 from mailfeed import MailFeedListCreateView, MailFeedDeleteView  # NOQA
+
 from mailfeedrule import (  # NOQA
     MailFeedRuleListCreateView,
     MailFeedRulePositionUpdateView,
+    MailFeedRuleGroupUpdateView,
     MailFeedRuleDeleteView,
 )
 
