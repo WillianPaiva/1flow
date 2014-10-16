@@ -679,7 +679,7 @@ class MailAccount(ModelDiffMixin):
                         decoded_header.append(string.decode(charset))
 
                     else:
-                        decoded_header.append(string)
+                        decoded_header.append(unicode(string))
 
             else:
                 string, charset = header_values[0]
@@ -688,7 +688,7 @@ class MailAccount(ModelDiffMixin):
                     decoded_header = string.decode(charset)
 
                 else:
-                    decoded_header = string
+                    decoded_header = unicode(string)
 
             email_message.replace_header(header, decoded_header)
 

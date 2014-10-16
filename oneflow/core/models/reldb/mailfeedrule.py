@@ -307,7 +307,7 @@ class MailFeedRule(ModelDiffMixin):
             value = self.match_value.lower()
 
         for header_name in HEADERS[self.header_field]:
-            header = message.get(header_name, '')
+            header = message.get(header_name, u'')
 
             if isinstance(header, list) or isinstance(header, tuple):
                 if len(header) > 2:
