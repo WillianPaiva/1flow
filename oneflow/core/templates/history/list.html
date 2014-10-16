@@ -45,12 +45,12 @@
 
 		<div class="spacer50"></div>
 
-		<table class="table table-hover">
+		<table class="table" id="historyentry-table">
 		<thead>
 		  <tr>
-			<th>{% trans "Event" %}</th>
+			<th class="col-sm-9">{% trans "Event" %}</th>
 			{% sort_th _("Date") 'date_created' %}
-			<th class="right">{% trans "Actions" %}</th>
+			<th class="right col-sm-1">{% trans "Actions" %}</th>
 		  </tr>
 		</thead>
 		<tbody>
