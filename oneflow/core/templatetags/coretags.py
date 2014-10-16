@@ -103,6 +103,47 @@ reading_lists = {
 }
 
 
+# colors =["%06x" % random.randint(0,0xFFFFFF) for i in range(255)]
+random_colors = [
+    'e5479e', 'e37331', 'a0072f', '2d58d5', 'c4dce6', 'b2d547', '235746',
+    '1b30d4', '406596', '2955b3', '70e1f8', 'ad3b12', 'c4bd01', '8b32fe',
+    '3ead7e', '689900', 'abdb8f', 'de9e17', 'fe99f5', '9a451a', '8091be',
+    '50fbab', 'c18b8e', 'df3d42', '81a09f', 'fdf27c', '3a939d', '6944a6',
+    '90206c', 'd98fa5', '5f2265', '6f218a', '5eb070', '296616', 'c46e9d',
+    'eec4aa', 'bca7b3', 'a59ea7', '8617a1', '2a76d8', '79997d', 'bd4797',
+    '7b58e9', '082214', '198688', '614708', 'f50529', '05a652', 'cb346b',
+    '1d1162', '083658', 'a787e7', 'dee937', '3a2228', '4ffde8', 'b4adcc',
+    '2f7052', '1d00b7', '6faee5', '40e2ec', 'bfa558', '5203e4', '457e56',
+    '94c67c', 'c21ab2', 'c07e03', 'c111f6', '3771f7', '094cf4', '4c9ea2',
+    '4a1f83', 'feb28e', 'f60971', '749a9e', '78b058', '258a65', '5b9cb0',
+    '4d1bc8', '23d0bc', '70a8d2', '5f4648', '603070', '952c58', '2b9bb3',
+    'f4ba8f', 'b0e0d6', '6ea6c5', '8b1706', '0cb904', '767021', 'ea21b4',
+    'b28f0f', '67c76b', 'ad3599', 'cd65d2', '5c5f84', 'e7d9a0', '40ef4f',
+    'b41768', 'd64200', 'd37288', '2aa6be', '845e91', '1b793e', '7544f6',
+    '558e91', '98ffd0', '4ed9f0', '52f5e3', '23748c', '192912', '2c2547',
+    '643ce0', '3d9924', '603f5d', 'eed6c8', 'c58e19', 'bd3d43', 'c1bf9b',
+    '839d96', '4dab28', 'd07948', 'da5b9c', '640e71', '247538', '0e9ebf',
+    '63e204', '3ee4d1', 'aab2ce', '9156ff', '730779', '54a6f4', 'b719c3',
+    '2c626f', 'f2593e', 'd4dcaf', '41c177', '0c2e9b', '788b61', '7d3fd9',
+    '1d06ec', '7c3a0a', 'b01827', '01b18f', 'cc9f7f', 'd302ec', '40cfbe',
+    'f9e817', '5625ac', '088157', 'eb7c64', '94db02', 'fb5aa8', '406694',
+    '6166d8', 'ba2c61', 'f99ac7', 'd8eafa', '128e4e', '604062', '4b343b',
+    '4baebe', 'fb3c64', '032f90', '576b9a', 'b8afb1', '5f06e6', 'c8b897',
+    '9689e3', '19a641', 'dc7785', 'a9dc1f', 'a7bc2e', '764f45', 'bcac0c',
+    'e0c848', '3e3aa8', 'b9f8d5', 'a37726', 'c1ba2a', '4bb9cd', '45f18f',
+    'ec7bc3', 'd55c9e', 'bc5ed6', 'bdb494', '2436e9', '0141cb', '8dbda0',
+    '016354', '6c6386', '0bff73', '59e646', '831f4c', 'dcc0b3', '834508',
+    'a33a55', '63b06b', '9357db', 'bb31b7', '541161', 'f84041', '722a7f',
+    '8512ce', 'b48bc0', 'ad82d6', 'd9b5df', 'c06730', '698767', 'cd9f78',
+    'fa8f13', '3c69c5', '9883f9', 'de283c', '41bdcf', '48005d', '96c274',
+    'df3b7d', '87bd69', 'ae00bd', 'eee68c', '5304a7', '69071d', '7a61a6',
+    '33573a', '89a44e', '689625', 'ec8235', '084f3e', '4fd8f6', '82caa1',
+    '8a9db7', '0b88ed', '7a7ac3', 'a4e454', 'cd9373', '340111', '4a6f79',
+    'afa195', 'd60429', '3660fd', 'c37e93', '993047', '06bb9a', 'e1a26b',
+    'e629dc', 'be882d', 'b63bd3', '563aec', '716490', 'e27bc0', 'a17405'
+    '80d8d8', '928525', 'f07344',
+]
+
 @register.filter
 def naturaldelta(the_datetime):
 
@@ -751,3 +792,9 @@ def userimport_articles_details(user, articles_urls):
         'reads': reads,
         'articles': articles,
     }
+
+@register.filter
+def randcolor(number):
+    """ Return a random color from a number. """
+
+    return random_colors[number % len(random_colors)]
