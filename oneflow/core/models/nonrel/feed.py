@@ -62,10 +62,10 @@ from .common import (DocumentHelperMixin,
                      CONTENT_TYPE_BOOKMARK,
                      # ORIGIN_TYPE_NONE,
                      ORIGIN_TYPE_FEEDPARSER,
+                     ORIGIN_TYPE_EMAIL_FEED,
                      ORIGIN_TYPE_WEBIMPORT,
                      ORIGIN_TYPE_GOOGLE_READER,
                      ORIGIN_TYPE_TWITTER,
-                     ORIGIN_TYPE_EMAIL_FEED,
                      USER_FEEDS_SITE_URL,
                      BAD_SITE_URL_BASE,
                      SPECIAL_FEEDS_DATA)
@@ -236,10 +236,10 @@ class Feed(Document, DocumentHelperMixin):
                                             u'must know it and manually enter '
                                             u'the feed address.'))
     thumbnail_url  = URLField(verbose_name=_(u'Thumbnail URL'),
+                              required=False,
                               help_text=_(u'Full URL of the thumbnail '
                                           u'displayed in the feed selector. '
-                                          u'Can be hosted outside of 1flow.'),
-                              default=u'')
+                                          u'Can be hosted outside of 1flow.'))
     description_fr = StringField(verbose_name=_(u'Description (FR)'),
                                  help_text=_(u'Public description of the feed '
                                              u'in French language. '
@@ -914,10 +914,25 @@ class Feed(Document, DocumentHelperMixin):
         # Don't forget the parenthesis else we return ``False`` everytime.
         return created or (None if mutualized else False)
 
-    def build_refresh_kwargs(self):
+    def create_article_from_mail(self, article):
+        """ Take a feedparser item and a list of Feed subscribers and
+            feed tags, and create the corresponding Article and Read(s). """
+
+        return
+
+    def build_refresh_kwargs(self, for_type=None):
         """ Return a kwargs suitable for internal feed refreshing methods. """
 
+        if for_type is None:
+            for_type = ORIGIN_TYPE_FEEDPARSER
+
         kwargs = {}
+
+        if for_type == ORIGIN_TYPE_EMAIL_FEED:
+            kwargs['since'] = self.last_fetch
+            return kwargs
+
+        # ——————————————————————————————————————————————— RSS specifics
 
         # Implement last-modified & etag headers to save BW.
         # Cf. http://pythonhosted.org/feedparser/http-etag.html
@@ -1108,23 +1123,10 @@ class Feed(Document, DocumentHelperMixin):
 
         return interval
 
-    def refresh(self, force=False):
-        """ Find new articles in an RSS feed.
+    def refresh_rss_feed(self, force=False):
+        """ Refresh an RSS feed. """
 
-            .. note:: we don't release the lock, this is intentional. The
-                next refresh should not occur within the feed official
-                refresh interval, this would waste resources.
-        """
-
-        # In tasks, doing this is often useful, if
-        # the task waited a long time before running.
-        self.safe_reload()
-
-        if self.refresh_must_abort(force=force):
-            self.refresh_lock.release()
-            return
-
-        LOGGER.info(u'Refreshing feed %s…', self)
+        LOGGER.info(u'Refreshing RSS feed %s…', self)
 
         feedparser_kwargs, http_logger = self.build_refresh_kwargs()
         parsed_feed = feedparser.parse(self.url, **feedparser_kwargs)
@@ -1157,11 +1159,12 @@ class Feed(Document, DocumentHelperMixin):
             self.close(reason=unicode(e))
             return
 
+        new_articles  = 0
+        duplicates    = 0
+        mutualized    = 0
+
         if feed_status == 304:
             LOGGER.info(u'No new content in feed %s.', self)
-
-            with statsd.pipeline() as spipe:
-                spipe.incr('feeds.refresh.fetch.global.unchanged')
 
         else:
             tags = Tag.get_tags_set(getattr(parsed_feed, 'tags', []),
@@ -1175,13 +1178,6 @@ class Feed(Document, DocumentHelperMixin):
                 LOGGER.info(u'Updating tags of feed %s from %s to %s.',
                             self.tags, tags)
                 self.tags = list(tags)
-
-            new_articles  = 0
-            duplicates    = 0
-            mutualized    = 0
-
-            with statsd.pipeline() as spipe:
-                spipe.incr('feeds.refresh.fetch.global.updated')
 
             for article in parsed_feed.entries:
                 created = self.create_article_from_feedparser(article, tags)
@@ -1202,35 +1198,117 @@ class Feed(Document, DocumentHelperMixin):
             self.last_modified = getattr(parsed_feed, 'modified', None)
             self.last_etag     = getattr(parsed_feed, 'etag', None)
 
-            if not force:
-                # forcing the refresh is most often triggered by admins
-                # and developers. It should not trigger the adaptative
-                # throttling computations, because it generates a lot
-                # of false-positive duplicates, and will.
+        return new_articles, duplicates, mutualized
 
-                new_interval = Feed.throttle_fetch_interval(self.fetch_interval,
-                                                            new_articles,
-                                                            mutualized,
-                                                            duplicates,
-                                                            self.last_etag,
-                                                            self.last_modified)
+    def refresh_mail_feed(self, force=False):
+        """ Refresh a mail feed. """
 
-                if new_interval != self.fetch_interval:
-                    LOGGER.info(u'Fetch interval changed from %s to %s '
-                                u'for feed %s (%s new article(s), %s '
-                                u'duplicate(s)).', self.fetch_interval,
-                                new_interval, self, new_articles, duplicates)
+        LOGGER.info(u'Refreshing mail feed %s…', self)
 
-                    self.fetch_interval = new_interval
+        feed_kwargs = self.build_refresh_kwargs(for_type=ORIGIN_TYPE_EMAIL_FEED)
+        try:
+            mailfeed = MailFeed.get_from_stream_url(self.url)
+
+        except:
+            LOGGER.exception(u'Could not get MailFeed object for %s', self)
+            self.close(u'Non-existent MailFeed for {0}.'.format(self.url))
+            return
+
+        new_articles = 0
+        duplicates   = 0
+        mutualized   = 0
+
+        for article in mailfeed.get_new_entries(**feed_kwargs):
+            created = self.create_article_from_mail(article)
+
+            if created:
+                new_articles += 1
+
+            elif created is False:
+                duplicates += 1
+
+            else:
+                mutualized += 1
+
+        if new_articles == duplicates == mutualized  == 0:
+            LOGGER.info(u'No new content in mail feed %s.', self)
+
+        return new_articles, duplicates, mutualized
+
+    def refresh(self, force=False):
+        """ Look for new content in a 1flow feed. """
+
+        # In tasks, doing this is often useful, if
+        # the task waited a long time before running.
+        self.safe_reload()
+
+        # HEADS UP: refresh_must_abort() has already acquire()'d our lock.
+        if self.refresh_must_abort(force=force):
+            self.refresh_lock.release()
+            return
+
+        try:
+            if self.is_mailfeed:
+                data = self.refresh_mail_feed(force=force)
+
+            else:
+                data = self.refresh_rss_feed(force=force)
+
+        except:
+            LOGGER.exception(u'Could not refresh feed %s', self)
+            self.refresh_lock.release()
+            return
+
+        if data is None:
+            # An error occured and the feed has already been closed.
+            self.refresh_lock.release()
+            return
+
+        new_articles, duplicates, mutualized = data
+
+        if new_articles == duplicates == mutualized == 0:
 
             with statsd.pipeline() as spipe:
-                spipe.incr('feeds.refresh.global.fetched', new_articles)
-                spipe.incr('feeds.refresh.global.duplicates', duplicates)
-                spipe.incr('feeds.refresh.global.mutualized', mutualized)
+                spipe.incr('feeds.refresh.fetch.global.unchanged')
+
+        else:
+            with statsd.pipeline() as spipe:
+                spipe.incr('feeds.refresh.fetch.global.updated')
+
+        if not force:
+            # forcing the refresh is most often triggered by admins
+            # and developers. It should not trigger the adaptative
+            # throttling computations, because it generates a lot
+            # of false-positive duplicates, and will.
+
+            new_interval = Feed.throttle_fetch_interval(self.fetch_interval,
+                                                        new_articles,
+                                                        mutualized,
+                                                        duplicates,
+                                                        self.last_etag,
+                                                        self.last_modified)
+
+            if new_interval != self.fetch_interval:
+                LOGGER.info(u'Fetch interval changed from %s to %s '
+                            u'for feed %s (%s new article(s), %s '
+                            u'duplicate(s)).', self.fetch_interval,
+                            new_interval, self, new_articles, duplicates)
+
+                self.fetch_interval = new_interval
+
+        with statsd.pipeline() as spipe:
+            spipe.incr('feeds.refresh.global.fetched', new_articles)
+            spipe.incr('feeds.refresh.global.duplicates', duplicates)
+            spipe.incr('feeds.refresh.global.mutualized', mutualized)
 
         # Everything went fine, be sure to reset the "error counter".
         self.errors[:]  = []
-        self.last_fetch = now()
+
+        if not self.is_mailfeed:
+            # XXX: mail feeds and mail articles are not ready yet.
+            # We must get the content every time.
+            self.last_fetch = now()
+
         self.save()
 
         with statsd.pipeline() as spipe:
