@@ -408,7 +408,7 @@ header {
         float: left;
         height: 40px;
         margin-right: 10px;
-        min-width: 5px !important;
+        min-width: 8px !important;
 
         button {
             margin: 8px 8px 0;
@@ -420,11 +420,15 @@ header {
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
         border-bottom-right-radius: 5px;
+        margin-top: -6px;
+        height: 38px;
     }
 
     .group-last {
         border-bottom-left-radius: 5px;
         border-bottom-right-radius: 5px;
+        margin-bottom: -7px;
+        height: 38px;
     }
 
     h1 a,
