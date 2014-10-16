@@ -81,7 +81,7 @@ class MailFeedRule(ModelDiffMixin):
     group = models.IntegerField(verbose_name=_(u'Rules group'),
                                 null=True, blank=True)
 
-    group_operation =  models.CharField(
+    group_operation = models.CharField(
         verbose_name=_(u'Rules group operation'),
         max_length=10, default=u'any', blank=True, null=True,
         choices=tuple(MailFeed.RULES_OPERATION_CHOICES.items()),

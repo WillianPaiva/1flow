@@ -349,6 +349,10 @@ CONSTANCE_CONFIG = {
     'MAIL_IMAP_CACHE_IDS_EXPIRY': (3600*4, ugettext(u'Make cached e-mails '
                                    u'IDs after this amount of seconds.')),
 
+    'MAIL_RULES_GROUPS_MAX': (25, ugettext(u'When fetching e-mails from IMAP '
+                            u'accounts, how many should be downloaded at '
+                            u'each call.')),
+
 
     # ————————————————————————————————————————————————————————————— Check tasks
 
