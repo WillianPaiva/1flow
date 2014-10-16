@@ -344,9 +344,10 @@ CONSTANCE_CONFIG = {
 
 
     'MAIL_IMAP_CACHE_EXPIRY': (3600*24, ugettext(u'Make cached e-mails '
-                               u'expire after this amount of seconds to '
-                               u'avoid burning local instance memory and '
-                               u'disk.')),
+                               u'expire after this amount of seconds.')),
+
+    'MAIL_IMAP_CACHE_IDS_EXPIRY': (3600*4, ugettext(u'Make cached e-mails '
+                                   u'IDs after this amount of seconds.')),
 
 
     # ————————————————————————————————————————————————————————————— Check tasks

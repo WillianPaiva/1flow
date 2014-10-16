@@ -119,6 +119,7 @@ ConstanceAdmin.fieldsets = (
                 'MAIL_IMAP_FETCH_MAX',
                 'MAIL_IMAP_CACHE_MESSAGES',
                 'MAIL_IMAP_CACHE_EXPIRY',
+                'MAIL_IMAP_CACHE_IDS_EXPIRY',
             ),
         }),
 
