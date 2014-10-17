@@ -51,13 +51,17 @@
 		  {% include "mailfeed/form.html" %}
 
 		  <tr>
-			{% sort_th _("Feed name") 'name' %}
-			<th class="centered">{% trans "Status" %}</th>
-			{% sort_th _("Public") 'is_public' %}
-			<th>{% trans "Default action" %}</th>
-			<th>{% trans "Default finish" %}</th>
-			<th>{% trans "Rules" %}</th>
-			<th class="right">{% trans "Actions" %}</th>
+			{% sort_th _("Feed name") 'name' '' 'col-sm-2' %}
+			<th class="col-sm-1 centered">{% trans "Status" %}</th>
+			{% sort_th _("Public") 'is_public' '' 'col-sm-1' %}
+
+			<th class="col-sm-2">{% trans "Mail account" %}</th>
+			{# <th>{% trans "Mailbox" %}</th> #}
+
+			<th class="col-sm-2">{% trans "Default action" %}</th>
+			<th class="col-sm-2">{% trans "Default finish" %}</th>
+			<th class="col-sm-1">{% trans "Rules" %}</th>
+			<th class="col-sm-1 right">{% trans "Actions" %}</th>
 		  </tr>
 		</thead>
 		<tbody>
@@ -65,8 +69,12 @@
 			<tr>
 				<td>{% inplace_edit 'mailfeed.name' %}</td>
 
-				<td class="centered">{#{% mail_is_usable_to_icon mailfeed %}#}TODO</td>
+				<td class="centered">{#{% mail_is_usable_to_icon mailfeed %}#}<i class="icon icon-time"></i></td>
 				<td>{% inplace_edit 'mailfeed.is_public' autoSave="1" %}</td>
+
+				<td>{% inplace_edit 'mailfeed.account' edit_empty_value=_('All') %}</td>
+
+				{# <td>{% inplace_edit 'mailfeed.mailbox' %}</td> #}
 
 				<td>{% inplace_edit 'mailfeed.match_action' %}</td>
 				<td>{% inplace_edit 'mailfeed.finish_action' %}</td>

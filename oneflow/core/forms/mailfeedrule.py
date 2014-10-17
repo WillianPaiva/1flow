@@ -106,9 +106,8 @@ class MailFeedRuleForm(forms.ModelForm):
 
     class Meta:
         model = MailFeedRule
-        fields = ('account', 'header_field', 'other_header',
-                  'match_type', 'match_value', 'match_action',
-                  'finish_action', )
+        fields = ('header_field', 'other_header',
+                  'match_type', 'match_value', )
 
 
 class MailFeedRulePositionForm(forms.ModelForm):

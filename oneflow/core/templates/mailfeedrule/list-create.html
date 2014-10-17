@@ -70,28 +70,23 @@
 		  {% include "mailfeedrule/form.html" %}
 
 		  <tr>
-			<th>{% trans "Mail account" %}</th>
-			{# <th>{% trans "Mailbox" %}</th> #}
-			<th>{% trans "Header" %}</th>
-			<th>{% trans "Custom header" %}</th>
-			<th>{% trans "Match type" %}</th>
-			<th>{% trans "Value" %}</th>
+			<th class="col-sm-2">{% trans "Header" %}</th>
+			<th class="col-sm-2">{% trans "Custom header" %}</th>
+			<th class="col-sm-2">{% trans "Match type" %}</th>
+			<th class="col-sm-2">{% trans "Value" %}</th>
+
+			{% comment %}
 			<th>{% trans "Result" %}</th>
 			<th>{% trans "Finish" %}</th>
+			{% endcomment %}
 
-			<th class="centered">{% trans "Status" %}</th>
-			<th class="right">{% trans "Actions" %}</th>
+			<th class="col-sm-2 centered">{% trans "Status" %}</th>
+			<th class="col-sm-2 right">{% trans "Actions" %}</th>
 		  </tr>
 		</thead>
 		<tbody>
 		{% for previous, mailfeedrule, next in mailfeedrule_list|prevcurnext %}
 			<tr>
-				<td>
-				{% inplace_edit 'mailfeedrule.account' edit_empty_value=_('All') %}
-				</td>
-
-				{# <td>{% inplace_edit 'mailfeedrule.mailbox' %}</td> #}
-
 				<td>{% inplace_edit 'mailfeedrule.header_field' %}</td>
 				<td>
 				{% if mailfeedrule.header_field != 'other' %}
@@ -106,8 +101,11 @@
 				</td>
 				<td>{% inplace_edit 'mailfeedrule.match_type' %}</td>
 				<td>{% inplace_edit 'mailfeedrule.match_value' %}</td>
+
+				{% comment %}
 				<td>{% inplace_edit 'mailfeedrule.match_action' edit_empty_value=_('global feed action') %}</td>
 				<td>{% inplace_edit 'mailfeedrule.finish_action' edit_empty_value=_('global feed action') %}</td>
+				{% endcomment %}
 
 				<td class="centered">{% mail_is_usable_to_icon mailfeedrule %}</td>
 
