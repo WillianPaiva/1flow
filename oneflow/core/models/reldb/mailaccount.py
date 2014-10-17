@@ -310,6 +310,9 @@ class MailAccount(ModelDiffMixin):
         .. note:: this method is registered as a task in Celery.
         """
 
+        if not self.recently_usable:
+            return
+
         self._mailboxes_ = mailaccount_mailboxes_default(self)
 
         LOGGER.debug(u'IMAP %s: mailboxes list updated → %s',
