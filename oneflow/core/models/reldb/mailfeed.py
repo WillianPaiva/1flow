@@ -58,12 +58,15 @@ class MailFeed(ModelDiffMixin):
         (u'delete', _(u'delete e-mail')),
     ))
 
+    RULES_OPERATION_ANY = u'any'
+    RULES_OPERATION_ALL = u'all'
+
     RULES_OPERATION_CHOICES = OrderedDict((
-        (u'all', _(u'All rules must match')),
-        (u'any', _(u'Any rule matches')),
+        (RULES_OPERATION_ALL, _(u'All rules must match')),
+        (RULES_OPERATION_ANY, _(u'Any rule matches')),
     ))
 
-    RULES_OPERATION_DEFAULT = u'any'
+    RULES_OPERATION_DEFAULT = RULES_OPERATION_ANY
 
     name = models.CharField(max_length=255, verbose_name=_(u'Feed name'))
     user = models.ForeignKey(DjangoUser, verbose_name=_(u'Creator'))

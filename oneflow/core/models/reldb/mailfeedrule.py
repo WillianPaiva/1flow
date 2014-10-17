@@ -87,7 +87,8 @@ class MailFeedRule(ModelDiffMixin):
 
     group_operation = models.CharField(
         verbose_name=_(u'Rules group operation'),
-        max_length=10, default=u'any', blank=True, null=True,
+        default=MailFeed.RULES_OPERATION_ANY,
+        max_length=10, blank=True, null=True,
         choices=tuple(MailFeed.RULES_OPERATION_CHOICES.items()),
         help_text=_(u'Condition between rules of this group.'))
 
