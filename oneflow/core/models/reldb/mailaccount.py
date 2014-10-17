@@ -591,6 +591,27 @@ class MailAccount(ModelDiffMixin):
         Eg. decode headers and prettify everything that can be.
         """
 
+        guess_encodings = ('utf-8', ) + tuple(
+            x.strip() for x in config.MAIL_IMAP_DECODE_FALLBACK.split(u',')
+        )
+
+        def decode_with_fallback(something):
+
+            try:
+                return unicode(something)
+
+            except UnicodeDecodeError:
+
+                for encoding in guess_encodings:
+
+                    try:
+                        return unicode(something, encoding)
+
+                    except UnicodeDecodeError:
+                        pass
+
+                return unicode(something, errors='replace')
+
         email_message = message_from_string(raw_message)
 
         for header in self.common_headers:
@@ -603,26 +624,33 @@ class MailAccount(ModelDiffMixin):
             if value is None or not value:
                 continue
 
-            header_values = decode_header(value)
+            decoded_header = None
 
-            if len(header_values) > 1:
-                decoded_header = []
-
-                for string, charset in header_values:
-                    if charset:
-                        decoded_header.append(string.decode(charset))
-
-                    else:
-                        decoded_header.append(unicode(string))
+            if isinstance(value, unicode):
+                # Skip to the end.
+                decoded_header = value
 
             else:
-                string, charset = header_values[0]
+                header_values = decode_header(value)
 
-                if charset:
-                    decoded_header = string.decode(charset)
+                if len(header_values) > 1:
+                    decoded_header = []
+
+                    for string, charset in header_values:
+                        if charset:
+                            decoded_header.append(string.decode(charset))
+
+                        else:
+                            decoded_header.append(decode_with_fallback(string))
 
                 else:
-                    decoded_header = unicode(string)
+                    string, charset = header_values[0]
+
+                    if charset:
+                        decoded_header = string.decode(charset)
+
+                    else:
+                        decoded_header = decode_with_fallback(string)
 
             email_message.replace_header(header, decoded_header)
 
