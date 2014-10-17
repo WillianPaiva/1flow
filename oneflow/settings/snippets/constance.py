@@ -349,6 +349,12 @@ CONSTANCE_CONFIG = {
     'MAIL_IMAP_CACHE_IDS_EXPIRY': (3600*4, ugettext(u'Make cached e-mails '
                                    u'IDs after this amount of seconds.')),
 
+    'MAIL_IMAP_DECODE_FALLBACK': (u'iso8859-15, iso8859-1', ugettext(u'a list '
+                                  u'of comma separated encodings to try when '
+                                  u'email headers cannot be decoded. “utf-8” '
+                                  u'is always added to the list, and tried '
+                                  u'first.')),
+
     'MAIL_RULES_GROUPS_MAX': (25, ugettext(u'When fetching e-mails from IMAP '
                             u'accounts, how many should be downloaded at '
                             u'each call.')),

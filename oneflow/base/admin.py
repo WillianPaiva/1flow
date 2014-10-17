@@ -118,6 +118,7 @@ ConstanceAdmin.fieldsets = (
                 'MAIL_ACCOUNT_REFRESH_PERIOD',
                 'MAIL_RULES_GROUPS_MAX',
                 'MAIL_IMAP_FETCH_MAX',
+                'MAIL_IMAP_DECODE_FALLBACK',
                 'MAIL_IMAP_CACHE_MESSAGES',
                 'MAIL_IMAP_CACHE_EXPIRY',
                 'MAIL_IMAP_CACHE_IDS_EXPIRY',
