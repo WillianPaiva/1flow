@@ -186,10 +186,11 @@ def refresh_all_mailaccounts(force=False):
 
                 except:
                     pass
+
         finally:
             my_lock.release()
 
-        LOGGER.info(u'Launched %s checks out of %s feed(s) checked.',
+        LOGGER.info(u'Launched %s checks on unusable accounts out of %s total.',
                     accounts.count(), MailAccount.objects.all().count())
 
 
