@@ -61,6 +61,11 @@ class MailFeedRule(ModelDiffMixin):
         (u'subject', _(u'Subject')),
         (u'from', _(u'Sender')),
         (u'to', _(u'Recipient (To:, Cc: or Bcc:)')),
+        (u'common', _(u'Subject or addresses')),
+
+        # Not ready for that.
+        # (u'body', _(u'Message body')),
+
         (u'list', _(u'Mailing-list')),
         (u'other', _(u'Other header (please specify)')),
     ))
@@ -250,7 +255,7 @@ class MailFeedRule(ModelDiffMixin):
     # ——————————————————————————————————————————————————————————————— Internals
 
     def check_is_valid(self, commit=True):
-        """ TODO: implement this. """
+        """ Check if the rule is appliable or not, and mark it as such. """
 
         is_valid = True
 
@@ -297,6 +302,10 @@ class MailFeedRule(ModelDiffMixin):
 
         HEADERS = common.BASE_HEADERS.copy()
         HEADERS[u'other'] = self.other_header
+
+        #
+        # TODO: implement body searching.
+        #
 
         if self.match_case:
             value = self.match_value

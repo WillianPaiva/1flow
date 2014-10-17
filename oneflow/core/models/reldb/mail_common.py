@@ -19,6 +19,10 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
+from collections import OrderedDict
+
+from django.utils.translation import ugettext_lazy as _
+
 # No fear. See http://bit.ly/smtp-headers
 OTHER_VALID_HEADERS = (
     'DL-Expansion-History',
@@ -187,6 +191,80 @@ BASE_HEADERS = {
     u'list': ('Mailing-list', 'List-ID',
               'X-Mailing-List', 'List-URL', ),
 }
+
+BASE_HEADERS[u'common'] = (
+    BASE_HEADERS[u'subject']
+    + BASE_HEADERS[u'to']
+    + BASE_HEADERS[u'from']
+)
+
+MAILBOXES_STRING_SEPARATOR = u'~|~'
+
+MAILBOXES_BLACKLIST = (
+    'Drafts',
+    'Trash',
+    'Sent Messages',
+    'Sent',
+    'Spam',
+    'Junk',
+    'Deleted Messages',
+    'Archive',
+    'Archives',
+
+    'INBOX.Drafts',
+    'INBOX.Trash',
+    'INBOX.Sent Messages',
+    'INBOX.Sent',
+    'INBOX.Spam',
+    'INBOX.Junk',
+    'INBOX.Deleted Messages',
+    'INBOX.Archive',
+    'INBOX.Archives',
+
+    'INBOX.INBOX.Junk',
+    'INBOX.INBOX.Drafts',
+    'INBOX.INBOX.Sent',
+    'INBOX.INBOX.Trash',
+    'INBOX.INBOX.Sent Messages',
+    'INBOX.INBOX.Spam',
+    'INBOX.INBOX.Deleted Messages',
+    'INBOX.INBOX.Archive',
+    'INBOX.INBOX.Archives',
+
+    _(u'Drafts'),
+    _(u'Trash'),
+    _(u'Sent Messages'),
+    _(u'Sent'),
+    _(u'Spam'),
+    _(u'Junk'),
+    _(u'Deleted Messages'),
+    _(u'Archive'),
+    _(u'Archives'),
+
+    _(u'INBOX.Drafts'),
+    _(u'INBOX.Trash'),
+    _(u'INBOX.Sent Messages'),
+    _(u'INBOX.Sent'),
+    _(u'INBOX.Spam'),
+    _(u'INBOX.Junk'),
+    _(u'INBOX.Deleted Messages'),
+    _(u'INBOX.Archive'),
+    _(u'INBOX.Archives'),
+
+    _(u'INBOX.INBOX.Junk'),
+    _(u'INBOX.INBOX.Drafts'),
+    _(u'INBOX.INBOX.Sent'),
+    _(u'INBOX.INBOX.Trash'),
+    _(u'INBOX.INBOX.Sent Messages'),
+    _(u'INBOX.INBOX.Spam'),
+    _(u'INBOX.INBOX.Deleted Messages'),
+    _(u'INBOX.INBOX.Archive'),
+    _(u'INBOX.INBOX.Archives'),
+)
+
+MAILBOXES_COMMON = OrderedDict((
+    (u'INBOX', _(u'Inbox')),
+))
 
 
 def email_get_first_text_block(email_message):

@@ -27,7 +27,6 @@ from email.header import decode_header
 import imaplib
 import logging
 
-from collections import OrderedDict
 from constance import config
 
 from django.db import models
@@ -69,74 +68,6 @@ class MailAccount(ModelDiffMixin):
 
     1flow create feeds from them.
     """
-
-    MAILBOXES_STRING_SEPARATOR = u'~|~'
-
-    MAILBOXES_BLACKLIST = (
-        'Drafts',
-        'Trash',
-        'Sent Messages',
-        'Sent',
-        'Spam',
-        'Junk',
-        'Deleted Messages',
-        'Archive',
-        'Archives',
-
-        'INBOX.Drafts',
-        'INBOX.Trash',
-        'INBOX.Sent Messages',
-        'INBOX.Sent',
-        'INBOX.Spam',
-        'INBOX.Junk',
-        'INBOX.Deleted Messages',
-        'INBOX.Archive',
-        'INBOX.Archives',
-
-        'INBOX.INBOX.Junk',
-        'INBOX.INBOX.Drafts',
-        'INBOX.INBOX.Sent',
-        'INBOX.INBOX.Trash',
-        'INBOX.INBOX.Sent Messages',
-        'INBOX.INBOX.Spam',
-        'INBOX.INBOX.Deleted Messages',
-        'INBOX.INBOX.Archive',
-        'INBOX.INBOX.Archives',
-
-        _(u'Drafts'),
-        _(u'Trash'),
-        _(u'Sent Messages'),
-        _(u'Sent'),
-        _(u'Spam'),
-        _(u'Junk'),
-        _(u'Deleted Messages'),
-        _(u'Archive'),
-        _(u'Archives'),
-
-        _(u'INBOX.Drafts'),
-        _(u'INBOX.Trash'),
-        _(u'INBOX.Sent Messages'),
-        _(u'INBOX.Sent'),
-        _(u'INBOX.Spam'),
-        _(u'INBOX.Junk'),
-        _(u'INBOX.Deleted Messages'),
-        _(u'INBOX.Archive'),
-        _(u'INBOX.Archives'),
-
-        _(u'INBOX.INBOX.Junk'),
-        _(u'INBOX.INBOX.Drafts'),
-        _(u'INBOX.INBOX.Sent'),
-        _(u'INBOX.INBOX.Trash'),
-        _(u'INBOX.INBOX.Sent Messages'),
-        _(u'INBOX.INBOX.Spam'),
-        _(u'INBOX.INBOX.Deleted Messages'),
-        _(u'INBOX.INBOX.Archive'),
-        _(u'INBOX.INBOX.Archives'),
-    )
-
-    MAILBOXES_COMMON = OrderedDict((
-        (u'INBOX', _(u'Inbox')),
-    ))
 
     # NOTE: MAILBOXES_BLACKLIST is in MailAccount.
 
@@ -190,7 +121,7 @@ class MailAccount(ModelDiffMixin):
         if not _mailboxes_:
             return []
 
-        return _mailboxes_.split(self.MAILBOXES_STRING_SEPARATOR)
+        return _mailboxes_.split(common.MAILBOXES_STRING_SEPARATOR)
 
     @property
     def recently_usable(self):
@@ -504,11 +435,11 @@ class MailAccount(ModelDiffMixin):
             for line in data:
                 mailbox = line.split(' "." ')[1].replace('"', '')
 
-                if mailbox not in self.MAILBOXES_BLACKLIST:
+                if mailbox not in common.MAILBOXES_BLACKLIST:
 
                     subfolder = False
 
-                    for blacklisted in self.MAILBOXES_BLACKLIST:
+                    for blacklisted in common.MAILBOXES_BLACKLIST:
                         if mailbox.startswith(blacklisted + u'.'):
                             subfolder = True
                             break
@@ -519,7 +450,7 @@ class MailAccount(ModelDiffMixin):
             self.mark_usable()
 
             if as_text:
-                return self.MAILBOXES_STRING_SEPARATOR.join(sorted(mailboxes))
+                return common.MAILBOXES_STRING_SEPARATOR.join(sorted(mailboxes))
 
             return sorted(mailboxes)
 
