@@ -38,7 +38,6 @@ from django.utils.translation import ugettext_lazy as _
 from sparks.django.models import ModelDiffMixin
 
 import mail_common as common
-from mailaccount import MailAccount
 from mailfeed import MailFeed
 
 LOGGER = logging.getLogger(__name__)
@@ -93,16 +92,7 @@ class MailFeedRule(ModelDiffMixin):
         help_text=_(u'Condition between rules of this group.'))
 
     mailfeed = models.ForeignKey(MailFeed)
-    account = models.ForeignKey(MailAccount, null=True, blank=True,
-                                verbose_name=_(u'Mail account'),
-                                help_text=_(u"To apply this rule to all "
-                                            u"accounts, just don't choose "
-                                            u"any."))
-    mailbox = models.CharField(verbose_name=_(u'Mailbox'),
-                               max_length=255, default=u'INBOX',
-                               null=True, blank=True)
-    recurse_mailbox = models.BooleanField(verbose_name=_(u'Recurse mailbox'),
-                                          default=True, blank=True)
+
     header_field = models.CharField(verbose_name=_(u'Header'),
                                     max_length=10, default=u'any',
                                     choices=tuple(HEADER_FIELD_CHOICES.items()),

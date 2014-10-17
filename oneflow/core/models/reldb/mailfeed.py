@@ -35,6 +35,7 @@ from sparks.django.models import ModelDiffMixin
 # from sparks.django.models import ModelDiffMixin
 
 from common import DjangoUser  # , REDIS
+from mailaccount import MailAccount
 # from mail_common import email_get_first_text_block
 
 LOGGER = logging.getLogger(__name__)
@@ -70,6 +71,17 @@ class MailFeed(ModelDiffMixin):
                                     default=True, blank=True,
                                     help_text=_(u'Can other 1flow users '
                                                 u'subscribe to this feed?'))
+
+    account = models.ForeignKey(MailAccount, null=True, blank=True,
+                                verbose_name=_(u'Mail account'),
+                                help_text=_(u"To apply this rule to all "
+                                            u"accounts, just don't choose "
+                                            u"any."))
+    mailbox = models.CharField(verbose_name=_(u'Mailbox'),
+                               max_length=255, default=u'INBOX',
+                               null=True, blank=True)
+    recurse_mailbox = models.BooleanField(verbose_name=_(u'Recurse mailbox'),
+                                          default=True, blank=True)
 
     match_action =  models.CharField(
         verbose_name=_(u'Match action'),
