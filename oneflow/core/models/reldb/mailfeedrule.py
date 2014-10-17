@@ -285,7 +285,39 @@ class MailFeedRule(ModelDiffMixin):
                 self.save()
 
     def match_message(self, message):
-        """ Return ``True`` if :param:`message` matches the current rule. """
+        """ True if :param:`message` matches the current rule or its group. """
+
+        if self.group:
+            return self.match_message_in_group(message)
+
+        else:
+            return self.match_message_individual(message)
+
+    def match_message_in_group(self, message):
+        """ Return True if our rule group says so. """
+
+        operation_any = self.group_operation == MailFeed.RULES_OPERATION_ANY
+        operation_all = not operation_any
+
+        rules_group = self.mailfeed.mailfeedrule_set.filter(group=self.group)
+
+        for rule in rules_group:
+
+            if rule.match_message_individual(message):
+                if operation_any:
+                    # First match makes the group be true.
+                    return True
+
+            else:
+                if operation_all:
+                    # First non-match kills the group.
+                    return False
+
+        # OK, this is kind of a nice shortcut.
+        return operation_all
+
+    def match_message_individual(self, message):
+        """ Test message against the current rule, member of a group or not. """
 
         def match_header(header, value):
             if not self.match_case:
