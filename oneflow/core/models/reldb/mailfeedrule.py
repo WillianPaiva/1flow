@@ -231,6 +231,21 @@ class MailFeedRule(ModelDiffMixin):
                 #                                    _(u'feed default')),
             ))
 
+    def repr_for_json(self):
+        """ Return our attributes in a JSON-compatible form. """
+
+        return {
+            'id': self.id,
+            'group': self.group,
+            'group_operation': self.group_operation,
+            'position': self.position,
+
+            'header_field': self.header_field,
+            'other_header': self.other_header,
+            'match_type': self.match_type,
+            'match_value': self.match_value,
+        }
+
     def save(self, *args, **kwargs):
         """ Check the rule is valid before saving. """
 

@@ -18,7 +18,7 @@ You should have received a copy of the GNU Affero General Public
 License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
-
+import json
 import logging
 
 from collections import OrderedDict
@@ -186,24 +186,48 @@ class MailFeed(ModelDiffMixin):
     def get_new_entries(self, **kwargs):
         """ Return new mails from the current feed. """
 
+        def prepare_message(message, rules):
+
+            # if __debug__:
+            #     LOGGER.debug(u'>>> MATCH #%s FOUND '
+            #                  u'by rule #%s:\n'
+            #                  u'   Subject: %s\n'
+            #                  u'      From: %s\n'
+            #                  u'      Date: %s\n'
+            #                  u'      Body: %s…\n'
+            #                  u'  %s\n',
+            #                  mailbox_matched + 1,
+            #                  rule.pk,
+            #                  message.get('subject'),
+            #                  message.get('from'),
+            #                  message.get('date'),
+            #                  email_get_first_text_block(
+            #                      message).strip().replace(
+            #                      '\r', '').replace(
+            #                      '\n', ' ')[:80],
+            #                  rule)
+
+            return {
+                'email': message,
+                'date': message.get('date', None),
+                'meta': {
+                    'processing': self.match_action,
+                    # (rule.match_action or self.match_action)
+                    'matched_rules': json.dumps([r.repr_for_json()
+                                                for r in rules]),
+                }
+            }
+
         since = kwargs.get('since')
 
         feed_rules = tuple(
-            self.mailfeedrule_set.filter(is_valid=True).order_by('position')
+            self.mailfeedrule_set.filter(is_valid=True).order_by('group',
+                                                                 'position')
         )
 
         usable_accounts = self.user.mailaccount_set.filter(is_usable=True)
 
-        rules_by_account = {account: [] for account in usable_accounts}
-
-        for rule in feed_rules:
-
-            if rule.account is None:
-                for account in usable_accounts:
-                    rules_by_account[account].append(rule)
-
-            else:
-                rules_by_account[rule.account].append(rule)
+        rules_operation_any = self.rules_operation == self.RULES_OPERATION_ANY
 
         total_matched   = 0
         total_unmatched = 0
@@ -230,46 +254,49 @@ class MailFeed(ModelDiffMixin):
                     for message in account.imap_search_since(since=since):
 
                         matched = False
+                        seen_groups = []
 
-                        for rule in rules_by_account[account]:
+                        for rule in feed_rules:
+
+                            if rule.group:
+                                if rule.group in seen_groups:
+                                    # The rule will return the match
+                                    # result for its whole group. No
+                                    # need to try others of the same.
+                                    continue
+
+                                else:
+                                    seen_groups.append(rule.group)
 
                             if rule.match_message(message):
 
-                                # if __debug__:
-                                #     LOGGER.debug(u'>>> MATCH #%s FOUND '
-                                #                  u'by rule #%s:\n'
-                                #                  u'   Subject: %s\n'
-                                #                  u'      From: %s\n'
-                                #                  u'      Date: %s\n'
-                                #                  u'      Body: %s…\n'
-                                #                  u'  %s\n',
-                                #                  mailbox_matched + 1, rule.pk,
-                                #                  message.get('subject'),
-                                #                  message.get('from'),
-                                #                  message.get('date'),
-                                #                  email_get_first_text_block(
-                                #                      message).strip().replace(
-                                #                      '\r', '').replace(
-                                #                      '\n', ' ')[:80],
-                                #                  rule)
+                                if rules_operation_any:
 
-                                yield {
-                                    'email': message,
-                                    'date': message.get('date', None),
-                                    'meta': {
-                                        'processing': (rule.match_action
-                                                       or self.match_action),
-                                        'matched_rule': rule,
-                                    }
-                                }
+                                    yield prepare_message(message, [rule])
+                                    matched = True
+                                    break
 
-                                # First matching rule wins,
-                                # no need to test other.
-                                matched = True
-                                break
+                                else:
+                                    matched = True
+                                    # but continue, we need to match all
+
+                            else:
+                                if rules_operation_any:
+                                    # nothing to do, next
+                                    # rule will perhaps match.
+                                    pass
+
+                                else:
+                                    # One rule/group of a “AND” set()
+                                    # didn't match. Don't bother trying
+                                    # others, it's dead pal.
+                                    matched = False
+                                    break
 
                         if matched:
                             mailbox_matched += 1
+                            if not rules_operation_any:
+                                yield prepare_message(message, feed_rules)
 
                             #
                             # TODO: implement final action
@@ -284,24 +311,24 @@ class MailFeed(ModelDiffMixin):
 
                     account.imap_close()
 
-                    LOGGER.info(u'%s/%s email(s) matched %s in '
-                                u'mailbox %s of %s',
+                    LOGGER.info(u'%s/%s email(s) matched in mailbox %s of %s',
                                 mailbox_matched,
                                 mailbox_matched + mailbox_unmatched,
-                                rule, mailbox_name, account)
+                                mailbox_name, account)
+
+                # end with account
 
             total_matched   += account_matched
             total_unmatched += account_unmatched
 
-            LOGGER.info(u'%s/%s email(s) matched %s in %s',
+            LOGGER.info(u'%s/%s email(s) matched in %s',
                         account_matched,
                         account_matched + account_unmatched,
-                        rule, account)
+                        account)
 
-        LOGGER.info(u'%s/%s email(s) matched %s.',
+        LOGGER.info(u'%s/%s email(s) matched in all accounts.',
                     total_matched,
-                    total_matched + total_unmatched,
-                    rule)
+                    total_matched + total_unmatched)
 
 
 # ————————————————————————————————————————————————————————————————————— Signals
