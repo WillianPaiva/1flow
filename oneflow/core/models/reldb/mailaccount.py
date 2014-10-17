@@ -256,10 +256,11 @@ class MailAccount(ModelDiffMixin):
         if commit:
             self.save()
 
-    def mark_usable(self, commit=True):
+    def mark_usable(self, commit=True, verbose=True):
         """ Mark the account usable and clear error. """
 
-        LOGGER.info(u'%s is now usable.', self)
+        if verbose:
+            LOGGER.info(u'%s is now considered usable.', self)
 
         if self.is_usable:
             start_task = False
@@ -450,7 +451,8 @@ class MailAccount(ModelDiffMixin):
                     if not subfolder:
                         mailboxes.append(mailbox)
 
-            self.mark_usable()
+            # Update the last connection datetime.
+            self.mark_usable(verbose=False)
 
             if as_text:
                 return common.MAILBOXES_STRING_SEPARATOR.join(sorted(mailboxes))

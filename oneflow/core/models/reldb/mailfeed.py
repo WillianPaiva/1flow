@@ -311,23 +311,24 @@ class MailFeed(ModelDiffMixin):
 
                     account.imap_close()
 
-                    LOGGER.info(u'%s/%s email(s) matched in mailbox %s of %s',
-                                mailbox_matched,
-                                mailbox_matched + mailbox_unmatched,
-                                mailbox_name, account)
+                    LOGGER.debug(u'Mailfeed %s: %s/%s email(s) matched in '
+                                 u'mailbox %s of %s', self.name,
+                                 mailbox_matched,
+                                 mailbox_matched + mailbox_unmatched,
+                                 mailbox_name, account)
 
                 # end with account
 
             total_matched   += account_matched
             total_unmatched += account_unmatched
 
-            LOGGER.info(u'%s/%s email(s) matched in %s',
-                        account_matched,
+            LOGGER.info(u'Mailfeed %s: %s/%s email(s) matched in %s',
+                        self.name, account_matched,
                         account_matched + account_unmatched,
                         account)
 
-        LOGGER.info(u'%s/%s email(s) matched in all accounts.',
-                    total_matched,
+        LOGGER.info(u'Mailfeed %s: %s/%s email(s) matched in all accounts.',
+                    self.name, total_matched,
                     total_matched + total_unmatched)
 
 
