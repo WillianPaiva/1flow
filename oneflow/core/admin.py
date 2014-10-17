@@ -771,8 +771,7 @@ class MailFeedRuleAdmin(admin.ModelAdmin):
     """ MailFeedRule admin class. """
 
     list_display = ('id', 'get_mailfeed__name', 'get_mailfeed__user',
-                    'group',  'account',
-                    'header_field', 'match_type', 'match_value', )
+                    'group', 'header_field', 'match_type', 'match_value', )
     list_display_links = ('id', 'get_mailfeed__name',
                           'get_mailfeed__user', 'group', )
     list_filter = ('group', )
