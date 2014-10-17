@@ -118,20 +118,24 @@ class MailFeedRule(ModelDiffMixin):
                                    help_text=_(u"Examples: “Tweet de”, "
                                                u"“Google Alert:”. Can be "
                                                u"any text."))
-
-    match_action = models.CharField(
-        verbose_name=_(u'Action when matched'),
-        max_length=10, null=True, blank=True,
-        choices=tuple(MailFeed.MATCH_ACTION_CHOICES.items()),
-        help_text=_(u'Choose nothing to execute '
-                    u'action defined at the feed level.'))
-
-    finish_action =  models.CharField(
-        verbose_name=_(u'Finish action'),
-        max_length=10, null=True, blank=True,
-        choices=tuple(MailFeed.FINISH_ACTION_CHOICES.items()),
-        help_text=_(u'Choose nothing to execute '
-                    u'action defined at the feed level.'))
+    #
+    # De-activated, considered too complex to handle.
+    # This information is already in the mailfeed.
+    #
+    # match_action = models.CharField(
+    #     verbose_name=_(u'Action when matched'),
+    #     max_length=10, null=True, blank=True,
+    #     choices=tuple(MailFeed.MATCH_ACTION_CHOICES.items()),
+    #     help_text=_(u'Choose nothing to execute '
+    #                 u'action defined at the feed level.'))
+    #
+    # finish_action =  models.CharField(
+    #     verbose_name=_(u'Finish action'),
+    #     max_length=10, null=True, blank=True,
+    #     choices=tuple(MailFeed.FINISH_ACTION_CHOICES.items()),
+    #     help_text=_(u'Choose nothing to execute '
+    #                 u'action defined at the feed level.'))
+    #
 
     # Used to have many times the same rule in different feeds
     clone_of = models.ForeignKey('MailFeedRule', null=True, blank=True)
@@ -211,21 +215,19 @@ class MailFeedRule(ModelDiffMixin):
     def __unicode__(self):
         """ OMG, that's __unicode__, pep257. """
 
-        return _(u'Rule #{2}: {3}, applied to {0} for MailFeed {1}').format(
-            _(u'all accounts') if self.account is None
-            else _(u'account {0}').format(self.account),
-            self.mailfeed,
+        return _(u'Rule #{0}: {2} for MailFeed {1}').format(
             self.id,
-            _(u'{0} {1} “{2}” → {3} → {4}').format(
+            self.mailfeed,
+            _(u'{0} {1} “{2}”').format(
                 self.other_header
                 if self.header_field == u'other'
                 else self.HEADER_FIELD_CHOICES[self.header_field],
                 self.MATCH_TYPE_CHOICES[self.match_type],
                 self.match_value,
-                MailFeed.MATCH_ACTION_CHOICES.get(self.match_action,
-                                                  _(u'feed default')),
-                MailFeed.FINISH_ACTION_CHOICES.get(self.finish_action,
-                                                   _(u'feed default')),
+                # MailFeed.MATCH_ACTION_CHOICES.get(self.match_action,
+                #                                   _(u'feed default')),
+                # MailFeed.FINISH_ACTION_CHOICES.get(self.finish_action,
+                #                                    _(u'feed default')),
             ))
 
     def save(self, *args, **kwargs):
