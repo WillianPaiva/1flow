@@ -51,6 +51,13 @@ ConstanceAdmin.fieldsets = (
             'classes': ('grp-collapse grp-open', ),
             'fields': (
                 'FEED_FETCH_DISABLED',
+                'FEED_FETCH_RSSATOM_DISABLED',
+                'FEED_FETCH_EMAIL_DISABLED',
+
+                # TODO: activate these when we need them.
+                # 'FEED_FETCH_TWITTER_DISABLED',
+                # 'FEED_FETCH_FACEBOOK_DISABLED',
+                # 'FEED_FETCH_GOOGLE_DISABLED',
             ),
         }),
 

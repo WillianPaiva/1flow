@@ -211,6 +211,21 @@ CONSTANCE_CONFIG = {
                             u'for all fetchers to terminate. It should take at '
                             u'most FEED_FETCH_DEFAULT_INTERVAL seconds.')),
 
+    'FEED_FETCH_RSSATOM_DISABLED': (False, ugettext(u'Disable all RSS/Atom '
+                                    u'feed operations.')),
+
+    'FEED_FETCH_EMAIL_DISABLED': (False, ugettext(u'Disable all email '
+                                    u'feed operations.')),
+
+    'FEED_FETCH_TWITTER_DISABLED': (False, ugettext(u'Disable all email '
+                                    u'feed operations.')),
+
+    'FEED_FETCH_FACEBOOK_DISABLED': (False, ugettext(u'Disable all email '
+                                    u'feed operations.')),
+
+    'FEED_FETCH_GOOGLE_DISABLED': (False, ugettext(u'Disable all email '
+                                    u'feed operations.')),
+
     'FEED_FETCH_GHOST_ENABLED': (False, ugettext(u'Enable Ghost fetching or '
                                  u'not. Disabled by default, make OSX Python '
                                  u'crash.')),
