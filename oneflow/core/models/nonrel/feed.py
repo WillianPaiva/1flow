@@ -971,6 +971,20 @@ class Feed(Document, DocumentHelperMixin):
             LOGGER.info(u'Feed %s refresh disabled by configuration.', self)
             return True
 
+        # ————————————————————————————————————— TODO: move this into sub-models
+
+        if self.is_mailfeed and config.FEED_FETCH_EMAIL_DISABLED:
+            LOGGER.info(u'Email feed %s refresh disabled by dynamic '
+                        u'configuration.', self)
+            return True
+
+        elif config.FEED_FETCH_RSSATOM_DISABLED:
+            LOGGER.info(u'RSS/Atom feed %s refresh disabled by dynamic '
+                        u'configuration.', self)
+            return True
+
+        # ————————————————————————————————————————————————  Try to acquire lock
+
         if not self.refresh_lock.acquire():
             if force:
                 LOGGER.warning(u'Forcing refresh for feed %s, despite of '
