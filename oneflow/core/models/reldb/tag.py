@@ -114,8 +114,11 @@ class SimpleTag(MPTTModel):
         for tag_name in tags_names:
             tag_name = tag_name.lower()
 
-            tag, created = cls.objects.get_or_create(name=tag_name,
-                                                     origin=origin)
+            tag, created = cls.objects.get_or_create(name=tag_name)
+
+            if created and origin:
+                tag.origin = origin
+                tag.save()
 
             tags.add(tag.duplicate_of or tag)
 
