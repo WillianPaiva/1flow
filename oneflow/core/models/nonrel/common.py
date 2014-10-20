@@ -1,50 +1,21 @@
 # -*- coding: utf-8 -*-
 """
-    Copyright 2013-2014 Olivier Cortès <oc@1flow.io>
+Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
-    This file is part of the 1flow project.
+This file is part of the 1flow project.
 
-    1flow is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation, either version 3 of
-    the License, or (at your option) any later version.
+1flow is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
 
-    1flow is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
+1flow is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU Affero General Public
-    License along with 1flow.  If not, see http://www.gnu.org/licenses/
-
-    .. note:: as of Celery 3.0.20, there are many unsolved problems related
-        to tasks-as-methods. Just to name a few:
-        - https://github.com/celery/celery/issues/1458
-        - https://github.com/celery/celery/issues/1459
-        - https://github.com/celery/celery/issues/1478
-
-        As I have no time to dive into celery celery and fix them myself,
-        I just turned tasks-as-methods into standard tasks calling the "old"
-        method inside the task.
-
-        This has the side-effect-benefit of avoiding any `.reload()` call
-        inside the tasks methods themselves, but forces us to write extraneous
-        functions only for the tasks, which is duplicate work for me.
-
-        But in the meantime, this allows tests to work correctly, which is
-        a much bigger benefit.
-
-    .. warning:: **convention** says tasks that call `Class.method()` must
-        be named `class_method()` (``class`` as lowercase). Lookups rely on
-        this.
-
-        And special post-create tasks must be
-        named ``def class_post_create_task()``, not
-        just ``class_article_post_create``. This is because these special
-        methods are not meant to be called in the app normal life, only at a
-        special moment (after database record creation, exactly).
-        BUT, I prefer the ``name=`` of the celery task to stay without
-        the ``_task`` for shortyness and readability in celery flower.
+You should have received a copy of the GNU Affero General Public
+License along with 1flow.  If not, see http://www.gnu.org/licenses/
 """
 
 import os
@@ -67,102 +38,34 @@ from django.utils.translation import ugettext_lazy as _
 
 from ....base.utils.dateutils import benchmark
 
+# Get the very-common (reldb & nonrel) common parts.
+from oneflow.core.models.common import *  # NOQA
+
+# XXX: Compat during the MongoDB → PostgreSQL transition
+SPECIAL_FEEDS_DATA['web_import'] = (
+    USER_FEEDS_SITE_URL + 'imports',
+    _(u'Imported items of {0}')
+)
 # ••••••••••••••••••••••••••••••••••••••••••••••••••••••••• constants and setup
 
 
 LOGGER = logging.getLogger(__name__)
 
-REQUEST_BASE_HEADERS  = {'User-agent': settings.DEFAULT_USER_AGENT}
 
-# Lower the default, we know good websites just work well.
-requests.adapters.DEFAULT_RETRIES = 1
-
-# Don't use any lang-dependant values (eg. _(u'NO CONTENT'))
-CONTENT_NOT_PARSED       = None
-CONTENT_TYPE_NONE        = 0
-CONTENT_TYPE_HTML        = 1
-# Since Hotfix 0.20.11.5, we process markdown differently,
-# And need to know about the "old" processing method to be
-# able to fix it afterwards in the production database.
-CONTENT_TYPE_MARKDOWN_V1 = 2
-CONTENT_TYPE_MARKDOWN    = 3
-CONTENT_TYPE_IMAGE       = 100
-CONTENT_TYPE_VIDEO       = 200
-CONTENT_TYPE_BOOKMARK    = 900
-CONTENT_TYPES_FINAL      = (CONTENT_TYPE_MARKDOWN,
-                            CONTENT_TYPE_MARKDOWN_V1,
-                            CONTENT_TYPE_IMAGE,
-                            CONTENT_TYPE_VIDEO,
-                            CONTENT_TYPE_BOOKMARK,
-                            )
-
-CONTENT_PREPARSING_NEEDS_GHOST = 1
-CONTENT_FETCH_LIKELY_MULTIPAGE = 2
-
-# MORE CONTENT_PREPARSING_NEEDS_* TO COME
-
-ORIGIN_TYPE_NONE          = 0
-ORIGIN_TYPE_GOOGLE_READER = 1
-ORIGIN_TYPE_FEEDPARSER    = 2
-ORIGIN_TYPE_STANDALONE    = 3
-ORIGIN_TYPE_TWITTER       = 4
-ORIGIN_TYPE_WEBIMPORT     = 5
-ORIGIN_TYPE_EMAIL_FEED    = 6
-
-CACHE_ONE_HOUR  = 3600
-CACHE_ONE_DAY   = CACHE_ONE_HOUR * 24
-CACHE_ONE_WEEK  = CACHE_ONE_DAY * 7
-CACHE_ONE_MONTH = CACHE_ONE_DAY * 30
-
-ARTICLE_ORPHANED_BASE = u'http://{0}/orphaned/article/'.format(
-                        settings.SITE_DOMAIN)
-BAD_SITE_URL_BASE     = u'http://badsite.{0}/'.format(
-                        settings.SITE_DOMAIN)
-USER_FEEDS_SITE_URL   = u'http://{0}'.format(settings.SITE_DOMAIN
-                                             ) + u'/user/{user.id}/'
-SPECIAL_FEEDS_DATA = {
-    'sent_items': (USER_FEEDS_SITE_URL + 'sent',
-                   _(u'Items sent by {0}')),
-    'web_import': (USER_FEEDS_SITE_URL + 'imports',
-                   _(u'Imported items of {0}')),
-    'received_items': (USER_FEEDS_SITE_URL + 'received',
-                       _(u'Inbox of {0}')),
-}
-
-
-def lowername(objekt):
-
-    return attrgetter('name')(objekt).lower()
 
 
 class TreeCycleException(Exception):
+
     """ Raised when a tree has a cycle. Obviously it should not have. """
+
     pass
-
-
-class FeedIsHtmlPageException(Exception):
-    """ Raised when the parsed feed gives us an HTML content
-        instead of an XML (RSS/Atom) one. """
-    pass
-
-
-class FeedFetchException(Exception):
-    """ Raised when an RSS/Atom feed cannot be fetched, for any reason. """
-    pass
-
-
-class NotTextHtmlException(Exception):
-    """ Raised when the content of an article is not text/html, to switch to
-        other parsers, without re-requesting the actual content. """
-    def __init__(self, message, response):
-        # Call the base class constructor with the parameters it needs
-        Exception.__init__(self, message)
-        self.response = response
 
 
 class DocumentHelperMixin(object):
-    """ Because, as of MongoEngine 0.8.3,
-        subclassing `Document` is not possible o_O
+
+    """ Because subclassing `Document` is not possible o_O.
+
+    As of MongoEngine 0.8.3:
 
         […]
           File "/Users/olive/sources/1flow/oneflow/core/models/nonrel.py", line 141, in <module> # NOQA
@@ -188,9 +91,10 @@ class DocumentHelperMixin(object):
     @classmethod
     def get_or_404(cls, oid=None, **kwargs):
         """ Rough equivalent of Django's get_object_or_404() shortcut.
-            Not as powerful, though.
 
-            .. versionadded:: 0.21.7
+        Not as powerful, though.
+
+        .. versionadded:: 0.21.7
         """
 
         try:
@@ -217,6 +121,7 @@ class DocumentHelperMixin(object):
 
     @classmethod
     def check_temporary_defect(cls, defect_name, limit=None, progress=None):
+        """ TODO. """
 
         if limit is None:
             # Don't let "Cursor … invalid at server" errors stop us.
@@ -297,6 +202,7 @@ class DocumentHelperMixin(object):
                          u'attributes on %s.', defect_name, cls.__name__)
 
     def register_duplicate(self, duplicate, force=False):
+        """ TODO. """
 
         # be sure this helper method is called
         # on a document that has the atribute.
@@ -350,12 +256,14 @@ class DocumentHelperMixin(object):
                            u'a task with `register_task_method()`.', self)
 
     def offload_attribute(self, attribute_name, remove=False):
-        """ NOTE: this method is not used as of 20130816, but I keep it because
-            it contains the base for the idea of a global on-disk unique path
-            for each document.
+        """ NOTE: this method is not used as of 20130816.
 
-            The unique path can also eventually be used for statistics, to
-            avoid unbrowsable too big folders in Graphite.
+        But I keep it because
+        it contains the base for the idea of a global on-disk unique path
+        for each document.
+
+        The unique path can also eventually be used for statistics, to
+        avoid unbrowsable too big folders in Graphite.
         """
 
         # TODO: factorize this sometwhere common to all classes.
@@ -384,6 +292,8 @@ class DocumentHelperMixin(object):
             delattr(self, attribute_name)
 
     def safe_reload(self):
+        """ Safe reload the current MongoEngine object. """
+
         try:
             self.reload()
 
@@ -391,6 +301,7 @@ class DocumentHelperMixin(object):
             pass
 
     def compute_cached_descriptors(self, **kwargs):
+        """ TODO. """
 
         # TODO: detect descriptors automatically by examining the __class__.
 
@@ -439,16 +350,18 @@ class DocumentHelperMixin(object):
 
 
 class DocumentTreeMixin(object):
-    """ WARNING: currently I have no obvious way to add the required
-        fields to the class this mixin is added to. The two fields
-        ``.parent`` and ``.children`` must exist.
 
-        See the :class:`Folder` class for an example. The basics are::
+    """ WARNING.
 
-            parent = ReferenceField('self', reverse_delete_rule=NULLIFY)
-            children = ListField(ReferenceField('self',
-                                 reverse_delete_rule=PULL), default=list)
+    Currently I have no obvious way to add the required
+    fields to the class this mixin is added to. The two fields
+    ``.parent`` and ``.children`` must exist.
 
+    See the :class:`Folder` class for an example. The basics are::
+
+        parent = ReferenceField('self', reverse_delete_rule=NULLIFY)
+        children = ListField(ReferenceField('self',
+                             reverse_delete_rule=PULL), default=list)
     """
 
     def set_parent(self, parent, update_reverse_link=True, full_reload=True):
