@@ -1,21 +1,21 @@
 # -*- coding: utf-8 -*-
 """
-    Copyright 2013-2014 Olivier Cortès <oc@1flow.io>
+Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
-    This file is part of the 1flow project.
+This file is part of the 1flow project.
 
-    1flow is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation, either version 3 of
-    the License, or (at your option) any later version.
+1flow is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
 
-    1flow is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
+1flow is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU Affero General Public
-    License along with 1flow.  If not, see http://www.gnu.org/licenses/
+You should have received a copy of the GNU Affero General Public
+License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
@@ -29,23 +29,40 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _  # , pgettext_lazy
 from django.utils.safestring import mark_safe
 from django.contrib.auth import get_user_model
-#from django.contrib.auth.admin import UserAdmin
+# from django.contrib.auth.admin import UserAdmin
 from django.core.urlresolvers import reverse
 
-#from django_markdown.widgets import MarkdownWidget
+# from django_markdown.widgets import MarkdownWidget
 from writingfield import FullScreenTextarea
 
-from .models.nonrel import (Tag, Feed, Article, Read, CONTENT_TYPE_MARKDOWN,
-                            User as MongoUser, Group as MongoGroup)
-from .models.reldb import (HelpContent, HistoryEntry, UserImport,
-                           MailAccount, MailFeed, MailFeedRule)
+from models.common import CONTENT_TYPES
+
+from models.nonrel import (
+    Tag as MongoTag,
+    Feed as MongoFeed,
+    Article as MongoArticle,
+    Read as MongoRead,
+    User as MongoUser,
+    Group as MongoGroup,
+    # WebSite as MongoWebSite,
+)
+from models.reldb import (
+    HelpContent,
+    HistoryEntry, UserImport,
+    MailAccount,
+    MailFeed, MailFeedRule,
+    RssAtomFeed, Article,
+    # CombinedFeed, CombinedFeedRule,
+    Subscription, Read,
+    WebSite,
+)
 from django.contrib import admin
 import mongoadmin
 from mongodbforms import DocumentForm
 
 from sparks.django.utils import languages, truncate_field
 
-#from ..base.admin import CSVAdminMixin
+# from ..base.admin import CSVAdminMixin
 from ..base.utils.dateutils import naturaldelta, naturaltime
 
 # NOTE: using "from base.models import User" will generate
@@ -66,11 +83,14 @@ if settings.FULL_ADMIN:
                                     for field in content_fields_names)
 
     class HelpContentAdmin(admin.ModelAdmin):
+
+        """ Help content admin. """
+
         list_display_links = ('label', )
         list_display       = ('label', 'ordering', 'active', ) \
             + name_fields_displays
         list_editable      = ('ordering', 'active', )
-        search_fields      = ('label', ) + name_fields_names + content_fields_names # NOQA
+        search_fields      = ('label', ) + name_fields_names + content_fields_names  # NOQA
         ordering           = ('ordering', 'label', )
         save_as            = True
         fieldsets = (
@@ -116,23 +136,28 @@ if settings.FULL_ADMIN:
 # ————————————————————————————————————————————————————————————————————— MongoDB
 
 
-class TagAdmin(mongoadmin.DocumentAdmin):
+class MongoTagAdmin(mongoadmin.DocumentAdmin):
+
+    """ MongoEngine Tag admin. """
 
     list_display = ('id', 'name', 'language', 'duplicate_of',
                     'parents_display', 'children_display')
     list_display_links = ('id', 'name', )
-    #list_editable = ('language', )
+    # list_editable = ('language', )
     search_fields = ('name', 'slug', )
     change_list_filter_template = "admin/filter_listing.html"
     filter_horizontal = ('parents', 'children', )
 
     def change_view(self, request, object_id, extra_context=None):
+        """ FILL ME, pep257. """
+
         self.exclude = ('origin', )  # 'parents', 'children', )
 
-        return super(TagAdmin, self).change_view(request, object_id,
-                                                 extra_context=None)
+        return super(MongoTagAdmin, self).change_view(request, object_id,
+                                                      extra_context=None)
 
     def parents_display(self, obj):
+        """ FILL ME, pep257. """
 
         if obj.parents:
             return u', '.join(u'<a href="{0}tag/{1}" '
@@ -147,6 +172,7 @@ class TagAdmin(mongoadmin.DocumentAdmin):
     parents_display.allow_tags = True
 
     def children_display(self, obj):
+        """ FILL ME, pep257. """
 
         if obj.children:
             return u', '.join(u'<a href="{0}tag/{1}" '
@@ -161,10 +187,13 @@ class TagAdmin(mongoadmin.DocumentAdmin):
     children_display.allow_tags = True
 
 
-admin.site.register(Tag, TagAdmin)
+admin.site.register(MongoTag, MongoTagAdmin)
 
 
 class MongoUserAdminForm(DocumentForm):
+
+    """ MongoEngine User admin form. """
+
     class Meta:
         model = MongoUser
         widgets = {
@@ -175,12 +204,15 @@ class MongoUserAdminForm(DocumentForm):
 
 
 class MongoUserAdmin(mongoadmin.DocumentAdmin):
+
+    """ MongoEngine User admin. """
+
     list_display = ('id', 'username', 'first_name', 'last_name', 'django_user',
                     'is_staff_display', 'is_superuser_display', )
     list_display_links = ('id', 'username', )
     search_fields = ('username', 'first_name', 'last_name', )
     change_list_filter_template = "admin/filter_listing.html"
-    #filter_horizontal = ('parents', 'children', )
+    # filter_horizontal = ('parents', 'children', )
     form = MongoUserAdminForm
     # raw_id_fields = ()
     fieldsets = (
@@ -189,7 +221,7 @@ class MongoUserAdmin(mongoadmin.DocumentAdmin):
                 'username',
                 ('first_name', 'last_name', ),
                 ('is_staff', 'is_superuser', 'django_user', ),
-                #'permissions'
+                # 'permissions'
             ),
         }),
         ('Friends', {
@@ -201,6 +233,7 @@ class MongoUserAdmin(mongoadmin.DocumentAdmin):
     )
 
     def is_staff_display(self, obj):
+        """ FILL ME, pep257. """
 
         return obj.is_staff
 
@@ -209,6 +242,7 @@ class MongoUserAdmin(mongoadmin.DocumentAdmin):
     is_staff_display.boolean = True
 
     def is_superuser_display(self, obj):
+        """ FILL ME, pep257. """
 
         return obj.is_superuser
 
@@ -221,6 +255,9 @@ admin.site.register(MongoUser, MongoUserAdmin)
 
 
 class MongoGroupAdminForm(DocumentForm):
+
+    """ MongoEngine group admin form. """
+
     class Meta:
         model = MongoGroup
         exclude = ('backend', )
@@ -231,12 +268,15 @@ class MongoGroupAdminForm(DocumentForm):
 
 
 class MongoGroupAdmin(mongoadmin.DocumentAdmin):
+
+    """ MongoEngine Group admin. """
+
     list_display = ('id', 'name', 'internal_name', 'creator',
                     'backend', )
-    list_display_links = ('id', 'name',  'internal_name', )
+    list_display_links = ('id', 'name', 'internal_name', )
     search_fields = ('name', 'internal_name', )
     change_list_filter_template = "admin/filter_listing.html"
-    #filter_horizontal = ('parents', 'children', )
+    # filter_horizontal = ('parents', 'children', )
     form = MongoGroupAdminForm
     raw_id_fields = ('members', 'administrators', 'guests', )
     fieldsets = (
@@ -268,32 +308,37 @@ class MongoGroupAdmin(mongoadmin.DocumentAdmin):
 admin.site.register(MongoGroup, MongoGroupAdmin)
 
 
-class ArticleAdminForm(DocumentForm):
+class MongoArticleAdminForm(DocumentForm):
+
+    """ MongoEngine Article admin form. """
+
     class Meta:
-        model = Article
+        model = MongoArticle
         widgets = {
             'image_url': TextInput(attrs={'class': 'vURLField'}),
-            #'content': MarkdownWidget(attrs={'class': 'markdown-editor'}),
+            # 'content': MarkdownWidget(attrs={'class': 'markdown-editor'}),
             'content': FullScreenTextarea(),
             'url_error': TextInput(attrs={'class': 'vURLField'}),
             'content_error': TextInput(attrs={'class': 'vURLField'}),
         }
 
 
-class ArticleAdmin(mongoadmin.DocumentAdmin):
+class MongoArticleAdmin(mongoadmin.DocumentAdmin):
+
+    """ MongoEngine Article admin. """
 
     class Media:
         js = (settings.STATIC_URL + 'writingfield/mousetrap.min.js',
               settings.STATIC_URL + 'writingfield/writingfield.js',)
         css = {
             'all': (
-                '//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css', # NOQA
+                '//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css',  # NOQA
                 settings.STATIC_URL + 'writingfield/writingfield.css',
                 # settings.STATIC_URL + 'admin/admin.css',
             )
         }
 
-    form = ArticleAdminForm
+    form = MongoArticleAdminForm
     list_display = ('id', 'title', 'language', 'url_absolute',
                     'date_published', 'tags_display',
                     'orphaned', 'duplicate_of_display',
@@ -337,6 +382,7 @@ class ArticleAdmin(mongoadmin.DocumentAdmin):
     )
 
     def tags_display(self, obj):
+        """ FILL ME, pep257. """
 
         try:
             return u', '.join(u'<a href="{0}tag/{1}" '
@@ -344,7 +390,7 @@ class ArticleAdmin(mongoadmin.DocumentAdmin):
                                   settings.NONREL_ADMIN,
                                   tag.id, tag.name)
                               for tag in obj.tags)
-        except Exception, e:
+        except Exception as e:
             return unicode(e)
 
     tags_display.allow_tags        = True
@@ -352,6 +398,7 @@ class ArticleAdmin(mongoadmin.DocumentAdmin):
     tags_display.admin_order_field = 'tags'
 
     def duplicate_of_display(self, obj):
+        """ FILL ME, pep257. """
 
         if obj.duplicate_of:
             return (u'<a href="{0}article/{1}" '
@@ -366,9 +413,10 @@ class ArticleAdmin(mongoadmin.DocumentAdmin):
     duplicate_of_display.admin_order_field = 'duplicate_of'
 
     def content_type_display(self, obj):
+        """ FILL ME, pep257. """
 
         if obj.content_type:
-            return u'MD' if obj.content_type == CONTENT_TYPE_MARKDOWN else u'…'
+            return u'MD' if obj.content_type == CONTENT_TYPES.MARKDOWN else u'…'
 
         return u''
 
@@ -377,6 +425,7 @@ class ArticleAdmin(mongoadmin.DocumentAdmin):
     content_type_display.admin_order_field = 'content_type'
 
     def content_error_display(self, obj):
+        """ FILL ME, pep257. """
 
         if obj.content_error:
             return _(u'<span title="{0}" '
@@ -390,6 +439,7 @@ class ArticleAdmin(mongoadmin.DocumentAdmin):
     content_error_display.admin_order_field = 'content_error'
 
     def url_error_display(self, obj):
+        """ FILL ME, pep257. """
 
         if obj.url_error:
             return _(u'<span title="{0}" '
@@ -403,10 +453,12 @@ class ArticleAdmin(mongoadmin.DocumentAdmin):
     url_error_display.admin_order_field = 'url_error'
 
 
-admin.site.register(Article, ArticleAdmin)
+admin.site.register(MongoArticle, MongoArticleAdmin)
 
 
-class ReadAdmin(mongoadmin.DocumentAdmin):
+class MongoReadAdmin(mongoadmin.DocumentAdmin):
+
+    """ MongoEngine Read admin. """
 
     list_display = ('id', 'article_display',
                     'user_display',
@@ -447,12 +499,13 @@ class ReadAdmin(mongoadmin.DocumentAdmin):
     )
 
     def user_display(self, obj):
+        """ FILL ME, pep257. """
 
         try:
             return u'<a href="{0}user/{1}" target="_blank">{2}</a>'.format(
                 settings.NONREL_ADMIN, obj.user.id, obj.user.username)
 
-        except Exception, e:
+        except Exception as e:
             return unicode(e)
 
     user_display.allow_tags        = True
@@ -460,6 +513,7 @@ class ReadAdmin(mongoadmin.DocumentAdmin):
     user_display.admin_order_field = 'user'
 
     def article_display(self, obj):
+        """ FILL ME, pep257. """
 
         art = obj.article
 
@@ -468,7 +522,7 @@ class ReadAdmin(mongoadmin.DocumentAdmin):
                 settings.NONREL_ADMIN, art.id,
                 art.title[:40] + (art.title[:40] and u'…'))
 
-        except Exception, e:
+        except Exception as e:
             return unicode(e)
 
     article_display.allow_tags        = True
@@ -476,6 +530,7 @@ class ReadAdmin(mongoadmin.DocumentAdmin):
     article_display.admin_order_field = 'article'
 
     def subscriptions_display(self, obj):
+        """ FILL ME, pep257. """
 
         try:
             return u', '.join(u'<a href="{0}subscription/{1}" '
@@ -483,7 +538,7 @@ class ReadAdmin(mongoadmin.DocumentAdmin):
                                   settings.NONREL_ADMIN,
                                   sub.id, sub.name)
                               for sub in obj.subscriptions)
-        except Exception, e:
+        except Exception as e:
             return unicode(e)
 
     subscriptions_display.allow_tags        = True
@@ -491,11 +546,16 @@ class ReadAdmin(mongoadmin.DocumentAdmin):
     subscriptions_display.admin_order_field = 'subscriptions'
 
 
-admin.site.register(Read, ReadAdmin)
+admin.site.register(MongoRead, MongoReadAdmin)
 
 
 class HorizontalCheckbox(CheckboxSelectMultiple):
+
+    """ Ho my, that's an horizontal checkbox, pep257. """
+
     def render(self, *args, **kwargs):
+        """ Hello pep257, kiss my ass, it's just a render method. """
+
         output = super(HorizontalCheckbox,
                        self).render(*args, **kwargs)
 
@@ -506,9 +566,12 @@ class HorizontalCheckbox(CheckboxSelectMultiple):
                          u'</li>', u'</span>'))
 
 
-class FeedAdminForm(DocumentForm):
+class MongoFeedAdminForm(DocumentForm):
+
+    """ MongoEngine Feed admin form. """
+
     class Meta:
-        model = Feed
+        model = MongoFeed
         widgets = {
             'url': TextInput(attrs={'class': 'vURLField'}),
             'name': TextInput(attrs={'class': 'vLargeTextField'}),
@@ -519,7 +582,10 @@ class FeedAdminForm(DocumentForm):
         }
 
 
-class FeedAdmin(mongoadmin.DocumentAdmin):
+class MongoFeedAdmin(mongoadmin.DocumentAdmin):
+
+    """ MongoEngine Feed admin. """
+
     class Media:
         css = {
             'all': (
@@ -527,7 +593,7 @@ class FeedAdmin(mongoadmin.DocumentAdmin):
             )
         }
 
-    form = FeedAdminForm
+    form = MongoFeedAdminForm
     list_display = ('id_display', 'name', 'url_display',
                     'good_for_use_display', 'restricted_display',
                     'is_internal_display',
@@ -540,7 +606,7 @@ class FeedAdmin(mongoadmin.DocumentAdmin):
                     'subscriptions_count_display', )
 
     # Doesn't work with mongoadmin yet
-    #list_editable      = ('good_for_use', )
+    # list_editable      = ('good_for_use', )
 
     list_display_links = ('name', )
     list_per_page = config.FEED_ADMIN_LIST_PER_PAGE
@@ -548,13 +614,13 @@ class FeedAdmin(mongoadmin.DocumentAdmin):
     exclude = ('tags', )
     raw_id_fields = ('duplicate_of', 'created_by', )
     # Setting this makes the whole thing unsortable…
-    #ordering = ('-last_fetch', )
+    # ordering = ('-last_fetch', )
 
     # The following fields don't work with mongoadmin.
     #
-    #list_filter = ('closed', 'last_fetch', 'recent_articles__count', )
-    #date_hierarchy = 'date_added'
-    #change_list_template = "admin/change_list_filter_sidebar.html"
+    # list_filter = ('closed', 'last_fetch', 'recent_articles__count', )
+    # date_hierarchy = 'date_added'
+    # change_list_template = "admin/change_list_filter_sidebar.html"
     change_list_filter_template = "admin/filter_listing.html"
 
     fieldsets = (
@@ -591,6 +657,7 @@ class FeedAdmin(mongoadmin.DocumentAdmin):
     # name_display.admin_order_field = 'name'
 
     def id_display(self, obj):
+        """ FILL ME, pep257. """
 
         return (u'<a href="{0}feed/{1}" target="_blank" title="{1}"><i '
                 u'class="fa fa-barcode fa-2x"></i></a>').format(
@@ -601,6 +668,7 @@ class FeedAdmin(mongoadmin.DocumentAdmin):
     id_display.admin_order_field = 'id'
 
     def url_display(self, obj):
+        """ FILL ME, pep257. """
 
         return (u'<a href="{0}" target="_blank" {2}>'
                 u'<i class="fa fa-rss-square fa-lg fa-fw"></i></a>&nbsp;'
@@ -614,6 +682,7 @@ class FeedAdmin(mongoadmin.DocumentAdmin):
     url_display.admin_order_field = 'url'
 
     def duplicate_of_display(self, obj):
+        """ FILL ME, pep257. """
 
         if obj.duplicate_of:
             return (u'<a href="{0}feed/{1}" target="_blank"><i '
@@ -627,6 +696,7 @@ class FeedAdmin(mongoadmin.DocumentAdmin):
     duplicate_of_display.admin_order_field = 'duplicate_of'
 
     def errors_display(self, obj):
+        """ FILL ME, pep257. """
 
         if obj.closed:
             return u'—'
@@ -637,10 +707,11 @@ class FeedAdmin(mongoadmin.DocumentAdmin):
             with django_language():
                 return _(u'<span title="Last 3 errors:\n{0}" '
                          u'style="cursor: pointer">'
-                         u'{1} error(s)</span>').format(u'\n'.join(
-                                _(u'{0}: {1}').format(naturaltime(
-                                    dateutil.parser.parse(y)), x)
-                                for x, y in last3), len(obj.errors))
+                         u'{1} error(s)</span>').format(
+                             u'\n'.join(
+                                 _(u'{0}: {1}').format(
+                                     naturaltime(dateutil.parser.parse(y)), x)
+                                 for x, y in last3), len(obj.errors))
 
         return u'—'
 
@@ -649,6 +720,7 @@ class FeedAdmin(mongoadmin.DocumentAdmin):
     errors_display.admin_order_field = 'errors'
 
     def restricted_display(self, obj):
+        """ FILL ME, pep257. """
 
         return obj.restricted
 
@@ -657,6 +729,7 @@ class FeedAdmin(mongoadmin.DocumentAdmin):
     restricted_display.boolean = True
 
     def is_internal_display(self, obj):
+        """ FILL ME, pep257. """
 
         return obj.restricted
 
@@ -665,6 +738,7 @@ class FeedAdmin(mongoadmin.DocumentAdmin):
     is_internal_display.boolean = True
 
     def good_for_use_display(self, obj):
+        """ FILL ME, pep257. """
 
         return obj.good_for_use
 
@@ -673,20 +747,23 @@ class FeedAdmin(mongoadmin.DocumentAdmin):
     good_for_use_display.boolean = True
 
     def recent_articles_count_display(self, obj):
+        """ FILL ME, pep257. """
 
         return obj.recent_articles_count
 
     recent_articles_count_display.short_description = _(u'Recent')
-    #recent_articles_count_display.admin_order_field = 'recent_articles_count'
+    # recent_articles_count_display.admin_order_field = 'recent_articles_count'
 
     def all_articles_count_display(self, obj):
+        """ FILL ME, pep257. """
 
         return obj.all_articles_count
 
     all_articles_count_display.short_description = _(u'Total')
-    #all_articles_count_display.admin_order_field = 'all_articles_count'
+    # all_articles_count_display.admin_order_field = 'all_articles_count'
 
     def latest_article_display(self, obj):
+        """ FILL ME, pep257. """
 
         if obj.closed:
             return u'—'
@@ -695,9 +772,10 @@ class FeedAdmin(mongoadmin.DocumentAdmin):
             return naturaltime(obj.latest_article_date_published)
 
     latest_article_display.short_description = _(u'Latest')
-    #latest_article_display.admin_order_field = 'latest_article_date_published'
+    # latest_article_display.admin_order_field = 'latest_article_date_published'
 
     def date_added_display(self, obj):
+        """ FILL ME, pep257. """
 
         with django_language():
             return naturaltime(obj.date_added)
@@ -706,6 +784,7 @@ class FeedAdmin(mongoadmin.DocumentAdmin):
     date_added_display.admin_order_field = 'date_added'
 
     def fetch_interval_display(self, obj):
+        """ FILL ME, pep257. """
 
         if obj.closed:
             return u'—'
@@ -717,6 +796,7 @@ class FeedAdmin(mongoadmin.DocumentAdmin):
     fetch_interval_display.admin_order_field = 'fetch_interval'
 
     def last_fetch_display(self, obj):
+        """ FILL ME, pep257. """
 
         if obj.closed:
             return u'—'
@@ -731,13 +811,15 @@ class FeedAdmin(mongoadmin.DocumentAdmin):
     last_fetch_display.admin_order_field = 'last_fetch'
 
     def subscriptions_count_display(self, obj):
+        """ FILL ME, pep257. """
 
         return obj.subscriptions_count
 
     subscriptions_count_display.short_description = _(u'Subs.')
-    #subscriptions_count_display.admin_order_field = 'subscriptions_count'
+    # subscriptions_count_display.admin_order_field = 'subscriptions_count'
 
     def closed_display(self, obj):
+        """ FILL ME, pep257. """
 
         #
         # NOTE: using "fa-spin" on open feeds brings firefox to 100% CPU.
@@ -758,12 +840,16 @@ class FeedAdmin(mongoadmin.DocumentAdmin):
     closed_display.admin_order_field = 'closed'
 
 
-admin.site.register(Feed, FeedAdmin)
+admin.site.register(MongoFeed, MongoFeedAdmin)
 
 # —————————————————————————————————————————————————————————————————— PostgreSQL
 
+admin.site.register(WebSite)
 admin.site.register(MailAccount)
 admin.site.register(MailFeed)
+admin.site.register(RssAtomFeed)
+admin.site.register(Article)
+# admin.site.register(CombinedFeed)
 
 
 class MailFeedRuleAdmin(admin.ModelAdmin):
@@ -785,12 +871,16 @@ class MailFeedRuleAdmin(admin.ModelAdmin):
     # inlines = [] if UserProfile is None else [UserProfileInline, ]
 
     def get_mailfeed__name(self, obj):
+        """ FILL ME, pep257. """
+
         return obj.mailfeed.name
 
     get_mailfeed__name.short_description = _(u'Mail feed')
     get_mailfeed__name.admin_order_field = 'mailfeed__name'
 
     def get_mailfeed__user(self, obj):
+        """ FILL ME, pep257. """
+
         return obj.mailfeed.user.username
 
     get_mailfeed__user.short_description = _(u'User')
@@ -798,5 +888,10 @@ class MailFeedRuleAdmin(admin.ModelAdmin):
 
 admin.site.register(MailFeedRule, MailFeedRuleAdmin)
 
+# admin.site.register(CombinedFeedRule)
+
 admin.site.register(HistoryEntry)
 admin.site.register(UserImport)
+
+admin.site.register(Subscription)
+admin.site.register(Read)
