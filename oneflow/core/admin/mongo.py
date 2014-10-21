@@ -18,7 +18,6 @@ You should have received a copy of the GNU Affero General Public
 License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
-
 import dateutil.parser
 
 from humanize.i18n import django_language
@@ -35,9 +34,9 @@ from django.core.urlresolvers import reverse
 # from django_markdown.widgets import MarkdownWidget
 from writingfield import FullScreenTextarea
 
-from models.common import CONTENT_TYPES
+from ..models.common import CONTENT_TYPES
 
-from models.nonrel import (
+from ..models.nonrel import (
     Tag as MongoTag,
     Feed as MongoFeed,
     Article as MongoArticle,
@@ -46,91 +45,19 @@ from models.nonrel import (
     Group as MongoGroup,
     # WebSite as MongoWebSite,
 )
-from models.reldb import (
-    HelpContent,
-    HistoryEntry, UserImport,
-    MailAccount,
-    MailFeed, MailFeedRule,
-    RssAtomFeed, Article,
-    # CombinedFeed, CombinedFeedRule,
-    Subscription, Read,
-    WebSite,
-)
+
 from django.contrib import admin
+
 import mongoadmin
 from mongodbforms import DocumentForm
 
-from sparks.django.utils import languages, truncate_field
-
-# from ..base.admin import CSVAdminMixin
-from ..base.utils.dateutils import naturaldelta, naturaltime
+from oneflow.base.utils.dateutils import naturaldelta, naturaltime
 
 # NOTE: using "from base.models import User" will generate
 # a "cannot proxy swapped model base.User" when creating the
 # GriUser class. Using `get_user_model()` works and is the
 # Django recommended way of doing it.
 User = get_user_model()
-
-
-if settings.FULL_ADMIN:
-    name_fields_names = tuple(('name_' + code)
-                              for code, lang in languages)
-    name_fields_displays = tuple((field + '_display')
-                                 for field in name_fields_names)
-    content_fields_names = tuple(('content_' + code)
-                                 for code, lang in languages)
-    content_fields_displays = tuple((field + '_display')
-                                    for field in content_fields_names)
-
-    class HelpContentAdmin(admin.ModelAdmin):
-
-        """ Help content admin. """
-
-        list_display_links = ('label', )
-        list_display       = ('label', 'ordering', 'active', ) \
-            + name_fields_displays
-        list_editable      = ('ordering', 'active', )
-        search_fields      = ('label', ) + name_fields_names + content_fields_names  # NOQA
-        ordering           = ('ordering', 'label', )
-        save_as            = True
-        fieldsets = (
-            (_(u'Main'), {
-                'fields': (
-                    ('label', 'active', 'ordering', ),
-                ),
-            }),
-            (_(u'Translators notes'), {
-                'classes': ('grp-collapse grp-closed', ),
-                'fields': (
-                    'name_nt',
-                    'content_nt',
-                )
-            }),
-            (_(u'Contents (English)'), {
-                'fields': (
-                    'name_en',
-                    'content_en',
-                )
-            }),
-            (_(u'Contents (French)'), {
-                'fields': (
-                    'name_fr',
-                    'content_fr',
-                )
-            }),
-        )
-
-    for attr, attr_name in zip(name_fields_names,
-                               name_fields_displays):
-        setattr(HelpContentAdmin, attr_name,
-                truncate_field(HelpContent, attr))
-
-    for attr, attr_name in zip(content_fields_names,
-                               content_fields_displays):
-        setattr(HelpContentAdmin, attr_name,
-                truncate_field(HelpContent, attr))
-
-    admin.site.register(HelpContent, HelpContentAdmin)
 
 
 # ————————————————————————————————————————————————————————————————————— MongoDB
@@ -841,57 +768,3 @@ class MongoFeedAdmin(mongoadmin.DocumentAdmin):
 
 
 admin.site.register(MongoFeed, MongoFeedAdmin)
-
-# —————————————————————————————————————————————————————————————————— PostgreSQL
-
-admin.site.register(WebSite)
-admin.site.register(MailAccount)
-admin.site.register(MailFeed)
-admin.site.register(RssAtomFeed)
-admin.site.register(Article)
-# admin.site.register(CombinedFeed)
-
-
-class MailFeedRuleAdmin(admin.ModelAdmin):
-
-    """ MailFeedRule admin class. """
-
-    list_display = ('id', 'get_mailfeed__name', 'get_mailfeed__user',
-                    'group', 'header_field', 'match_type', 'match_value', )
-    list_display_links = ('id', 'get_mailfeed__name',
-                          'get_mailfeed__user', 'group', )
-    list_filter = ('group', )
-    # ordering = ('name', 'parent', )
-    # date_hierarchy = 'date_joined'
-    change_list_template = "admin/change_list_filter_sidebar.html"
-    change_list_filter_template = "admin/filter_listing.html"
-
-    # Don't display the UserProfile inline, this will conflict with the
-    # post_save() signal in profiles.models. There is a race condition…
-    # inlines = [] if UserProfile is None else [UserProfileInline, ]
-
-    def get_mailfeed__name(self, obj):
-        """ FILL ME, pep257. """
-
-        return obj.mailfeed.name
-
-    get_mailfeed__name.short_description = _(u'Mail feed')
-    get_mailfeed__name.admin_order_field = 'mailfeed__name'
-
-    def get_mailfeed__user(self, obj):
-        """ FILL ME, pep257. """
-
-        return obj.mailfeed.user.username
-
-    get_mailfeed__user.short_description = _(u'User')
-    get_mailfeed__user.admin_order_field = 'mailfeed__user__username'
-
-admin.site.register(MailFeedRule, MailFeedRuleAdmin)
-
-# admin.site.register(CombinedFeedRule)
-
-admin.site.register(HistoryEntry)
-admin.site.register(UserImport)
-
-admin.site.register(Subscription)
-admin.site.register(Read)
