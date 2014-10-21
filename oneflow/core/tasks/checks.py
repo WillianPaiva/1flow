@@ -35,13 +35,14 @@ from django.utils.translation import ugettext_lazy as _
 
 from ..models import (Article, Feed, Read, User as MongoUser)
 
+from ..models.reldb.common import DjangoUser  # , REDIS
+
 from oneflow.base.utils import RedisExpiringLock
 from oneflow.base.utils.dateutils import (now, timedelta,
                                           naturaldelta, benchmark)
 
 LOGGER = logging.getLogger(__name__)
 
-# from common import User, REDIS
 from archive import archive_documents
 
 
@@ -61,6 +62,7 @@ def global_checker_task(*args, **kwargs):
         global_duplicates_checker.si(),
         archive_documents.si(),
 
+        global_users_checker.si(),
         global_feeds_checker.si(),
         global_subscriptions_checker.si(),
         global_reads_checker.si(),
@@ -459,3 +461,68 @@ def global_reads_checker(limit=None, force=False, verbose=False,
                 wiped_reads_count * 100.0 / processed_reads,
                 skipped_count,
                 skipped_count * 100.0 / processed_reads)
+
+
+@task(queue='low')
+def global_users_checker(limit=None, force=False, verbose=False,
+                         break_on_exception=False, extended_check=False):
+    """ Check all Users and their dependants. """
+
+    if config.CHECK_USERS_DISABLED:
+        LOGGER.warning(u'Users check disabled in configuration.')
+        return
+
+    # This task runs twice a day. Acquire the lock for just a
+    # little more time (13h, because Redis doesn't like floats)
+    # to avoid over-parallelized runs.
+    my_lock = RedisExpiringLock('check_all_users', expire_time=3600 * 13)
+
+    if not my_lock.acquire():
+        if force:
+            my_lock.release()
+            my_lock.acquire()
+            LOGGER.warning(u'Forcing users check…')
+
+        else:
+            # Avoid running this task over and over again in the queue
+            # if the previous instance did not yet terminate. Happens
+            # when scheduled task runs too quickly.
+            LOGGER.warning(u'global_users_checker() is alusery '
+                           u'locked, aborting.')
+            return
+
+    if limit is None:
+        limit = 0
+
+    active_users      = DjangoUser.objects.filter(is_active=True)
+    total_users_count = active_users.count()
+    processed_users   = 0
+    changed_users     = 0
+    skipped_count     = 0
+
+    with benchmark(u"Check {0}/{1} users".format(limit, total_users_count)):
+        try:
+            for user in active_users:
+
+                processed_users += 1
+
+                if limit and changed_users >= limit:
+                    break
+
+                userfeeds = user.feeds
+                userfeeds.check()
+
+                if extended_check:
+                    pass
+
+        finally:
+            my_lock.release()
+
+    LOGGER.info(u'global_users_checker(): %s/%s users processed '
+                u'(%.2f%%), %s corrected (%.2f%%), %s skipped (%.2f%%).',
+                processed_users, total_users_count,
+                processed_users * 100.0 / total_users_count,
+                changed_users,
+                changed_users * 100.0 / processed_users,
+                skipped_count,
+                skipped_count * 100.0 / processed_users)
