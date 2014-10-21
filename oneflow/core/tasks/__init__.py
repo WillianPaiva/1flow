@@ -28,7 +28,14 @@ from celery import task
 
 from django.utils.translation import ugettext_lazy as _
 
-from ..models import MailAccount, Feed, feed_refresh_task
+from ..models.reldb import (
+    MailAccount,
+    BaseFeed, basefeed_refresh_task
+)
+
+from ..models.nonrel import (
+    Feed as MongoFeed, feed_refresh_task as mongo_feed_refresh_task
+)
 
 from oneflow.base.utils import RedisExpiringLock
 from oneflow.base.utils.dateutils import (now, today, timedelta,
@@ -59,6 +66,100 @@ def clean_obsolete_redis_keys():
 
 
 @task(queue='high')
+def refresh_all_mongo_feeds(limit=None, force=False):
+    """ Refresh all MongoEngine feeds (RSS).
+
+    .. note:: this task should vanish when
+        MongoDB → PostgreSQL migration is done.
+    """
+
+    if config.FEED_FETCH_DISABLED:
+        # Do not raise any .retry(), this is a scheduled task.
+        LOGGER.warning(u'Feed refresh disabled in configuration.')
+        return
+
+    # Be sure two refresh operations don't overlap, but don't hold the
+    # lock too long if something goes wrong. In production conditions
+    # as of 20130812, refreshing all feeds takes only a moment:
+    # [2013-08-12 09:07:02,028: INFO/MainProcess] Task
+    #       oneflow.core.tasks.refresh_all_feeds succeeded in 1.99886608124s.
+    my_lock = RedisExpiringLock('refresh_all_mongo_feeds', expire_time=120)
+
+    if not my_lock.acquire():
+        if force:
+            my_lock.release()
+            my_lock.acquire()
+            LOGGER.warning(_(u'Forcing all feed refresh…'))
+
+        else:
+            # Avoid running this task over and over again in the queue
+            # if the previous instance did not yet terminate. Happens
+            # when scheduled task runs too quickly.
+            LOGGER.warning(u'refresh_all_feeds() is already locked, aborting.')
+            return
+
+    feeds = MongoFeed.objects.filter(closed__ne=True, is_internal__ne=True)
+
+    if limit:
+        feeds = feeds.limit(limit)
+
+    # No need for caching and cluttering CPU/memory for a one-shot thing.
+    feeds.no_cache()
+
+    with benchmark('refresh_all_mongo_feeds()'):
+
+        try:
+            count = 0
+            mynow = now()
+
+            for feed in feeds:
+
+                if feed.refresh_lock.is_locked():
+                    LOGGER.info(u'Feed %s already locked, skipped.', feed)
+                    continue
+
+                interval = timedelta(seconds=feed.fetch_interval)
+
+                if feed.last_fetch is None:
+
+                    mongo_feed_refresh_task.delay(feed.id)
+
+                    LOGGER.info(u'Launched immediate refresh of feed %s which '
+                                u'has never been refreshed.', feed)
+
+                elif force or feed.last_fetch + interval < mynow:
+
+                    how_late = feed.last_fetch + interval - mynow
+                    how_late = how_late.days * 86400 + how_late.seconds
+
+                    if config.FEED_REFRESH_RANDOMIZE:
+                        countdown = randrange(
+                            config.FEED_REFRESH_RANDOMIZE_DELAY)
+
+                        mongo_feed_refresh_task.apply_async((feed.id, force),
+                                                            countdown=countdown)
+
+                    else:
+                        countdown = 0
+                        mongo_feed_refresh_task.delay(feed.id, force)
+
+                    LOGGER.info(u'%s refresh of feed %s %s (%s late).',
+                                u'Scheduled randomized'
+                                if countdown else u'Launched',
+                                feed,
+                                u' in {0}'.format(naturaldelta(countdown))
+                                if countdown else u'in the background',
+                                naturaldelta(how_late))
+                    count += 1
+
+        finally:
+            my_lock.release()
+
+        LOGGER.info(u'Launched %s refreshes out of %s feed(s) checked.',
+                    count, feeds.count())
+
+
+@task(queue='high')
 def refresh_all_feeds(limit=None, force=False):
     """ Refresh all feeds (RSS/Mail/Twitter…). """
 
@@ -66,6 +167,9 @@ def refresh_all_feeds(limit=None, force=False):
         # Do not raise any .retry(), this is a scheduled task.
         LOGGER.warning(u'Feed refresh disabled in configuration.')
         return
+
+    # TODO: WIPE THIS when Mongo → PG migration is complete!
+    refresh_all_mongo_feeds.delay()
 
     # Be sure two refresh operations don't overlap, but don't hold the
     # lock too long if something goes wrong. In production conditions
@@ -87,13 +191,11 @@ def refresh_all_feeds(limit=None, force=False):
             LOGGER.warning(u'refresh_all_feeds() is already locked, aborting.')
             return
 
-    feeds = Feed.objects.filter(closed__ne=True, is_internal__ne=True)
+    # This should bring us a Polymorphic Query to refresh all feeds types.
+    feeds = BaseFeed.objects.filter(is_active=True, is_internal=False)
 
     if limit:
         feeds = feeds.limit(limit)
-
-    # No need for caching and cluttering CPU/memory for a one-shot thing.
-    feeds.no_cache()
 
     with benchmark('refresh_all_feeds()'):
 
@@ -111,7 +213,7 @@ def refresh_all_feeds(limit=None, force=False):
 
                 if feed.last_fetch is None:
 
-                    feed_refresh_task.delay(feed.id)
+                    basefeed_refresh_task.delay(feed.id)
 
                     LOGGER.info(u'Launched immediate refresh of feed %s which '
                                 u'has never been refreshed.', feed)
@@ -125,12 +227,12 @@ def refresh_all_feeds(limit=None, force=False):
                         countdown = randrange(
                             config.FEED_REFRESH_RANDOMIZE_DELAY)
 
-                        feed_refresh_task.apply_async((feed.id, force),
-                                                      countdown=countdown)
+                        basefeed_refresh_task.apply_async((feed.id, force),
+                                                          countdown=countdown)
 
                     else:
                         countdown = 0
-                        feed_refresh_task.delay(feed.id, force)
+                        basefeed_refresh_task.delay(feed.id, force)
 
                     LOGGER.info(u'%s refresh of feed %s %s (%s late).',
                                 u'Scheduled randomized'
