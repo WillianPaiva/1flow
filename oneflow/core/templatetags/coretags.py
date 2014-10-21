@@ -456,7 +456,7 @@ def read_action_toggle_url(read):
 #@cached(CACHE_ONE_WEEK)
 def article_full_content_display(article):
 
-    if article.content_type == models.CONTENT_TYPE_MARKDOWN:
+    if article.content_type == models.CONTENT_TYPES.MARKDOWN:
 
         if len(article.content) > config.READ_ARTICLE_MIN_LENGTH:
 
@@ -544,7 +544,7 @@ def article_excerpt_content_display(article):
     # to be sure WE are not cut down by repressive laws from another age.
     #
 
-    if article.content_type == models.CONTENT_TYPE_MARKDOWN:
+    if article.content_type == models.CONTENT_TYPES.MARKDOWN:
 
         try:
             # Save it for next time / user to cool CPU usage.    save=True

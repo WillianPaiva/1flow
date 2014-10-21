@@ -25,9 +25,7 @@ from statsd import statsd
 from constance import config
 
 from oneflow.core.models import (Tag, Feed, Article, Author, WebSite,
-                                 CONTENT_TYPE_NONE,
-                                 CONTENT_TYPE_HTML,
-                                 CONTENT_TYPE_MARKDOWN,
+                                 CONTENT_TYPES,
                                  )
 from oneflow.base.utils.dateutils import (timedelta, now, pytime,
                                           naturaldelta, benchmark)
@@ -494,9 +492,9 @@ def synchronize_statsd_articles_gauges(full=False):
         # empty_content_error = empty.filter(content_error__ne='')
         # empty_url_error     = empty.filter(url_error__ne='')
 
-        parsed             = Article.objects(content_type__ne=CONTENT_TYPE_NONE)
-        html               = parsed.filter(content_type=CONTENT_TYPE_HTML)
-        markdown           = parsed.filter(content_type=CONTENT_TYPE_MARKDOWN)
+        parsed             = Article.objects(content_type__ne=CONTENT_TYPES.NONE)
+        html               = parsed.filter(content_type=CONTENT_TYPES.HTML)
+        markdown           = parsed.filter(content_type=CONTENT_TYPES.MARKDOWN)
 
         absolutes          = Article.objects(url_absolute=True).no_cache()
         duplicates         = Article.objects(duplicate_of__ne=None).no_cache()

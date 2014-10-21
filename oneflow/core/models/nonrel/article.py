@@ -70,17 +70,11 @@ from sparks.foundations.classes import SimpleObject
 
 from .common import (DocumentHelperMixin,
                      NotTextHtmlException,
-                     CONTENT_NOT_PARSED, CONTENT_TYPE_NONE,
-                     CONTENT_TYPE_HTML,
-                     CONTENT_TYPE_MARKDOWN_V1, CONTENT_TYPE_MARKDOWN,
-                     CONTENT_TYPE_BOOKMARK,
+                     CONTENT_TYPES,
                      CONTENT_TYPES_FINAL,
                      CONTENT_PREPARSING_NEEDS_GHOST,
                      CONTENT_FETCH_LIKELY_MULTIPAGE,
-                     ORIGIN_TYPE_NONE,
-                     ORIGIN_TYPE_FEEDPARSER,
-                     ORIGIN_TYPE_WEBIMPORT,
-                     ORIGIN_TYPE_GOOGLE_READER,
+                     ORIGINS,
                      ARTICLE_ORPHANED_BASE,
                      REQUEST_BASE_HEADERS,
                      )
@@ -192,10 +186,10 @@ class Article(Document, DocumentHelperMixin):
                                 help_text=_(u'Small excerpt of content, '
                                             u'if applicable.'))
 
-    content       = StringField(default=CONTENT_NOT_PARSED,
+    content       = StringField(
                                 verbose_name=_(u'Content'),
                                 help_text=_(u'Article content'))
-    content_type  = IntField(default=CONTENT_TYPE_NONE,
+    content_type  = IntField(default=CONTENT_TYPES.NONE,
                              verbose_name=_(u'Content type'),
                              help_text=_(u'Type of article content '
                                          u'(text, image…)'))
@@ -206,7 +200,7 @@ class Article(Document, DocumentHelperMixin):
     # An article references its source (origin blog / newspaper…)
     source = ReferenceField('self', reverse_delete_rule=NULLIFY)
 
-    origin_type = IntField(default=ORIGIN_TYPE_NONE,
+    origin_type = IntField(default=ORIGINS.NONE,
                            verbose_name=_(u'Origin type'),
                            help_text=_(u'Origin of article (feedparser, '
                                        u'twitter, websnap…). Can be 0 '
@@ -669,8 +663,8 @@ class Article(Document, DocumentHelperMixin):
     def postprocess_original_data(self, force=False, commit=True):
 
         methods_table = {
-            ORIGIN_TYPE_NONE: self.postprocess_guess_origin_data,
-            ORIGIN_TYPE_FEEDPARSER: self.postprocess_feedparser_data,
+            ORIGINS.NONE: self.postprocess_guess_origin_data,
+            ORIGINS.FEEDPARSER: self.postprocess_feedparser_data,
         }
 
         meth = methods_table.get(self.origin_type, None)
@@ -691,11 +685,11 @@ class Article(Document, DocumentHelperMixin):
         need_save = False
 
         if self.original_data.feedparser_hydrated:
-            self.origin_type = ORIGIN_TYPE_FEEDPARSER
+            self.origin_type = ORIGINS.FEEDPARSER
             need_save        = True
 
         elif self.original_data.google_reader_hydrated:
-            self.origin_type = ORIGIN_TYPE_GOOGLE_READER
+            self.origin_type = ORIGINS.GOOGLE_READER
             need_save        = True
 
         if need_save:
@@ -765,7 +759,7 @@ class Article(Document, DocumentHelperMixin):
 
                         if detail_type == 'text/plain':
                             self.content = detail_value
-                            self.content_type = CONTENT_TYPE_MARKDOWN
+                            self.content_type = CONTENT_TYPES.MARKDOWN
                             self.save()
 
                             statsd.gauge('articles.counts.markdown',
@@ -773,7 +767,7 @@ class Article(Document, DocumentHelperMixin):
 
                         elif detail_type == 'text/html':
                             self.content = detail_value
-                            self.content_type = CONTENT_TYPE_HTML
+                            self.content_type = CONTENT_TYPES.HTML
                             self.save()
 
                             statsd.gauge('articles.counts.html',
@@ -1195,7 +1189,7 @@ class Article(Document, DocumentHelperMixin):
             LOGGER.info(u'Article %s image already found.', self)
             return True
 
-        if self.content_type not in (CONTENT_TYPE_MARKDOWN, ):
+        if self.content_type not in (CONTENT_TYPES.MARKDOWN, ):
             LOGGER.warning(u'Article %s is not in Markdown format, '
                            u'aborting image lookup.', self)
             return True
@@ -1325,7 +1319,7 @@ class Article(Document, DocumentHelperMixin):
         """ Try to extract title from the HTML content, and set the article
             title from there. """
 
-        if self.origin_type != ORIGIN_TYPE_WEBIMPORT and not force:
+        if self.origin_type != ORIGINS.WEBIMPORT and not force:
             LOGGER.warning(u'Skipped title extraction on non-imported article '
                            u'#%s (use `force=True`).', self.id)
             return
@@ -1342,7 +1336,7 @@ class Article(Document, DocumentHelperMixin):
             return
 
         if content is None:
-            if self.content_type == CONTENT_TYPE_HTML:
+            if self.content_type == CONTENT_TYPES.HTML:
                 content = self.content
 
             else:
@@ -1438,7 +1432,7 @@ class Article(Document, DocumentHelperMixin):
             LOGGER.info(u'Bookmarks fetching disabled in configuration.')
             return
 
-        if self.content_type == CONTENT_TYPE_NONE:
+        if self.content_type == CONTENT_TYPES.NONE:
 
             slashes_parts = [p for p in self.url.split(u'/') if p != u'']
 
@@ -1452,7 +1446,7 @@ class Article(Document, DocumentHelperMixin):
                 # This is a simple website link. For sure, a bookmark.
                 # eg. we got ['http', 'www.mysite.com']
 
-                self.content_type = CONTENT_TYPE_BOOKMARK
+                self.content_type = CONTENT_TYPES.BOOKMARK
 
             # elif parts_nr < 5:
                 # TODO: find a way to ask the user to choose if he wanted
@@ -1509,7 +1503,7 @@ class Article(Document, DocumentHelperMixin):
             LOGGER.info(u'Article text fetching disabled in configuration.')
             return
 
-        if self.content_type == CONTENT_TYPE_NONE:
+        if self.content_type == CONTENT_TYPES.NONE:
 
             LOGGER.info(u'Parsing text content for article %s…', self)
 
@@ -1551,7 +1545,7 @@ class Article(Document, DocumentHelperMixin):
                 #
                 self.content = unicode(str(content), 'utf-8')
 
-            self.content_type = CONTENT_TYPE_HTML
+            self.content_type = CONTENT_TYPES.HTML
 
             if self.content_error:
                 statsd.gauge('articles.counts.content_errors', -1, delta=True)
@@ -1587,7 +1581,7 @@ class Article(Document, DocumentHelperMixin):
                         u'configuration.')
             return
 
-        if self.content_type == CONTENT_TYPE_MARKDOWN:
+        if self.content_type == CONTENT_TYPES.MARKDOWN:
             if not force:
                 LOGGER.info(u'Article %s already converted to Markdown.', self)
                 return
@@ -1595,7 +1589,7 @@ class Article(Document, DocumentHelperMixin):
             else:
                 statsd.gauge('articles.counts.markdown', -1, delta=True)
 
-        elif self.content_type != CONTENT_TYPE_HTML:
+        elif self.content_type != CONTENT_TYPES.HTML:
             LOGGER.warning(u'Article %s cannot be converted to Markdown, '
                            u'it is not currently HTML.', self)
             return
@@ -1607,7 +1601,7 @@ class Article(Document, DocumentHelperMixin):
         # Set sane defaults. body_width > 0 breaks
         # some links by inserting \n inside them.
         #
-        # MARKDOWN_V1 had [False, False, 78] (=default parameters)
+        # MD_V1 had [False, False, 78] (=default parameters)
         md_converter.unicode_snob = True
         md_converter.escape_snob  = True
         md_converter.body_width   = 0
@@ -1625,7 +1619,7 @@ class Article(Document, DocumentHelperMixin):
             LOGGER.exception(u'Markdown convert failed for article %s.', self)
             return e
 
-        self.content_type = CONTENT_TYPE_MARKDOWN
+        self.content_type = CONTENT_TYPES.MARKDOWN
 
         if self.content_error:
             statsd.gauge('articles.counts.content_errors', -1, delta=True)
@@ -1660,10 +1654,10 @@ class Article(Document, DocumentHelperMixin):
             repair its links by removing the `\n` inside them.
         """
 
-        if self.content_type == CONTENT_TYPE_MARKDOWN:
+        if self.content_type == CONTENT_TYPES.MARKDOWN:
             replace_newlines = False
 
-        elif self.content_type == CONTENT_TYPE_MARKDOWN_V1:
+        elif self.content_type == CONTENT_TYPES.MD_V1:
             replace_newlines = True
 
         else:
@@ -1716,7 +1710,7 @@ class Article(Document, DocumentHelperMixin):
             self.content = content
 
             if replace_newlines:
-                self.content_type = CONTENT_TYPE_MARKDOWN
+                self.content_type = CONTENT_TYPES.MARKDOWN
 
             # Disabled until more love is put inside.
             # self.find_image(commit=False, force=force)

@@ -24,42 +24,69 @@ from operator import attrgetter
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
+from sparks.django.utils import NamedTupleChoices
+
 REQUEST_BASE_HEADERS  = {'User-agent': settings.DEFAULT_USER_AGENT}
 
 # Lower the default, we know good websites just work well.
 requests.adapters.DEFAULT_RETRIES = 1
 
-# Don't use any lang-dependant values (eg. _(u'NO CONTENT'))
-CONTENT_NOT_PARSED       = None
-CONTENT_TYPE_NONE        = 0
-CONTENT_TYPE_HTML        = 1
-# Since Hotfix 0.20.11.5, we process markdown differently,
-# And need to know about the "old" processing method to be
-# able to fix it afterwards in the production database.
-CONTENT_TYPE_MARKDOWN_V1 = 2
-CONTENT_TYPE_MARKDOWN    = 3
-CONTENT_TYPE_IMAGE       = 100
-CONTENT_TYPE_VIDEO       = 200
-CONTENT_TYPE_BOOKMARK    = 900
-CONTENT_TYPES_FINAL      = (CONTENT_TYPE_MARKDOWN,
-                            CONTENT_TYPE_MARKDOWN_V1,
-                            CONTENT_TYPE_IMAGE,
-                            CONTENT_TYPE_VIDEO,
-                            CONTENT_TYPE_BOOKMARK,
-                            )
+CONTENT_TYPES = NamedTupleChoices(
+    'CONTENT_TYPES',
+
+    # Nothing at all could be fetched / parsed (but we tried).
+    ('NONE', 0, _(u'No content')),
+
+    # Content is still HTML (probably the MD conversion failed).
+    ('HTML', 1, _(u'HTML')),
+
+    # This one is obsolete, but we keep it in case
+    # it's still present in http://1flow.io/ database.
+    #
+    # Since Hotfix 0.20.11.5, we process markdown differently,
+    # And need to know about the "old" processing method to be
+    # able to fix it afterwards in the production database.
+    ('MD_V1', 2, _(u'Markdown v1 (1flow internal, obsolete)')),
+
+    # The current conversion model.
+    ('MARKDOWN', 3, _(u'Markdown')),
+
+    # The next/future one (supports footnotes and cool stuff).
+    ('MULTIMD', 4, _(u'MultiMarkdown')),
+
+    # Other types, which will probably go into dedicated models.
+    ('IMAGE', 100, _(u'Image')),
+    ('VIDEO', 200, _(u'Video')),
+    ('BOOKMARK', 900, _(u'Bookmark')),
+)
+
+CONTENT_TYPES_FINAL = (
+    CONTENT_TYPES.MARKDOWN,
+    CONTENT_TYPES.MD_V1,
+    CONTENT_TYPES.MULTIMD,
+    CONTENT_TYPES.IMAGE,
+    CONTENT_TYPES.VIDEO,
+    CONTENT_TYPES.BOOKMARK,
+)
 
 CONTENT_PREPARSING_NEEDS_GHOST = 1
 CONTENT_FETCH_LIKELY_MULTIPAGE = 2
 
 # MORE CONTENT_PREPARSING_NEEDS_* TO COME
 
-ORIGIN_TYPE_NONE          = 0
-ORIGIN_TYPE_GOOGLE_READER = 1
-ORIGIN_TYPE_FEEDPARSER    = 2
-ORIGIN_TYPE_STANDALONE    = 3
-ORIGIN_TYPE_TWITTER       = 4
-ORIGIN_TYPE_WEBIMPORT     = 5
-ORIGIN_TYPE_EMAIL_FEED    = 6
+ORIGINS = NamedTupleChoices(
+    'ORIGINS',
+    ('NONE', 0, _(u'None or Unknown')),
+    ('GOOGLE_READER', 1, _(u'Google Reader')),
+    ('FEEDPARSER', 2, _(u'RSS/Atom')),
+    ('WRITING', 3, _(u'User writing')),
+    ('TWITTER', 4, _(u'Twitter')),
+    ('WEBIMPORT', 5, _(u'Web import')),
+    ('EMAIL_FEED', 6, _(u'E-mail')),
+    ('FACEBOOK', 7, _(u'Facebook')),
+    ('GOOGLEPLUS', 8, _(u'Google Plus')),
+    ('INTERNAL', 99, _(u'1flow internal origin'))
+)
 
 CACHE_ONE_HOUR  = 3600
 CACHE_ONE_DAY   = CACHE_ONE_HOUR * 24

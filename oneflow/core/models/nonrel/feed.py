@@ -54,18 +54,8 @@ from ....base.utils.dateutils import (now, timedelta, today, datetime,
 from .common import (DocumentHelperMixin,
                      FeedIsHtmlPageException,
                      FeedFetchException,
-                     CONTENT_NOT_PARSED,
-                     CONTENT_TYPE_MARKDOWN,
-                     CONTENT_TYPE_HTML,
-                     CONTENT_TYPE_IMAGE,
-                     CONTENT_TYPE_VIDEO,
-                     CONTENT_TYPE_BOOKMARK,
-                     # ORIGIN_TYPE_NONE,
-                     ORIGIN_TYPE_FEEDPARSER,
-                     ORIGIN_TYPE_EMAIL_FEED,
-                     ORIGIN_TYPE_WEBIMPORT,
-                     ORIGIN_TYPE_GOOGLE_READER,
-                     ORIGIN_TYPE_TWITTER,
+                     CONTENT_TYPES,
+                     ORIGINS,
                      USER_FEEDS_SITE_URL,
                      BAD_SITE_URL_BASE,
                      SPECIAL_FEEDS_DATA)
@@ -74,7 +64,7 @@ from .tag import Tag
 from .article import Article
 from .user import User
 
-from ..reldb.mailfeed import MailFeed
+# from ..reldb.mailfeed import MailFeed
 
 
 LOGGER                = logging.getLogger(__name__)
@@ -606,15 +596,15 @@ class Feed(Document, DocumentHelperMixin):
                 # by the register_task_method() call.
                 feed_refresh_task.delay(feed.id)  # NOQA
 
-        else:
-            if feed.is_mailfeed:
-                # HEADS UP: we use save() to forward the
-                # name change to the Subscription instance
-                # without duplicating the code to do it here.
-                mailfeed = MailFeed.get_from_stream_url(feed.url)
-                mailfeed.name = feed.name
-                mailfeed.is_public = not feed.restricted
-                mailfeed.save()
+            # else:
+            #     if feed.is_mailfeed:
+            #         # HEADS UP: we use save() to forward the
+            #         # name change to the Subscription instance
+            #         # without duplicating the code to do it here.
+            #         mailfeed = MailFeed.get_from_stream_url(feed.url)
+            #         mailfeed.name = feed.name
+            #         mailfeed.is_public = not feed.restricted
+            #         mailfeed.save()
 
     def has_option(self, option):
         return option in self.options
@@ -641,15 +631,15 @@ class Feed(Document, DocumentHelperMixin):
 
         self.safe_reload()
 
-    @property
-    def is_mailfeed(self):
-        """ Return ``True`` if the current document originates from a MailFeed.
-
-        .. warning:: please synchronize the conditions
-            with :mod:`~oneflow.core.models.reldb.MailFeed`.
-        """
-
-        return MailFeed.is_stream_url(self.url)
+    # @property
+    # def is_mailfeed(self):
+    #     """ Return ``True`` if the current document originates from a MailFeed.
+    #
+    #     .. warning:: please synchronize the conditions
+    #         with :mod:`~oneflow.core.models.reldb.MailFeed`.
+    #     """
+    #
+    #     return MailFeed.is_stream_url(self.url)
 
     @property
     def articles(self):
@@ -795,7 +785,7 @@ class Feed(Document, DocumentHelperMixin):
             new_article, created = Article.create_article(
                 url=url.replace(' ', '%20'),
                 title=_(u'Imported item from {0}').format(clean_url(url)),
-                feeds=[self], origin_type=ORIGIN_TYPE_WEBIMPORT)
+                feeds=[self], origin_type=ORIGINS.WEBIMPORT)
 
         except:
             # NOTE: duplication handling is already
@@ -826,11 +816,11 @@ class Feed(Document, DocumentHelperMixin):
         """ Take a feedparser item and a list of Feed subscribers and
             feed tags, and create the corresponding Article and Read(s). """
 
-        feedparser_content = getattr(article, 'content', CONTENT_NOT_PARSED)
+        feedparser_content = getattr(article, 'content', None)
 
         if isinstance(feedparser_content, list):
             feedparser_content = feedparser_content[0]
-            content = feedparser_content.get('value', CONTENT_NOT_PARSED)
+            content = feedparser_content.get('value', None)
 
         else:
             content = feedparser_content
@@ -871,7 +861,7 @@ class Feed(Document, DocumentHelperMixin):
                 title=getattr(article, 'title', u' '),
 
                 excerpt=content, date_published=date_published,
-                feeds=[self], tags=tags, origin_type=ORIGIN_TYPE_FEEDPARSER)
+                feeds=[self], tags=tags, origin_type=ORIGINS.FEEDPARSER)
 
         except:
             # NOTE: duplication handling is already
@@ -924,11 +914,11 @@ class Feed(Document, DocumentHelperMixin):
         """ Return a kwargs suitable for internal feed refreshing methods. """
 
         if for_type is None:
-            for_type = ORIGIN_TYPE_FEEDPARSER
+            for_type = ORIGINS.FEEDPARSER
 
         kwargs = {}
 
-        if for_type == ORIGIN_TYPE_EMAIL_FEED:
+        if for_type == ORIGINS.EMAIL_FEED:
             kwargs['since'] = self.last_fetch
             return kwargs
 
@@ -969,18 +959,6 @@ class Feed(Document, DocumentHelperMixin):
             # we do not raise .retry() because the global refresh
             # task will call us again anyway at next global check.
             LOGGER.info(u'Feed %s refresh disabled by configuration.', self)
-            return True
-
-        # ————————————————————————————————————— TODO: move this into sub-models
-
-        if self.is_mailfeed and config.FEED_FETCH_EMAIL_DISABLED:
-            LOGGER.info(u'Email feed %s refresh disabled by dynamic '
-                        u'configuration.', self)
-            return True
-
-        elif config.FEED_FETCH_RSSATOM_DISABLED:
-            LOGGER.info(u'RSS/Atom feed %s refresh disabled by dynamic '
-                        u'configuration.', self)
             return True
 
         # ————————————————————————————————————————————————  Try to acquire lock
@@ -1214,41 +1192,6 @@ class Feed(Document, DocumentHelperMixin):
 
         return new_articles, duplicates, mutualized
 
-    def refresh_mail_feed(self, force=False):
-        """ Refresh a mail feed. """
-
-        LOGGER.info(u'Refreshing mail feed %s…', self)
-
-        feed_kwargs = self.build_refresh_kwargs(for_type=ORIGIN_TYPE_EMAIL_FEED)
-        try:
-            mailfeed = MailFeed.get_from_stream_url(self.url)
-
-        except:
-            LOGGER.exception(u'Could not get MailFeed object for %s', self)
-            self.close(u'Non-existent MailFeed for {0}.'.format(self.url))
-            return
-
-        new_articles = 0
-        duplicates   = 0
-        mutualized   = 0
-
-        for article in mailfeed.get_new_entries(**feed_kwargs):
-            created = self.create_article_from_mail(article)
-
-            if created:
-                new_articles += 1
-
-            elif created is False:
-                duplicates += 1
-
-            else:
-                mutualized += 1
-
-        if new_articles == duplicates == mutualized  == 0:
-            LOGGER.info(u'No new content in mail feed %s.', self)
-
-        return new_articles, duplicates, mutualized
-
     def refresh(self, force=False):
         """ Look for new content in a 1flow feed. """
 
@@ -1262,11 +1205,7 @@ class Feed(Document, DocumentHelperMixin):
             return
 
         try:
-            if self.is_mailfeed:
-                data = self.refresh_mail_feed(force=force)
-
-            else:
-                data = self.refresh_rss_feed(force=force)
+            data = self.refresh_rss_feed(force=force)
 
         except:
             LOGGER.exception(u'Could not refresh feed %s', self)
@@ -1422,36 +1361,36 @@ def feed_export_content_classmethod(cls, since, folder=None):
 
     def origin_type(origin_type):
 
-        if origin_type in (ORIGIN_TYPE_FEEDPARSER,
-                           ORIGIN_TYPE_GOOGLE_READER):
+        if origin_type in (ORIGINS.FEEDPARSER,
+                           ORIGINS.GOOGLE_READER):
             return u'rss'
 
-        if origin_type == ORIGIN_TYPE_TWITTER:
+        if origin_type == ORIGINS.TWITTER:
             return u'twitter'
 
-        if origin_type == ORIGIN_TYPE_EMAIL_FEED:
+        if origin_type == ORIGINS.EMAIL_FEED:
             return u'email'
 
         # implicit:
-        # if origin_type == (ORIGIN_TYPE_NONE,
-        #                   ORIGIN_TYPE_WEBIMPORT):
+        # if origin_type == (ORIGINS.NONE,
+        #                   ORIGINS.WEBIMPORT):
         return u'web'
 
     def content_type(content_type):
 
-        if content_type == CONTENT_TYPE_MARKDOWN:
+        if content_type == CONTENT_TYPES.MARKDOWN:
             return u'markdown'
 
-        if content_type == CONTENT_TYPE_HTML:
+        if content_type == CONTENT_TYPES.HTML:
             return u'html'
 
-        if content_type == CONTENT_TYPE_IMAGE:
+        if content_type == CONTENT_TYPES.IMAGE:
             return u'image'
 
-        if content_type == CONTENT_TYPE_VIDEO:
+        if content_type == CONTENT_TYPES.VIDEO:
             return u'video'
 
-        if content_type == CONTENT_TYPE_BOOKMARK:
+        if content_type == CONTENT_TYPES.BOOKMARK:
             return u'bookmark'
 
     if folder is None:

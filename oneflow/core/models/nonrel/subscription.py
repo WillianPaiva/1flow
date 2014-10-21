@@ -29,7 +29,7 @@ from mongoengine.fields import (StringField, ListField, ReferenceField,
                                 GenericReferenceField, DBRef)
 from mongoengine.errors import NotUniqueError
 
-#from cache_utils.decorators import cached
+# from cache_utils.decorators import cached
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _, ugettext as __
@@ -44,7 +44,7 @@ from .folder import Folder
 from .user import User
 from .feed import Feed
 
-from ..reldb.mailfeed import MailFeed
+# from ..reldb.mailfeed import MailFeed
 
 LOGGER = logging.getLogger(__name__)
 
@@ -170,16 +170,16 @@ class Subscription(Document, DocumentHelperMixin):
                 # by the register_task_method() call.
                 subscription_post_create_task.delay(subscription.id)  # NOQA
 
-        else:
-            if subscription.feed.is_mailfeed:
-                mailfeed = MailFeed.get_from_stream_url(subscription.feed.url)
-
-                if subscription.user.django == mailfeed.user:
-                    # HEADS UP: we use save() to forward the
-                    # name change to the Feed instance without
-                    # duplicating the code here.
-                    mailfeed.name = subscription.name
-                    mailfeed.save()
+        # else:
+        #     if subscription.feed.is_mailfeed:
+        #         mailfeed = MailFeed.get_from_stream_url(subscription.feed.url)
+        #
+        #         if subscription.user.django == mailfeed.user:
+        #             # HEADS UP: we use save() to forward the
+        #             # name change to the Feed instance without
+        #             # duplicating the code here.
+        #             mailfeed.name = subscription.name
+        #             mailfeed.save()
 
     def post_create_task(self):
         """ Method meant to be run from a celery task. """
@@ -304,7 +304,7 @@ class Subscription(Document, DocumentHelperMixin):
         # If our caches are correctly computed, doing
         # one more full query just for this is too much.
         #
-        #self.compute_cached_descriptors(unread=True)
+        # self.compute_cached_descriptors(unread=True)
 
         self.unread_articles_count -= impacted_count
 
@@ -494,7 +494,7 @@ def User_sent_items_subscription_property_get(self):
                                               __(u'Sent items'))
 
 
-#@cached(CACHE_ONE_DAY)
+# @cached(CACHE_ONE_DAY)
 def User_web_import_subscription_property_get(self):
 
     return get_or_create_special_subscription(self, self.web_import_feed,

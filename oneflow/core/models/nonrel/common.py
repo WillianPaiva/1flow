@@ -41,6 +41,10 @@ from ....base.utils.dateutils import benchmark
 # Get the very-common (reldb & nonrel) common parts.
 from oneflow.core.models.common import *  # NOQA
 
+# Get a copy for the nonrel submodule, we will update it
+# and we don't want the changes to affect the reldb module.
+SPECIAL_FEEDS_DATA = SPECIAL_FEEDS_DATA.copy()
+
 # XXX: Compat during the MongoDB → PostgreSQL transition
 SPECIAL_FEEDS_DATA['web_import'] = (
     USER_FEEDS_SITE_URL + 'imports',
@@ -50,8 +54,6 @@ SPECIAL_FEEDS_DATA['web_import'] = (
 
 
 LOGGER = logging.getLogger(__name__)
-
-
 
 
 class TreeCycleException(Exception):
