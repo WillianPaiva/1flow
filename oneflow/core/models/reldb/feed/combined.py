@@ -28,11 +28,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from sparks.django.models import ModelDiffMixin
 
-# from django.utils.translation import ugettext as _
-# from django.utils.text import slugify
-
-from ..common import DjangoUser  # , REDIS
-# from mail_common import email_get_first_text_block
+from ..common import DjangoUser as User  # , REDIS
 
 LOGGER = logging.getLogger(__name__)
 
@@ -42,7 +38,7 @@ class CombinedFeed(ModelDiffMixin):
     """ An aggregate of other feed types, including itself. """
 
     name = models.CharField(max_length=255, verbose_name=_(u'Feed name'))
-    user = models.ForeignKey(DjangoUser, verbose_name=_(u'Creator'))
+    user = models.ForeignKey(User, verbose_name=_(u'Creator'))
     is_restricted = models.BooleanField(verbose_name=_(u'Restricted'),
                                         default=False, blank=True,
                                         help_text=_(u'Can other 1flow users '

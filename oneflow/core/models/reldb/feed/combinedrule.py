@@ -35,9 +35,10 @@ from django.utils.translation import ugettext_lazy as _
 
 from sparks.django.models import ModelDiffMixin
 
-import mail_common as common
+from base import BaseFeed
+# import mail_common as common
+# from mailfeed import MailFeed
 from combined import CombinedFeed
-from mailfeed import MailFeed
 
 LOGGER = logging.getLogger(__name__)
 
@@ -99,42 +100,42 @@ class CombinedFeedRule(ModelDiffMixin):
 
     combinedfeed = models.ForeignKey(CombinedFeed)
 
-    feeds = models.ManyToMany(BaseFeed)
+    feeds = models.ManyToManyField(BaseFeed)
 
-    filter_field = models.CharField(verbose_name=_(u'Field'),
-                                    max_length=10, default=u'any',
-                                    choices=tuple(HEADER_FIELD_CHOICES.items()),
-                                    help_text=_(u"E-mail field on which the "
-                                                u"match type is applied."))
-    match_type = models.CharField(verbose_name=_(u'Match type'),
-                                  max_length=10, default=u'contains',
-                                  choices=tuple(MATCH_TYPE_CHOICES.items()),
-                                  help_text=_(u"Operation applied on the "
-                                              u"header to compare with match "
-                                              u"value."))
-    match_case = models.BooleanField(verbose_name=_(u'Match case'),
-                                     default=False, blank=True,
-                                     help_text=_(u"Do we care about uppercase "
-                                                 u"and lowercase characters?"))
-    match_value = models.CharField(verbose_name=_(u'Match value'),
-                                   default=u'', max_length=1024,
-                                   help_text=_(u"Examples: “Tweet de”, "
-                                               u"“Google Alert:”. Can be "
-                                               u"any text."))
+    # filter_field = models.CharField(verbose_name=_(u'Field'),
+    #                                 max_length=10, default=u'any',
+    #                                 choices=tuple(HEADER_FIELD_CHOICES.items()),
+    #                                 help_text=_(u"E-mail field on which the "
+    #                                             u"match type is applied."))
+    # match_type = models.CharField(verbose_name=_(u'Match type'),
+    #                               max_length=10, default=u'contains',
+    #                               choices=tuple(MATCH_TYPE_CHOICES.items()),
+    #                               help_text=_(u"Operation applied on the "
+    #                                           u"header to compare with match "
+    #                                           u"value."))
+    # match_case = models.BooleanField(verbose_name=_(u'Match case'),
+    #                                  default=False, blank=True,
+    #                                  help_text=_(u"Do we care about uppercase "
+    #                                              u"and lowercase characters?"))
+    # match_value = models.CharField(verbose_name=_(u'Match value'),
+    #                                default=u'', max_length=1024,
+    #                                help_text=_(u"Examples: “Tweet de”, "
+    #                                            u"“Google Alert:”. Can be "
+    #                                            u"any text."))
 
-    match_action = models.CharField(
-        verbose_name=_(u'Action when matched'),
-        max_length=10, null=True, blank=True,
-        choices=tuple(MailFeed.MATCH_ACTION_CHOICES.items()),
-        help_text=_(u'Choose nothing to execute '
-                    u'action defined at the feed level.'))
+    # match_action = models.CharField(
+    #     verbose_name=_(u'Action when matched'),
+    #     max_length=10, null=True, blank=True,
+    #     choices=tuple(MailFeed.MATCH_ACTION_CHOICES.items()),
+    #     help_text=_(u'Choose nothing to execute '
+    #                 u'action defined at the feed level.'))
 
-    finish_action =  models.CharField(
-        verbose_name=_(u'Finish action'),
-        max_length=10, null=True, blank=True,
-        choices=tuple(MailFeed.FINISH_ACTION_CHOICES.items()),
-        help_text=_(u'Choose nothing to execute '
-                    u'action defined at the feed level.'))
+    # finish_action =  models.CharField(
+    #     verbose_name=_(u'Finish action'),
+    #     max_length=10, null=True, blank=True,
+    #     choices=tuple(MailFeed.FINISH_ACTION_CHOICES.items()),
+    #     help_text=_(u'Choose nothing to execute '
+    #                 u'action defined at the feed level.'))
 
     # Used to have many times the same rule in different feeds
     clone_of = models.ForeignKey('MailFeedRule', null=True, blank=True)
@@ -210,26 +211,6 @@ class CombinedFeedRule(ModelDiffMixin):
 
     # —————————————————————————————————————————————————————————————————— Django
 
-    def __unicode__(self):
-        """ OMG, that's __unicode__, pep257. """
-
-        return _(u'Rule #{2}: {3}, applied to {0} for MailFeed {1}').format(
-            _(u'all accounts') if self.account is None
-            else _(u'account {0}').format(self.account),
-            self.mailfeed,
-            self.id,
-            _(u'{0} {1} “{2}” → {3} → {4}').format(
-                self.other_header
-                if self.header_field == u'other'
-                else self.HEADER_FIELD_CHOICES[self.header_field],
-                self.MATCH_TYPE_CHOICES[self.match_type],
-                self.match_value,
-                MailFeed.MATCH_ACTION_CHOICES.get(self.match_action,
-                                                  _(u'feed default')),
-                MailFeed.FINISH_ACTION_CHOICES.get(self.finish_action,
-                                                   _(u'feed default')),
-            ))
-
     def save(self, *args, **kwargs):
         """ Check the rule is valid before saving. """
 
@@ -242,37 +223,14 @@ class CombinedFeedRule(ModelDiffMixin):
 
             self.check_is_valid(commit=False)
 
-        super(MailFeedRule, self).save(*args, **kwargs)
+        super(CombinedFeedRule, self).save(*args, **kwargs)
 
     # ——————————————————————————————————————————————————————————————— Internals
 
     def check_is_valid(self, commit=True):
-        """ TODO: implement this. """
+        """ TODO: implement this for a combined feed rule. """
 
         is_valid = True
-
-        if self.header_field == u'other':
-            other = self.other_header
-
-            if other.strip().endswith(':'):
-                self.other_header = other = other.strip()[:-1]
-
-            if other.lower() not in common.OTHER_VALID_HEADERS_lower:
-                is_valid = False
-                self.check_error = _(u'Unrecognized header name “{0}”. Please '
-                                     u'look at http://bit.ly/smtp-headers '
-                                     u'to find a list of valid headers. '
-                                     u'Perhaps just a typo?').format(other)
-
-        if self.match_type in (u're_match', u'nre_match'):
-            try:
-                re.compile(self.match_value)
-
-            except Exception as e:
-                is_valid = False
-                self.check_error = _(u'Invalid regular expression “{0}”: '
-                                     u'{1}').format(self.match_value,
-                                                    unicode(e))
 
         if is_valid != self.is_valid:
             self.is_valid = is_valid
@@ -283,62 +241,7 @@ class CombinedFeedRule(ModelDiffMixin):
             if commit:
                 self.save()
 
-    def match_message(self, message):
-        """ Return ``True`` if :param:`message` matches the current rule. """
-
-        def match_header(header, value):
-            if not self.match_case:
-                header = header.lower()
-
-            return self.operation(header, value)
-
-        HEADERS = common.BASE_HEADERS.copy()
-        HEADERS[u'other'] = self.other_header
-
-        if self.match_case:
-            value = self.match_value
-
-        else:
-            # HEADS UP: we don't care for the RE; the
-            # second parameter in that case is ignored.
-            value = self.match_value.lower()
-
-        for header_name in HEADERS[self.header_field]:
-            header = message.get(header_name, '')
-
-            if isinstance(header, list) or isinstance(header, tuple):
-                if len(header) > 2:
-                    for header_part in header:
-                        if isinstance(header, list) \
-                                or isinstance(header, tuple):
-                            header = u'{0} {1}'.format(*header_part)
-
-                            if match_header(header, value):
-                                return True
-
-                        else:
-                            if match_header(header_part, value):
-                                return True
-
-                else:
-                    if header[1].startswith(u'<'):
-                        # Here we've got [u'Olivier Cortès', '<oc@1flow.io>']
-                        # it's the same person; one test.
-
-                        header = u'{0} {1}'.format(*header)
-
-                        if match_header(header, value):
-                            return True
-
-                    else:
-                        # There we've got [u'Toto <n@t.com>', u'Tutu <m@t.com>']
-                        # They are 2 different persons and 2 tests.
-
-                        for header_part in header:
-                            if match_header(header_part, value):
-                                return True
-            else:
-                if match_header(header, value):
-                    return True
+    def match_item(self, message):
+        """ Return ``True`` if :param:`item` matches the current rule. """
 
         return False

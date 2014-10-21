@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
+Copyright 2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
 
@@ -19,38 +19,20 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
+from base import BaseItem  # NOQA
 
-from helpcontent import HelpContent  # NOQA
+# from document import (  # NOQA
+#    Document,
+#    Image,
+#    Video,
+#    PdfDocument,
+#    ZipDocument,
+# )
 
-from mailaccount import MailAccount  # NOQA
+from article import Article  # NOQA
 
-from history import HistoryEntry  # NOQA
+# from bookmark import Bookmark  # NOQA
 
-from userimport import UserImport  # NOQA
+# from comment import Comment  # NOQA
 
-from website import WebSite  # NOQA
-
-from tag import SimpleTag  # NOQA
-
-from item import (  # NOQA
-    BaseItem,
-    Article,
-
-    # Email,
-)
-
-from feed import (  # NOQA
-    BaseFeed,
-    RssAtomFeed,
-    MailFeed, MailFeedRule,
-    CombinedFeed, CombinedFeedRule,
-    UserFeeds,
-)
-
-from read import Read  # NOQA
-
-from subscription import Subscription  # NOQA
-
-from usersubscriptions import UserSubscriptions  # NOQA
-
-from index import IndexNode, RemoteModel  # NOQA
+# from tweet import Tweet  # NOQA

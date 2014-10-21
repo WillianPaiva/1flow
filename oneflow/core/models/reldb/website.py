@@ -17,26 +17,87 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with 1flow.  If not, see http://www.gnu.org/licenses/
 """
+import six
 import uuid
 import logging
 
+from statsd import statsd
+from collections import namedtuple
 from constance import config
 from collections import OrderedDict
 from transmeta import TransMeta
 from jsonfield import JSONField
 
 from django.db import models
+from django.db.models.signals import post_save  # pre_save, pre_delete
 from django.utils.translation import ugettext_lazy as _
+from django.utils.text import slugify
 
-from mptt.models import MPTTModel, TreeForeignKey
+from mptt.models import MPTTModelBase, MPTTModel, TreeForeignKey
+from sparks.django.models import DiffMixin
 
 LOGGER = logging.getLogger(__name__)
 
 
-__all__ = ['WebSite', ]
+__all__ = ['WebSite', 'split_url', 'SplitUrlException', ]
 
 
-def get_website_thumbnail_upload_path(instance, filename):
+url_tuple = namedtuple('url', ['scheme', 'host_and_port', 'remaining', ])
+url_port_tuple = namedtuple('url_port',
+                            ['scheme', 'hostname', 'port', 'remaining', ])
+
+
+class SplitUrlException(Exception):
+
+    """ Raised when an URL is reaaaaally bad. """
+
+    pass
+
+
+def split_url(url, split_port=False):
+    """ Split an URL into a named tuple for easy manipulations.
+
+    Eg. “http://test.com/toto becomes:
+    ('scheme'='http', 'host_and_port'='test.com', 'remaining'='toto').
+
+    if :param:`split_port` is ``True``, the returned namedtuple is of the form:
+
+    ('scheme'='http', 'hostname'='test.com', 'port'=80, 'remaining'='toto').
+
+    In this case, ``port`` will be an integer. All other attributes are strings.
+
+    In case of an error, it will raise a :class:`SplitUrlException` exception.
+    """
+
+    try:
+        proto, remaining = url.split('://', 1)
+
+    except:
+        raise SplitUrlException(u'Unparsable url “{0}”'.format(url))
+
+    try:
+        host_and_port, remaining = remaining.split('/', 1)
+
+    except ValueError:
+        host_and_port = remaining
+        remaining     = u''
+
+    if split_port:
+        try:
+            hostname, port = host_and_port.split(':')
+
+        except ValueError:
+            hostname = host_and_port
+            port = '80' if proto == 'http' else '443'
+
+        return url_port_tuple(proto, hostname, int(port), remaining)
+
+    return url_tuple(proto, host_and_port, remaining)
+
+
+# ————————————————————————————————————————————————————————————— Class & related
+
+def get_website_image_upload_path(instance, filename):
 
     if not filename.strip():
         filename = uuid.uuid4()
@@ -46,56 +107,66 @@ def get_website_thumbnail_upload_path(instance, filename):
     filename = filename.replace(u' ', u'_')
 
     if instance:
-        return 'website/{0}/thumbnails/{1}'.format(instance.id, filename)
+        return 'website/{0}/images/{1}'.format(instance.id, filename)
 
-    return u'thumbnails/%Y/%m/%d/{0}'.format(filename)
+    return u'images/%Y/%m/%d/{0}'.format(filename)
 
 
-class WebSite(MPTTModel):
+class WebSiteMeta(MPTTModelBase, TransMeta):
+
+    """ This one follows the BaseFeedMeta idea. """
+
+    pass
+
+
+class WebSite(six.with_metaclass(WebSiteMeta, MPTTModel, DiffMixin)):
 
     """ Web site object. Used to hold options for a whole website. """
 
-    __metaclass__ = TransMeta
-
-    name = models.Charfield(max_length=128, verbose_name=_(u'name'))
-    slug = models.Charfield(max_length=128, verbose_name=_(u'slug'))
-    url  = models.URLField(unique=True, verbose_name=_(u'url'))
+    name = models.CharField(max_length=128, verbose_name=_(u'name'), blank=True)
+    slug = models.CharField(max_length=128, verbose_name=_(u'slug'), blank=True)
+    url  = models.URLField(unique=True, verbose_name=_(u'url'), blank=True)
     parent = TreeForeignKey('self', null=True, blank=True,
                             related_name='children')
 
-    duplicate_of = models.ForeignKey('self')
+    duplicate_of = models.ForeignKey('self', null=True, blank=True,
+                                     verbose_name=_(u'Duplicate of'))
 
-    # TODO: move this into WebSite to avoid too much parallel fetches
+    # TODO: move this into Website to avoid too much parallel fetches
     # when using multiple feeds from the same origin website.
     fetch_limit_nr = models.IntegerField(
-        default=config.website_FETCH_PARALLEL_LIMIT,
-        verbose_name=_(u'fetch limit'),
+        default=config.FEED_FETCH_PARALLEL_LIMIT,
+        verbose_name=_(u'fetch limit'), blank=True,
         help_text=_(u'The maximum number of articles that can be fetched '
                     u'from the website in parallel. If less than {0}, do '
                     u'not touch: the workers have already tuned it from '
                     u'real-life results.').format(
                         config.FEED_FETCH_PARALLEL_LIMIT))
 
-    mail_warned = JSONField(load_kwargs={'object_pairs_hook': OrderedDict})
+    mail_warned = JSONField(load_kwargs={'object_pairs_hook': OrderedDict},
+                            default=u'[]', blank=True)
 
-    thumbnail = models.ImageField(
-        verbose_name=_(u'Thumbnail'), null=True, blank=True,
-        upload_to=get_website_thumbnail_upload_path,
-        help_text=_(u'Use either thumbnail when 1flow instance hosts the '
-                    u'image, or thumbnail_url when hosted elsewhere. If '
-                    u'both are filled, thumbnail takes precedence.'))
+    image = models.ImageField(
+        verbose_name=_(u'Image'), null=True, blank=True,
+        upload_to=get_website_image_upload_path,
+        help_text=_(u'Use either image when 1flow instance hosts the '
+                    u'image, or image_url when hosted elsewhere. If '
+                    u'both are filled, image takes precedence.'))
 
-    thumbnail_url  = models.URLField(
-        verbose_name=_(u'Thumbnail URL'),
-        help_text=_(u'Full URL of the thumbnail displayed in the feed '
+    image_url  = models.URLField(
+        null=True, blank=True,
+        verbose_name=_(u'Image URL'),
+        help_text=_(u'Full URL of the image displayed in the feed '
                     u'selector. Can be hosted outside of 1flow.'))
 
     short_description = models.CharField(
+        null=True, blank=True,
         max_length=256, verbose_name=_(u'Short description'),
         help_text=_(u'Public short description of the feed, for '
                     u'auto-completer listing. Markdown text.'))
 
     description = models.TextField(
+        null=True, blank=True,
         verbose_name=_(u'Description'),
         help_text=_(u'Public description of the feed. Markdown text.'))
 
@@ -111,6 +182,70 @@ class WebSite(MPTTModel):
     def __unicode__(self):
         """ I'm __unicode__, pep257. """
 
-        return u'%s #%s (%s)%s' % (self.name or u'<UNSET>', self.id, self.url,
+        return u'%s #%s (%s)%s' % (self.name or u'WebSite', self.id, self.url,
                                    (_(u'(dupe of #%s)') % self.duplicate_of.id)
                                    if self.duplicate_of else u'')
+
+    # ——————————————————————————————————————————————————————————— Class methods
+
+    @classmethod
+    def get_from_url(cls, url):
+        """ Will get you the ``Website`` object from an :param:`url`.
+
+        After having striped down the path part (eg.
+        ``http://test.com/my-article`` gives you the web site
+        ``http://test.com``, without the trailing slash).
+
+        It will return ``None`` if the url is really bad.
+
+        .. note:: unlike :meth:`get_or_create_website`, this method will
+            harmonize urls: ``Website.get_from_url('http://toto.com')``
+            and  ``Website.get_from_url('http://toto.com/')`` will give
+            you back the same result. This is intended, to avoid
+            duplication.
+
+        """
+        try:
+            proto, host_and_port, remaining = split_url(url)
+
+        except:
+            LOGGER.exception(u'Unable to split url “%s”', url)
+            return None
+
+        base_url = '%s://%s' % (proto, host_and_port)
+
+        try:
+            website, _ = WebSite.objects.get_or_create(url=base_url)
+
+        except:
+            LOGGER.exception('Could not get or create website from url '
+                             u'“%s” (via original “%s”)', base_url, url)
+            return None
+
+        return website
+
+
+# ————————————————————————————————————————————————————————————————————— Signals
+
+
+def website_post_save(instance, **kwargs):
+    """ Method meant to be run from a celery task. """
+
+    if not kwargs.get('created', False):
+        return
+
+    website = instance
+
+    if not website.slug:
+        if website.name is None:
+            proto, host_and_port, remaining = split_url(website.url)
+            website.name = host_and_port.replace(u'_', u' ').title()
+
+        website.slug = slugify(website.name)
+
+        website.save()
+
+        statsd.gauge('websites.counts.total', 1, delta=True)
+
+
+post_save.connect(website_post_save, sender=WebSite)

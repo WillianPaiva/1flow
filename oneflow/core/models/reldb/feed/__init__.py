@@ -25,3 +25,8 @@ from rssatom import RssAtomFeed  # NOQA
 
 from mail import MailFeed  # NOQA
 from mailrule import MailFeedRule  # NOQA
+
+from combined import CombinedFeed  # NOQA
+from combinedrule import CombinedFeedRule  # NOQA
+
+from userfeeds import UserFeeds  # NOQA
