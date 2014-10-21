@@ -11,7 +11,7 @@
     <tr class="{% if not form.errors %}collapse{% endif %} collapsible">
 
         {% for field in form %}
-        	<td {% if field.name == 'is_public' %}colspan="2"{% endif %}>
+        	<td {% if field.name == 'is_restricted' %}colspan="2"{% endif %}>
 
             {% include "widgets/forms/field-generic.html" with field=field field_label_css_class='col-sm-12' field_input_css_class='col-sm-12' %}
 

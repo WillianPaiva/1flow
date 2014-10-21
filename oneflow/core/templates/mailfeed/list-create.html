@@ -53,7 +53,7 @@
 		  <tr>
 			{% sort_th _("Feed name") 'name' '' 'col-sm-2' %}
 			<th class="col-sm-1 centered">{% trans "Status" %}</th>
-			{% sort_th _("Public") 'is_public' '' 'col-sm-1' %}
+			{% sort_th _("Restricted") 'is_restricted' '' 'col-sm-1' %}
 
 			<th class="col-sm-2">{% trans "Mail account" %}</th>
 			{# <th>{% trans "Mailbox" %}</th> #}
@@ -70,7 +70,7 @@
 				<td>{% inplace_edit 'mailfeed.name' %}</td>
 
 				<td class="centered">{#{% mail_is_usable_to_icon mailfeed %}#}<i class="icon icon-time"></i></td>
-				<td>{% inplace_edit 'mailfeed.is_public' autoSave="1" %}</td>
+				<td>{% inplace_edit 'mailfeed.is_restricted' autoSave="1" %}</td>
 
 				<td>{% inplace_edit 'mailfeed.account' edit_empty_value=_('All') %}</td>
 
