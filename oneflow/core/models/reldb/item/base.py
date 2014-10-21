@@ -429,7 +429,7 @@ class BaseItem(PolymorphicModel):
             LOGGER.info(u'URL of article %s is already absolute!', self)
             return True
 
-        if self.orphaned and not force:
+        if self.is_orphaned and not force:
             LOGGER.warning(u'Article %s is orphaned, absolutization aborted.',
                            self)
             return True
@@ -533,7 +533,7 @@ class BaseItem(PolymorphicModel):
                 spipe.gauge('articles.counts.orphaned', 1, delta=True)
                 spipe.gauge('articles.counts.url_errors', 1, delta=True)
 
-            self.orphaned  = True
+            self.is_orphaned  = True
             self.url_error = message % args
             self.save()
 
@@ -797,7 +797,7 @@ class BaseItem(PolymorphicModel):
                            u'clear: %s.', self, self.url_error)
             return True
 
-        if self.orphaned and not force:
+        if self.is_orphaned and not force:
             LOGGER.warning(u'Article %s is orphaned, cannot fetch.', self)
             return True
 
@@ -880,7 +880,7 @@ class BaseItem(PolymorphicModel):
         #       and core.views.read_with_endless_pagination::search
         #
 
-        if self.orphaned:
+        if self.is_orphaned:
             return False
 
         if not self.url_absolute:
