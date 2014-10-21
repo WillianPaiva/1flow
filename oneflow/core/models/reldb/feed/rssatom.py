@@ -35,7 +35,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.validators import URLValidator
 
 from common import dateutilDateHandler
-from base import BaseFeed, basefeed_refresh_task
+from base import BaseFeed, basefeed_refresh_task, basefeed_pre_save
 from ..tag import SimpleTag
 
 from oneflow.base.utils import HttpResponseLogProcessor
@@ -646,7 +646,8 @@ def rssatomfeed_post_save(instance, **kwargs):
     statsd.gauge('feeds.counts.total', 1, delta=True)
     statsd.gauge('feeds.counts.rssatom', 1, delta=True)
 
+# Because http://stackoverflow.com/a/24624838/654755 doesn't work.
+pre_save.connect(basefeed_pre_save, sender=RssAtomFeed)
 
 pre_save.connect(rssatomfeed_pre_save, sender=RssAtomFeed)
 post_save.connect(rssatomfeed_post_save, sender=RssAtomFeed)
-# pre_delete.connect(mailfeed_pre_delete, sender=MailFeed)

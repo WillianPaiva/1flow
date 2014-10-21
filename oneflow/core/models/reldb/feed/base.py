@@ -19,6 +19,7 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 import six
+import json
 import uuid
 import logging
 
@@ -32,7 +33,7 @@ from jsonfield import JSONField
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
-from django.db.models.signals import post_save  # , pre_save, pre_delete
+from django.db.models.signals import post_save, pre_save  # , pre_delete
 
 from polymorphic import PolymorphicModel
 from polymorphic.base import PolymorphicModelBase
@@ -70,10 +71,12 @@ LOGGER = logging.getLogger(__name__)
 __all__ = [
     'BaseFeed',
 
-    'basefeed_all_articles_count_default',
-    'basefeed_good_articles_count_default',
-    'basefeed_bad_articles_count_default',
-    'basefeed_recent_articles_count_default',
+    'basefeed_pre_save',
+
+    'basefeed_all_items_count_default',
+    'basefeed_good_items_count_default',
+    'basefeed_bad_items_count_default',
+    'basefeed_recent_items_count_default',
     'basefeed_subscriptions_count_default',
 ]
 
@@ -96,22 +99,22 @@ def get_feed_thumbnail_upload_path(instance, filename):
     return u'thumbnails/%Y/%m/%d/{0}'.format(filename)
 
 
-def basefeed_all_articles_count_default(feed, *args, **kwargs):
+def basefeed_all_items_count_default(feed, *args, **kwargs):
 
-    return feed.articles.count()
+    return feed.items.count()
 
 
-def basefeed_good_articles_count_default(feed, *args, **kwargs):
+def basefeed_good_items_count_default(feed, *args, **kwargs):
 
     return feed.good_articles.count()
 
 
-def basefeed_bad_articles_count_default(feed, *args, **kwargs):
+def basefeed_bad_items_count_default(feed, *args, **kwargs):
 
     return feed.bad_articles.count()
 
 
-def basefeed_recent_articles_count_default(feed, *args, **kwargs):
+def basefeed_recent_items_count_default(feed, *args, **kwargs):
 
     return feed.recent_articles.count()
 
@@ -152,12 +155,12 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
     """ Base 1flow feed.
 
     .. todo::
-        created_by   → creator
+        date_added   → date_created
+        created_by   → user
         restricted   → is_restricted
         closed       → is_active
         last_fetch   → date_last_fetch
         good_for_use → is_good
-        date_added   → date_created
         errors : ListField(StringField) → JSONField
     """
 
@@ -191,7 +194,8 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
                                       null=True, max_length=255, blank=True)
 
     items = models.ManyToManyField(BaseItem, blank=True,
-                                   verbose_name=_(u'Feed items'))
+                                   verbose_name=_(u'Feed items'),
+                                   related_name='feeds')
 
     tags = models.ManyToManyField(
         SimpleTag, verbose_name=_(u'tags'), blank=True,
@@ -204,8 +208,8 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
         help_text=_(u'Set this to more than one language to help article '
                     u'language detection if none is set in articles.'))
 
-    date_created = models.DateTimeField(auto_now_add=True, default=now,
-                                        verbose_name=_(u'date created'))
+    date_created = models.DateTimeField(auto_now_add=True, blank=True,
+                                        verbose_name=_(u'Date created'))
 
     is_internal = models.BooleanField(verbose_name=_(u'Internal'),
                                       blank=True, default=False)
@@ -231,10 +235,8 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
     date_last_fetch = models.DateTimeField(verbose_name=_(u'last fetch'),
                                            null=True, blank=True)
 
-    errors = JSONField(load_kwargs={'object_pairs_hook': OrderedDict},
-                       default=[], blank=True)
-    options = JSONField(load_kwargs={'object_pairs_hook': OrderedDict},
-                        default={}, blank=True)
+    errors = JSONField(default=[], blank=True)
+    options = JSONField(default={}, blank=True)
 
     duplicate_of = models.ForeignKey('self', null=True, blank=True)
 
@@ -277,63 +279,63 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
     #       the attr_name here, but make it automatically created.
     #       This is an underlying implementation detail and doesn't
     #       belong here.
-    latest_article_date_published = DatetimeRedisDescriptor(
+    latest_item_date_published = DatetimeRedisDescriptor(
         # 5 years ealier should suffice to get old posts when starting import.
         attr_name='bf.la_dp', default=now() - timedelta(days=1826))
 
-    all_articles_count = IntRedisDescriptor(
-        attr_name='bf.aa_c', default=basefeed_all_articles_count_default,
+    all_items_count = IntRedisDescriptor(
+        attr_name='bf.ai_c', default=basefeed_all_items_count_default,
         set_default=True, min_value=0)
 
-    good_articles_count = IntRedisDescriptor(
-        attr_name='bf.ga_c', default=basefeed_good_articles_count_default,
+    good_items_count = IntRedisDescriptor(
+        attr_name='bf.gi_c', default=basefeed_good_items_count_default,
         set_default=True, min_value=0)
 
-    bad_articles_count = IntRedisDescriptor(
-        attr_name='bf.ba_c', default=basefeed_bad_articles_count_default,
+    bad_items_count = IntRedisDescriptor(
+        attr_name='bf.bi_c', default=basefeed_bad_items_count_default,
         set_default=True, min_value=0)
 
-    recent_articles_count = IntRedisDescriptor(
-        attr_name='bf.ra_c', default=basefeed_recent_articles_count_default,
+    recent_items_count = IntRedisDescriptor(
+        attr_name='bf.ri_c', default=basefeed_recent_items_count_default,
         set_default=True, min_value=0)
 
     subscriptions_count = IntRedisDescriptor(
         attr_name='bf.s_c', default=basefeed_subscriptions_count_default,
         set_default=True, min_value=0)
 
-    def update_all_articles_count(self):
+    def update_all_items_count(self):
 
-        self.all_articles_count = basefeed_all_articles_count_default(self)
+        self.all_items_count = basefeed_all_items_count_default(self)
 
     def update_subscriptions_count(self):
 
         self.subscriptions_count = basefeed_subscriptions_count_default(self)
 
-    def update_latest_article_date_published(self):
+    def update_latest_item_date_published(self):
         """ This seems simple, but this operations costs a lot in MongoDB. """
 
         try:
             # This query should still cost less than the pure and bare
             # `self.latest_article.date_published` which will first sort
             # all articles of the feed before getting the first of them.
-            self.latest_article_date_published = self.recent_articles.order_by(
+            self.latest_item_date_published = self.recent_articles.order_by(
                 '-date_published').first().date_published
         except:
             # Don't worry, the default value of
             # the descriptor should fill the gaps.
             pass
 
-    def update_recent_articles_count(self, force=False):
+    def update_recent_items_count(self, force=False):
         """ This task is protected to run only once per day,
             even if is called more. """
 
         urac_lock = RedisExpiringLock(self, lock_name='urac', expire_time=86100)
 
         if urac_lock.acquire() or force:
-            self.recent_articles_count = self.recent_articles.count()
+            self.recent_items_count = self.recent_articles.count()
 
         elif not force:
-            LOGGER.warning(u'No more than one update_recent_articles_count '
+            LOGGER.warning(u'No more than one update_recent_items_count '
                            u'per day (feed %s).', self)
         #
         # Don't bother release the lock, this will
@@ -345,7 +347,7 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
     @property
     def recent_articles(self):
         return self.good_articles.filter(
-            date_published__gt=today()
+            Article___date_published__gt=today()
             - timedelta(
                 days=config.FEED_ADMIN_MEANINGFUL_DELTA))
 
@@ -362,9 +364,9 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
         #       and invert them in @BaseFeed.bad_articles
         #
 
-        return self.articles.filter(orphaned__ne=True,
-                                    url_absolute=True,
-                                    duplicate_of=None)
+        return self.items.filter(Article___is_orphaned=False,
+                                 Article___url_absolute=True,
+                                 duplicate_of=None)
 
     @property
     def bad_articles(self):
@@ -373,9 +375,9 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
         # NOTE: invert these conditions in @Feed.good_articles
         #
 
-        return self.articles.filter(Q(orphaned=True)
-                                    | Q(url_absolute=False)
-                                    | Q(duplicate_of__ne=None))
+        return self.items.filter(Q(Article___is_orphaned=True)
+                                 | Q(Article___url_absolute=False)
+                                 | Q(duplicate_of__ne=None))
 
     # NOTE for myself: these property & method are provided by Django
     #       bye-bye MongoDB glue code everywhere to mimic relational DB.
@@ -389,9 +391,9 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
     #     """ A parameter-able version of the :attr:`articles` property. """
     #
     #     if limit:
-    #         return self.articles.order_by('-date_published').limit(limit)
+    #         return self.items.order_by('-date_published').limit(limit)
     #
-    #     return self.articles.order_by('-date_published')
+    #     return self.items.order_by('-date_published')
 
     # —————————————————————————————————————————————————————— Django & Grappelli
 
@@ -643,17 +645,33 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
 
 register_task_method(BaseFeed, BaseFeed.refresh,
                      globals(), u'medium')
-register_task_method(BaseFeed, BaseFeed.update_all_articles_count,
+register_task_method(BaseFeed, BaseFeed.update_all_items_count,
                      globals(), queue=u'low')
 register_task_method(BaseFeed, BaseFeed.update_subscriptions_count,
                      globals(), queue=u'low')
-register_task_method(BaseFeed, BaseFeed.update_recent_articles_count,
+register_task_method(BaseFeed, BaseFeed.update_recent_items_count,
                      globals(), queue=u'low')
-register_task_method(BaseFeed, BaseFeed.update_latest_article_date_published,
+register_task_method(BaseFeed, BaseFeed.update_latest_item_date_published,
                      globals(), queue=u'low')
 
 
 # ————————————————————————————————————————————————————————————————————— Signals
+
+
+def basefeed_pre_save(instance, **kwargs):
+    """ Fix the JSON editing in the admin. """
+
+    feed = instance
+
+    if isinstance(feed.errors, unicode):
+        # Workaround the admin keeping saving
+        # unicode(unicode(…)) over and over.
+        feed.errors = json.loads(feed.errors)
+
+    if isinstance(feed.options, unicode):
+        # Workaround the admin keeping saving
+        # unicode(unicode(…)) over and over.
+        feed.options = json.loads(feed.options)
 
 
 def basefeed_post_save(instance, **kwargs):
@@ -687,6 +705,7 @@ def basefeed_post_save(instance, **kwargs):
 
 
 post_save.connect(basefeed_post_save, sender=BaseFeed)
+pre_save.connect(basefeed_pre_save, sender=BaseFeed)
 
 
 # ————————————————————————————————————————————————————————— Export class method
@@ -747,7 +766,7 @@ def basefeed_export_content_classmethod(cls, since, folder=None):
         active_feeds_count = len(active_feeds)
 
     exported_feeds = []
-    total_exported_articles_count = 0
+    total_exported_items_count = 0
 
     if active_feeds_count:
         LOGGER.info(u'Starting feeds/articles export procedure with %s '
@@ -759,9 +778,9 @@ def basefeed_export_content_classmethod(cls, since, folder=None):
 
     for feed in active_feeds:
         new_articles = feed.good_articles.filter(date_published__gte=since)
-        new_articles_count = new_articles.count()
+        new_items_count = new_articles.count()
 
-        if not new_articles_count:
+        if not new_items_count:
             continue
 
         exported_articles = []
@@ -785,8 +804,8 @@ def basefeed_export_content_classmethod(cls, since, folder=None):
                 tags=[t.name for t in article.tags],
             ))
 
-        exported_articles_count = len(exported_articles)
-        total_exported_articles_count += exported_articles_count
+        exported_items_count = len(exported_articles)
+        total_exported_items_count += exported_items_count
 
         exported_feeds.append(OrderedDict(
             id=unicode(feed.id),
@@ -797,12 +816,12 @@ def basefeed_export_content_classmethod(cls, since, folder=None):
         ))
 
         LOGGER.info(u'%s articles exported in feed %s.',
-                    exported_articles_count, feed)
+                    exported_items_count, feed)
 
     exported_feeds_count = len(exported_feeds)
 
     LOGGER.info(u'%s feeds and %s total articles exported.',
-                exported_feeds_count, total_exported_articles_count)
+                exported_feeds_count, total_exported_items_count)
 
     return exported_feeds
 
