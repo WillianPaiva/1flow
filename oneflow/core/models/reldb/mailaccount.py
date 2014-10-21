@@ -18,11 +18,8 @@ You should have received a copy of the GNU Affero General Public
 License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
-import operator
 
 from datetime import datetime
-from email import message_from_string
-from email.header import decode_header
 
 import imaplib
 import logging
@@ -33,15 +30,15 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 # from django.utils.text import slugify
 
-from ....base.fields import TextRedisDescriptor
-from ....base.utils import register_task_method, list_chunks
+from oneflow.base.fields import TextRedisDescriptor
+from oneflow.base.utils import register_task_method, list_chunks
 
 from sparks.django.models import ModelDiffMixin
 
-from oneflow.base.utils.dateutils import (now, timedelta,
-                                          email_date_to_datetime_tz)
+from oneflow.base.utils.dateutils import now, timedelta
 
-from common import REDIS, long_in_the_past, DjangoUser
+from mail_common import email_prettify_raw_message
+from common import REDIS, long_in_the_past, DjangoUser as User
 import mail_common as common
 
 LOGGER = logging.getLogger(__name__)
@@ -71,7 +68,7 @@ class MailAccount(ModelDiffMixin):
 
     # NOTE: MAILBOXES_BLACKLIST is in MailAccount.
 
-    user = models.ForeignKey(DjangoUser, verbose_name=_(u'Creator'))
+    user = models.ForeignKey(User, verbose_name=_(u'Creator'))
     name = models.CharField(verbose_name=_(u'Account name'),
                             max_length=128, blank=True)
 
@@ -130,17 +127,6 @@ class MailAccount(ModelDiffMixin):
         return self.is_usable and (
             now() - self.date_last_conn
             < timedelta(seconds=config.MAIL_ACCOUNT_REFRESH_PERIOD))
-
-    @property
-    def common_headers(self):
-        try:
-            return self._common_headers_
-
-        except AttributeError:
-            self._common_headers_ = reduce(operator.add,
-                                           common.BASE_HEADERS.values())
-
-            return self._common_headers_
 
     # —————————————————————————————————————————————————————————————————— Django
 
@@ -583,87 +569,9 @@ class MailAccount(ModelDiffMixin):
                         if len(raw_data) == 1:
                             continue
 
-                        yield self.email_prettify_raw_message(raw_data[1])
+                        yield email_prettify_raw_message(raw_data[1])
 
-    # —————————————————————————————————————————————————————————————————— E-mail
-
-    def email_prettify_raw_message(self, raw_message):
-        """ Make a raw IMAP message usable from Python code.
-
-        Eg. decode headers and prettify everything that can be.
-        """
-
-        guess_encodings = ('utf-8', ) + tuple(
-            x.strip() for x in config.MAIL_IMAP_DECODE_FALLBACK.split(u',')
-        )
-
-        def decode_with_fallback(something):
-
-            try:
-                return unicode(something)
-
-            except UnicodeDecodeError:
-
-                for encoding in guess_encodings:
-
-                    try:
-                        return unicode(something, encoding)
-
-                    except UnicodeDecodeError:
-                        pass
-
-                return unicode(something, errors='replace')
-
-        email_message = message_from_string(raw_message)
-
-        for header in self.common_headers:
-            try:
-                value = email_message[header]
-
-            except KeyError:
-                continue
-
-            if value is None or not value:
-                continue
-
-            decoded_header = None
-
-            if isinstance(value, unicode):
-                # Skip to the end.
-                decoded_header = value
-
-            else:
-                header_values = decode_header(value)
-
-                if len(header_values) > 1:
-                    decoded_header = []
-
-                    for string, charset in header_values:
-                        if charset:
-                            decoded_header.append(string.decode(charset))
-
-                        else:
-                            decoded_header.append(decode_with_fallback(string))
-
-                else:
-                    string, charset = header_values[0]
-
-                    if charset:
-                        decoded_header = string.decode(charset)
-
-                    else:
-                        decoded_header = decode_with_fallback(string)
-
-            email_message.replace_header(header, decoded_header)
-
-            # Now, prettify the date.
-            email_datetime = email_message.get('date', None)
-
-            if not isinstance(email_datetime, datetime):
-                msg_datetime = email_date_to_datetime_tz(email_datetime)
-                email_message.replace_header('date', msg_datetime)
-
-        return email_message
+# ———————————————————————————————————————————————————————————————— Celery tasks
 
 register_task_method(MailAccount, MailAccount.test_connection,
                      globals(), u'swarm')

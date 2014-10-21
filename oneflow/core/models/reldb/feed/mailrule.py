@@ -37,8 +37,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from sparks.django.models import ModelDiffMixin
 
-import mail_common as common
-from mailfeed import MailFeed
+from ..mail_common import OTHER_VALID_HEADERS_lower, BASE_HEADERS
+from mail import MailFeed
 
 LOGGER = logging.getLogger(__name__)
 
@@ -273,7 +273,7 @@ class MailFeedRule(ModelDiffMixin):
             if other.strip().endswith(':'):
                 self.other_header = other = other.strip()[:-1]
 
-            if other.lower() not in common.OTHER_VALID_HEADERS_lower:
+            if other.lower() not in OTHER_VALID_HEADERS_lower:
                 is_valid = False
                 self.check_error = _(u'Unrecognized header name “{0}”. Please '
                                      u'look at http://bit.ly/smtp-headers '
@@ -340,7 +340,7 @@ class MailFeedRule(ModelDiffMixin):
 
             return self.operation(header, value)
 
-        HEADERS = common.BASE_HEADERS.copy()
+        HEADERS = BASE_HEADERS.copy()
         HEADERS[u'other'] = self.other_header
 
         #

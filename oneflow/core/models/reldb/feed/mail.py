@@ -21,27 +21,24 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 import json
 import logging
 
+from constance import config
 from collections import OrderedDict
 
-from django.conf import settings
+# from django.conf import settings
 from django.db import models
+from django.db.models.signals import pre_save  # , post_save  # , pre_delete
 from django.utils.translation import ugettext_lazy as _
-from django.db.models.signals import pre_save, post_save, pre_delete
-
-from sparks.django.models import ModelDiffMixin
-
-# from django.utils.translation import ugettext as _
 # from django.utils.text import slugify
-# from sparks.django.models import ModelDiffMixin
 
-from common import DjangoUser  # , REDIS
-from mailaccount import MailAccount
-# from mail_common import email_get_first_text_block
+from ..common import ORIGINS  # , REDIS
+from ..mailaccount import MailAccount
+
+from base import BaseFeed
 
 LOGGER = logging.getLogger(__name__)
 
 
-class MailFeed(ModelDiffMixin):
+class MailFeed(BaseFeed):
 
     """ Configuration of a mail-based 1flow feed. """
 
@@ -68,25 +65,26 @@ class MailFeed(ModelDiffMixin):
 
     RULES_OPERATION_DEFAULT = RULES_OPERATION_ANY
 
-    name = models.CharField(max_length=255, verbose_name=_(u'Feed name'))
-    user = models.ForeignKey(DjangoUser, verbose_name=_(u'Creator'))
-    is_public = models.BooleanField(verbose_name=_(u'Public'),
-                                    default=True, blank=True,
-                                    help_text=_(u'Can other 1flow users '
-                                                u'subscribe to this feed?'))
+    #
+    # HEADS UP: `.user` is inherited from BaseFeed.
+    #
 
-    account = models.ForeignKey(MailAccount, null=True, blank=True,
-                                verbose_name=_(u'Mail account'),
-                                help_text=_(u"To apply this rule to all "
-                                            u"accounts, just don't choose "
-                                            u"any."))
-    mailbox = models.CharField(verbose_name=_(u'Mailbox'),
-                               max_length=255, default=u'INBOX',
-                               null=True, blank=True)
-    recurse_mailbox = models.BooleanField(verbose_name=_(u'Recurse mailbox'),
-                                          default=True, blank=True)
+    account = models.ManyToManyField(
+        MailAccount, null=True, blank=True,
+        verbose_name=_(u'Mail accounts'),
+        help_text=_(u"To apply this rule to all accounts, "
+                    u"just don't choose any."))
 
-    match_action =  models.CharField(
+    #
+    # TODO: implement mailboxes.
+    #
+    # mailbox = models.CharField(verbose_name=_(u'Mailbox'),
+    #                            max_length=255, default=u'INBOX',
+    #                            null=True, blank=True)
+    # recurse_mailbox = models.BooleanField(verbose_name=_(u'Recurse mailbox'),
+    #                                       default=True, blank=True)
+
+    match_action = models.CharField(
         verbose_name=_(u'Match action'),
         max_length=10, default=u'scrape',
         choices=tuple(MATCH_ACTION_CHOICES.items()),
@@ -96,7 +94,7 @@ class MailFeed(ModelDiffMixin):
                     u'rule level, only for the ones '
                     u'you want.'))
 
-    finish_action =  models.CharField(
+    finish_action = models.CharField(
         verbose_name=_(u'Finish action'),
         max_length=10, default=u'markread',
         choices=tuple(FINISH_ACTION_CHOICES.items()),
@@ -134,45 +132,7 @@ class MailFeed(ModelDiffMixin):
 
     # ——————————————————————————————————————————————————————————— Class methods
 
-    @classmethod
-    def is_stream_url(self, url):
-        """ Return ``True`` if :param:`url` is a mail stream URL. """
-
-        return url.startswith(u'https://mailstream.{0}/'.format(
-                              settings.SITE_DOMAIN))
-
-    @classmethod
-    def get_from_stream_url(cls, stream_url):
-        """ Return a :class:`MailFeed` instance from a stream URL.
-
-        The purpose of this method is to rassemble the stream_url
-        creation/extraction processes in the current file, without
-        duplicating code elsewhere.
-        """
-
-        return cls.objects.get(pk=int(stream_url.rsplit('/', 1)[-1]))
-
     # —————————————————————————————————————————————————————————————— Properties
-
-    @property
-    def stream_url(self):
-        """ Return an URL suitable for use in our MongoDB Feed collection.
-
-        .. warning:: if you change the way ``stream_url`` is generated,
-            please update :meth:`queryset_from_stream_url` too.
-        """
-
-        return u'https://mailstream.{1}/{0}'.format(self.pk,
-                                                    settings.SITE_DOMAIN)
-
-    @property
-    def stream(self):
-        """ Return the 1flow stream associated with the current mail feed. """
-
-        # Imported here to avoid cycles.
-        from ..nonrel import Feed
-
-        return Feed.objects.get(url=self.stream_url)
 
     # —————————————————————————————————————————————————————————————————— Django
 
@@ -182,6 +142,62 @@ class MailFeed(ModelDiffMixin):
         return u'“{0}” of user {1}'.format(self.name, self.user)
 
     # ——————————————————————————————————————————————————————————————— Internals
+
+    def build_refresh_kwargs(self):
+        """ Return a kwargs suitable for Email feed refreshing method. """
+
+        return {
+            'since': self.date_last_fetch
+        }
+
+    def process_email(self, email):
+        """ Process an email as configured in the feed. """
+
+        # store email
+        #
+        # hde it if configured to only parse content.
+        #
+        # parse content and fetch links
+
+        return
+
+    def refresh_must_abort_internal(self):
+        """ Specific conditions where an e-mail feed should not refresh. """
+
+        if config.FEED_FETCH_EMAIL_DISABLED:
+            LOGGER.info(u'Email feed %s refresh disabled by dynamic '
+                        u'configuration.', self)
+            return True
+
+        return False
+
+    def refresh_feed_internal(self, force=False):
+        """ Refresh a mail feed. """
+
+        LOGGER.info(u'Refreshing mail feed %s…', self)
+
+        feed_kwargs = self.build_refresh_kwargs(for_type=ORIGINS.EMAIL_FEED)
+
+        new_emails = 0
+        duplicates = 0
+        mutualized = 0
+
+        for email in self.get_new_entries(**feed_kwargs):
+            created = self.process_email(email)
+
+            if created:
+                new_emails += 1
+
+            elif created is False:
+                duplicates += 1
+
+            else:
+                mutualized += 1
+
+        if new_emails == duplicates == mutualized  == 0:
+            LOGGER.info(u'No new content in mail feed %s.', self)
+
+        return new_emails, duplicates, mutualized
 
     def get_new_entries(self, **kwargs):
         """ Return new mails from the current feed. """
@@ -333,95 +349,31 @@ class MailFeed(ModelDiffMixin):
 
 
 # ————————————————————————————————————————————————————————————————————— Signals
+#
+# HEADS UP: see subscription.py for other signals.
+#
 
 
 def mailfeed_pre_save(instance, **kwargs):
-    """ Create a MongoDB feed if mailfeed was just created. """
+    """ Update owner's subscription name when mailfeed name changes. """
 
-    if not instance.pk:
-        # We are creating a mail feed; the dirty
-        # work will be handled by post_save().
+    mailfeed = instance
+
+    if not mailfeed.pk:
+        # The feed is beeing created.
+        # The subscription doesn't exist yet.
         return
 
-    feed = instance.stream
-
-    instance_name = instance.name
-    update_feed = {}
-    update_subscription = False
-
-    #
-    # HEADS UP: we treat feed & subscriptions differently, because
-    #           they both save() MailFeed instances. Given from where
-    #           the is coming, we must decouple the processing, else
-    #           the one not sending the save() will not be updated.
-    #
-    # HEADS UP: we use update() on MongoDB instances to avoid
-    #           post_save() signals cycles between three models.
-    #
-
-    if 'name' in instance.changed_fields:
-        update_subscription = True
-
-        if instance_name != feed.name:
-            update_feed['set__name'] = instance_name
-
-    if 'is_public' in instance.changed_fields \
-            and instance.is_public == feed.restricted:
-        update_feed['set__restricted'] = not instance.is_public
-
-    if update_feed:
-        feed.update(**update_feed)
-
-    if update_subscription:
-        for subscription in feed.subscriptions:
-            if subscription.user.django == instance.user \
-                    and subscription.name != instance_name:
-                # HEADS UP: we use update() to
-                # avoid post_save() signals cycles.
-                subscription.update(set__name=instance_name)
+    if 'name' in mailfeed.changed_fields:
+        # Push the name update from the mailfeed
+        # to the owner's corresponding subscription.
+        #
+        # HEADS UP: we use filter()/update()
+        # to avoid a post_save() signal loop.
+        mailfeed.user.subscription_set.filter(
+            feed=mailfeed).update(name=mailfeed.name)
 
 
-def mailfeed_post_save(instance, **kwargs):
-    """ Create a MongoDB feed if mailfeed was just created. """
-
-    # LOGGER.info('MailFeed post save for %s: %s', instance, kwargs)
-
-    if kwargs.get('created', False):
-
-        # Imported here to avoid cycles.
-        from ..nonrel import Feed, Subscription
-
-        feed = Feed(name=instance.name,
-                    url=instance.stream_url,
-                    site_url=u'http://' + settings.SITE_DOMAIN,
-                    restricted=not instance.is_public,
-                    good_for_use=True).save()
-
-        LOGGER.info('Created Feed %s for MailFeed %s', feed, instance)
-
-        Subscription.subscribe_user_to_feed(instance.user.mongo,
-                                            feed, background=True)
-
-
-def mailfeed_pre_delete(instance, **kwargs):
-    """ Close Feed when mail feed is deleted. """
-
-    feed = instance.stream
-
-    # Deleting everything without warning users
-    # seems not to be the best option for now.
-    #
-    # TODO: what if a creator wants to really delete
-    # the feed with its history, for privacy concerns?
-    #
-    # for subscription in feed.subscriptions:
-    #     subscription.delete()
-    # feed.delete()
-
-    feed.close(_(u'%s, creator of the mail feed, closed it.').format(
-               instance.user))
-
-
-post_save.connect(mailfeed_post_save, sender=MailFeed)
 pre_save.connect(mailfeed_pre_save, sender=MailFeed)
-pre_delete.connect(mailfeed_pre_delete, sender=MailFeed)
+# post_save.connect(mailfeed_post_save, sender=MailFeed)
+# pre_delete.connect(mailfeed_pre_delete, sender=MailFeed)

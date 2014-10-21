@@ -22,3 +22,6 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 from base import BaseFeed  # NOQA
 
 from rssatom import RssAtomFeed  # NOQA
+
+from mail import MailFeed  # NOQA
+from mailrule import MailFeedRule  # NOQA

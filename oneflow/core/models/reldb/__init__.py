@@ -30,10 +30,10 @@ from userimport import UserImport  # NOQA
 
 from tag import SimpleTag  # NOQA
 
-from feed import BaseFeed, RssAtomFeed  # NOQA
+from feed import (  # NOQA
+    BaseFeed,
+    MailFeed, MailFeedRule,
 
-from mailfeed import MailFeed  # NOQA
 
-from mailfeedrule import MailFeedRule  # NOQA
 
 from index import IndexNode, RemoteModel  # NOQA
