@@ -29,8 +29,8 @@ from django.db.models.signals import post_save  # , pre_save, pre_delete
 
 # from oneflow.base.utils import register_task_method
 
-from common import DjangoUser as User, SPECIAL_FEEDS_DATA
-from subscription import Subscription, subscribe_user_to_feed
+from ..common import DjangoUser as User, SPECIAL_FEEDS_DATA
+from ..subscription import Subscription, subscribe_user_to_feed
 
 LOGGER = logging.getLogger(__name__)
 

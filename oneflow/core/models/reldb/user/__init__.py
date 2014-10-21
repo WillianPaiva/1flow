@@ -19,12 +19,6 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
-from base import BaseFeed, basefeed_refresh_task  # NOQA
+from feeds import UserFeeds  # NOQA
 
-from rssatom import RssAtomFeed  # NOQA
-
-from mail import MailFeed  # NOQA
-from mailrule import MailFeedRule  # NOQA
-
-from combined import CombinedFeed  # NOQA
-from combinedrule import CombinedFeedRule  # NOQA
+from subscriptions import UserSubscriptions  # NOQA

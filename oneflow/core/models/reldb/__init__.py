@@ -19,6 +19,8 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
+# ————————————————————————————————————————————————————————————— Standard models
+#                                                            and simple objects
 
 from helpcontent import HelpContent  # NOQA
 
@@ -32,25 +34,17 @@ from website import WebSite  # NOQA
 
 from tag import SimpleTag  # NOQA
 
-from item import (  # NOQA
-    BaseItem,
-    Article,
+# —————————————————————————————————————————————————————————— Polymorphic models
+#                                                               and derivatives
 
-    # Email,
-)
+from item import *  # NOQA
+from feed import *  # NOQA
 
-from feed import (  # NOQA
-    BaseFeed,
-    RssAtomFeed,
-    MailFeed, MailFeedRule,
-    CombinedFeed, CombinedFeedRule,
-    UserFeeds,
-)
+from subscription import *  # NOQA
+from read import *  # NOQA
 
-from read import Read  # NOQA
+from user import *  # NOQA
 
-from subscription import Subscription  # NOQA
-
-from usersubscriptions import UserSubscriptions  # NOQA
+# ————————————————————————————————————————————————————————————————— 1flow index
 
 from index import IndexNode, RemoteModel  # NOQA
