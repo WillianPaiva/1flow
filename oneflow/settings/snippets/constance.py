@@ -396,6 +396,9 @@ CONSTANCE_CONFIG = {
                              u'`is_good` attribute. Default: let it run '
                              u'(=enabled).')),
 
+    'CHECK_USERS_DISABLED': (False, ugettext(u'Disable or not the night '
+                             u'users check. Default: let it run (=enabled).')),
+
 
     # ———————————————————————————————————————————————————— Google Reader Import
     # GR_LOAD_LIMIT * GR_WAVE_LIMIT must equals GR_MAX_ARTICLES:

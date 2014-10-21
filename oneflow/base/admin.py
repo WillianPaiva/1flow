@@ -183,6 +183,7 @@ ConstanceAdmin.fieldsets = (
                 'CHECK_SUBSCRIPTIONS_DISABLED',
                 'CHECK_DUPLICATES_DISABLED',
                 'CHECK_READS_DISABLED',
+                'CHECK_USERS_DISABLED',
             ),
         }),
 
