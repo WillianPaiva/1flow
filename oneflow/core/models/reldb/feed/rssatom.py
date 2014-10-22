@@ -36,7 +36,8 @@ from django.core.validators import URLValidator
 
 from oneflow.base.utils import HttpResponseLogProcessor
 from oneflow.base.utils.http import clean_url
-from oneflow.base.utils.dateutils import (datetime, is_naive, make_aware, utc)
+from oneflow.base.utils.dateutils import (now, datetime, is_naive,
+                                          make_aware, utc)
 
 from ..common import (
     FeedIsHtmlPageException,
