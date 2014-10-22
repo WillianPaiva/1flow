@@ -34,10 +34,6 @@ from django.db.models.signals import pre_save, post_save  # , pre_delete
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import URLValidator
 
-from common import dateutilDateHandler
-from base import BaseFeed, basefeed_refresh_task, basefeed_pre_save
-from ..tag import SimpleTag
-
 from oneflow.base.utils import HttpResponseLogProcessor
 from oneflow.base.utils.http import clean_url
 from oneflow.base.utils.dateutils import (datetime, is_naive, make_aware, utc)
@@ -51,9 +47,13 @@ from ..common import (
     # BAD_SITE_URL_BASE,
     # SPECIAL_FEEDS_DATA
 )
-from ..website import WebSite
 
-from common import throttle_fetch_interval
+from ..website import WebSite
+from ..item import Article
+from ..tag import SimpleTag
+
+from common import throttle_fetch_interval, dateutilDateHandler
+from base import BaseFeed, basefeed_refresh_task, basefeed_pre_save
 
 LOGGER = logging.getLogger(__name__)
 
