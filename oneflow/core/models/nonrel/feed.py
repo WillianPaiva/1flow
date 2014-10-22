@@ -596,16 +596,6 @@ class Feed(Document, DocumentHelperMixin):
                 # by the register_task_method() call.
                 feed_refresh_task.delay(feed.id)  # NOQA
 
-            # else:
-            #     if feed.is_mailfeed:
-            #         # HEADS UP: we use save() to forward the
-            #         # name change to the Subscription instance
-            #         # without duplicating the code to do it here.
-            #         mailfeed = MailFeed.get_from_stream_url(feed.url)
-            #         mailfeed.name = feed.name
-            #         mailfeed.is_public = not feed.restricted
-            #         mailfeed.save()
-
     def has_option(self, option):
         return option in self.options
 
@@ -630,16 +620,6 @@ class Feed(Document, DocumentHelperMixin):
                     self, self.closed_reason)
 
         self.safe_reload()
-
-    # @property
-    # def is_mailfeed(self):
-    #     """ Return ``True`` if the current document originates from a MailFeed.
-    #
-    #     .. warning:: please synchronize the conditions
-    #         with :mod:`~oneflow.core.models.reldb.MailFeed`.
-    #     """
-    #
-    #     return MailFeed.is_stream_url(self.url)
 
     @property
     def articles(self):
@@ -1255,13 +1235,9 @@ class Feed(Document, DocumentHelperMixin):
             spipe.incr('feeds.refresh.global.mutualized', mutualized)
 
         # Everything went fine, be sure to reset the "error counter".
-        self.errors[:]  = []
+        self.errors[:] = []
 
-        if not self.is_mailfeed:
-            # XXX: mail feeds and mail articles are not ready yet.
-            # We must get the content every time.
-            self.last_fetch = now()
-
+        self.last_fetch = now()
         self.save()
 
         with statsd.pipeline() as spipe:
