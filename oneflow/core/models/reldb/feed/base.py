@@ -235,8 +235,8 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
     date_last_fetch = models.DateTimeField(verbose_name=_(u'last fetch'),
                                            null=True, blank=True)
 
-    errors = JSONField(default=[], blank=True)
-    options = JSONField(default={}, blank=True)
+    errors = JSONField(default=list, blank=True)
+    options = JSONField(default=dict, blank=True)
 
     duplicate_of = models.ForeignKey('self', null=True, blank=True)
 
