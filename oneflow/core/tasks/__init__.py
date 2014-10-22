@@ -113,16 +113,16 @@ def refresh_all_feeds(limit=None, force=False):
 
                 interval = timedelta(seconds=feed.fetch_interval)
 
-                if feed.last_fetch is None:
+                if feed.date_last_fetch is None:
 
                     basefeed_refresh_task.delay(feed.id)
 
                     LOGGER.info(u'Launched immediate refresh of feed %s which '
                                 u'has never been refreshed.', feed)
 
-                elif force or feed.last_fetch + interval < mynow:
+                elif force or feed.date_last_fetch + interval < mynow:
 
-                    how_late = feed.last_fetch + interval - mynow
+                    how_late = feed.date_last_fetch + interval - mynow
                     how_late = how_late.days * 86400 + how_late.seconds
 
                     if config.FEED_REFRESH_RANDOMIZE:
