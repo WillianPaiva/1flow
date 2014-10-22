@@ -33,7 +33,7 @@ from django.utils.translation import ugettext_lazy as _
 from ..common import ORIGINS  # , REDIS
 from ..mailaccount import MailAccount
 
-from base import BaseFeed
+from base import BaseFeed, basefeed_pre_save
 
 LOGGER = logging.getLogger(__name__)
 
@@ -236,6 +236,8 @@ class MailFeed(BaseFeed):
 
         since = kwargs.get('since')
 
+        # Freeze the QuerySet as tuple() for current run.
+        # This avoids having a moving set of rules for each account.
         feed_rules = tuple(
             self.mailfeedrule_set.filter(is_valid=True).order_by('group',
                                                                  'position')
@@ -254,7 +256,7 @@ class MailFeed(BaseFeed):
                 account.update_mailboxes()
 
                 #
-                # TODO: implement rule.mailboxes specific usage here
+                # TODO: implement feed.account.mailboxes specific usage here
                 #
 
                 account_matched   = 0
@@ -373,6 +375,8 @@ def mailfeed_pre_save(instance, **kwargs):
         mailfeed.user.subscription_set.filter(
             feed=mailfeed).update(name=mailfeed.name)
 
+# Because http://stackoverflow.com/a/24624838/654755 doesn't work.
+pre_save.connect(basefeed_pre_save, sender=MailFeed)
 
 pre_save.connect(mailfeed_pre_save, sender=MailFeed)
 # post_save.connect(mailfeed_post_save, sender=MailFeed)
