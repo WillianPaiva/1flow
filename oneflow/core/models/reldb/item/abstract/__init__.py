@@ -19,22 +19,6 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
-from base import BaseItem  # NOQA
+from url import UrlItem  # NOQA
 
-# from document import (  # NOQA
-#    Document,
-#    Image,
-#    Video,
-#    PdfDocument,
-#    ZipDocument,
-# )
-
-from article import Article  # NOQA
-
-from original_data import OriginalData
-
-# from bookmark import Bookmark  # NOQA
-
-# from comment import Comment  # NOQA
-
-# from tweet import Tweet  # NOQA
+from content import ContentItem  # NOQA

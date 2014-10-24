@@ -21,12 +21,23 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 import re
 import ast
+import logging
+
+from statsd import statsd
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from base import BaseItem
+from ..common import ORIGINS, CONTENT_TYPES
 from ..mail_common import email_prettify_raw_message
+from ..tag import SimpleTag as Tag
+from ..author import Author
+
+from base import BaseItem
+from article import Article
+
+LOGGER = logging.getLogger(__name__)
+
 
 __all__ = [
     'OriginalData',
@@ -46,7 +57,8 @@ class OriginalData(models.Model):
         verbose_name = _(u'Original data')
         verbose_name_plural = _(u'Original data')
 
-    article = models.OneToOneField(BaseItem, primary_key=True)
+    item = models.OneToOneField(BaseItem, primary_key=True,
+                                related_name='original_data')
 
     # This should go away soon, after a full re-parsing.
     google_reader = models.TextField()
@@ -85,3 +97,206 @@ class OriginalData(models.Model):
             return email_prettify_raw_message(self.raw_email)
 
         return None
+
+
+# ———————————————————————————————————————————————————————————— External methods
+
+
+def BaseItem_add_original_data_method(self, name, value):
+    """ Direct property writer for an original data. """
+
+    try:
+        od = self.original_data
+
+    except OriginalData.DoesNotExist:
+        od = OriginalData(item=self)
+
+    setattr(od, name, value)
+    od.save()
+
+
+def BaseItem_remove_original_data_method(self, name):
+    """ Direct property remover for an original data. """
+
+    try:
+        od = self.original_data
+
+    except OriginalData.DoesNotExist:
+        return
+
+    try:
+        delattr(od, name)
+
+    except AttributeError:
+        pass
+
+    else:
+        od.save()
+
+
+def BaseItem_postprocess_original_data_method(self, force=False, commit=True):
+    """ Generic method for original data post_processing. """
+
+    methods_table = {
+        ORIGINS.NONE: self.postprocess_guess_original_data,
+        ORIGINS.FEEDPARSER: self.postprocess_feedparser_data,
+    }
+
+    meth = methods_table.get(self.origin_type, None)
+
+    if meth is None:
+        LOGGER.warning(u'No method to post-process origin type %s of '
+                       u'article %s.', self.origin_type, self)
+        return
+
+    meth(force=force, commit=commit)
+
+
+BaseItem.add_original_data         = BaseItem_add_original_data_method
+BaseItem.remove_original_data      = BaseItem_remove_original_data_method
+BaseItem.postprocess_original_data = BaseItem_postprocess_original_data_method
+
+
+# ———————————————————————————————————————————————————— External Article methods
+
+
+def Article_postprocess_guess_original_data_method(self, force=False,
+                                                   commit=True):
+
+    need_save = False
+
+    if self.original_data.feedparser_hydrated:
+        self.origin_type = ORIGINS.FEEDPARSER
+        need_save        = True
+
+    elif self.original_data.google_reader_hydrated:
+        self.origin_type = ORIGINS.GOOGLE_READER
+        need_save        = True
+
+    if need_save:
+        if commit:
+            self.save()
+
+        # Now that we have an origin type, re-run the real post-processor.
+        self.postprocess_original_data(force=force, commit=commit)
+
+
+def Article_postprocess_feedparser_data_method(self, force=False,
+                                               commit=True):
+    """ XXX: should disappear when feedparser_data is useless. """
+
+    if self.original_data.feedparser_processed and not force:
+        LOGGER.info('feedparser data already post-processed.')
+        return
+
+    fpod = self.original_data.feedparser_hydrated
+
+    if fpod:
+        if self.tags == [] and 'tags' in fpod:
+            tags = list(
+                Tag.get_tags_set((
+                    t['term']
+                    # Sometimes, t['term'] can be None.
+                    # http://dev.1flow.net/webapps/1flow/group/4082/
+                    for t in fpod['tags'] if t['term'] is not None),
+                    origin=self))
+
+            self.update_tags(tags, initial=True, need_reload=False)
+
+        if self.authors == []:
+            Author.get_authors_from_feedparser_article(fpod,
+                                                       set_to_article=self)
+
+        if self.language is None:
+            language = fpod.get('summary_detail', {}).get('language', None)
+
+            if language is None:
+                language = fpod.get('title_detail', {}).get(
+                    'language', None)
+
+            if language is not None:
+                try:
+                    self.language = language.lower()
+                    self.save()
+
+                except:
+                    # This happens if the language code of the
+                    # feedparser data does not correspond to a
+                    # Django setting language we support.
+                    LOGGER.exception(u'Cannot set language %s on '
+                                     u'article %s.', language, self)
+
+        if self.is_orphaned:
+            # We have a chance to get at least *some* content. It will
+            # probably be incomplete, but this is better than nothing.
+
+            detail = fpod.get('summary_detail', {})
+
+            if detail:
+                detail_type = detail.get('type', None)
+                detail_value = detail.get('value', '')
+
+                # We need some *real* data, though
+                if len(detail_value) > 20:
+
+                    if detail_type == 'text/plain':
+                        self.content = detail_value
+                        self.content_type = CONTENT_TYPES.MARKDOWN
+                        self.save()
+
+                        statsd.gauge('articles.counts.markdown',
+                                     1, delta=True)
+
+                    elif detail_type == 'text/html':
+                        self.content = detail_value
+                        self.content_type = CONTENT_TYPES.HTML
+                        self.save()
+
+                        statsd.gauge('articles.counts.html',
+                                     1, delta=True)
+
+                        self.convert_to_markdown()
+
+                    else:
+                        LOGGER.warning(u'No usable content-type found '
+                                       u'while trying to recover article '
+                                       u'%s content: %s => "%s".', self,
+                                       detail_type, detail_value)
+                else:
+                    LOGGER.warning(u'Empty (or nearly) content-type '
+                                   u'found while trying to recover '
+                                   u'orphaned article %s '
+                                   u'content: %s => "%s".', self,
+                                   detail_type, detail_value)
+            else:
+                LOGGER.warning(u'No summary detail found while trying '
+                               u'to recover orphaned article %s '
+                               u'content.', self)
+
+        if self.comments_feed is None:
+
+            comments_feed_url = fpod.get('wfw_commentrss', None)
+
+            if comments_feed_url:
+                self.comments_feed = comments_feed_url
+                self.save()
+
+        # We don't care anymore, it's already in another database.
+        # self.offload_attribute('feedparser_original_data')
+
+    self.original_data.update(set__feedparser_processed=True)
+
+
+def Article_postprocess_google_reader_data_method(self, force=False,
+                                                  commit=True):
+
+    LOGGER.warning(u'postprocess_google_reader_data() is not implemented '
+                   u'yet but it was called for article %s!', self)
+
+
+Article.postprocess_guess_original_data = \
+    Article_postprocess_guess_original_data_method
+Article.postprocess_feedparser_data     = \
+    Article_postprocess_feedparser_data_method
+Article.postprocess_google_reader_data  = \
+    Article_postprocess_google_reader_data_method
