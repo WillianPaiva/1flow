@@ -98,10 +98,14 @@ class SimpleTag(MPTTModel):
 
         duplicate = self.__class__.objects.get(id=duplicate_id)
 
-        # This method is defined in nonrel.article to avoid an import loop.
-        self.replace_duplicate_in_articles(duplicate, *args, **kwargs)
+        # This method is defined in basefeed to avoid an import loop.
+        self.replace_duplicate_in_feeds(duplicate, *args, **kwargs)
+
+        # This method is defined in baseitem to avoid an import loop.
+        self.replace_duplicate_in_items(duplicate, *args, **kwargs)
+
         #
-        # TODO: do the same for feeds, reads (, subscriptions?) …
+        # TODO: do the same for feeds, subscriptions…
         #
         pass
 

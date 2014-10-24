@@ -829,3 +829,27 @@ def basefeed_export_content_classmethod(cls, since, folder=None):
 
 setattr(BaseFeed, 'export_content',
         classmethod(basefeed_export_content_classmethod))
+
+
+# —————————————————————————————————————————————————————— external bound methods
+#                                            Defined here to avoid import loops
+
+
+def SimpleTag_replace_duplicate_in_feeds_method(self, duplicate, force=False):
+    """ Replace a duplicate of a Tag in all feeds/subscriptions having it. """
+
+    #
+    # TODO: update search engine indexes…
+    #
+
+    for feed in duplicate.feeds.all():
+        feed.tags.remove(duplicate)
+        feed.tags.add(self)
+
+    for subscription in duplicate.subscriptions.all():
+        subscription.tags.remove(duplicate)
+        subscription.tags.add(self)
+
+
+SimpleTag.replace_duplicate_in_feeds = \
+    SimpleTag_replace_duplicate_in_feeds_method
