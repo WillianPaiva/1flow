@@ -379,7 +379,7 @@ class RssAtomFeed(BaseFeed):
             kwargs['modified'] = self.last_modified
 
         else:
-            kwargs['modified'] = self.latest_article_date_published
+            kwargs['modified'] = self.latest_item_date_published
 
         if self.last_etag:
             kwargs['etag'] = self.last_etag
@@ -511,10 +511,10 @@ class RssAtomFeed(BaseFeed):
         mutualized = created is None
 
         if created or mutualized:
-            self.recent_articles_count += 1
-            self.all_articles_count += 1
+            self.recent_items_count += 1
+            self.all_items_count += 1
 
-        self.latest_article_date_published = now()
+        self.latest_item_date_published = now()
 
         # Even if the article wasn't created, we need to create reads.
         # In the case of a mutualized article, it will be fetched only
@@ -600,19 +600,19 @@ class RssAtomFeed(BaseFeed):
         mutualized = created is None
 
         if created or mutualized:
-            self.recent_articles_count += 1
-            self.all_articles_count += 1
+            self.recent_items_count += 1
+            self.all_items_count += 1
 
         # Update the "latest date" kind-of-cache.
         if date_published is not None and \
-                date_published > self.latest_article_date_published:
-            self.latest_article_date_published = date_published
+                date_published > self.latest_item_date_published:
+            self.latest_item_date_published = date_published
 
         # Even if the article wasn't created, we need to create reads.
         # In the case of a mutualized article, it will be fetched only
         # once, but all subscribers of all feeds must be connected to
         # it to be able to read it.
-        for subscription in self.subscriptions:
+        for subscription in self.subscriptions.all():
             subscription.create_read(new_article, verbose=created)
 
         # Don't forget the parenthesis else we return ``False`` everytime.
