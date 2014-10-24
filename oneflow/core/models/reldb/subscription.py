@@ -282,50 +282,25 @@ class Subscription(ModelDiffMixin):
         self.user.unread_articles_count -= impacted_count
 
     def create_read(self, article, verbose=True, **kwargs):
-        """ Returns a tuple (read, created) with the new (or existing) read,
-            and ``created`` as a boolean indicating if it was actually created
-            or if it existed before.
+        """ Return a tuple (read, created) with the new (or existing) read.
 
+
+        ``created`` is a boolean indicating if it was actually created
+        or if it existed before.
         """
 
-        raise NotImplementedError('Review for relational database.')
+        read, created = Read.objects.get_or_create(article=article,
+                                                   user=self.user)
 
-        new_read = Read(article=article, user=self.user)
+        if created:
+            read.subscriptions.add(self)
+            read.tags.add(article.tags)
 
-        try:
-            new_read.save()
+            need_save = False
 
-        except (NotUniqueError, DuplicateKeyError):
-            if verbose:
-                LOGGER.info(u'Duplicate read %s!', new_read)
-
-            cur_read = Read.objects.get(article=article, user=self.user)
-
-            # If another feed has already created the read, be sure the
-            # current one is registered in the read via the subscriptions.
-            cur_read.update(add_to_set__subscriptions=self)
-
-            #
-            # NOTE: we do not check `is_good` here, when the read was not
-            #       created. This is handled (indirectly) via the article
-            #       check part of Subscription.check_reads(). DRY.
-            #
-
-            return cur_read, False
-
-        except:
-            # We must not fail here, because often this method is called in
-            # a loop 'for subscription in ….subscriptions:'. All other read
-            # creations need to succeed.
-            LOGGER.exception(u'Could not save read %s!', new_read)
-
-        else:
-
-            # XXX: todo remove this 'is not None', when database is clean…
-            tags = [t for t in article.tags if t is not None]
-
-            params = dict(('set__' + key, value)
-                          for key, value in kwargs.items())
+            for key, value in kwargs.items():
+                setattr(read, key, value)
+                need_save = True
 
             # If the article was already there and fetched (mutualized from
             # another feed, for example), activate the read immediately.
@@ -334,16 +309,29 @@ class Subscription(ModelDiffMixin):
             # "just-added" subscriptions, whose reads are created via the
             # current method.
             if article.is_good:
-                params['set__is_good'] = True
+                read.is_good = True
+                need_save = True
 
-            new_read.update(set__tags=tags,
-                            set__subscriptions=[self], **params)
+            if need_save:
+                read.save()
 
             # Update cached descriptors
             self.all_articles_count += 1
             self.unread_articles_count += 1
 
-            return new_read, True
+            return read, True
+
+        # If another feed has already created the read, be sure the
+        # current one is registered in the read via the subscriptions.
+        read.subscriptions.add(self)
+
+        #
+        # NOTE: we do not check `is_good` here, when the read was not
+        #       created. This is handled (indirectly) via the article
+        #       check part of Subscription.check_reads(). DRY.
+        #
+
+        return read, False
 
     def check_reads(self, articles=None, force=False, extended_check=False):
         """ Also available as a task for background execution. """
@@ -354,7 +342,7 @@ class Subscription(ModelDiffMixin):
                         u'with `force=True` if you are sure.')
             return
 
-        raise Exception('REVIEW Subscription.check_reads()')
+        raise NotImplementedError('REVIEW Subscription.check_reads()')
 
         yesterday = combine(today() - timedelta(days=1), time(0, 0, 0))
         is_older  = False
@@ -646,7 +634,7 @@ def generic_check_subscriptions_method(self, commit=True, extended_check=False):
 
         # Convert the subscriptions QuerySet to a list to avoid
         # "cursor #… not valid at server" on very long operations.
-        subscriptions = [s for s in self.subscriptions]
+        subscriptions = [s for s in self.subscriptions.all()]
 
         for subscription in subscriptions:
             try:
@@ -676,6 +664,31 @@ def generic_check_subscriptions_method(self, commit=True, extended_check=False):
                     missing, rechecked, reads, unreads, failed)
 
 
+def Read_set_subscriptions_method(self, commit=True):
+
+    # @all_subscriptions, because here internal feeds count.
+    user_feeds    = [sub.feed for sub in self.user.all_subscriptions]
+    article_feeds = [feed for feed in self.item.feeds
+                     if feed in user_feeds]
+
+    self.subscriptions.clear()
+
+    # HEADS UP: searching only for feed__in=article_feeds will lead
+    # to have other user's subscriptions attached to the read.
+    # Harmless but very confusing.
+    self.subscriptions.add(*Subscription.objects.filter(
+                           feed__in=article_feeds,
+                           user=self.user))
+
+    # if commit:
+    #    self.save()
+    #    TODO: only for the new subscriptions.
+    #    self.update_cached_descriptors( … )
+
+    return self.subscriptions.all()
+
+
 BaseFeed.check_subscriptions = generic_check_subscriptions_method
 User.check_subscriptions     = generic_check_subscriptions_method
 Read.check_subscriptions     = generic_check_subscriptions_method
+Read.set_subscriptions       = Read_set_subscriptions_method

@@ -789,30 +789,6 @@ class Read(models.Model):
 
     # ————————————————————————————————————————————————————————————————— Methods
 
-    def set_subscriptions(self, commit=True):
-
-        raise NotImplementedError('Review for relational DB.')
-
-        # @all_subscriptions, because here internal feeds count.
-        user_feeds         = [sub.feed for sub in self.user.all_subscriptions]
-        article_feeds      = [feed for feed in self.item.feeds
-                              if feed in user_feeds]
-
-        # HEADS UP: searching only for feed__in=article_feeds will lead
-        # to have other user's subscriptions attached to the read.
-        # Harmless but very confusing.
-        self.subscriptions = list(Subscription.objects(
-                                  feed__in=article_feeds,
-                                  user=self.user))
-
-        if commit:
-            self.save()
-
-            # TODO: only for the new subscriptions.
-            # self.update_cached_descriptors( … )
-
-        return self.subscriptions
-
     def activate(self, force=False):
         """ This method will mark the Read ``.is_good=True``
             and do whatever in consequence. """
@@ -1018,26 +994,26 @@ def Folder_reads_property_get(self):
 
     # We user `.reads` to get only the owner's good reads.
     return self.user.reads.filter(
-        subscriptions_in=self.subscription_set.all())
+        subscriptions_in=self.subscriptions.all())
 
 
 def BaseItem_good_reads_property_get(self):
 
     # Do NOT filter on is_good here. The BaseItem needs to
     # know about ALL reads, to activate them when ready.
-    return self.read_set.filter(is_good=True)
+    return self.reads.filter(is_good=True)
 
 
 def BaseItem_bad_reads_property_get(self):
 
     # Do NOT filter on is_good here. The BaseItem needs to
     # know about ALL reads, to activate them when ready.
-    return self.read_set.filter(is_good=False)
+    return self.reads.filter(is_good=False)
 
 
 def User_reads_property_get(self):
 
-    return self.read_set.filter(is_good=True)
+    return self.reads.filter(is_good=True)
 
 
 Folder.reads        = property(Folder_reads_property_get)
