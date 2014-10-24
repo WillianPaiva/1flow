@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -59,7 +59,7 @@ class SimpleTag(MPTTModel):
     origin = generic.GenericForeignKey('origin_type', 'origin_id')
 
     duplicate_of = models.ForeignKey(
-        'self', verbose_name=_(u'Duplicate of'),
+        'self', verbose_name=_(u'Duplicate of'), null=True, blank=True,
         help_text=_(u'Put a "master" tag here to help avoiding too much '
                     u'different tags (eg. singular and plurals) '
                     u'with the same meaning and loss of information.'))
@@ -85,7 +85,7 @@ class SimpleTag(MPTTModel):
         return _(u'{0} {1}⚐ (#{2})').format(self.name, self.language, self.id)
 
     def replace_duplicate_everywhere(self, duplicate_id, *args, **kwargs):
-        """ When a Tag is marked as duplicate of another.
+        u""" When a Tag is marked as duplicate of another.
 
         Do the necessary dirty work of replacing it everywhere it's
         needed to keep the database clean, in order to eventually delete

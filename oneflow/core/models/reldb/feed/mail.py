@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -71,7 +71,7 @@ class MailFeed(BaseFeed):
 
     account = models.ManyToManyField(
         MailAccount, null=True, blank=True,
-        verbose_name=_(u'Mail accounts'),
+        verbose_name=_(u'Mail accounts'), related_name='mail_feeds',
         help_text=_(u"To apply this rule to all accounts, "
                     u"just don't choose any."))
 

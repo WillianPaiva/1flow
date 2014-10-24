@@ -127,18 +127,22 @@ class Subscription(ModelDiffMixin):
 
     # —————————————————————————————————————————————————————————————— Attributes
 
-    feed = models.ForeignKey(BaseFeed)
-    user = models.ForeignKey(User)
+    feed = models.ForeignKey(BaseFeed, related_name='subscriptions')
+    user = models.ForeignKey(User, related_name='all_subscriptions')
 
-    items = models.ManyToManyField(Read, blank=True)
+    items = models.ManyToManyField(Read, blank=True, null=True,
+                                   related_name='subscriptions')
 
     # allow the user to rename the subscription in his/her selector
     name = models.CharField(verbose_name=_(u'Name'), max_length=255)
 
-    tags = models.ManyToManyField(SimpleTag, blank=True,
-                                  verbose_name=_(u'tags'))
-    folders = models.ManyToManyField(Folder, blank=True,
-                                     verbose_name=_(u'Folders'))
+    tags = models.ManyToManyField(SimpleTag, blank=True, null=True,
+                                  verbose_name=_(u'tags'),
+                                  related_name='subscriptions')
+
+    folders = models.ManyToManyField(Folder, blank=True, null=True,
+                                     verbose_name=_(u'Folders'),
+                                     related_name='subscriptions')
 
     notes = models.TextField(
         verbose_name=_(u'Notes'), null=True, blank=True,

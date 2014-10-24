@@ -193,18 +193,20 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
     slug           = models.CharField(verbose_name=_(u'slug'),
                                       null=True, max_length=255, blank=True)
 
-    items = models.ManyToManyField(BaseItem, blank=True,
+    items = models.ManyToManyField(BaseItem, blank=True, null=True,
                                    verbose_name=_(u'Feed items'),
                                    related_name='feeds')
 
     tags = models.ManyToManyField(
-        SimpleTag, verbose_name=_(u'tags'), blank=True,
+        SimpleTag, verbose_name=_(u'tags'),
+        blank=True, null=True, related_name='feeds',
         help_text=_(u'This tags are used only when items from this '
                     u'feed have no tags already. They are assigned to new '
                     u'subscriptions too.'))
 
     languages = models.ManyToManyField(
-        Language, verbose_name=_(u'Languages'), blank=True,
+        Language, verbose_name=_(u'Languages'),
+        blank=True, null=True, related_name='feeds',
         help_text=_(u'Set this to more than one language to help article '
                     u'language detection if none is set in articles.'))
 

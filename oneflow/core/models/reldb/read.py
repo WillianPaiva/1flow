@@ -75,11 +75,12 @@ class Read(models.Model):
         verbose_name_plural = _(u'Reads')
         unique_together = ('user', 'item', )
 
-    item = models.ForeignKey(BaseItem)
-    user = models.ForeignKey(User)
+    item = models.ForeignKey(BaseItem, related_name='reads')
+    user = models.ForeignKey(User, related_name='all_reads')
 
     senders = models.ManyToManyField(
-        User, verbose_name=_(u'Senders'), related_name='senders',
+        User, verbose_name=_(u'Senders'),
+        related_name='reads_sent', null=True, blank=True,
         help_text=_(u'All the users that have shared the article with the '
                     u'current owner of this read.'))
 
@@ -193,6 +194,7 @@ class Read(models.Model):
     # TODO: convert to UserTag to use models.ForeignKey and reverse_delete_rule.
     tags = models.ManyToManyField(
         SimpleTag, verbose_name=_(u'Tags'),
+        related_name='reads', null=True, blank=True,
         help_text=_(u'User set of tags for this read.'))
 
     # This will be set to Article.default_rating

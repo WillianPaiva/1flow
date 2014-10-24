@@ -42,7 +42,8 @@ class Language(MPTTModel):
                              related_name='children')
 
     duplicate_of = models.ForeignKey(
-        'self', verbose_name=_(u'Duplicate of'))
+        'self', null=True, blank=True,
+        verbose_name=_(u'Duplicate of'))
 
     class Meta:
         app_label = 'core'
