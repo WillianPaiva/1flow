@@ -2,43 +2,45 @@
 #
 # Default constance keys, and their values.
 #
-"""
-    Copyright 2013 Olivier Cortès <oc@1flow.io>
+u"""
+Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
-    This file is part of the 1flow project.
+This file is part of the 1flow project.
 
-    1flow is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation, either version 3 of
-    the License, or (at your option) any later version.
+1flow is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
 
-    1flow is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
+1flow is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU Affero General Public
-    License along with 1flow.  If not, see http://www.gnu.org/licenses/
-
+You should have received a copy of the GNU Affero General Public
+License along with 1flow.  If not, see http://www.gnu.org/licenses/
 """
 
 import datetime
 
-#CONSTANCE_REDIS_CONNECTION is to be found in 'snippets/databases*'
+# CONSTANCE_REDIS_CONNECTION is to be found in 'snippets/databases*'
 CONSTANCE_BACKEND      = 'constance.backends.redisd.RedisBackend'
 CONSTANCE_REDIS_PREFIX = 'c0s1f:'
 
 # This setting is available only in our own constance fork.
 CONSTANCE_CHANGE_LIST_TEMPLATE = u'admin/constance_change_list.html'
 
-CONSTANCE_CONFIG = {
-    #
-    # HEADS UP: don't forget to update
-    #           oneflow/base/admin.py::ConstanceAdmin.fieldsets
-    #           to get the new values sorted in the admin.
-    #
-    # ————————————————————————————————————————————————————————————— Staff stuff
+# SEMANTIC NOTE: we use '_DISABLED' (and not 'enabled') because everything
+# should be enabled in normal conditions, unless specified otherwise. Stopping
+# things is an unusual / rare action, so the setting is named accordingly.
 
+#    /!\    HEADS UP: don't forget to update
+#    /!\              oneflow/base/admin.py::ConstanceAdmin.fieldsets
+#    /!\              to get the new values sorted in the admin.
+
+CONSTANCE_CONFIG = {
+
+    # ————————————————————————————————————————————————————————————— Staff stuff
 
     'STAFF_HAS_FULL_ACCESS': (False, ugettext(u'Allow staff to have full '
                               u'access to anything. We use this mostly for '
@@ -47,14 +49,26 @@ CONSTANCE_CONFIG = {
                               u'disabling this does not prevent any malicious '
                               u'code which bypasses this configuration flag.')),
 
-    # ————————————————————————————————————————————————————————— Interface stuff
+    # ————————————————————————————————————————————————————————— Plain documents
 
+    'DOCUMENTS_ARCHIVING_DISABLED': (False, ugettext(u'Set this to True to '
+                            u'disable maintenance archiving operations. '
+                            u'Useful for archive database migrations (BUT '
+                            u'NOT SUFFICIENT, because of `original_data` that '
+                            u'must be disabled too, via `*_FETCH_DISABLED`).')),
+}
+
+# ————————————————————————————————————————————————————————————— Interface stuff
+
+CONSTANCE_CONFIG.update({
 
     'INTERFACE_SHOW_EXPORT_IDS': (False, ugettext(u'Show IDs everywhere for '
                                   u'easy export links creation.')),
+})
 
-    # ———————————————————————————————————————————————————— System announcements
+# ———————————————————————————————————————————————————————— System announcements
 
+CONSTANCE_CONFIG.update({
 
     'ANNOUNCEMENT_USER': (u'', ugettext(u'Announcement for all users. '
                           u'Markdown accepted. Leave empty for none.')),
@@ -99,10 +113,11 @@ CONSTANCE_CONFIG = {
                                ugettext(u'Staff announcement end '
                                u'date. Leave in the far future for endless '
                                u'display.')),
+})
 
+# ——————————————————————————————————————————————————————————— Site theme & CDNs
 
-    # ——————————————————————————————————————————————————————— Site theme & CDNs
-
+CONSTANCE_CONFIG.update({
 
     'WEB_CDNS_ENABLED': (False, ugettext(u'Enable This to use public CDNs for '
                          u'common JS and CSS (jQuery, bootstrap...). Disabled '
@@ -121,12 +136,13 @@ CONSTANCE_CONFIG = {
     'WEB_THEME_NAVBAR_INVERSE': (True, ugettext(u'Does the bootstrap navbar '
                                  u'uses inverse colors. Default: true, for '
                                  u'detail-admin theme.')),
+})
 
+# ———————————————————————————————————————————————————————————————— User support
+# HEADS UP: the 3 next are translatable, to allow providing
+#           different addresses for multi-language support.
 
-    # ———————————————————————————————————————————————————————————— User support
-    # HEADS UP: the 3 next are translatable, to allow providing
-    #           different addresses for multi-language support.
-
+CONSTANCE_CONFIG.update({
 
     'SUPPORT_EMAIL_ADDRESS': (ugettext(u'supportREMOVETHIS@1flow.io'),
                               ugettext(u'Support email address. Set empty '
@@ -139,10 +155,11 @@ CONSTANCE_CONFIG = {
 
     'IRC_SUPPORT_SERVER': (ugettext(u'irc.freenode.net'),
                             ugettext(u'Support IRC server.')),
+})
 
+# ——————————————————————————————————————————————————————— Logins & registration
 
-    # ——————————————————————————————————————————————————— Logins & registration
-
+CONSTANCE_CONFIG.update({
 
     'SOCIAL_LOGIN_ENABLED': (True, ugettext(u'Already known users are allowed '
                              u'to sign in via social network accounts. '
@@ -165,19 +182,11 @@ CONSTANCE_CONFIG = {
                                     u'configuration. We have to contribute a '
                                     u'patch, but the configuration directive '
                                     u'exists, at least.')),
+})
 
+# ——————————————————————————————————————————————————————————————— Reading lists
 
-    # ————————————————————————————————————————————————————————— Plain documents
-
-
-    'DOCUMENTS_ARCHIVING_DISABLED': (False, ugettext(u'Set this to True to '
-                            u'disable maintenance archiving operations. '
-                            u'Useful for archive database migrations (BUT '
-                            u'NOT SUFFICIENT, because of `original_data` that '
-                            u'must be disabled too, via `*_FETCH_DISABLED`).')),
-
-
-    # ——————————————————————————————————————————————————————————— Reading lists
+CONSTANCE_CONFIG.update({
 
 
     'READ_INFINITE_AUTOSCROLL_ENABLED': (True, ugettext(u'Make the read view '
@@ -198,13 +207,11 @@ CONSTANCE_CONFIG = {
                                    u'words per minutes that an adult can '
                                    u'read. When the user has not configured '
                                    u'his/her own, this one will be used.')),
+})
 
+# ————————————————————————————————————————————————————————— RSS feed refreshing
 
-    # ————————————————————————————————————————————————————— RSS feed refreshing
-    # SEMANTIC NOTE: we use 'disabled' (and not 'enabled') because the rss
-    # refreshing is something that is enabled in normal conditions. Stopping
-    # it is an unusual / rare action, so the setting is named accordingly.
-
+CONSTANCE_CONFIG.update({
 
     'FEED_FETCH_DISABLED': (False, ugettext(u'Set this to True on '
                             u'maintenance operations. After setting, wait '
@@ -283,10 +290,11 @@ CONSTANCE_CONFIG = {
     'FEED_CLOSED_WARN_LIMIT': (5, ugettext(u'Number of days during which a '
                                u'just closed feed will be warned about to '
                                u'site managers via mail.')),
+})
 
+# —————————————————————————————————————————————————— Article fetching & parsing
 
-    # —————————————————————————————————————————————— Article fetching & parsing
-
+CONSTANCE_CONFIG.update({
 
     'ARTICLE_FETCHING_DEBUG': (False, ugettext(u'Enable this to log '
                                u'intermediate article versions. Default: '
@@ -334,9 +342,11 @@ CONSTANCE_CONFIG = {
                                      u'below which a paragraph does not '
                                      u'have enough data (words) to be '
                                      u'considered informational.')),
+})
 
+# ——————————————————————————————————————————————————————————————— Mail accounts
 
-    # ——————————————————————————————————————————————————————————— Mail accounts
+CONSTANCE_CONFIG.update({
 
     'MAIL_ACCOUNT_REFRESH_DISABLED': (False, ugettext(u'Disable or not the '
                                       u'periodic check of all unusable mail '
@@ -373,10 +383,11 @@ CONSTANCE_CONFIG = {
     'MAIL_RULES_GROUPS_MAX': (25, ugettext(u'When fetching e-mails from IMAP '
                             u'accounts, how many should be downloaded at '
                             u'each call.')),
+})
 
+# ————————————————————————————————————————————————————————————————— Check tasks
 
-    # ————————————————————————————————————————————————————————————— Check tasks
-
+CONSTANCE_CONFIG.update({
 
     'CHECK_SUBSCRIPTIONS_DISABLED': (False, ugettext(u'Disable or not the '
                                      u'night subscription check that will '
@@ -398,16 +409,25 @@ CONSTANCE_CONFIG = {
 
     'CHECK_USERS_DISABLED': (False, ugettext(u'Disable or not the night '
                              u'users check. Default: let it run (=enabled).')),
+})
 
+# ———————————————————————————————————————————————————————————————— Next section
 
-    # ———————————————————————————————————————————————————— Google Reader Import
+# CONSTANCE_CONFIG.update({
+#
+# })
+
+# ———————————————————————————————————————————————————————— Google Reader Import
+#                                              (OBSOLETE but kept for memories)
+
+CONSTANCE_CONFIG.update({
+
     # GR_LOAD_LIMIT * GR_WAVE_LIMIT must equals GR_MAX_ARTICLES:
     # In the worst case, a user could have only one feed containing all its
     # articles. In this case, if WAVE_LIMIT is too low, the import tasks will
     # stop because of waves exhaustion, but the global import will never stop
     # because neither GR_MAX_ARTICLES nor total_starred nor total_reads would
     # have been reached.
-
 
     'GR_MAX_ARTICLES': (25 if DEBUG else 500000, ugettext(u'maximum number '
                         u'of Google Reader articles imported for a user. '
@@ -446,5 +466,4 @@ CONSTANCE_CONFIG = {
     'GR_STORAGE_LIMIT': (100000 if DEBUG else 27000000, ugettext(u'Maximum '
                          u'number of articles in database, after which the '
                          u'Google Reader imports will be disabled.')),
-
-}
+})
