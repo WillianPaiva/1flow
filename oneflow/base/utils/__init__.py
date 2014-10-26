@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2012-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -101,6 +101,11 @@ def register_task_method(klass, meth, module_globals,
         exported_name = u'{0}_task'.format(
             task_name.lower().replace('.', '_'))
 
+    #
+    # HEADS UP: issubclass(…, models.Model) includes PolymorphicModel,
+    #           and will work as expected as long as .objects is a
+    #           PolymorphicManager().
+    #
     if issubclass(klass, models.Model):
 
         @task(name=task_name, queue=queue,

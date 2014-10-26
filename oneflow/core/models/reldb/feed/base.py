@@ -39,13 +39,8 @@ from polymorphic import PolymorphicModel, PolymorphicManager
 from polymorphic.base import PolymorphicModelBase
 from sparks.django.models import DiffMixin
 
-# from django.utils.translation import ugettext as _
-# from django.utils.text import slugify
-# from sparks.django.models import ModelDiffMixin
-
 from oneflow.base.fields import IntRedisDescriptor, DatetimeRedisDescriptor
 from oneflow.base.utils.dateutils import now, timedelta, today
-# from oneflow.base.utils.http import clean_url
 
 from oneflow.base.utils import (
     register_task_method,
@@ -128,6 +123,8 @@ def basefeed_subscriptions_count_default(feed, *args, **kwargs):
 
 class GoodFeedsManager(PolymorphicManager):
 
+    """ Get only the good feeds. """
+
     def get_queryset(self):
         return super(GoodFeedsManager, self).get_queryset().filter(
             # not internal, still open and validated by a human.
@@ -187,13 +184,13 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
     # We use `.user` attribute name for writing-easyness of permissions classes,
     # But really the `.user` attribute has different roles. Please always refer
     # to its verbose_name to exactly know what it is really.
-    user           = models.ForeignKey(User,
-                                       null=True, blank=True,
-                                       verbose_name=_(u'Creator'))
+    user = models.ForeignKey(User,
+                             null=True, blank=True,
+                             verbose_name=_(u'Creator'))
 
-    name           = models.CharField(verbose_name=_(u'name'), max_length=255)
-    slug           = models.CharField(verbose_name=_(u'slug'),
-                                      null=True, max_length=255, blank=True)
+    name = models.CharField(verbose_name=_(u'name'), max_length=255)
+    slug = models.CharField(verbose_name=_(u'slug'),
+                            null=True, max_length=255, blank=True)
 
     items = models.ManyToManyField(BaseItem, blank=True, null=True,
                                    verbose_name=_(u'Feed items'),
@@ -227,10 +224,11 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
         verbose_name=_(u'active'), default=True, blank=True,
         help_text=_(u'Is the feed refreshed or dead?'))
 
-    date_closed    = models.DateTimeField(verbose_name=_(u'date closed'),
-                                          null=True, blank=True)
-    closed_reason  = models.TextField(verbose_name=_(u'closed reason'),
-                                      null=True, blank=True)
+    date_closed = models.DateTimeField(verbose_name=_(u'date closed'),
+                                       null=True, blank=True)
+
+    closed_reason = models.TextField(verbose_name=_(u'closed reason'),
+                                     null=True, blank=True)
 
     fetch_interval = models.IntegerField(
         default=config.FEED_FETCH_DEFAULT_INTERVAL,
@@ -272,6 +270,7 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
         max_length=256, verbose_name=_(u'Short description'),
         help_text=_(u'Public short description of the feed, for '
                     u'auto-completer listing. Markdown text.'))
+
     description = models.TextField(
         null=True, blank=True,
         verbose_name=_(u'Description'),
