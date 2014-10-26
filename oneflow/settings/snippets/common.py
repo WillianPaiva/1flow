@@ -478,6 +478,7 @@ INSTALLED_APPS = [
     #'grappelli.dashboard',
     'grappelli',
     'mongoadmin',
+    'json_field',
     'django.contrib.admin',
     #'django.contrib.admindocs',
     'django_reset',
