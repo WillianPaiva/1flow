@@ -469,8 +469,11 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
 
         LOGGER.error(u'Error on feed %s: %s.', self, message)
 
+        error_message = u'{0} @@{1}'.format(message,
+                                            now().isoformat())
+
         # Put the errors more recent first.
-        self.errors.insert(0, u'%s @@%s' % (message, now().isoformat()))
+        self.errors.insert(0, error_message)
 
         if last_fetch:
             self.date_last_fetch = now()
