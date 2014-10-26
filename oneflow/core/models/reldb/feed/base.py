@@ -35,7 +35,7 @@ from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.signals import post_save, pre_save  # , pre_delete
 
-from polymorphic import PolymorphicModel
+from polymorphic import PolymorphicModel, PolymorphicManager
 from polymorphic.base import PolymorphicModelBase
 from sparks.django.models import DiffMixin
 
@@ -126,7 +126,7 @@ def basefeed_subscriptions_count_default(feed, *args, **kwargs):
 
 # ———————————————————————————————————————————————————————————————————— Managers
 
-class GoodFeedsManager(models.Manager):
+class GoodFeedsManager(PolymorphicManager):
 
     def get_queryset(self):
         return super(GoodFeedsManager, self).get_queryset().filter(
@@ -172,7 +172,9 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
 
     # ———————————————————————————————————————————————————————————————— Managers
 
-    objects = models.Manager()
+    # add the default polymorphic manager first
+    objects = PolymorphicManager()
+    # objects = models.Manager()
     good = GoodFeedsManager()
 
     # —————————————————————————————————————————————————————————————— Attributes
