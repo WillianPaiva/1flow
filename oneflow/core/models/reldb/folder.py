@@ -31,21 +31,21 @@ from mptt.models import MPTTModel, TreeForeignKey
 from oneflow.base.fields import IntRedisDescriptor
 from oneflow.base.utils import register_task_method
 
+from common import lowername, DjangoUser as User
 
-from common import DjangoUser as User
 
 LOGGER = logging.getLogger(__name__)
 
 
-__all__ = ['Folder',
+__all__ = [
+    'Folder',
 
-           # Make these accessible to compute them from `DocumentHelperMixin`.
-           'folder_all_articles_count_default',
-           'folder_starred_articles_count_default',
-           'folder_unread_articles_count_default',
-           'folder_archived_articles_count_default',
-           'folder_bookmarked_articles_count_default',
-           ]
+    'folder_all_articles_count_default',
+    'folder_starred_articles_count_default',
+    'folder_unread_articles_count_default',
+    'folder_archived_articles_count_default',
+    'folder_bookmarked_articles_count_default',
+]
 
 
 # ——————————————————————————————————————————————————————————————— Redis Helpers
@@ -83,10 +83,21 @@ class Folder(MPTTModel, DiffMixin):
 
     """ A simple folder structure. """
 
+    class Meta:
+        app_label = 'core'
+        verbose_name = _(u'Folder')
+        verbose_name_plural = _(u'Folders')
+        unique_together = ('name', 'user', 'parent', )
+
+    user = models.ForeignKey(User, verbose_name=_(u'Owner'),
+                             related_name='folders')
+
     name = models.CharField(verbose_name=_(u'Name'), max_length=255)
-    user = models.ForeignKey(User, verbose_name=_(u'Owner'))
-    parent   = TreeForeignKey('self', null=True, blank=True,
-                              related_name='children')
+
+    parent = TreeForeignKey('self', null=True, blank=True,
+                            related_name='children')
+
+    # —————————————————————————————————————————————————————— Cached descriptors
 
     all_articles_count = IntRedisDescriptor(
         attr_name='f.aa_c', default=folder_all_articles_count_default,
@@ -109,11 +120,7 @@ class Folder(MPTTModel, DiffMixin):
         attr_name='f.ba_c', default=folder_bookmarked_articles_count_default,
         set_default=True)
 
-    class Meta:
-        app_label = 'core'
-        verbose_name = _(u'Folder')
-        verbose_name_plural = _(u'Folders')
-        unique_together = ('name', 'user', 'parent', )
+    # ————————————————————————————————————————————————————————— Django & Python
 
     def __unicode__(self):
         """ Wake up, pep257. That's just the unicode method. """
@@ -127,11 +134,29 @@ class Folder(MPTTModel, DiffMixin):
                 for child in self.children))
             if self.children != [] else u'')
 
+    # —————————————————————————————————————————————————————————————— Properties
+
+    @property
+    def has_content(self):
+
+        # PERF: it's faster to test for children than query for subscriptions.
+        return self.children or self.subscriptions
+
+    @property
+    def max_depth(self):
+
+        return 4 \
+            if self.user.preferences.selector.extended_folders_depth \
+            else 2
+
+    # ——————————————————————————————————————————————————————————— Class methods
+
     @classmethod
     def get_root_for(cls, user):
         """ Get the root folder for a user. Might create it on the fly. """
 
-        root, created = cls.objects.get(name=u'__root__', user=user)
+        root, created = cls.objects.get_or_create(user=user,
+                                                  name=u'__root__')
 
         return root
 
@@ -190,27 +215,16 @@ class Folder(MPTTModel, DiffMixin):
 
         return folder, created
 
-    @property
-    def has_content(self):
-
-        # PERF: it's faster to test for children than query for subscriptions.
-        return self.children or self.subscriptions
-
-    @property
-    def max_depth(self):
-
-        return 4 \
-            if self.user.preferences.selector.extended_folders_depth \
-            else 2
+    # ————————————————————————————————————————————————————————————————— Methods
 
     def get_subfolders(self, current_level):
 
         raise NotImplementedError('Use MPTT for get_subfolders()')
 
         if current_level >= self.max_depth:
-            return PseudoQuerySet()
+            return models.QuerySet()
 
-        children = PseudoQuerySet(model=self.__class__)
+        children = models.QuerySet(model=self.__class__)
 
         for child in sorted(self.children, key=lowername):
             children.append(child)
@@ -239,11 +253,6 @@ register_task_method(Folder, Folder.purge, globals(), u'low')
 #                                            Defined here to avoid import loops
 
 
-def User_folders_property_get(self):
-
-    return Folder.objects(user=self, parent__ne=None)
-
-
 def User_root_folder_property_get(self):
 
     return Folder.get_root_for(self)
@@ -263,7 +272,7 @@ def User_folders_tree_property_get(self):
 
 def User_get_folders_tree_method(self, for_parent=False):
 
-    folders = PseudoQuerySet(model=Folder)
+    folders = models.QuerySet(model=Folder)
 
     # Articificialy increment the level by one to limit the folder
     # tree to the N-1 levels. This clamps the folder manager modal.
@@ -276,7 +285,6 @@ def User_get_folders_tree_method(self, for_parent=False):
     return folders
 
 
-User.folders          = property(User_folders_property_get)
 User.root_folder      = property(User_root_folder_property_get)
 User.top_folders      = property(User_top_folders_property_get)
 User.folders_tree     = property(User_folders_tree_property_get)
