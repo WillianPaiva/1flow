@@ -467,26 +467,26 @@ INSTALLED_APPS = [
     'polymorphic',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    #'django.contrib.sites',
+    # 'django.contrib.sites',
 
     # We could use Django's `humanize`, it produces more
     # detailled `*delta()` than the external `humanize` module.
-    #'django.contrib.humanize',
+    # 'django.contrib.humanize',
 
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #'grappelli.dashboard',
+    # 'grappelli.dashboard',
     'grappelli',
     'mongoadmin',
     'json_field',
     'django.contrib.admin',
-    #'django.contrib.admindocs',
+    # 'django.contrib.admindocs',
     'django_reset',
     'django_shell_ipynb',
     'gunicorn',
     'south',
     'south_admin',
-    #'maintenancemode', — not needed at all, the middleware is sufficient.
+    # 'maintenancemode', — not needed at all, the middleware is sufficient.
     'transmeta',
     'mptt',
     'sorting_bootstrap',
@@ -494,15 +494,15 @@ INSTALLED_APPS = [
     # Order matters for inplace & friends.
     'inplaceeditform_bootstrap',
     'inplaceeditform',
-    #'inplaceeditform_extra_fields',
-    #'bootstrap3_datetime',
+    # 'inplaceeditform_extra_fields',
+    # 'bootstrap3_datetime',
 
     'logentry_admin',
     'constance',
     'tastypie',
     'tastypie_mongoengine',
     'overextends',
-    #'django_markdown',
+    # 'django_markdown',
     'writingfield',
     'redisboard',
     'djcelery',
@@ -514,7 +514,7 @@ INSTALLED_APPS = [
     'endless_pagination',
 
     # `infinite_pagination` doesn't work on MongoEngine QuerySet.
-    #'infinite_pagination',
+    # 'infinite_pagination',
 
     'mathfilters',
 
