@@ -27,7 +27,8 @@ from statsd import statsd
 from constance import config
 from collections import OrderedDict
 from transmeta import TransMeta
-from jsonfield import JSONField
+
+from json_field import JSONField
 
 # from django.conf import settings
 from django.db import models
