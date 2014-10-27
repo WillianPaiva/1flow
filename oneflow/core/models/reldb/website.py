@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -55,7 +55,7 @@ class SplitUrlException(Exception):
 
 
 def split_url(url, split_port=False):
-    """ Split an URL into a named tuple for easy manipulations.
+    u""" Split an URL into a named tuple for easy manipulations.
 
     Eg. “http://test.com/toto becomes:
     ('scheme'='http', 'host_and_port'='test.com', 'remaining'='toto').
@@ -153,7 +153,7 @@ class WebSite(six.with_metaclass(WebSiteMeta, MPTTModel, DiffMixin)):
                     u'image, or image_url when hosted elsewhere. If '
                     u'both are filled, image takes precedence.'))
 
-    image_url  = models.URLField(
+    image_url = models.URLField(
         null=True, blank=True,
         verbose_name=_(u'Image URL'),
         help_text=_(u'Full URL of the image displayed in the feed '
