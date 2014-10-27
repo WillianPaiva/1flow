@@ -63,6 +63,7 @@ from .common import (DocumentHelperMixin,
 from .tag import Tag
 from .article import Article
 from .user import User
+from .website import WebSite
 
 # from ..reldb.mailfeed import MailFeed
 
@@ -1382,6 +1383,7 @@ def feed_export_content_classmethod(cls, since, folder=None):
         active_feeds = [s.feed for s in subscriptions if not s.feed.closed]
         active_feeds_count = len(active_feeds)
 
+    exported_websites = {}
     exported_feeds = []
     total_exported_articles_count = 0
 
@@ -1414,7 +1416,7 @@ def feed_export_content_classmethod(cls, since, folder=None):
                 content_type=content_type(article.content_type),
                 date_published=article.date_published,
 
-                authors=[unicode(a) for a in article.authors],
+                authors=[(a.name or a.origin_name) for a in article.authors],
                 date_updated=None,
                 language=article.language,
                 text_direction=article.text_direction,
@@ -1424,12 +1426,29 @@ def feed_export_content_classmethod(cls, since, folder=None):
         exported_articles_count = len(exported_articles)
         total_exported_articles_count += exported_articles_count
 
+        website = WebSite.get_from_url(feed.site_url)
+
+        try:
+            exported_website = exported_websites[website.url]
+
+        except:
+            exported_website = OrderedDict(
+                id=unicode(website.id),
+                name=website.name,
+                slug=website.slug,
+                url=website.url,
+            )
+
+            exported_websites[website.url] = exported_website
+
         exported_feeds.append(OrderedDict(
             id=unicode(feed.id),
             name=feed.name,
             url=feed.url,
+            thumbnail_url=feed.thumbnail_url,
             tags=[t.name for t in feed.tags],
-            articles=exported_articles
+            articles=exported_articles,
+            website=exported_website,
         ))
 
         LOGGER.info(u'%s articles exported in feed %s.',
