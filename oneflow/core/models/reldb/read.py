@@ -24,7 +24,7 @@ import logging
 import operator
 
 from django.db import models
-from django.db.models.signals import pre_delete, pre_save  # , post_save
+from django.db.models.signals import pre_delete, post_save  # , pre_save
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _, pgettext_lazy
 
@@ -912,12 +912,12 @@ register_task_method(Read, Read.post_create_task, globals(), u'high')
 # ————————————————————————————————————————————————————————————————————— Signals
 
 
-def read_pre_save(instance, **kwargs):
+def read_post_save(instance, **kwargs):
     """ Method meant to be run from a celery task. """
 
     read = instance
 
-    if read.pk is None:
+    if kwargs.get('created', False):
         read.rating = read.item.default_rating
 
         read.set_subscriptions(commit=False)
@@ -938,7 +938,7 @@ def read_pre_delete(instance, **kwargs):
 
 
 pre_delete.connect(read_pre_delete, sender=Read)
-pre_save.connect(read_pre_save, sender=Read)
+post_save.connect(read_post_save, sender=Read)
 
 
 # ————————————————————————————————————————————————————————— external properties
