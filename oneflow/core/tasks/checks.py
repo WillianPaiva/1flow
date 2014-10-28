@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -33,8 +33,8 @@ from django.core.urlresolvers import reverse
 from django.core.mail import mail_managers
 from django.utils.translation import ugettext_lazy as _
 
-from ..models import (Article, Feed, Read, User as MongoUser)
-
+from ..models import Article, BaseFeed, Read
+from ..models.nonrel import User as MongoUser
 from ..models.reldb.common import DjangoUser  # , REDIS
 
 from oneflow.base.utils import RedisExpiringLock
@@ -75,6 +75,8 @@ def global_checker_task(*args, **kwargs):
 def global_feeds_checker():
     """ Check all RSS feeds and their dependants. Close them if needed. """
 
+    raise NotImplementedError('Review for relational DB port.')
+
     def pretty_print_feed(feed):
 
         return (u'- %s,\n'
@@ -109,9 +111,9 @@ def global_feeds_checker():
     limit_days   = config.FEED_CLOSED_WARN_LIMIT
     closed_limit = dtnow - timedelta(days=limit_days)
 
-    feeds = Feed.objects(Q(closed=True)
-                         & (Q(date_closed__exists=False)
-                            | Q(date_closed__gte=closed_limit)))
+    feeds = BaseFeed.objects(Q(closed=True)
+                             & (Q(date_closed__exists=False)
+                                | Q(date_closed__gte=closed_limit)))
 
     count = feeds.count()
 
@@ -150,6 +152,8 @@ def global_subscriptions_checker(force=False, limit=None, from_feeds=True,
                                  from_users=False, extended_check=False):
     """ A conditionned version of :meth:`Feed.check_subscriptions`. """
 
+    raise NotImplementedError('Review for relational DB port.')
+
     if config.CHECK_SUBSCRIPTIONS_DISABLED:
         LOGGER.warning(u'Subscriptions checks disabled in configuration.')
         return
@@ -182,7 +186,7 @@ def global_subscriptions_checker(force=False, limit=None, from_feeds=True,
         if from_feeds:
             with benchmark("Check all subscriptions from feeds"):
 
-                feeds           = Feed.good_feeds.no_cache()
+                feeds           = BaseFeed.good_feeds.no_cache()
                 feeds_count     = feeds.count()
                 processed_count = 0
                 checked_count   = 0

@@ -34,10 +34,12 @@ from celery import task
 from django.conf import settings
 from django.core.mail import mail_admins
 
-from ..models import (RATINGS,
-                      Article,
-                      Feed,
-                      Subscription, Read, User as MongoUser)
+from ..models.nonrel import (
+    RATINGS,
+    Article,
+    Feed,
+    Subscription, Read, User as MongoUser
+)
 
 from ..gr_import import GoogleReaderImport
 

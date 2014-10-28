@@ -36,7 +36,9 @@ from mongodbforms import DocumentForm
 from django_select2.widgets import (Select2Widget, Select2MultipleWidget,
                                     HeavySelect2MultipleWidget)
 
-from ..models import (Folder, Subscription, Feed, Article, Read)
+from ..models.nonrel import (
+    Folder, Subscription, Feed, Article, Read
+)
 from .fields import OnlyNameChoiceField, OnlyNameMultipleChoiceField
 
 

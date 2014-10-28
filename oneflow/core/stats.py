@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -24,9 +24,10 @@ import operator
 from statsd import statsd
 from constance import config
 
-from oneflow.core.models import (Tag, Feed, Article, Author, WebSite,
-                                 CONTENT_TYPES,
-                                 )
+from oneflow.core.models.nonrel import (
+    Tag, Feed, Article, Author, WebSite,
+    CONTENT_TYPES,
+)
 from oneflow.base.utils.dateutils import (timedelta, now, pytime,
                                           naturaldelta, benchmark)
 
@@ -492,7 +493,8 @@ def synchronize_statsd_articles_gauges(full=False):
         # empty_content_error = empty.filter(content_error__ne='')
         # empty_url_error     = empty.filter(url_error__ne='')
 
-        parsed             = Article.objects(content_type__ne=CONTENT_TYPES.NONE)
+        parsed             = Article.objects(
+            content_type__ne=CONTENT_TYPES.NONE)
         html               = parsed.filter(content_type=CONTENT_TYPES.HTML)
         markdown           = parsed.filter(content_type=CONTENT_TYPES.MARKDOWN)
 
