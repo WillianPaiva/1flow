@@ -16,13 +16,36 @@ GNU Affero General Public License for more details.
 
 You should have received a copy of the GNU Affero General Public
 License along with 1flow.  If not, see http://www.gnu.org/licenses/
-
 """
 
-from common import *  # NOQA
 
-from reldb import *  # NOQA
+class FeedIsHtmlPageException(Exception):
 
-# from nonrel import *  # NOQA
+    """ Raised when the parsed feed gives us an HTML content.
 
-from keyval import *  # NOQA
+    instead of an XML (RSS/Atom) one.
+    """
+
+    pass
+
+
+class FeedFetchException(Exception):
+
+    """ Raised when an RSS/Atom feed cannot be fetched, for any reason. """
+
+    pass
+
+
+class NotTextHtmlException(Exception):
+
+    """ Raised when the content of an article is not text/html.
+
+    To switch to other parsers, without re-requesting the actual content.
+    """
+
+    def __init__(self, message, response):
+        """ OMG, pep257, please. """
+
+        # Call the base class constructor with the parameters it needs
+        Exception.__init__(self, message)
+        self.response = response

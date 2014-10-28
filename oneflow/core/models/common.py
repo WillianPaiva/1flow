@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -17,12 +17,15 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public
 License along with 1flow.  If not, see http://www.gnu.org/licenses/
 """
+
 import requests
 
 from operator import attrgetter
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+
+from sparks.foundations.classes import SimpleObject
 
 from sparks.django.utils import NamedTupleChoices
 
@@ -111,40 +114,16 @@ SPECIAL_FEEDS_DATA = {
 }
 
 
-# —————————————————————————————————————————————————————————————————— Exceptions
+RATINGS = SimpleObject(from_dict={
+    'STARRED': 5.0,
+    'RETWEET': 10.0,
+})
 
-
-class FeedIsHtmlPageException(Exception):
-
-    """ Raised when the parsed feed gives us an HTML content.
-
-    instead of an XML (RSS/Atom) one.
-    """
-
-    pass
-
-
-class FeedFetchException(Exception):
-
-    """ Raised when an RSS/Atom feed cannot be fetched, for any reason. """
-
-    pass
-
-
-class NotTextHtmlException(Exception):
-
-    """ Raised when the content of an article is not text/html.
-
-    To switch to other parsers, without re-requesting the actual content.
-    """
-
-    def __init__(self, message, response):
-        """ OMG, pep257, please. """
-
-        # Call the base class constructor with the parameters it needs
-        Exception.__init__(self, message)
-        self.response = response
-
+from exceptions import (  # NOQA
+    FeedIsHtmlPageException,
+    FeedFetchException,
+    NotTextHtmlException,
+)
 
 # ——————————————————————————————————————————————————————————————————— Functions
 
