@@ -96,10 +96,11 @@ class Article(BaseItem, UrlItem, ContentItem):
 
     @property
     def is_good(self):
+        """ Return True if all our base classes don't return False. """
 
-        if not BaseItem.is_good(self) \
-            or not UrlItem.is_good(self) \
-                or not ContentItem.is_good(self):
+        if not BaseItem.is_good.fget(self) \
+            or not UrlItem.is_good.fget(self) \
+                or not ContentItem.is_good.fget(self):
             return False
 
         return True
