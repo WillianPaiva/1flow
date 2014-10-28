@@ -103,13 +103,13 @@ BAD_SITE_URL_BASE     = u'http://badsite.{0}/'.format(
 USER_FEEDS_SITE_URL   = u'http://{0}'.format(settings.SITE_DOMAIN
                                              ) + u'/user/{user.id}/'
 SPECIAL_FEEDS_DATA = {
-    'imported_items': (USER_FEEDS_SITE_URL + 'imports',
+    'imported_items': (USER_FEEDS_SITE_URL + u'imports',
                        _(u'Imported items of {0}')),
-    'sent_items': (USER_FEEDS_SITE_URL + 'sent',
+    'sent_items': (USER_FEEDS_SITE_URL + u'sent',
                    _(u'Items sent by {0}')),
-    'received_items': (USER_FEEDS_SITE_URL + 'received',
+    'received_items': (USER_FEEDS_SITE_URL + u'received',
                        _(u'Received items of {0}')),
-    'written_items': (USER_FEEDS_SITE_URL + 'written',
+    'written_items': (USER_FEEDS_SITE_URL + u'written',
                       _(u'Items written by {0}')),
 }
 
