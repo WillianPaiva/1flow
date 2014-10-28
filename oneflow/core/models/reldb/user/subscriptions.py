@@ -55,26 +55,26 @@ class UserSubscriptions(models.Model):
                                 related_name='subscriptions',
                                 primary_key=True)
 
-    imported_items = models.OneToOneField(
+    imported_items = models.ForeignKey(
         Subscription, null=True, blank=True,
         verbose_name=_(u'Web import subscription'),
-        related_name='imported_items')
+        related_name='imported_items_subscriptions')
 
-    sent_items = models.OneToOneField(
+    sent_items = models.ForeignKey(
         Subscription, null=True, blank=True,
         verbose_name=_(u'Sent items subscription'),
-        related_name='sent_items')
+        related_name='sent_items_subscriptions')
 
-    received_items = models.OneToOneField(
+    received_items = models.ForeignKey(
         Subscription, null=True, blank=True,
         verbose_name=_(u'Received items subscription'),
-        related_name='received_items')
+        related_name='received_items_subscriptions')
 
     # The union of all blogs
-    written_items = models.OneToOneField(
+    written_items = models.ForeignKey(
         Subscription, null=True, blank=True,
         verbose_name=_(u'Written items subscription'),
-        related_name='written_items')
+        related_name='written_items_subscriptions')
 
     blogs = models.ManyToManyField(Subscription, null=True, blank=True,
                                    verbose_name=_(u'User blogs'),
@@ -98,7 +98,10 @@ class UserSubscriptions(models.Model):
 
         for feed_key_name, data in SPECIAL_FEEDS_DATA.items():
 
-            if getattr(self, feed_key_name) is None:
+            LOGGER.debug(u'Sub %s is %s', feed_key_name,
+                         getattr(self, feed_key_name + '_id'))
+
+            if getattr(self, feed_key_name + '_id') is None:
 
                 url, tmpl_name = data
 

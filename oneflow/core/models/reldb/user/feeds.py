@@ -55,26 +55,26 @@ class UserFeeds(models.Model):
                                 related_name='feeds',
                                 primary_key=True)
 
-    imported_items = models.OneToOneField(
+    imported_items = models.ForeignKey(
         BaseFeed, null=True, blank=True,
         verbose_name=_(u'Web import feed'),
-        related_name='imported_items')
+        related_name='imported_items_feeds')
 
-    sent_items = models.OneToOneField(
+    sent_items = models.ForeignKey(
         BaseFeed, null=True, blank=True,
         verbose_name=_(u'Sent items feed'),
-        related_name='sent_items')
+        related_name='sent_items_feeds')
 
-    received_items = models.OneToOneField(
+    received_items = models.ForeignKey(
         BaseFeed, null=True, blank=True,
         verbose_name=_(u'Received items feed'),
-        related_name='received_items')
+        related_name='received_items_feeds')
 
     # The union of all blogs
-    written_items = models.OneToOneField(
+    written_items = models.ForeignKey(
         BaseFeed, null=True, blank=True,
         verbose_name=_(u'Written items feed'),
-        related_name='written_items')
+        related_name='written_items_feeds')
 
     blogs = models.ManyToManyField(BaseFeed, null=True, blank=True,
                                    verbose_name=_(u'User blogs'))
@@ -91,7 +91,10 @@ class UserFeeds(models.Model):
 
         for feed_key_name, data in SPECIAL_FEEDS_DATA.items():
 
-            if getattr(self, feed_key_name) is None:
+            LOGGER.debug(u'%s is %s', feed_key_name,
+                         getattr(self, feed_key_name + '_id'))
+
+            if getattr(self, feed_key_name + '_id') is None:
 
                 url, tmpl_name = data
 
