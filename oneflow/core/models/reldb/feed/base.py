@@ -170,10 +170,18 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
 
     # ———————————————————————————————————————————————————————————————— Managers
 
+    #
+    # BIG HEADS UP: for an unknown reason, if I define both managers, Django
+    #               picks the `good` as the default one, which is not what we
+    #               want at all, and goes instead the documetation which says
+    #               the first defined will be the default one. Thus for now,
+    #               both are deactivated.
+    #
+
     # add the default polymorphic manager first
-    objects = PolymorphicManager()
     # objects = models.Manager()
-    good = GoodFeedsManager()
+    # objects = PolymorphicManager()
+    # good_feeds = GoodFeedsManager()
 
     # —————————————————————————————————————————————————————————————— Attributes
 
