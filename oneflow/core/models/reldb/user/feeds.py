@@ -51,9 +51,10 @@ class UserFeeds(models.Model):
         verbose_name = _(u'User feed')
         verbose_name_plural = _(u'Users feeds')
 
-    user = models.OneToOneField(User,
-                                related_name='feeds',
-                                primary_key=True)
+    user = models.OneToOneField(
+        User,
+        related_name='user_feeds',
+        primary_key=True)
 
     imported_items = models.ForeignKey(
         BaseFeed, null=True, blank=True,
@@ -91,8 +92,8 @@ class UserFeeds(models.Model):
 
         for feed_key_name, data in SPECIAL_FEEDS_DATA.items():
 
-            LOGGER.debug(u'%s is %s', feed_key_name,
-                         getattr(self, feed_key_name + '_id'))
+            # LOGGER.debug(u'%s is %s', feed_key_name,
+            #              getattr(self, feed_key_name + '_id'))
 
             if getattr(self, feed_key_name + '_id') is None:
 
