@@ -102,17 +102,17 @@ def basefeed_all_items_count_default(feed, *args, **kwargs):
 
 def basefeed_good_items_count_default(feed, *args, **kwargs):
 
-    return feed.good_articles.count()
+    return feed.good_items.count()
 
 
 def basefeed_bad_items_count_default(feed, *args, **kwargs):
 
-    return feed.bad_articles.count()
+    return feed.bad_items.count()
 
 
 def basefeed_recent_items_count_default(feed, *args, **kwargs):
 
-    return feed.recent_articles.count()
+    return feed.recent_items.count()
 
 
 def basefeed_subscriptions_count_default(feed, *args, **kwargs):
@@ -322,7 +322,7 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
             # This query should still cost less than the pure and bare
             # `self.latest_article.date_published` which will first sort
             # all articles of the feed before getting the first of them.
-            self.latest_item_date_published = self.recent_articles.order_by(
+            self.latest_item_date_published = self.recent_items.order_by(
                 '-date_published').first().date_published
         except:
             # Don't worry, the default value of
@@ -336,7 +336,7 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
         urac_lock = RedisExpiringLock(self, lock_name='urac', expire_time=86100)
 
         if urac_lock.acquire() or force:
-            self.recent_items_count = self.recent_articles.count()
+            self.recent_items_count = self.recent_items.count()
 
         elif not force:
             LOGGER.warning(u'No more than one update_recent_items_count '
@@ -349,23 +349,23 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
     # ————————————————————————————————————————————————————— Articles properties
 
     @property
-    def recent_articles(self):
-        return self.good_articles.filter(
+    def recent_items(self):
+        return self.good_items.filter(
             Article___date_published__gt=today()
             - timedelta(
                 days=config.FEED_ADMIN_MEANINGFUL_DELTA))
 
     @property
-    def good_articles(self):
-        """ Subscriptions should always use :attr:`good_articles` to give
+    def good_items(self):
+        """ Subscriptions should always use :attr:`good_items` to give
             to users only useful content for them, whereas :class:`Feed`
-            will use :attr:`articles` or :attr:`all_articles` to reflect
+            will use :attr:`articles` or :attr:`all_items` to reflect
             real numbers.
         """
 
         #
         # NOTE: sync the conditions with @Article.is_good
-        #       and invert them in @BaseFeed.bad_articles
+        #       and invert them in @BaseFeed.bad_items
         #
 
         return self.items.filter(Article___is_orphaned=False,
@@ -373,10 +373,10 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
                                  duplicate_of=None)
 
     @property
-    def bad_articles(self):
+    def bad_items(self):
 
         #
-        # NOTE: invert these conditions in @Feed.good_articles
+        # NOTE: invert these conditions in @Feed.good_items
         #
 
         return self.items.filter(Q(Article___is_orphaned=True)
@@ -388,10 +388,10 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
     #
     # @property
     # def articles(self):
-    #     """ A simple version of :meth:`get_articles`. """
+    #     """ A simple version of :meth:`get_items`. """
     #     return Article.objects(feeds__contains=self)
     #
-    # def get_articles(self, limit=None):
+    # def get_items(self, limit=None):
     #     """ A parameter-able version of the :attr:`articles` property. """
     #
     #     if limit:
@@ -570,9 +570,9 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
             self.refresh_lock.release()
             return
 
-        new_articles, duplicates, mutualized = data
+        new_items, duplicates, mutualized = data
 
-        if new_articles == duplicates == mutualized == 0:
+        if new_items == duplicates == mutualized == 0:
 
             with statsd.pipeline() as spipe:
                 spipe.incr('feeds.refresh.fetch.global.unchanged')
@@ -586,10 +586,10 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
             # and developers. It should not trigger the adaptative
             # throttling computations, because it generates a lot
             # of false-positive duplicates.
-            self.throttle_fetch_interval(new_articles, mutualized, duplicates)
+            self.throttle_fetch_interval(new_items, mutualized, duplicates)
 
         with statsd.pipeline() as spipe:
-            spipe.incr('feeds.refresh.global.fetched', new_articles)
+            spipe.incr('feeds.refresh.global.fetched', new_items)
             spipe.incr('feeds.refresh.global.duplicates', duplicates)
             spipe.incr('feeds.refresh.global.mutualized', mutualized)
 
@@ -618,7 +618,7 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
 
         self.date_last_fetch = now()
 
-    def throttling_method(self, new_articles, mutualized, duplicates):
+    def throttling_method(self, new_items, mutualized, duplicates):
         """ Calls throttle_fetch_interval() barely.
 
         This method can be safely overriden by subclasses to compute
@@ -627,14 +627,14 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
         """
 
         return throttle_fetch_interval(self.fetch_interval,
-                                       new_articles,
+                                       new_items,
                                        mutualized,
                                        duplicates)
 
-    def throttle_fetch_interval(self, new_articles, mutualized, duplicates):
+    def throttle_fetch_interval(self, new_items, mutualized, duplicates):
         """ Compute a new fetch interval. """
 
-        new_interval = self.throttling_method(new_articles,
+        new_interval = self.throttling_method(new_items,
                                               mutualized,
                                               duplicates)
 
@@ -642,7 +642,7 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
             LOGGER.info(u'Fetch interval changed from %s to %s '
                         u'for feed %s (%s new article(s), %s '
                         u'duplicate(s)).', self.fetch_interval,
-                        new_interval, self, new_articles, duplicates)
+                        new_interval, self, new_items, duplicates)
 
             self.fetch_interval = new_interval
 
@@ -772,6 +772,7 @@ def basefeed_export_content_classmethod(cls, since, folder=None):
         active_feeds = [s.feed for s in subscriptions if not s.feed.closed]
         active_feeds_count = len(active_feeds)
 
+    exported_websites = {}
     exported_feeds = []
     total_exported_items_count = 0
 
@@ -784,16 +785,16 @@ def basefeed_export_content_classmethod(cls, since, folder=None):
         return
 
     for feed in active_feeds:
-        new_articles = feed.good_articles.filter(date_published__gte=since)
-        new_items_count = new_articles.count()
+        new_items = feed.good_items.filter(date_published__gte=since)
+        new_items_count = new_items.count()
 
         if not new_items_count:
             continue
 
-        exported_articles = []
+        exported_items = []
 
-        for article in new_articles:
-            exported_articles.append(OrderedDict(
+        for article in new_items:
+            exported_items.append(OrderedDict(
                 id=unicode(article.id),
                 title=article.title,
                 pages_url=[article.url],
@@ -804,23 +805,54 @@ def basefeed_export_content_classmethod(cls, since, folder=None):
                 content_type=content_type(article.content_type),
                 date_published=article.date_published,
 
-                authors=[unicode(a) for a in article.authors],
+                authors=[(a.name or a.origin_name) for a in article.authors],
                 date_updated=None,
                 language=article.language,
                 text_direction=article.text_direction,
                 tags=[t.name for t in article.tags],
             ))
 
-        exported_items_count = len(exported_articles)
+        exported_items_count = len(exported_items)
         total_exported_items_count += exported_items_count
 
-        exported_feeds.append(OrderedDict(
+        try:
+            website = feed.website.duplicate_of \
+                if feed.website.duplicate_of is not None else feed.website
+
+        except AttributeError:
+            # Not a website-aware feed.
+            exported_website = None
+
+        else:
+            try:
+                exported_website = exported_websites[website.url]
+
+            except:
+                exported_website = OrderedDict(
+                    id=unicode(website.id),
+                    name=website.name,
+                    slug=website.slug,
+                    url=website.url,
+                    image_url=website.image_url,
+                    short_description=website.short_description,
+                )
+
+                exported_websites[website.url] = exported_website
+
+        exported_feed = OrderedDict(
             id=unicode(feed.id),
             name=feed.name,
             url=feed.url,
+            thumbnail_url=feed.thumbnail_url,
+            short_description=feed.short_description,
             tags=[t.name for t in feed.tags],
-            articles=exported_articles
-        ))
+            articles=exported_items,
+        )
+
+        if exported_website:
+            exported_feed['website'] = exported_website
+
+        exported_feeds.append(exported_feed)
 
         LOGGER.info(u'%s articles exported in feed %s.',
                     exported_items_count, feed)

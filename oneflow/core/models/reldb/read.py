@@ -41,7 +41,7 @@ from folder import Folder
 # from subscription import Subscription, generic_check_subscriptions_method
 
 from item.base import BaseItem
-from tag import SimpleTag
+from tag import SimpleTag as Tag
 
 LOGGER = logging.getLogger(__name__)
 
@@ -193,7 +193,7 @@ class Read(models.Model):
 
     # TODO: convert to UserTag to use models.ForeignKey and reverse_delete_rule.
     tags = models.ManyToManyField(
-        SimpleTag, verbose_name=_(u'Tags'),
+        Tag, verbose_name=_(u'Tags'),
         related_name='reads', null=True, blank=True,
         help_text=_(u'User set of tags for this read.'))
 
@@ -598,50 +598,10 @@ class Read(models.Model):
 
         self.update_cached_descriptors()
 
-    @classmethod
-    def signal_pre_delete_handler(cls, sender, document, **kwargs):
-
-        read = document
-
-        if not read.is_good:
-            # counters already don't take this read into account.
-            return
-
-        read.update_cached_descriptors(operation='-')
-
-    def validate(self, *args, **kwargs):
-        try:
-            super(Read, self).validate(*args, **kwargs)
-
-        except ValidationError as e:
-            tags_error = e.errors.get('tags', None)
-
-            if tags_error and 'GenericReferences can only contain documents' \
-                    in str(tags_error):
-
-                good_tags  = set()
-                to_replace = set()
-
-                for tag in self.tags:
-                    if isinstance(tag, Document):
-                        good_tags.add(tag)
-
-                    else:
-                        to_replace.add(tag)
-
-                new_tags = Tag.get_tags_set([t for t in to_replace
-                                            if t not in (u'', None)])
-
-                self.tags = good_tags | new_tags
-                e.errors.pop('tags')
-
-            if e.errors:
-                raise e
-
     def __unicode__(self):
         return _(u'{0}∞{1} (#{2}∞#{3}→#{4}) {5} @{6}').format(
             self.user.username,
-            self.item.title[:40] + (self.item.title[40:] and u'…'),
+            self.item.name[:40] + (self.item.name[40:] and u'…'),
             self.user.id, self.item.id, self.id,
             pgettext_lazy(u'adjective', u'read')
             if self.is_read
@@ -699,7 +659,7 @@ class Read(models.Model):
         else:
             source = u''
 
-        return _(u'{title}{source}').format(title=article.title,
+        return _(u'{title}{source}').format(title=article.name,
                                             source=source)
 
     @property
@@ -709,12 +669,7 @@ class Read(models.Model):
             return self.item.source
 
         if self.subscriptions:
-            # This method displays things to the user. Don't let dead
-            # DBRefs pass through.
-            #
-            # TODO: let things pass through for administrators, though.
-            #
-            return [s for s in self.subscriptions if isinstance(s, Document)]
+            return self.subscriptions.all()
 
         return self.item.get_source
 
@@ -853,29 +808,29 @@ class Read(models.Model):
 
         if update_only is None:
 
-            to_change = ['all_articles_count']
+            to_change = ['all_items_count']
 
             if self.is_archived:
-                to_change.append('archived_articles_count')
+                to_change.append('archived_items_count')
 
             if self.is_bookmarked:
-                to_change.append('bookmarked_articles_count')
+                to_change.append('bookmarked_items_count')
 
             if self.is_starred:
-                to_change.append('starred_articles_count')
+                to_change.append('starred_items_count')
 
             if not self.is_read:
-                to_change.append('unread_articles_count')
+                to_change.append('unread_items_count')
 
             for watch_attr_name in Read.watch_attributes:
                 if getattr(self, watch_attr_name):
                     # Strip 'is_' from the attribute name.
-                    to_change.append(watch_attr_name[3:] + '_articles_count')
+                    to_change.append(watch_attr_name[3:] + '_items_count')
 
         else:
             assert type(update_only) in (type(tuple()), type([]))
 
-            to_change = [only + '_articles_count' for only in update_only]
+            to_change = [only + '_items_count' for only in update_only]
 
             for attr_name in to_change:
                 try:
@@ -963,9 +918,9 @@ def read_pre_save(instance, **kwargs):
     read = instance
 
     if read.pk is None:
-        read.rating = read.article.default_rating
+        read.rating = read.item.default_rating
 
-    read.set_subscriptions(commit=False)
+        read.set_subscriptions(commit=False)
 
     read.update_cached_descriptors()
 

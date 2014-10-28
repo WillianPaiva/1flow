@@ -22,8 +22,12 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 import uuid
 import logging
 
+from collections import namedtuple
+from constance import config
+
 # from django.conf import settings
 from django.db import models
+from django.db.models import Q
 from django.db.models.signals import pre_save, post_save  # , pre_delete
 from django.utils.translation import ugettext_lazy as _
 
@@ -41,26 +45,41 @@ from feed import BaseFeed
 from feed.mail import MailFeed
 from tag import SimpleTag
 from read import Read
+from item import Article
 
 LOGGER = logging.getLogger(__name__)
 
 __all__ = [
     'Subscription',
     'subscribe_user_to_feed',
+    'CheckReadsCounter',
 
     # Make these accessible to compute them from `DocumentHelperMixin`.
-    'subscription_all_articles_count_default',
-    'subscription_unread_articles_count_default',
-    'subscription_starred_articles_count_default',
-    'subscription_archived_articles_count_default',
-    'subscription_bookmarked_articles_count_default',
+    'subscription_all_items_count_default',
+    'subscription_unread_items_count_default',
+    'subscription_starred_items_count_default',
+    'subscription_archived_items_count_default',
+    'subscription_bookmarked_items_count_default',
 
     # This one will be picked up by `Read` as an instance method.
     'generic_check_subscriptions_method',
 ]
 
 
+CheckReadsCounter = namedtuple(
+    'CheckReadsCounter',
+    (
+        'reads',
+        'unreads',
+        'failed',
+        'missing',
+        'rechecked'
+    )
+)
+
+
 # ————————————————————————————————————————————————————————————— Redis / Helpers
+
 
 def get_subscription_thumbnail_upload_path(instance, filename):
 
@@ -77,27 +96,27 @@ def get_subscription_thumbnail_upload_path(instance, filename):
     return u'thumbnails/%Y/%m/%d/{0}'.format(filename)
 
 
-def subscription_all_articles_count_default(subscription):
+def subscription_all_items_count_default(subscription):
 
     return subscription.reads.count()
 
 
-def subscription_unread_articles_count_default(subscription):
+def subscription_unread_items_count_default(subscription):
 
     return subscription.reads.filter(is_read__ne=True).count()
 
 
-def subscription_starred_articles_count_default(subscription):
+def subscription_starred_items_count_default(subscription):
 
     return subscription.reads.filter(is_starred=True).count()
 
 
-def subscription_archived_articles_count_default(subscription):
+def subscription_archived_items_count_default(subscription):
 
     return subscription.reads.filter(is_archived=True).count()
 
 
-def subscription_bookmarked_articles_count_default(subscription):
+def subscription_bookmarked_items_count_default(subscription):
 
     return subscription.reads.filter(is_bookmarked=True).count()
 
@@ -164,26 +183,26 @@ class Subscription(ModelDiffMixin):
 
     # ———————————————————————————————————————————————————————— Redis attributes
 
-    all_articles_count = IntRedisDescriptor(
-        attr_name='s.aa_c', default=subscription_all_articles_count_default,
+    all_items_count = IntRedisDescriptor(
+        attr_name='s.aa_c', default=subscription_all_items_count_default,
         set_default=True, min_value=0)
 
-    unread_articles_count = IntRedisDescriptor(
-        attr_name='s.ua_c', default=subscription_unread_articles_count_default,
+    unread_items_count = IntRedisDescriptor(
+        attr_name='s.ua_c', default=subscription_unread_items_count_default,
         set_default=True, min_value=0)
 
-    starred_articles_count = IntRedisDescriptor(
-        attr_name='s.sa_c', default=subscription_starred_articles_count_default,
+    starred_items_count = IntRedisDescriptor(
+        attr_name='s.sa_c', default=subscription_starred_items_count_default,
         set_default=True, min_value=0)
 
-    archived_articles_count = IntRedisDescriptor(
+    archived_items_count = IntRedisDescriptor(
         attr_name='s.ra_c',
-        default=subscription_archived_articles_count_default,
+        default=subscription_archived_items_count_default,
         set_default=True, min_value=0)
 
-    bookmarked_articles_count = IntRedisDescriptor(
+    bookmarked_items_count = IntRedisDescriptor(
         attr_name='s.ba_c',
-        default=subscription_bookmarked_articles_count_default,
+        default=subscription_bookmarked_items_count_default,
         set_default=True, min_value=0)
 
     # —————————————————————————————————————————————— Django / Python attributes
@@ -196,7 +215,7 @@ class Subscription(ModelDiffMixin):
     def has_unread(self):
 
         # We need a boolean value for accurate template caching.
-        return self.unread_articles_count != 0
+        return self.unread_items_count != 0
 
     @property
     def is_active(self):
@@ -207,17 +226,17 @@ class Subscription(ModelDiffMixin):
 
     def mark_all_read(self, latest_displayed_read=None):
 
-        if self.unread_articles_count == 0:
+        if self.unread_items_count == 0:
             return
 
-        # count = self.unread_articles_count
+        # count = self.unread_items_count
 
-        # self.unread_articles_count = 0
+        # self.unread_items_count = 0
 
         # for folder in self.folders:
-        #     folder.unread_articles_count -= count
+        #     folder.unread_items_count -= count
 
-        # self.user.unread_articles_count -= count
+        # self.user.unread_items_count -= count
 
         # Marking all read is not a database-friendly operation,
         # thus it's run via a task to be able to return now immediately,
@@ -274,14 +293,14 @@ class Subscription(ModelDiffMixin):
         #
         # self.compute_cached_descriptors(unread=True)
 
-        self.unread_articles_count -= impacted_count
+        self.unread_items_count -= impacted_count
 
         for folder in self.folders:
-            folder.unread_articles_count -= impacted_count
+            folder.unread_items_count -= impacted_count
 
-        self.user.unread_articles_count -= impacted_count
+        self.user.unread_items_count -= impacted_count
 
-    def create_read(self, article, verbose=True, **kwargs):
+    def create_read(self, item, verbose=True, **kwargs):
         """ Return a tuple (read, created) with the new (or existing) read.
 
 
@@ -289,12 +308,12 @@ class Subscription(ModelDiffMixin):
         or if it existed before.
         """
 
-        read, created = Read.objects.get_or_create(article=article,
+        read, created = Read.objects.get_or_create(item=item,
                                                    user=self.user)
 
         if created:
             read.subscriptions.add(self)
-            read.tags.add(article.tags)
+            read.tags.add(item.tags)
 
             need_save = False
 
@@ -302,13 +321,13 @@ class Subscription(ModelDiffMixin):
                 setattr(read, key, value)
                 need_save = True
 
-            # If the article was already there and fetched (mutualized from
+            # If the item was already there and fetched (mutualized from
             # another feed, for example), activate the read immediately.
             # If we don't do this here, the only alternative is the daily
             # global_reads_checker() task, which is not acceptable for
             # "just-added" subscriptions, whose reads are created via the
             # current method.
-            if article.is_good:
+            if item.is_good:
                 read.is_good = True
                 need_save = True
 
@@ -316,8 +335,8 @@ class Subscription(ModelDiffMixin):
                 read.save()
 
             # Update cached descriptors
-            self.all_articles_count += 1
-            self.unread_articles_count += 1
+            self.all_items_count += 1
+            self.unread_items_count += 1
 
             return read, True
 
@@ -327,101 +346,111 @@ class Subscription(ModelDiffMixin):
 
         #
         # NOTE: we do not check `is_good` here, when the read was not
-        #       created. This is handled (indirectly) via the article
+        #       created. This is handled (indirectly) via the item
         #       check part of Subscription.check_reads(). DRY.
         #
 
         return read, False
 
-    def check_reads(self, articles=None, force=False, extended_check=False):
+    def check_reads(self, items=None, force=False, extended_check=False):
         """ Also available as a task for background execution. """
 
-        if not force:
-            LOGGER.info(u'Subscription.check_reads() is very expensive and '
-                        u'should be avoided in normal conditions. Call it '
-                        u'with `force=True` if you are sure.')
-            return
+        in_the_past = combine(today() - timedelta(
+            days=config.SUBSCRIPTIONS_ITEMS_UNREAD_DAYS), time(0, 0, 0))
 
-        raise NotImplementedError('REVIEW Subscription.check_reads()')
+        my_now = now()
 
-        yesterday = combine(today() - timedelta(days=1), time(0, 0, 0))
-        is_older  = False
-        my_now    = now()
-        reads     = 0
-        unreads   = 0
-        failed    = 0
-        missing   = 0
-        rechecked = 0
+        counters = CheckReadsCounter(0, 0, 0, 0, 0)
 
-        # See generic_check_subscriptions_method() for comment about this.
-        if articles is None:
-            articles = self.feed.good_articles.order_by('-date_published')
+        def create_read_for_item(item, params):
 
-        for article in articles:
-            #
-            # NOTE: Checking `article.is_good()` is done at a lower
-            #       level in the individual `self.create_read()`.
-            #       It has nothing to do with the dates-only checks
-            #       that we do here.
-            #
+            global counters
 
-            params = {}
-
-            if is_older or article.date_published is None:
-                params = {
-                    'is_read':        True,
-                    'is_auto_read':   True,
-                    'date_read':      my_now,
-                    'date_auto_read': my_now,
-                }
-
-            else:
-                # As they are ordered by date, switching is_older to True will
-                # avoid more date comparisons. MongoDB already did the job.
-                if article.date_published < yesterday:
-
-                    is_older = True
-
-                    params = {
-                        'is_read':        True,
-                        'is_auto_read':   True,
-                        'date_read':      my_now,
-                        'date_auto_read': my_now,
-                    }
-
-                # implicit: else: pass
-                # No params == all by default == is_read is False
-
-            # The `create_read()` methods is defined
-            # in `nonrel/read.py` to avoid an import loop.
-            _, created = self.create_read(article, False, **params)
+            _, created = self.create_read(item, verbose=False, **params)
 
             if created:
-                missing += 1
+                counters.missing += 1
 
                 if params.get('is_read', False):
-                    reads += 1
+                    counters.reads += 1
 
                 else:
-                    unreads += 1
+                    counters.unreads += 1
 
             elif created is False:
-                rechecked += 1
+                counters.rechecked += 1
 
                 if extended_check:
                     try:
-                        article.activate_reads()
+                        item.activate_reads()
 
                     except:
                         LOGGER.exception(u'Problem while activating reads '
                                          u'of Article #%s in Subscription '
                                          u'#%s.check_reads(), continuing '
-                                         u'check.', article.id, self.id)
+                                         u'check.', item.id, self.id)
 
             else:
-                failed += 1
+                counters.failed += 1
 
-        if missing or rechecked:
+        # ——————————————————————————————————————————————— First, check articles
+        # We can order them by date and connect reads in the same order.
+
+        if items is None:
+            on_items = self.feed.good_items.instance_of(
+                Article).order_by('Article___date_published')
+
+        else:
+            on_items = items.instance_of(
+                Article).order_by('Article___date_published')
+
+        for item in on_items.filter(Article___date_published__lt=in_the_past):
+
+            # We reconnect the user to the whole feed history, but marking
+            # old articles auto read, else there could be too much to read.
+            create_read_for_item(item, {
+                'is_read':        True,
+                'is_auto_read':   True,
+                'date_read':      my_now,
+                'date_auto_read': my_now,
+            })
+
+        for item in on_items.filter(Q(Article___date_published__gte=in_the_past)
+                                    | Q(Article___date_published=None)):
+
+            # default parameters, reads will be unread.
+            create_read_for_item(item, {})
+
+        # ——————————————————————————————————————————————————— Then, other items
+        # Do the same, but based on the date_added
+
+        if items is None:
+            on_items = self.feed.good_items.not_instance_of(Article)
+        else:
+            on_items = items.not_instance_of(Article)
+
+        for item in on_items.filter(date_updated__lt=in_the_past):
+
+            # We reconnect the user to the whole feed history, but marking
+            # old items auto read, else there could be too much to read.
+            create_read_for_item(item, {
+                'is_read':        True,
+                'is_auto_read':   True,
+                'date_read':      my_now,
+                'date_auto_read': my_now,
+            })
+
+        for item in on_items.filter(date_updated__gte=in_the_past):
+
+            # default parameters, reads will be unread.
+            create_read_for_item(item, {})
+
+        for item in on_items:
+            create_read_for_item(item, {})
+
+        # —————————————————————————————————————————————————— Update descriptors
+
+        if counters.missing or counters.rechecked:
             #
             # TODO: don't recompute everything, just
             #    add or subscribe the changed counts.
@@ -434,10 +463,10 @@ class Subscription(ModelDiffMixin):
         LOGGER.info(u'Checked subscription #%s. '
                     u'%s/%s non-existing/re-checked, '
                     u'%s/%s read/unread and %s not created.',
-                    self.id, missing, rechecked,
-                    reads, unreads, failed)
+                    self.id, counters.missing, counters.rechecked,
+                    counters.reads, counters.unreads, counters.failed)
 
-        return missing, rechecked, reads, unreads, failed
+        return counters
 
 # ———————————————————————————————————————————————————————————————— Celery tasks
 
@@ -566,8 +595,6 @@ def generic_check_subscriptions_method(self, commit=True, extended_check=False):
     too much time.
     """
 
-    raise NotImplementedError('Review for relational database.')
-
     # if not force:
     #     LOGGER.info(u'%s.check_subscriptions() is very costy and should '
     #                 u'not be needed in normal conditions. Call it with '
@@ -575,59 +602,16 @@ def generic_check_subscriptions_method(self, commit=True, extended_check=False):
     #                 self.__class__.__name__)
     #     return
 
-    to_keep       = []
     my_class_name = self.__class__.__name__
-
-    for subscription in self.subscriptions:
-
-        # TODO: code a not-hard-coded way to do this test,
-        #       eg. get the values via class attributes?
-        if my_class_name == 'Feed':
-            attrs_to_test = [(subscription.user, 'User')]
-
-        elif my_class_name == 'User':
-            attrs_to_test = [(subscription.feed, 'Feed')]
-
-        else:
-            # We are a Read.
-            attrs_to_test = [(subscription.user, 'User'),
-                             (subscription.feed, 'Feed')]
-
-        keep_it = True
-
-        for attr_to_test, class_to_test in attrs_to_test:
-            if isinstance(attr_to_test, DBRef) or attr_to_test is None:
-                LOGGER.warning(u'Clearing Subscription #%s from %s #%s, it '
-                               u'has a dangling reference to non-existing '
-                               u'%s #%s.', subscription.id,
-                               my_class_name, self.id, class_to_test,
-                               attr_to_test.id if attr_to_test
-                               else u'`None`')
-                keep_it = False
-                break
-
-        if keep_it:
-            to_keep.append(subscription)
-
-    if len(to_keep) != self.subscriptions.count():
-        self.subscriptions = to_keep
-
-        if commit:
-            self.save()
-        # No need to update cached descriptors, they should already be ok…
 
     # avoid checking supbscriptions of a read, this will dead-loop if
     # Article.activate_reads(extended_check=True).
     if extended_check and my_class_name != 'Read':
 
-        reads     = 0
-        failed    = 0
-        unreads   = 0
-        missing   = 0
-        rechecked = 0
+        counters = CheckReadsCounter(0, 0, 0, 0, 0)
 
         if my_class_name == 'Feed':
-            articles = self.good_articles.order_by('-id')
+            articles = self.good_items.order_by('-id')
 
         else:
             articles = None
@@ -638,9 +622,8 @@ def generic_check_subscriptions_method(self, commit=True, extended_check=False):
 
         for subscription in subscriptions:
             try:
-                smissing, srecheck, sreads, sunreads, sfailed = \
-                    subscription.check_reads(articles, force=True,
-                                             extended_check=True)
+                scounters = subscription.check_reads(articles, force=True,
+                                                     extended_check=True)
             except:
                 # In case the subscription was unsubscribed during the
                 # check operation, this is probably harmless.
@@ -648,11 +631,11 @@ def generic_check_subscriptions_method(self, commit=True, extended_check=False):
                                  subscription.id)
 
             else:
-                reads     += sreads
-                failed    += sfailed
-                missing   += smissing
-                unreads   += sunreads
-                rechecked += srecheck
+                counters.reads     += scounters.sreads
+                counters.failed    += scounters.sfailed
+                counters.missing   += scounters.smissing
+                counters.unreads   += scounters.sunreads
+                counters.rechecked += scounters.srecheck
 
         LOGGER.info(u'Checked %s #%s with %s subscriptions%s. '
                     u'Totals: %s/%s non-existing/re-checked reads, '
@@ -661,16 +644,27 @@ def generic_check_subscriptions_method(self, commit=True, extended_check=False):
                     self.subscriptions.count(),
                     u'' if articles is None
                     else (u' and %s articles' % articles.count()),
-                    missing, rechecked, reads, unreads, failed)
+                    counters.missing, counters.rechecked, counters.reads,
+                    counters.unreads, counters.failed)
 
 
 def Read_set_subscriptions_method(self, commit=True):
+    """ Set a read subscriptions from scratch.
+
+    In fact, from intersecting the feeds of the user and the articles.
+    """
 
     # @all_subscriptions, because here internal feeds count.
-    user_feeds    = [sub.feed for sub in self.user.all_subscriptions]
+    user_feeds    = [sub.feed for sub in self.user.all_subscriptions.all()]
     article_feeds = [feed for feed in self.item.feeds
                      if feed in user_feeds]
 
+    # clearing allows to remove dangling subscriptions.
+    #
+    # HEADS UP/ TODO: isn't that already handled by the CASCADE mechanism
+    #                 of the DB engine??? I'm too familiar with MongoDB
+    #                 that let us developers handle all the dirty work.
+    #
     self.subscriptions.clear()
 
     # HEADS UP: searching only for feed__in=article_feeds will lead
