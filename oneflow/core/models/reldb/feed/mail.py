@@ -139,7 +139,8 @@ class MailFeed(BaseFeed):
     def __unicode__(self):
         """ OMG, that's __unicode__, pep257. """
 
-        return u'“{0}” of user {1}'.format(self.name, self.user)
+        return u'MailFeed “{0}” of user {1} (#{2})'.format(
+            self.name, self.user, self.id)
 
     # ——————————————————————————————————————————————————————————————— Internals
 

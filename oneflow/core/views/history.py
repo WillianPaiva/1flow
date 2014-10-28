@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -52,4 +52,4 @@ class HistoryEntryDeleteView(mixins.OwnerQuerySetMixin,
     # form_class = forms.MailFeedForm
     # template_name = 'mailfeed/list-create.html'
     success_url = reverse_lazy('historyentry_list')
-    ownerqueryset_filter = 'mailfeed__user'
+    # ownerqueryset_filter = 'mailfeed__user'

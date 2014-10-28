@@ -322,9 +322,9 @@ class RssAtomFeed(BaseFeed):
                     u'source selector. This is not the XML feed URL.'))
 
     # Stored directly from feedparser data to avoid wasting BW.
-    last_etag      = models.CharField(verbose_name=_(u'last etag'),
-                                      max_length=64, null=True,
-                                      blank=True)
+    last_etag = models.CharField(verbose_name=_(u'last etag'),
+                                 max_length=64, null=True,
+                                 blank=True)
     last_modified  = models.CharField(verbose_name=_(u'modified'),
                                       max_length=64, null=True,
                                       blank=True)
@@ -336,6 +336,11 @@ class RssAtomFeed(BaseFeed):
         """ grappelli auto-complete method. """
 
         return ('name__icontains', 'url__icontains', 'site__url__icontains', )
+
+    def __unicode__(self):
+        """ Hello, pep257. I love you so. """
+
+        return _(u'RssAtomFeed {0} (#{1})').format(self.name, self.id)
 
     # —————————————————————————————————————————————————————————— Internal utils
 

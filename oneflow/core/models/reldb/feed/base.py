@@ -134,7 +134,7 @@ class GoodFeedsManager(PolymorphicManager):
             is_good=True,
 
             # And not being duplicate of any other feed.
-            duplicate_of=None,
+            duplicate_of_id=None,
         )
 
 
@@ -412,7 +412,7 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
     def __unicode__(self):
         """ Hello, pep257. I love you so. """
 
-        return _(u'{0} (#{1})').format(self.name, self.id)
+        return _(u'BaseFeed {0} (#{1})').format(self.name, self.id)
 
     @staticmethod
     def autocomplete_search_fields():
