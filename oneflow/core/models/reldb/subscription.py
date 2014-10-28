@@ -103,7 +103,7 @@ def subscription_all_items_count_default(subscription):
 
 def subscription_unread_items_count_default(subscription):
 
-    return subscription.reads.filter(is_read__ne=True).count()
+    return subscription.reads.filter(is_read=False).count()
 
 
 def subscription_starred_items_count_default(subscription):
@@ -146,14 +146,16 @@ class Subscription(ModelDiffMixin):
 
     # —————————————————————————————————————————————————————————————— Attributes
 
-    feed = models.ForeignKey(BaseFeed, related_name='subscriptions')
-    user = models.ForeignKey(User, related_name='all_subscriptions')
+    feed = models.ForeignKey(BaseFeed, blank=True, related_name='subscriptions')
+    user = models.ForeignKey(User, blank=True, related_name='all_subscriptions')
 
-    items = models.ManyToManyField(Read, blank=True, null=True,
+    reads = models.ManyToManyField(Read, blank=True, null=True,
                                    related_name='subscriptions')
 
     # allow the user to rename the subscription in his/her selector
-    name = models.CharField(verbose_name=_(u'Name'), max_length=255)
+    name = models.CharField(verbose_name=_(u'Name'),
+                            max_length=255,
+                            null=True, blank=True)
 
     tags = models.ManyToManyField(SimpleTag, blank=True, null=True,
                                   verbose_name=_(u'tags'),
@@ -274,11 +276,11 @@ class Subscription(ModelDiffMixin):
 
         # We touch only unread. This avoid altering the auto_read attribute
         # on reads that have been manually marked read by the user.
-        params = {'is_read__ne': True, 'date_created__lte': prior_datetime}
+        params = {'is_read': False, 'date_created__lte': prior_datetime}
 
         if self.user.preferences.read.bookmarked_marks_unread:
             # Let bookmarked reads stay unread.
-            params['is_bookmarked__ne'] = True
+            params['is_bookmarked'] = False
 
         impacted_unread = self.reads.filter(**params)
         impacted_count  = impacted_unread.count()
@@ -313,7 +315,7 @@ class Subscription(ModelDiffMixin):
 
         if created:
             read.subscriptions.add(self)
-            read.tags.add(item.tags)
+            read.tags.add(*item.tags.all())
 
             need_save = False
 
@@ -655,9 +657,10 @@ def Read_set_subscriptions_method(self, commit=True):
     """
 
     # @all_subscriptions, because here internal feeds count.
-    user_feeds    = [sub.feed for sub in self.user.all_subscriptions.all()]
-    article_feeds = [feed for feed in self.item.feeds
-                     if feed in user_feeds]
+    all_user_feeds_ids = [subscription.feed_id for subscription
+                          in self.user.all_subscriptions.all()]
+
+    article_feeds = self.item.feeds.filter(id__in=all_user_feeds_ids)
 
     # clearing allows to remove dangling subscriptions.
     #

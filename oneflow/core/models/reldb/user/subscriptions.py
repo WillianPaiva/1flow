@@ -51,9 +51,10 @@ class UserSubscriptions(models.Model):
         verbose_name = _(u'User subscriptions')
         verbose_name_plural = _(u'Users subscriptions')
 
-    user = models.OneToOneField(User,
-                                related_name='subscriptions',
-                                primary_key=True)
+    user = models.OneToOneField(
+        User,
+        related_name='user_subscriptions',
+        primary_key=True)
 
     imported_items = models.ForeignKey(
         Subscription, null=True, blank=True,
@@ -94,12 +95,12 @@ class UserSubscriptions(models.Model):
         user = self.user
 
         # Be sure all feeds exist before trying to link to them.
-        user.feeds.check()
+        user.user_feeds.check()
 
         for feed_key_name, data in SPECIAL_FEEDS_DATA.items():
 
-            LOGGER.debug(u'Sub %s is %s', feed_key_name,
-                         getattr(self, feed_key_name + '_id'))
+            # LOGGER.debug(u'Sub %s is %s', feed_key_name,
+            #              getattr(self, feed_key_name + '_id'))
 
             if getattr(self, feed_key_name + '_id') is None:
 
@@ -107,7 +108,7 @@ class UserSubscriptions(models.Model):
 
                 subscription = subscribe_user_to_feed(
                     user=user,
-                    feed=getattr(user.feeds, feed_key_name),
+                    feed=getattr(user.user_feeds, feed_key_name),
                     name=tmpl_name.format(user.username),
 
                     # In case the feed has already articles,
