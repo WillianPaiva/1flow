@@ -403,6 +403,10 @@ CONSTANCE_CONFIG.update({
 
 CONSTANCE_CONFIG.update({
 
+    'CHECK_DATABASE_MIGRATION_DISABLED': (
+        False, ugettext(u'Disable or not the global database migration '
+                        u'/ synchronization task.')),
+
     'CHECK_SUBSCRIPTIONS_DISABLED': (False, ugettext(u'Disable or not the '
                                      u'night subscription check that will '
                                      u'check_reads() all subscriptions that '
