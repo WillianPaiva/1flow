@@ -803,6 +803,7 @@ LOGGING = {
         # Don't log SQL queries, this bothers me.
         'django.db.backends': {
             'handlers': ['console'],
+            # 'level': 'DEBUG' if DEBUG else 'INFO',
             'level': 'INFO',
         },
         'raven': {

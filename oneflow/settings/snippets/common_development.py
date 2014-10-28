@@ -29,6 +29,8 @@
 
 """
 
+import re
+
 TEMPLATE_CONTEXT_PROCESSORS += (
     'django.core.context_processors.debug',
 )
@@ -76,11 +78,27 @@ ALLOWED_HOSTS += [
 
 # NOTE: INSTALLED_APPS is a list (not a tuple)
 # in 1flow, because of the conditional landing.
-INSTALLED_APPS += ['django_jenkins', 'django_nose', ]  # 'devserver', ]
+INSTALLED_APPS += ['django_jenkins', 'django_nose', 'devserver', ]
                    #'template_debug', )
 
 DEVSERVER_DEFAULT_ADDR = '0.0.0.0'
 DEVSERVER_DEFAULT_PORT = 8000
+
+DEVSERVER_MODULES = (
+    'devserver.modules.sql.SQLRealTimeModule',
+    'devserver.modules.sql.SQLSummaryModule',
+    'devserver.modules.profile.ProfileSummaryModule',
+
+    # Modules not enabled by default
+    # 'devserver.modules.ajax.AjaxDumpModule',
+    'devserver.modules.profile.MemoryUseModule',
+    'devserver.modules.cache.CacheSummaryModule',
+    'devserver.modules.profile.LineProfilerModule',
+)
+
+# DEVSERVER_FILTER_SQL = (
+#        re.compile('core_\w+'),  # Filter all queries related to 1flow code
+# )
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 JENKINS_TEST_RUNNER='django_jenkins.nose_runner.CINoseTestSuiteRunner'
