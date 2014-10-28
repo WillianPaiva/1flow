@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -63,7 +63,7 @@ def clean_obsolete_redis_keys():
 
 @task(queue='high')
 def refresh_all_feeds(limit=None, force=False):
-    """ Refresh all feeds (RSS/Mail/Twitter…). """
+    u""" Refresh all feeds (RSS/Mail/Twitter…). """
 
     if config.FEED_FETCH_DISABLED:
         # Do not raise any .retry(), this is a scheduled task.
