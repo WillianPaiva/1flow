@@ -209,6 +209,20 @@ CONSTANCE_CONFIG.update({
                                    u'his/her own, this one will be used.')),
 })
 
+# ——————————————————————————————————————————————————————————————— Subscriptions
+
+CONSTANCE_CONFIG.update({
+
+
+    'SUBSCRIPTIONS_ITEMS_UNREAD_DAYS': (2, ugettext(u'When a user '
+                                           u'subscribes to a feed, how many '
+                                           u'days from now are marked unread? '
+                                           u'(the remaining history is still '
+                                           u'available but marked auto_read).')
+                                           ),
+
+})
+
 # ————————————————————————————————————————————————————————— RSS feed refreshing
 
 CONSTANCE_CONFIG.update({
