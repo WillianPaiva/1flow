@@ -102,7 +102,7 @@ class OriginalData(models.Model):
 # ———————————————————————————————————————————————————————————— External methods
 
 
-def BaseItem_add_original_data_method(self, name, value):
+def BaseItem_add_original_data_method(self, name, value, commit=True):
     """ Direct property writer for an original data. """
 
     try:
@@ -112,10 +112,14 @@ def BaseItem_add_original_data_method(self, name, value):
         od = OriginalData(item=self)
 
     setattr(od, name, value)
-    od.save()
+
+    if commit:
+        od.save()
+
+    return od
 
 
-def BaseItem_remove_original_data_method(self, name):
+def BaseItem_remove_original_data_method(self, name, commit=True):
     """ Direct property remover for an original data. """
 
     try:
@@ -131,7 +135,8 @@ def BaseItem_remove_original_data_method(self, name):
         pass
 
     else:
-        od.save()
+        if commit:
+            od.save()
 
 
 def BaseItem_postprocess_original_data_method(self, force=False, commit=True):
