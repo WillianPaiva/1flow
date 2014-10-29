@@ -131,7 +131,7 @@ class Folder(MPTTModel, DiffMixin):
             if self.parent else u'',
             _(u', children: {0}').format(u', '.join(
                 _(u'{0} (#{1})').format(child.name, child.id)
-                for child in self.children))
+                for child in self.children.all()))
             if self.children != [] else u'')
 
     # —————————————————————————————————————————————————————————————— Properties
@@ -163,6 +163,8 @@ class Folder(MPTTModel, DiffMixin):
     @classmethod
     def add_folder_from_tag(cls, tag, user, parent=None):
         """ Return (folder, created) or raise an exception. """
+
+        raise NotImplementedError("REVIEW for RELDB.")
 
         if len(tag.parents) == 1:
             parent_folder, _created = cls.add_folder_from_tag(tag.parents[0],
@@ -203,13 +205,10 @@ class Folder(MPTTModel, DiffMixin):
                                                     user=user,
                                                     parent=parent)
         if created:
-            parent.add_child(folder, update_reverse_link=False)
+            parent.children.add(folder)
 
             if children:
-                for child in children:
-                    assert child.user == folder.user
-
-                    folder.add_child(child, full_reload=False)
+                folder.children.add(*children)
 
             LOGGER.info(u'Created folder %s.', folder)
 
