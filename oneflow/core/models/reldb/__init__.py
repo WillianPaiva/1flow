@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -22,6 +22,8 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 # ————————————————————————————————————————————————————————————— Standard models
 #                                                            and simple objects
 
+from common import DjangoUser as User  # NOQA
+
 from helpcontent import HelpContent  # NOQA
 
 from mailaccount import MailAccount  # NOQA
@@ -30,7 +32,13 @@ from history import HistoryEntry  # NOQA
 
 from userimport import UserImport  # NOQA
 
+from language import Language  # NOQA
+
 from website import WebSite  # NOQA
+
+from author import Author  # NOQA
+
+from folder import Folder  # NOQA
 
 from tag import SimpleTag  # NOQA
 
@@ -44,6 +52,8 @@ from subscription import *  # NOQA
 from read import *  # NOQA
 
 from user import *  # NOQA
+
+from preferences import Preferences  # NOQA
 
 # ————————————————————————————————————————————————————————————————— 1flow index
 
