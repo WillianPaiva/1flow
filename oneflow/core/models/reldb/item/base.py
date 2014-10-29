@@ -74,6 +74,7 @@ class BaseItem(PolymorphicModel):
     .. todo::
         title → name
         orphaned → is_orphaned
+        origin_type → origin
 
     """
 

@@ -197,9 +197,12 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
                              null=True, blank=True,
                              verbose_name=_(u'Creator'))
 
-    name = models.CharField(verbose_name=_(u'name'), max_length=255)
+    name = models.CharField(verbose_name=_(u'name'),
+                            null=True, blank=True,
+                            max_length=255)
     slug = models.CharField(verbose_name=_(u'slug'),
-                            null=True, max_length=255, blank=True)
+                            max_length=255,
+                            null=True, blank=True)
 
     items = models.ManyToManyField(BaseItem, blank=True, null=True,
                                    verbose_name=_(u'Feed items'),

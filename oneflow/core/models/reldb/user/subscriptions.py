@@ -56,26 +56,26 @@ class UserSubscriptions(models.Model):
         related_name='user_subscriptions',
         primary_key=True)
 
-    imported_items = models.ForeignKey(
+    imported_items = models.OneToOneField(
         Subscription, null=True, blank=True,
         verbose_name=_(u'Web import subscription'),
-        related_name='imported_items_subscriptions')
+        related_name='imported_items_user_subscriptions')
 
-    sent_items = models.ForeignKey(
+    sent_items = models.OneToOneField(
         Subscription, null=True, blank=True,
         verbose_name=_(u'Sent items subscription'),
-        related_name='sent_items_subscriptions')
+        related_name='sent_items_user_subscriptions')
 
-    received_items = models.ForeignKey(
+    received_items = models.OneToOneField(
         Subscription, null=True, blank=True,
         verbose_name=_(u'Received items subscription'),
-        related_name='received_items_subscriptions')
+        related_name='received_items_user_subscriptions')
 
     # The union of all blogs
-    written_items = models.ForeignKey(
+    written_items = models.OneToOneField(
         Subscription, null=True, blank=True,
         verbose_name=_(u'Written items subscription'),
-        related_name='written_items_subscriptions')
+        related_name='written_items_user_subscriptions')
 
     blogs = models.ManyToManyField(Subscription, null=True, blank=True,
                                    verbose_name=_(u'User blogs'),

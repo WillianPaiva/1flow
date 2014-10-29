@@ -27,7 +27,7 @@ from bs4 import BeautifulSoup
 from statsd import statsd
 from constance import config
 
-# from jsonfield import JSONField
+# from json_field import JSONField
 # from celery import chain as tasks_chain
 
 # from django.conf import settings

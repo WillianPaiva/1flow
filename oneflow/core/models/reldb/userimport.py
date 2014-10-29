@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -23,7 +23,7 @@ import logging
 
 # from statsd import statsd
 from collections import OrderedDict
-from jsonfield import JSONField
+from json_field import JSONField
 from dateutil import parser as date_parser
 
 # from django.conf import settings
@@ -81,8 +81,7 @@ class UserImport(HistoryEntry):
 
     urls = models.TextField(verbose_name=_(u'Web addresses'))
     lines = models.IntegerField(verbose_name=_(u'lines'), default=0)
-    results = JSONField(load_kwargs={'object_pairs_hook': OrderedDict},
-                        null=True, blank=True)
+    results = JSONField(default=dict, blank=True)
 
     def __unicode__(self):
         """ Unicode, pep257. """

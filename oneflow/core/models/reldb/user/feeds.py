@@ -56,26 +56,26 @@ class UserFeeds(models.Model):
         related_name='user_feeds',
         primary_key=True)
 
-    imported_items = models.ForeignKey(
+    imported_items = models.OneToOneField(
         BaseFeed, null=True, blank=True,
         verbose_name=_(u'Web import feed'),
-        related_name='imported_items_feeds')
+        related_name='imported_items_user_feed')
 
-    sent_items = models.ForeignKey(
+    sent_items = models.OneToOneField(
         BaseFeed, null=True, blank=True,
         verbose_name=_(u'Sent items feed'),
-        related_name='sent_items_feeds')
+        related_name='sent_items_user_feed')
 
-    received_items = models.ForeignKey(
+    received_items = models.OneToOneField(
         BaseFeed, null=True, blank=True,
         verbose_name=_(u'Received items feed'),
-        related_name='received_items_feeds')
+        related_name='received_items_user_feed')
 
     # The union of all blogs
-    written_items = models.ForeignKey(
+    written_items = models.OneToOneField(
         BaseFeed, null=True, blank=True,
         verbose_name=_(u'Written items feed'),
-        related_name='written_items_feeds')
+        related_name='written_items_user_feed')
 
     blogs = models.ManyToManyField(BaseFeed, null=True, blank=True,
                                    verbose_name=_(u'User blogs'))

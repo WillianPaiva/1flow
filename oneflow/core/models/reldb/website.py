@@ -24,9 +24,8 @@ import logging
 from statsd import statsd
 from collections import namedtuple
 from constance import config
-from collections import OrderedDict
 from transmeta import TransMeta
-from jsonfield import JSONField
+from json_field import JSONField
 
 from django.db import models
 from django.db.models.signals import post_save  # pre_save, pre_delete
@@ -143,8 +142,7 @@ class WebSite(six.with_metaclass(WebSiteMeta, MPTTModel, DiffMixin)):
                     u'real-life results.').format(
                         config.FEED_FETCH_PARALLEL_LIMIT))
 
-    mail_warned = JSONField(load_kwargs={'object_pairs_hook': OrderedDict},
-                            default=u'[]', blank=True)
+    mail_warned = JSONField(default=list, blank=True)
 
     image = models.ImageField(
         verbose_name=_(u'Image'), null=True, blank=True,
