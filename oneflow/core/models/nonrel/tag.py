@@ -27,7 +27,7 @@ from pymongo.errors import DuplicateKeyError
 
 from mongoengine import Document, NULLIFY, PULL
 from mongoengine.fields import (StringField, ReferenceField, ListField,
-                                GenericReferenceField)
+                                GenericReferenceField, BooleanField)
 from mongoengine.errors import NotUniqueError
 
 from django.conf import settings
@@ -46,6 +46,11 @@ __all__ = ['Tag', ]
 
 
 class Tag(Document, DocumentHelperMixin):
+
+    # BIG DB migration 20141028
+    bigmig_migrated = BooleanField(default=False)
+    # END BIG DB migration
+
     name     = StringField(verbose_name=_(u'name'), unique=True)
     slug     = StringField(verbose_name=_(u'slug'))
     language = StringField(verbose_name=_(u'language'), default='')

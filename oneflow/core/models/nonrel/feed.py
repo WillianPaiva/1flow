@@ -152,6 +152,12 @@ def feed_subscriptions_count_default(feed, *args, **kwargs):
 
 
 class Feed(Document, DocumentHelperMixin):
+
+    # BIG DB migration 20141028
+    bigmig_migrated = BooleanField(default=False)
+    bigmig_reassigned = BooleanField(default=False)
+    # END BIG DB migration
+
     name           = StringField(verbose_name=_(u'name'))
     url            = URLField(unique=True, verbose_name=_(u'url'))
     is_internal    = BooleanField(default=False)

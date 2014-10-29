@@ -26,7 +26,7 @@ from pymongo.errors import DuplicateKeyError
 
 from mongoengine import Document, CASCADE, PULL
 from mongoengine.fields import (StringField, ListField, ReferenceField,
-                                GenericReferenceField, DBRef)
+                                GenericReferenceField, BooleanField, DBRef)
 from mongoengine.errors import NotUniqueError
 
 # from cache_utils.decorators import cached
@@ -106,6 +106,12 @@ def subscription_post_delete_task(subscription, *args, **kwargs):
 
 
 class Subscription(Document, DocumentHelperMixin):
+
+    # BIG DB migration 20141028
+    bigmig_migrated = BooleanField(default=False)
+    bigmig_reassigned = BooleanField(default=False)
+    # END BIG DB migration
+
     feed = ReferenceField('Feed', reverse_delete_rule=CASCADE)
     user = ReferenceField('User', unique_with='feed',
                           reverse_delete_rule=CASCADE)

@@ -26,7 +26,8 @@ from statsd import statsd
 from pymongo.errors import DuplicateKeyError
 
 from mongoengine import Document, NULLIFY
-from mongoengine.fields import StringField, ReferenceField, URLField
+from mongoengine.fields import (StringField, ReferenceField,
+                                URLField, BooleanField)
 from mongoengine.errors import ValidationError, NotUniqueError
 
 from django.conf import settings
@@ -51,6 +52,10 @@ class WebSite(Document, DocumentHelperMixin):
         - replace Feed.site_url by Feed.website
         - set_fetch_limit goes into website (can be common to many feeds)
     """
+
+    # BIG DB migration 20141028
+    bigmig_migrated = BooleanField(default=False)
+    # END BIG DB migration
 
     name = StringField()
     slug = StringField(verbose_name=_(u'slug'))

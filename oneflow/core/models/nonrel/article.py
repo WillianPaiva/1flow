@@ -119,6 +119,11 @@ global_ghost_lock = RedisExpiringLock('__ghost.py__')
 
 class Article(Document, DocumentHelperMixin):
 
+    # BIG DB migration 20141028
+    bigmig_migrated = BooleanField(default=False)
+    bigmig_reassigned = BooleanField(default=False)
+    # END BIG DB migration
+
     title        = StringField(max_length=256, required=True,
                                verbose_name=_(u'Title'))
     slug         = StringField(max_length=256)

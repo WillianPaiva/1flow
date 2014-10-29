@@ -24,7 +24,8 @@ import logging
 from pymongo.errors import DuplicateKeyError
 
 from mongoengine import Document, NULLIFY, CASCADE, PULL
-from mongoengine.fields import StringField, ReferenceField, ListField
+from mongoengine.fields import (StringField, ReferenceField,
+                                ListField, BooleanField)
 from mongoengine.errors import NotUniqueError, ValidationError, DoesNotExist
 
 from django.utils.translation import ugettext_lazy as _
@@ -76,6 +77,11 @@ def folder_bookmarked_articles_count_default(folder, *args, **kwargs):
 
 
 class Folder(Document, DocumentHelperMixin, DocumentTreeMixin):
+
+    # BIG DB migration 20141028
+    bigmig_migrated = BooleanField(default=False)
+    # END BIG DB migration
+
     name  = StringField(verbose_name=_(u'Name'),
                         unique_with=['owner', 'parent'])
     owner = ReferenceField('User', verbose_name=_(u'Owner'),

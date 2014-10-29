@@ -49,6 +49,11 @@ __all__ = ['Author', ]
 
 
 class Author(Document, DocumentHelperMixin):
+
+    # BIG DB migration 20141028
+    bigmig_migrated = BooleanField(default=False)
+    # END BIG DB migration
+
     name        = StringField()
     website     = ReferenceField(u'WebSite', unique_with=u'origin_name',
                                  reverse_delete_rule=CASCADE)
