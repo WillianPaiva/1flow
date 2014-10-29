@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -41,12 +41,19 @@ from django.core.urlresolvers import reverse
 from ..models.reldb import (
     HelpContent,
     HistoryEntry, UserImport,
+
     MailAccount,
     MailFeed, MailFeedRule,
+
     RssAtomFeed, Article,
+
     # CombinedFeed, CombinedFeedRule,
     Subscription, Read,
+
     WebSite,
+    Author,
+    Folder,
+    Language,
 )
 from django.contrib import admin
 
@@ -126,6 +133,9 @@ if settings.FULL_ADMIN:
 
 
 admin.site.register(WebSite)
+admin.site.register(Author)
+admin.site.register(Folder)
+admin.site.register(Language)
 admin.site.register(MailAccount)
 
 
@@ -320,7 +330,7 @@ class RssAtomFeedAdmin(admin.ModelAdmin):
                 return _(u'never')
 
             with django_language():
-                return naturaltime(obj.last_fetch)
+                return naturaltime(obj.date_last_fetch)
 
         return u'—'
 
@@ -330,10 +340,10 @@ class RssAtomFeedAdmin(admin.ModelAdmin):
     def subscriptions_count_display(self, obj):
         """ FILL ME, pep257. """
 
-        return obj.subscription_set.count()
+        return obj.subscriptions.count()
 
     subscriptions_count_display.short_description = _(u'Subs.')
-    subscriptions_count_display.admin_order_field = 'subscription_set__count'
+    subscriptions_count_display.admin_order_field = 'subscriptions__count'
 
     def is_active_display(self, obj):
         """ FILL ME, pep257. """
