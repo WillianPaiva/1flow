@@ -353,14 +353,6 @@ class RssAtomFeed(BaseFeed):
                                        bool(self.last_etag
                                             or self.last_modified))
 
-    def update_last_fetch(self):
-        """ TODO: remove this method when this class is working. """
-        # XXX: mail feeds and mail articles are not ready yet.
-        # We must get the content every time.
-
-        LOGGER.warning(u'%s DID NOT UPDATE LAST_FETCH → UNDER DEVELOPMENT',
-                       self)
-
     # —————————————————————————————————————————————————————— High-level methods
 
     def refresh_must_abort_internal(self):
