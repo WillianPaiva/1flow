@@ -22,6 +22,8 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 # ————————————————————————————————————————————————————————————— Standard models
 #                                                            and simple objects
 
+from ..common import *  # NOQA
+
 from common import DjangoUser as User  # NOQA
 
 from helpcontent import HelpContent  # NOQA

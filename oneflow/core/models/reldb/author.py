@@ -49,7 +49,7 @@ class Author(models.Model):
     class Meta:
         app_label = 'core'
         verbose_name = _(u'Author')
-        verbose_name = _(u'Authors')
+        verbose_name_plural = _(u'Authors')
         unique_together = ('name', 'website', )
 
     name = models.CharField(max_length=255, blank=True,

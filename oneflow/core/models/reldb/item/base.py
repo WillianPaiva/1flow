@@ -75,6 +75,7 @@ class BaseItem(PolymorphicModel):
         title → name
         orphaned → is_orphaned
         origin_type → origin
+        date_added → date_created
 
     """
 
