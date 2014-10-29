@@ -25,6 +25,8 @@ import logging
 from constance import config
 
 from django.db import models
+from django.db.models.signals import post_save  # , pre_save, pre_delete
+from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
 from sparks.django.models import ModelDiffMixin
 
@@ -42,12 +44,37 @@ __all__ = [
 
 
 class Preferences(ModelDiffMixin):
+
+    class Meta:
+        app_label = 'core'
+        verbose_name = _(u'Preferences set')
+        verbose_name_plural = _(u'Preferences sets')
+
     user = models.OneToOneField(User, primary_key=True,
                                 verbose_name=_(u'Owner'))
 
     def __unicode__(self):
         return _(u'Preferences for user {0}').format(self.user.username)
 
+    def check(self):
+
+        for name, model in (
+            ('snap', SnapPreferences, ),
+            ('read', ReadPreferences, ),
+            ('selector', SelectorPreferences, ),
+            ('staff', StaffPreferences, ),
+            ('share', SharePreferences, ),
+            ('home', HomePreferences, ),
+            ('wizards', HelpWizards, ),
+            # ('notification', NotificationPreferences, ),
+        ):
+
+            try:
+                getattr(self, name)
+
+            except ObjectDoesNotExist:
+                pref = model(preferences=self)
+                pref.save()
 
 # ———————————————————————————————————————————————————————————— User preferences
 
@@ -59,7 +86,8 @@ class SnapPreferences(ModelDiffMixin):
     class Meta:
         app_label = 'core'
 
-    preferences = models.OneToOneField(Preferences, primary_key=True)
+    preferences = models.OneToOneField(Preferences, primary_key=True,
+                                       related_name='snap')
 
     select_paragraph = models.BooleanField(
         verbose_name=_(u'Select whole paragraph on click'),
@@ -99,6 +127,7 @@ READING_SPEED_CHOICES = (
 
 
 def read_default_reading_speed():
+
     return (config.READ_AVERAGE_READING_SPEED
             if config.READ_AVERAGE_READING_SPEED
             in [x[0] for x in READING_SPEED_CHOICES]
@@ -112,7 +141,8 @@ class ReadPreferences(ModelDiffMixin):
     class Meta:
         app_label = 'core'
 
-    preferences = models.OneToOneField(Preferences, primary_key=True)
+    preferences = models.OneToOneField(Preferences, primary_key=True,
+                                       related_name='read')
 
     starred_marks_read = models.BooleanField(
         verbose_name=_(u'Starring marks read too'),
@@ -204,7 +234,8 @@ class SelectorPreferences(ModelDiffMixin):
     class Meta:
         app_label = 'core'
 
-    preferences = models.OneToOneField(Preferences, primary_key=True)
+    preferences = models.OneToOneField(Preferences, primary_key=True,
+                                       related_name='selector')
 
     titles_show_unread_count = models.BooleanField(
         verbose_name=_(u'Feed names show unread count'),
@@ -261,7 +292,8 @@ class StaffPreferences(ModelDiffMixin):
     class Meta:
         app_label = 'core'
 
-    preferences = models.OneToOneField(Preferences, primary_key=True)
+    preferences = models.OneToOneField(Preferences, primary_key=True,
+                                       related_name='staff')
 
     super_powers_enabled = models.BooleanField(
         verbose_name=_(u'Super powers enabled'),
@@ -311,7 +343,8 @@ class SharePreferences(ModelDiffMixin):
     class Meta:
         app_label = 'core'
 
-    preferences = models.OneToOneField(Preferences, primary_key=True)
+    preferences = models.OneToOneField(Preferences, primary_key=True,
+                                       related_name='share')
 
     # This has no default intentionnaly, in order
     # to use the generated one from inside the form.
@@ -342,7 +375,8 @@ class HomePreferences(ModelDiffMixin):
     class Meta:
         app_label = 'core'
 
-    preferences = models.OneToOneField(Preferences, primary_key=True)
+    preferences = models.OneToOneField(Preferences, primary_key=True,
+                                       related_name='home')
 
     style_templates = {
         u'RL': 'snippets/read/read-list-item.html',
@@ -396,7 +430,24 @@ class HelpWizards(ModelDiffMixin):
     class Meta:
         app_label = 'core'
 
-    preferences = models.OneToOneField(Preferences, primary_key=True)
+    preferences = models.OneToOneField(Preferences, primary_key=True,
+                                       related_name='wizards')
 
     show_all           = models.BooleanField(default=True, blank=True)
     welcome_beta_shown = models.BooleanField(default=False, blank=True)
+
+
+# ————————————————————————————————————————————————————————————————————— Signals
+
+
+def user_post_save(instance, **kwargs):
+    """ Create the UserFeeds set. """
+
+    user = instance
+
+    if kwargs.get('created', False):
+
+        preferences = Preferences(user=user)
+        preferences.check()
+
+post_save.connect(user_post_save, sender=User)
