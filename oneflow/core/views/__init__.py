@@ -618,7 +618,9 @@ from mailfeedrule import (  # NOQA
 
 from folder import manage_folder, delete_folder  # NOQA
 
-from feed import add_feed  # NOQA
+from mongo_feed import add_feed  # NOQA
+
+from feed import feed_closed_toggle  # NOQA
 
 from subscription import (  # NOQA
     edit_subscription, add_subscription, cancel_subscription
@@ -641,7 +643,6 @@ from preferences import (  # NOQA
 from google_reader import (  # NOQA
     google_reader_import,
     google_reader_can_import_toggle,
-    feed_closed_toggle,
     google_reader_import_stop,
     google_reader_import_status,
 )

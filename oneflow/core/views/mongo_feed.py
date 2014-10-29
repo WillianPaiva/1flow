@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-u"""
-Copyright 2014 Olivier Cortès <oc@1flow.io>.
+"""
+Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
 
@@ -21,17 +21,10 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 import logging
 
-from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import render
 
-from ..models.reldb import (
-    BaseFeed,
-    Subscription,
-    WebSite,
-    FeedIsHtmlPageException,
-)
+from ..models.nonrel import Feed, Subscription, WebSite, FeedIsHtmlPageException
 
 LOGGER = logging.getLogger(__name__)
 
@@ -42,8 +35,6 @@ def add_feed(request, feed_url, subscribe=True):
     The :param`subscribe` parameter is set to ``False`` for staff
     members who use a different URL.
     """
-
-    raise NotImplementedError('REVIEW for RELDB.')
 
     user = request.user.mongo
     feeds = []
@@ -127,18 +118,3 @@ def add_feed(request, feed_url, subscribe=True):
                   'already_subscribed': already_subscribed,
                   'subscribe': subscribe,
                   'feed_exc': feed_exc, 'sub_exc': sub_exc})
-
-
-# This one is protected directly in urls.py
-def feed_closed_toggle(request, feed_id):
-    """ Toggle a feed closed or open from the admin. """
-
-    feed = BaseFeed.objects.get(id=feed_id)
-
-    if feed.is_active:
-        feed.close(u'Closed via the admin toggle button')
-    else:
-        feed.reopen()
-
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER',
-                                reverse('admin:index')))
