@@ -33,7 +33,7 @@ from mongoengine.fields import (StringField, BooleanField,
                                 GenericReferenceField, DBRef)
 from mongoengine.errors import NotUniqueError, ValidationError
 
-#from cache_utils.decorators import cached
+# from cache_utils.decorators import cached
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _, pgettext_lazy
