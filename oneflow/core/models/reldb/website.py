@@ -122,6 +122,15 @@ class WebSite(six.with_metaclass(WebSiteMeta, MPTTModel, DiffMixin)):
 
     """ Web site object. Used to hold options for a whole website. """
 
+    class Meta:
+        app_label = 'core'
+        verbose_name = _(u'Web site')
+        verbose_name_plural = _(u'Web sites')
+        translate = ('short_description', 'description', )
+
+    class MPTTMeta:
+        order_insertion_by = ['name']
+
     name = models.CharField(max_length=128, verbose_name=_(u'name'), blank=True)
     slug = models.CharField(max_length=128, verbose_name=_(u'slug'), blank=True)
     url  = models.URLField(unique=True, verbose_name=_(u'url'), blank=True)
@@ -168,14 +177,7 @@ class WebSite(six.with_metaclass(WebSiteMeta, MPTTModel, DiffMixin)):
         verbose_name=_(u'Description'),
         help_text=_(u'Public description of the feed. Markdown text.'))
 
-    class Meta:
-        app_label = 'core'
-        verbose_name = _(u'Web site')
-        verbose_name_plural = _(u'Web sites')
-        translate = ('short_description', 'description', )
-
-    class MPTTMeta:
-        order_insertion_by = ['name']
+    # ————————————————————————————————————————————————————————— Python & Django
 
     def __unicode__(self):
         """ I'm __unicode__, pep257. """
