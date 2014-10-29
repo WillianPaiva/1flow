@@ -97,7 +97,7 @@ class BaseItem(PolymorphicModel):
                     u'and cannot be shared like others inside the platform.'),
         default=False, blank=True)
 
-    date_added = models.DateTimeField(
+    date_created = models.DateTimeField(
         auto_now_add=True, verbose_name=_(u'Date added'),
         help_text=_(u'When the article was added to the 1flow database.'))
 

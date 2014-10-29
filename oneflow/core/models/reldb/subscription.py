@@ -424,7 +424,7 @@ class Subscription(ModelDiffMixin):
             create_read_for_item(item, {})
 
         # ——————————————————————————————————————————————————— Then, other items
-        # Do the same, but based on the date_added
+        # Do the same, but based on the date_created
 
         if items is None:
             on_items = self.feed.good_items.not_instance_of(Article)
