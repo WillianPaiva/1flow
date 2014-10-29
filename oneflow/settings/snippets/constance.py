@@ -407,6 +407,14 @@ CONSTANCE_CONFIG.update({
         False, ugettext(u'Disable or not the global database migration '
                         u'/ synchronization task.')),
 
+    'CHECK_DATABASE_MIGRATION_DEFINIVE_RUN': (
+        False, ugettext(u'Enable it to mark items migrated and avoid '
+                        u're-migrate them on next migration run.')),
+
+    'CHECK_DATABASE_MIGRATION_VACUUM_ENABLED': (
+        True, ugettext(u'Disable to avoid regular VACUUM ANALYZE runs '
+                       u'during the migration.')),
+
     'CHECK_SUBSCRIPTIONS_DISABLED': (False, ugettext(u'Disable or not the '
                                      u'night subscription check that will '
                                      u'check_reads() all subscriptions that '

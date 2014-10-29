@@ -182,6 +182,8 @@ ConstanceAdmin.fieldsets = (
         'classes': ('grp-collapse grp-closed', ),
         'fields': (
             'CHECK_DATABASE_MIGRATION_DISABLED',
+            'CHECK_DATABASE_MIGRATION_DEFINIVE_RUN',
+            'CHECK_DATABASE_MIGRATION_VACUUM_ENABLED',
             'CHECK_SUBSCRIPTIONS_DISABLED',
             'CHECK_DUPLICATES_DISABLED',
             'CHECK_READS_DISABLED',
