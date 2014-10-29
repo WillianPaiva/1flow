@@ -40,6 +40,7 @@ from oneflow.base.utils.dateutils import (now, today, timedelta,
 from gr_import import clean_gri_keys
 
 from mongo import refresh_all_mongo_feeds
+from migration import migrate_all_mongo_data  # NOQA
 
 # Import this one, so that celery can find it,
 # Else it complains about a missing import.
