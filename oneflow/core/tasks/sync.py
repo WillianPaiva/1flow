@@ -51,7 +51,7 @@ def sync_all_nodes(force=False, stop_on_exception=True):
     """
 
     try:
-        local_node = SyncNode.object.get(is_local_instance=True)
+        local_node = SyncNode.objects.get(is_local_instance=True)
 
     except SyncNode.DoesNotExist:
 
