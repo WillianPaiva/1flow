@@ -1068,15 +1068,14 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
 
         # ————————————————————————————————————————————————————————————————— end
 
-        LOGGER.info(u'RSS/Atom feeds migrated: {0}/{1} (total {2}), '
-                    u' {3} dupes, {4} already there.'.format(
-                        counters.migrated_feeds_count,
-                        external_feeds_count,
-                        all_feeds_count,
-                        duplicates_external_count,
-                        counters.migrated_feeds_count
-                        - counters.created_feeds_count
-                    ))
+        LOGGER.info(u'RSS/Atom feeds migrated: %s/%s (total %s), '
+                    u' %s dupes, %s already there.',
+                    counters.migrated_feeds_count,
+                    external_feeds_count,
+                    all_feeds_count,
+                    duplicates_external_count,
+                    counters.migrated_feeds_count
+                    - counters.created_feeds_count)
 
     def check_internal_users_feeds_and_subscriptions():
         """ Create internal feeds and subscriptions for all users. """
@@ -1129,15 +1128,14 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
 
         migrate_articles(duplicate_articles)
 
-        LOGGER.info(u'Articles migrated: {0}/{1} (total {2}), '
-                    u' {3} dupes, {4} already there.'.format(
-                        counters.migrated_articles_count,
-                        master_articles_count,
-                        all_articles_count,
-                        duplicate_articles_count,
-                        counters.migrated_articles_count
-                        - counters.created_articles_count
-                    ))
+        LOGGER.info(u'Articles migrated: %s/%s (total %s), '
+                    u'%s dupes, %s already there.',
+                    counters.migrated_articles_count,
+                    master_articles_count,
+                    all_articles_count,
+                    duplicate_articles_count,
+                    counters.migrated_articles_count
+                    - counters.created_articles_count)
 
     def migrate_all_folders():
 
@@ -1172,14 +1170,13 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
                 vacuum_analyze(u'(at {0} folders)'.format(
                     counters.migrated_folders_count))
 
-        LOGGER.info(u'Folders migrated: {0}/{1} (total {2}), '
-                    u'{3} already there.'.format(
-                        counters.migrated_folders_count,
-                        mongo_folders_count,
-                        all_folders_count,
-                        counters.migrated_folders_count
-                        - counters.created_folders_count
-                    ))
+        LOGGER.info(u'Folders migrated: %s/%s (total %s), '
+                    u'%s already there.',
+                    counters.migrated_folders_count,
+                    mongo_folders_count,
+                    all_folders_count,
+                    counters.migrated_folders_count
+                    - counters.created_folders_count)
 
     def migrate_all_subscriptions():
 
@@ -1214,14 +1211,13 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
                 vacuum_analyze(u'(at {0} subscriptions)'.format(
                     counters.migrated_subscriptions_count))
 
-        LOGGER.info(u'Subscriptions migrated: {0}/{1} (total {2}), '
-                    u' {3} already there.'.format(
-                        counters.migrated_subscriptions_count,
-                        mongo_subscriptions_count,
-                        all_subscriptions_count,
-                        counters.migrated_subscriptions_count
-                        - counters.created_subscriptions_count
-                    ))
+        LOGGER.info(u'Subscriptions migrated: %s/%s (total %s), '
+                    u'%s already there.',
+                    counters.migrated_subscriptions_count,
+                    mongo_subscriptions_count,
+                    all_subscriptions_count,
+                    counters.migrated_subscriptions_count
+                    - counters.created_subscriptions_count)
 
     def migrate_all_reads():
 
@@ -1256,14 +1252,13 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
                 vacuum_analyze(u'(at {0} reads)'.format(
                     counters.migrated_reads_count))
 
-        LOGGER.info(u'Reads migrated: {0}/{1} (total {2}), '
-                    u' {3} already there.'.format(
-                        counters.migrated_reads_count,
-                        mongo_reads_count,
-                        all_reads_count,
-                        counters.migrated_reads_count
-                        - counters.created_reads_count
-                    ))
+        LOGGER.info(u'Reads migrated: %s/%s (total %s), '
+                    u'%s already there.',
+                    counters.migrated_reads_count,
+                    mongo_reads_count,
+                    all_reads_count,
+                    counters.migrated_reads_count
+                    - counters.created_reads_count)
 
     def migrate_all_tags():
 
@@ -1283,15 +1278,14 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
 
         migrate_tags(duplicate_tags)
 
-        LOGGER.info(u'Tags migrated: {0}/{1} (total {2}), '
-                    u' {3} dupes, {4} already there.'.format(
-                        counters.migrated_tags_count,
-                        master_tags_count,
-                        all_tags_count,
-                        duplicate_tags_count,
-                        counters.migrated_tags_count
-                        - counters.created_tags_count
-                    ))
+        LOGGER.info(u'Tags migrated: %s/%s (total %s), '
+                    u'%s dupes, %s already there.',
+                    counters.migrated_tags_count,
+                    master_tags_count,
+                    all_tags_count,
+                    duplicate_tags_count,
+                    counters.migrated_tags_count
+                    - counters.created_tags_count)
 
     def reassign_all_tags():
 
