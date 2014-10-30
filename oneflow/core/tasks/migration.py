@@ -492,21 +492,30 @@ def migrate_article(mongo_article):
     return article, True
 
 
-def migrate_folder(mongo_folder):
+def migrate_folder(mongo_folder, only_parent=False):
     """ Migrate a Folder from MongoDB to PostgreSQL. """
 
-    #
-    # HEADS UP: we always try to get_or_create(), because our current
-    #           PG DB can already have the folder even if not migrated.
-    #
     # HEADS UP: we manually avoid to go up to __root__, else it will create
     #           __root__ folders indefinitely, or crash at some point.
-    #
-    if mongo_folder.parent and mongo_folder.parent != u'__root__':
-        parent, created = migrate_folder(mongo_folder.parent)
+    if mongo_folder.name == u'__root__':
+        return Folder.get_root_for(mongo_folder.owner.django), False
+
+    if mongo_folder.parent:
+        parent, created = migrate_folder(mongo_folder.parent,
+                                         only_parent=True)
 
     else:
         parent = None
+
+    # This is a get_or_create() equivalent, but better.
+    folder, created = Folder.add_folder(
+        name=mongo_folder.name,
+        user=mongo_folder.owner.django,
+        parent=parent,
+    )
+
+    if only_parent:
+        return folder, False
 
     if mongo_folder.children:
         children = []
@@ -515,15 +524,9 @@ def migrate_folder(mongo_folder):
             child, created = migrate_folder(mongo_child)
             children.append(child)
 
-    else:
-        children = None
+        folder.children.add(*children)
 
-    return Folder.add_folder(
-        name=mongo_folder.name,
-        user=mongo_folder.owner.django,
-        parent=parent,
-        children=children,
-    )
+    return folder, False
 
 
 def migrate_subscription(mongo_subscription):
