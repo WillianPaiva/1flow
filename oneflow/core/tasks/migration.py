@@ -180,7 +180,7 @@ def get_internal_feed_from_mongo_feed(mongo_feed):
     if mongo_feed == mongo_user.sent_items_feed:
         return mongo_user.django.user_feeds.sent_items
 
-    if mongo_feed == mongo_user.received_items:
+    if mongo_feed == mongo_user.received_items_feed:
         return mongo_user.django.user_feeds.received_items
 
     # NOTE: there are no `written_items` in the MongoDB database.
