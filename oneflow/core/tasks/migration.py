@@ -419,10 +419,6 @@ def migrate_article(mongo_article):
             mongo_article.duplicate_of)
         needs_save = True
 
-    if mongo_article.created_by:
-        article.user = mongo_article.created_by.django
-        needs_save = True
-
     if mongo_article.authors:
         authors = []
 
