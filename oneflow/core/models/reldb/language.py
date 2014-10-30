@@ -37,8 +37,8 @@ class Language(MPTTModel):
 
     class Meta:
         app_label = 'core'
-        verbose_name = _(u'models.language.verbose_name')
-        verbose_name_plural = _(u'models.language.verbose_name_plural')
+        verbose_name = _(u'Language')
+        verbose_name_plural = _(u'Languages')
 
     class MPTTMeta:
         order_insertion_by = ['name']
