@@ -70,6 +70,9 @@ class OriginalData(models.Model):
     feedparser_processed    = models.BooleanField(default=False)
     raw_email_processed     = models.BooleanField(default=False)
 
+    def __unicode__(self):
+        return u'Original data for {0}'.format(self.item)
+
     @property
     def google_reader_hydrated(self):
         """ XXX: should disappear when google_reader_data is useless. """
