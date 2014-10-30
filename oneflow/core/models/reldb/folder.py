@@ -156,7 +156,8 @@ class Folder(MPTTModel, DiffMixin):
         """ Get the root folder for a user. Might create it on the fly. """
 
         root, created = cls.objects.get_or_create(user=user,
-                                                  name=u'__root__')
+                                                  name=u'__root__',
+                                                  parent=None)
 
         return root
 
@@ -200,6 +201,15 @@ class Folder(MPTTModel, DiffMixin):
 
         if parent is None:
             parent = cls.get_root_for(user)
+
+        # Should we disable the name __root__ ?
+        # In fact, this doesn't raise any problem.
+        # There will always be a root with parent=None
+        # Satisfy the user root folder query.
+        # So let the user be free.
+        #
+        # elif name == u'__root__':
+        #     raise RuntimeError('Name __root___ is reserved')
 
         folder, created = cls.objects.get_or_create(name=name,
                                                     user=user,
