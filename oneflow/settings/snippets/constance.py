@@ -66,22 +66,6 @@ CONSTANCE_CONFIG.update({
                                   u'easy export links creation.')),
 })
 
-# ——————————————————————————————————————————————————————— Nodes Synchronization
-
-CONSTANCE_CONFIG.update({
-
-    'SYNC_DEFAULT_BROADCAST_CHOICE': (
-        1, ugettext(u'default broadcast choice. Please refer to '
-                    u'core.models.reldb.sync.common.BROADCAST_CHOICES for '
-                    u'possible values. Default value is protective.')),
-
-    'SYNC_DEFAULT_NODE_PERMISSION': (
-        2, ugettext(u'default permissions when new nodes are discovered. '
-                    u'Please refer to '
-                    u'core.models.reldb.sync.tokens.NODE_PERMISSIONS for '
-                    u'possible values. Default value is protective.')),
-})
-
 # ———————————————————————————————————————————————————————— System announcements
 
 CONSTANCE_CONFIG.update({
