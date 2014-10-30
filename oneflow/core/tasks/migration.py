@@ -756,7 +756,7 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
         if force:
             my_lock.release()
             my_lock.acquire()
-            LOGGER.warning(_(u'Forcing database migration…'))
+            LOGGER.warning(u'Forcing database migration…')
 
         else:
             # Avoid running this task over and over again in the queue
