@@ -734,7 +734,7 @@ def reassign_tags_on_subscription(mongo_subscription):
 def reassign_tags_on_article(mongo_article):
     """ Set the same tags on a PG article that are on a mongo one. """
 
-    article = get_article_from_mongo_article(url=mongo_article.url)
+    article = get_article_from_mongo_article(mongo_article)
 
     tags = Tag.get_tags_set(tuple(t.name for t in mongo_article.tags))
 
