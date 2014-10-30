@@ -32,7 +32,7 @@ from mongoengine import Q as MQ
 # from django.db.models import Q
 from django.db import connection
 # from django.core.exceptions import ObjectDoesNotExist
-from django.utils.translation import ugettext_lazy as _
+# from django.utils.translation import ugettext_lazy as _
 
 from sparks.foundations.classes import SimpleObject
 
@@ -77,8 +77,10 @@ from ..models.nonrel import (
 
 LOGGER = logging.getLogger(__name__)
 
-MONGO_INTERNAL_FEED_URL_RE = re.compile(
-    USER_FEEDS_SITE_URL.replace(u'{user.id}', ur'(?P<uid>\w{24,24})'))
+MONGO_INTERNAL_FEED_URL_RE_raw = USER_FEEDS_SITE_URL.replace(
+    u'{user.id}', ur'(?P<uid>\w{24,24})')
+
+MONGO_INTERNAL_FEED_URL_RE = re.compile(MONGO_INTERNAL_FEED_URL_RE_raw)
 
 
 # —————————————————————————————————————————————————————————— Utils & QS filters
@@ -158,12 +160,15 @@ def get_internal_feed_from_mongo_feed(mongo_feed):
 
     match = MONGO_INTERNAL_FEED_URL_RE.match(mongo_feed.url)
 
-    if match is not None:
-        uid = match.group('uid')
-        user = MongoUser.objects.get(id=uid)
+    # LOGGER.debug(u'>>>>>>>>>>')
+    # LOGGER.debug(u'Looking up internal feed from %s', mongo_feed)
+    # LOGGER.debug(mongo_feed.url)
+    # LOGGER.debug(MONGO_INTERNAL_FEED_URL_RE_raw)
+    # LOGGER.debug(match.group('uid'))
+    # LOGGER.debug(u'<<<<<<<<<<')
 
-    else:
-        return None
+    uid = match.group('uid')
+    user = MongoUser.objects.get(id=uid)
 
     # This is probably not the best way of
     # finding which feed it is, but it works:
@@ -179,7 +184,8 @@ def get_internal_feed_from_mongo_feed(mongo_feed):
 
     # NOTE: there are no `written_items` in the MongoDB database.
 
-    return None
+    raise StopMigration(u'Did not find any matching internal '
+                        u'feed, this should not happen.')
 
 
 def get_subscription_from_mongo_subscription(mongo_subscription):
@@ -446,6 +452,7 @@ def migrate_article(mongo_article):
         feeds.append(get_feed_from_mongo_feed(mongo_feed))
 
     if feeds:
+        # LOGGER.debug(u'Feeds for article %s: %s', article, feeds)
         article.feeds.add(*feeds)
 
     # NOT even used in the old database…
