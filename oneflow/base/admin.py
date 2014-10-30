@@ -61,6 +61,13 @@ ConstanceAdmin.fieldsets = (
         ),
     }),
 
+    (_(u'Nodes synchronization'), {
+        'classes': ('grp-collapse grp-open', ),
+        'fields': (
+            'SYNC_DEFAULT_NODE_PERMISSION',
+        ),
+    }),
+
     (_(u'User announcements'), {
         'classes': ('grp-collapse grp-open', ),
         'fields': (
