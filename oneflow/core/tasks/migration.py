@@ -1103,12 +1103,16 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
                 user_feeds = UserFeeds(user=dj_user)
                 user_feeds.save()
 
+            dj_user.user_feeds.check()
+
             try:
                 dj_user.user_subscriptions
 
             except:
                 user_subscriptions = UserSubscriptions(user=dj_user)
                 user_subscriptions.save()
+
+            dj_user.user_subscriptions.check()
 
         created_users_count = \
             User.objects.all().count() - current_users_count
