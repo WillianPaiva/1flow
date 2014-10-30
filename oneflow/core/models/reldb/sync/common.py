@@ -21,8 +21,6 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 import uuid
 
-from constance import config
-
 from django.utils.translation import ugettext_lazy as _
 
 from sparks.django.utils import NamedTupleChoices
@@ -31,7 +29,9 @@ from sparks.django.utils import NamedTupleChoices
 BROADCAST_CHOICES = NamedTupleChoices(
     'BROADCAST_CHOICES',
 
-    ('NONE', 0, _(u'No Broadcast')),
+    ('NONE', -1, _(u'Not Broadcasted')),
+
+    ('GLOBAL', 0, _(u'Use global broadcast setting')),
 
     ('TRUSTED', 1, _(u'To trusted instances only')),
 
@@ -44,7 +44,10 @@ NODE_PERMISSIONS = NamedTupleChoices(
     'NODE_PERMISSIONS',
 
     # This node is completely blocked and will be denied access.
-    ('NONE', 0, _(u'NO permission (blocked)')),
+    ('NONE', -1, _(u'NO permission (blocked)')),
+
+    # This node is completely blocked and will be denied access.
+    ('GLOBAL', 0, _(u'Use global permission')),
 
     # The node can talk to us, broadcast
     # other nodes, but doesn't read anything.
@@ -79,15 +82,15 @@ SYNC_STATUS = NamedTupleChoices(
 
 
 def default_broadcast_choice():
-    """ Return config.SYNC_DEFAULT_BROADCAST_CHOICE. """
+    """ Return the global choice. """
 
-    return config.SYNC_DEFAULT_BROADCAST_CHOICE
+    return BROADCAST_CHOICES.GLOBAL
 
 
 def default_node_permission():
-    """ Return config.SYNC_DEFAULT_NODE_PERMISSION. """
+    """ Return the global choice. """
 
-    return config.SYNC_DEFAULT_NODE_PERMISSION
+    return NODE_PERMISSIONS.GLOBAL
 
 
 def generate_token():

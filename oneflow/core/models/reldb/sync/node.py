@@ -20,10 +20,13 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 """
 
 import logging
+import platform
 
 # from constance import config
 
 from django.db import models
+from django.db.models.signals import pre_save  # , post_save, pre_delete
+
 from django.utils.translation import ugettext_lazy as _
 # from django.utils.text import slugify
 
@@ -79,6 +82,8 @@ class SyncNode(ModelDiffMixin):
 
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
+    date_last_seen = models.DateTimeField(verbose_name=_(u'Last seen'),
+                                          null=True, blank=True)
 
     is_active = models.BooleanField(
         verbose_name=_(u'Active'),
@@ -89,10 +94,10 @@ class SyncNode(ModelDiffMixin):
         verbose_name=_(u'Permission'),
         choices=NODE_PERMISSIONS.get_choices(),
         blank=True, default=default_node_permission,
-        help_text=_(u'Permission level you give to this node. '
-                    u'On local node, this defines the global permission '
-                    u'level, when nodes do not have any specific permission '
-                    u'defined. Does not affect current sync process if '
+        help_text=_(u'Permission level you give to this node. On local '
+                    u'node, this defines the permission level of '
+                    u'all nodes whose level is set to “global”. '
+                    u'Does not affect current sync process if '
                     u'already running.'))
 
     local_token = models.CharField(
@@ -122,9 +127,9 @@ class SyncNode(ModelDiffMixin):
         verbose_name=_(u'Broadcast status'),
         choices=BROADCAST_CHOICES.get_choices(),
         default=default_broadcast_choice, blank=True,
-        help_text=_(u'Is this node broadcasted to others? This field is '
-                    u'used only when the global config.SYNC_BROADCAST_INDEXES '
-                    u'is already true, else it has no effect.'))
+        help_text=_(u'How is this node broadcasted to others? On local '
+                    u'node, this defines the broadcast level of all nodes '
+                    u'whose level is set to “global”.'))
 
     # ————————————————————————————————————————————————————————— Python & Django
 
@@ -135,3 +140,42 @@ class SyncNode(ModelDiffMixin):
             self.uuid if self.name is None else self.name,
             self.id,
         )
+
+    @classmethod
+    def get_local_node(cls):
+
+        try:
+            return SyncNode.objects.get(is_local_instance=True)
+
+        except SyncNode.DoesNotExist:
+
+            local_node = SyncNode(
+                name=platform.node(),
+                is_active=True,
+                is_local_instance=True)
+
+            local_node.save()
+
+            return local_node
+
+
+# ————————————————————————————————————————————————————————————————————— Signals
+
+
+def syncnode_pre_save(instance, **kwargs):
+    """ Be sure the local admin doesn't shoot {him,her}self in the foot. """
+
+    sync_node = instance
+
+    if sync_node.pk is None:
+        return
+
+    if sync_node.is_local_instance:
+        if sync_node.permission == NODE_PERMISSIONS.GLOBAL:
+            sync_node.permission = NODE_PERMISSIONS.BASE
+
+        if sync_node.broadcast == BROADCAST_CHOICES.GLOBAL:
+            sync_node.broadcast = BROADCAST_CHOICES.TRUSTED
+
+
+pre_save.connect(syncnode_pre_save, sender=SyncNode)
