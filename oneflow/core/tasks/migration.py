@@ -120,7 +120,7 @@ def master_documents(mongo_queryset):
 def get_article_from_mongo_article(mongo_article):
     """ Find an article in PG from one in MongoDB. """
 
-    return Article.objects.get(mongo_article.url)
+    return Article.objects.get(url=mongo_article.url)
 
 
 def get_read_from_mongo_read(mongo_read):
