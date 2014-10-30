@@ -277,7 +277,6 @@ def migrate_author(mongo_author):
         name=mongo_author.name,
         origin_name=mongo_author.origin_name,
         website=WebSite.objects.get(url=mongo_author.website.url),
-        url=mongo_author.url,
         is_unsure=mongo_author.is_unsure,
     )
 
