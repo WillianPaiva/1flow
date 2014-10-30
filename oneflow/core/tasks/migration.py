@@ -790,7 +790,7 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
     counters.migrated_users_count = 0
 
     all_feeds = MongoFeed.objects.all().no_cache()
-    all_feeds_count = all_feeds
+    all_feeds_count = all_feeds.count()
     counters.created_feeds_count = 0
     counters.migrated_feeds_count = 0
 
