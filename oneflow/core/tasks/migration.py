@@ -716,7 +716,7 @@ def reassign_tags_on_feed(mongo_feed):
 
     feed.tags.add(*tags)
 
-    return tags.count()
+    return len(tags)
 
 
 def reassign_tags_on_subscription(mongo_subscription):
@@ -728,7 +728,7 @@ def reassign_tags_on_subscription(mongo_subscription):
 
     subscription.tags.add(*tags)
 
-    return tags.count()
+    return len(tags)
 
 
 def reassign_tags_on_article(mongo_article):
@@ -740,7 +740,7 @@ def reassign_tags_on_article(mongo_article):
 
     article.tags.add(*tags)
 
-    return tags.count()
+    return len(tags)
 
 
 def reassign_tags_on_read(mongo_read):
@@ -752,7 +752,7 @@ def reassign_tags_on_read(mongo_read):
 
     read.tags.add(*tags)
 
-    return tags.count()
+    return len(tags)
 
 
 # ————————————————————————————————————————————————————————————————— Global task
