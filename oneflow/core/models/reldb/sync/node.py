@@ -19,14 +19,8 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
-import uuid
-# import operator
-
-# from datetime import datetime
-
 import logging
 
-# from collections import OrderedDict
 # from constance import config
 
 from django.db import models
@@ -37,26 +31,22 @@ from django.utils.translation import ugettext_lazy as _
 # from oneflow.base.utils import register_task_method
 
 from sparks.django.models import ModelDiffMixin
-from sparks.django.utils import NamedTupleChoices
 
 # from oneflow.base.utils.dateutils import now, timedelta
-
-# from common import REDIS, long_in_the_past, DjangoUser
-
+from common import (
+    BROADCAST_CHOICES,
+    NODE_PERMISSIONS,
+    generate_token,
+    default_broadcast_choice,
+    default_node_permission,
+)
 
 LOGGER = logging.getLogger(__name__)
 
 
 __all__ = [
     'SyncNode',
-    'generate_token',
 ]
-
-
-def generate_token():
-    """ Return an uuid4 hex token. """
-
-    return uuid.uuid4().hex
 
 
 class SyncNode(ModelDiffMixin):
@@ -67,20 +57,12 @@ class SyncNode(ModelDiffMixin):
         be partially immutable.
     """
 
-    BROADCAST_CHOICES = NamedTupleChoices(
-        'BROADCAST_CHOICES',
-
-        ('NONE', 0, _(u'No Broadcast')),
-        ('TRUSTED', 1, _(u'To trusted instances only')),
-        ('ALL', 2, _(u'To all instances')),
-    )
-
     class Meta:
         app_label = 'core'
         verbose_name = _(u'Sync node')
         verbose_name_plural = _(u'Sync nodes')
 
-    # —————————————————————————————————————————————————————————————— Attributes
+    # —————————————————————————————————————————————————————————————————— Fields
 
     name = models.CharField(
         max_length=384, null=True, blank=True,
@@ -92,39 +74,40 @@ class SyncNode(ModelDiffMixin):
 
     uuid = models.CharField(
         max_length=32, blank=True, unique=True,
+        default=generate_token,
         verbose_name=_(u'Node unique identifier'))
 
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 
-    local_read_token = models.CharField(
-        verbose_name=_(u'Local read authorization token'),
-        max_length=32, blank=True, default=generate_token,
-        help_text=_(u'Give this token to the administrator of this remote '
-                    u'instance to give it global read permission.'))
-
-    local_write_token = models.CharField(
-        verbose_name=_(u'Local write authorization token'),
-        max_length=32, blank=True, default=generate_token,
-        help_text=_(u'Give this token to the administrator of this remote '
-                    u'instance to give it global write permission.'))
-
-    remote_read_token = models.CharField(
-        verbose_name=_(u'Remote read authorization token'),
-        max_length=32, blank=True, null=True,
-        help_text=_(u'Enter here the token given by the remote administrator '
-                    u'to allow your instance global read access to theirs.'))
-
-    remote_write_token = models.CharField(
-        verbose_name=_(u'Remote write authorization token'),
-        max_length=32, blank=True, null=True,
-        help_text=_(u'Enter here the token given by the remote administrator '
-                    u'to allow your instance global write access to theirs.'))
-
     is_active = models.BooleanField(
         verbose_name=_(u'Active'),
         default=True, blank=True,
-        help_text=_(u'Do we synchronize with this index?'))
+        help_text=_(u'Do we synchronize with this node?'))
+
+    permission = models.IntegerField(
+        verbose_name=_(u'Permission'),
+        choices=NODE_PERMISSIONS.get_choices(),
+        blank=True, default=default_node_permission,
+        help_text=_(u'Permission level you give to this node. '
+                    u'On local node, this defines the global permission '
+                    u'level, when nodes do not have any specific permission '
+                    u'defined. Does not affect current sync process if '
+                    u'already running.'))
+
+    local_token = models.CharField(
+        verbose_name=_(u'Local token'),
+        max_length=32, blank=True, default=generate_token,
+        help_text=_(u'Give this token to the remote instance\'s '
+                    u'administrator to grant them any permission '
+                    u'level > BASE.'))
+
+    remote_token = models.CharField(
+        verbose_name=_(u'Remote Token'),
+        max_length=32, blank=True, null=True,
+        help_text=_(u'Type/Paste here the token transmitted by the remote '
+                    u'instance administrator. This token determines which '
+                    u'permission your machine has on the remote one.'))
 
     # There must be at most ONE row where this boolean is True, and
     # all other will have it set to False.
@@ -135,18 +118,20 @@ class SyncNode(ModelDiffMixin):
         help_text=_(u'This field should not be edited, it is '
                     u'auto-determined upon creation'))
 
-    is_trusted = models.BooleanField(
-        verbose_name=_(u'Is trusted?'),
-        default=False, blank=True,
-        help_text=_(u'Do we trust this instance? Enabling this allow to '
-                    u'broadcast restricted indexes to friends but not all '
-                    u'instances.'))
-
     broadcast = models.IntegerField(
         verbose_name=_(u'Broadcast status'),
-        default=BROADCAST_CHOICES.TRUSTED, blank=True,
-        help_text=_(u'Is this index broadcasted to others? This field is '
+        choices=BROADCAST_CHOICES.get_choices(),
+        default=default_broadcast_choice, blank=True,
+        help_text=_(u'Is this node broadcasted to others? This field is '
                     u'used only when the global config.SYNC_BROADCAST_INDEXES '
                     u'is already true, else it has no effect.'))
 
-    # ——————————————————————————————————————————————————————————— Class methods
+    # ————————————————————————————————————————————————————————— Python & Django
+
+    def __unicode__(self):
+
+        return _(u'{0} node {1} #{2}').format(
+            _(u'Local') if self.is_local_instance else _(u'Remote'),
+            self.uuid if self.name is None else self.name,
+            self.id,
+        )

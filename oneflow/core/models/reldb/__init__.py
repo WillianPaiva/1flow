@@ -59,4 +59,4 @@ from preferences import Preferences  # NOQA
 
 # ————————————————————————————————————————————————————————————————— 1flow index
 
-from index import IndexNode, RemoteModel  # NOQA
+from sync import SyncNode, NodePermissions, ModelSyncLayer  # NOQA

@@ -34,7 +34,6 @@ from django.utils.translation import ugettext_lazy as _
 # from django.utils.text import slugify
 
 # from sparks.django.models import ModelDiffMixin
-from sparks.django.utils import NamedTupleChoices
 
 # from oneflow.base.fields import TextRedisDescriptor
 # from oneflow.base.utils.dateutils import now, timedelta
@@ -45,8 +44,9 @@ from oneflow.base.utils import (
 )
 
 # from common import REDIS, long_in_the_past, DjangoUser
+from common import SYNC_STATUS
 from node import SyncNode
-from tokens import NodeTokens
+from tokens import NodePermissions
 
 
 LOGGER = logging.getLogger(__name__)
@@ -61,19 +61,6 @@ class ModelSyncLayer(models.Model):
 
     """ Necessary glue-stuff to synchronize any model remotely. """
 
-    SYNC_STATUS = NamedTupleChoices(
-        'SYNC_STATUS',
-
-        ('AUTH_WAIT', 99, _(u'Waiting for authorization')),
-
-        ('IDLE', 0, _(u'Idle')),
-
-        ('SYNCHRONIZING', 1, _(u'Synchronizing')),
-        # ('RESYNC', 2, _(u'Re-synchronizing')),
-
-        ('FAILED', 9, _(u'Synchronization failed')),
-    )
-
     class Meta:
         abstract = True
         app_label = 'core'
@@ -82,9 +69,11 @@ class ModelSyncLayer(models.Model):
 
     # —————————————————————————————————————————————————————————————— Attributes
 
-    prefered_node = models.ForeignKey(
-        SyncNode, verbose_name=_(u'Prefered node'),
-        null=True, blank=True)
+    prefered_nodes = models.ManyToManyField(
+        SyncNode, verbose_name=_(u'Prefered nodes'),
+        null=True, blank=True,
+        help_text=_(u'Put here the nodes you want yours '
+                    u'to sync onto in priority.'))
 
     last_node = models.ForeignKey(
         SyncNode, verbose_name=_(u'Last node used'),
@@ -106,8 +95,14 @@ class ModelSyncLayer(models.Model):
 
     sync_error = models.CharField(max_length=255)
 
-    nodes = models.ManyToMany(NodeTokens, null=True, blank=True,
-                              verbose_name=_(u'Nodes tokens'))
+    permissions = models.ManyToManyField(
+        NodePermissions,
+        null=True, blank=True,
+        verbose_name=_(u'Nodes permissions'),
+        help_text=_(u'Define here global or fine-grained permissions '
+                    u'for synchronization nodes (only relevant if you '
+                    u'setup fine-grained permissions at the global level, '
+                    u'or at least for one host.'))
 
     # —————————————————————————————————————————————————————————————— Properties
 
