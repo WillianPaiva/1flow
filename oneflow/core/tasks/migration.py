@@ -286,8 +286,12 @@ def migrate_author(mongo_author):
         author.duplicate_of = Author.objects.get(
             url=mongo_author.duplicate_of.url)
 
+    # HEADS UP: the mongo “user” is not the creator,
+    #           it's the 1flow account who claimed to
+    #           be this author. It's one schema
+    #           difference between PG & Mongo archs.
     if mongo_author.user:
-        author.user = mongo_author.user.django
+        author.users.add(mongo_author.user.django)
 
     author.save()
 
