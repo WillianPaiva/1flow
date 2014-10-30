@@ -246,7 +246,6 @@ def migrate_website(mongo_website):
         name=mongo_website.name,
         slug=mongo_website.slug,
         url=mongo_website.url,
-        is_restricted=mongo_website.restricted,
     )
 
     # We assume the master is already created.
