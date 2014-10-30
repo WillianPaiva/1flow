@@ -78,7 +78,7 @@ from ..models.nonrel import (
 LOGGER = logging.getLogger(__name__)
 
 MONGO_INTERNAL_FEED_URL_RE_raw = USER_FEEDS_SITE_URL.replace(
-    u'{user.id}', ur'(?P<uid>\w{24,24})')
+    u'{user.id}', ur'(?P<mongo_uid>\w{24,24})')
 
 MONGO_INTERNAL_FEED_URL_RE = re.compile(MONGO_INTERNAL_FEED_URL_RE_raw)
 
@@ -167,20 +167,20 @@ def get_internal_feed_from_mongo_feed(mongo_feed):
     # LOGGER.debug(match.group('uid'))
     # LOGGER.debug(u'<<<<<<<<<<')
 
-    uid = match.group('uid')
-    user = MongoUser.objects.get(id=uid)
+    mongo_uid = match.group('mongo_uid')
+    mongo_user = MongoUser.objects.get(id=mongo_uid)
 
     # This is probably not the best way of
     # finding which feed it is, but it works:
 
-    if mongo_feed == user.web_import_feed:
-        return user.django.user_feeds.imported_items
+    if mongo_feed == mongo_user.web_import_feed:
+        return mongo_user.django.user_feeds.imported_items
 
-    if mongo_feed == user.sent_items_feed:
-        return user.django.user_feeds.sent_items
+    if mongo_feed == mongo_user.sent_items_feed:
+        return mongo_user.django.user_feeds.sent_items
 
-    if mongo_feed == user.received_items:
-        return user.django.user_feeds.received_items
+    if mongo_feed == mongo_user.received_items:
+        return mongo_user.django.user_feeds.received_items
 
     # NOTE: there are no `written_items` in the MongoDB database.
 
