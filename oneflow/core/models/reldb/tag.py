@@ -54,8 +54,8 @@ class SimpleTag(MPTTModel):
     parent   = TreeForeignKey('self', null=True, blank=True,
                               related_name='children')
 
-    origin_type = models.ForeignKey(ContentType)
-    origin_id = models.PositiveIntegerField()
+    origin_type = models.ForeignKey(ContentType, null=True, blank=True)
+    origin_id = models.PositiveIntegerField(null=True, blank=True)
     origin = generic.GenericForeignKey('origin_type', 'origin_id')
 
     duplicate_of = models.ForeignKey(
