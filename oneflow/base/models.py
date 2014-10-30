@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2012-2014 Olivier Cortès <oc@1flow.io>.
 
 ____________________________________________________________________
@@ -254,6 +254,9 @@ class OwnerOrSuperuserEditAdaptor(object):
 
         if user.is_anonymous():
             return False
+
+        elif user.is_superuser:
+            return True
 
         elif user.mongo.has_staff_access:
             return True
