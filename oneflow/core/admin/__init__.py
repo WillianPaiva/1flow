@@ -66,6 +66,9 @@ from ..models.reldb import (
     Folder,
     Language,
     SimpleTag as Tag,
+
+    SyncNode,
+    NodePermissions,
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -145,6 +148,8 @@ admin.site.register(HistoryEntry)
 admin.site.register(UserImport)
 admin.site.register(Subscription)
 admin.site.register(Read)
+admin.site.register(SyncNode)
+admin.site.register(NodePermissions)
 
 
 class RssAtomFeedAdmin(admin.ModelAdmin):
