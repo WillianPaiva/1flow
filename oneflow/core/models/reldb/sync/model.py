@@ -44,7 +44,12 @@ from oneflow.base.utils import (
 )
 
 # from common import REDIS, long_in_the_past, DjangoUser
-from common import SYNC_STATUS
+from common import (
+    SYNC_STATUS,
+    SYNC_STRATEGIES,
+    default_sync_status,
+    default_sync_strategy,
+)
 from node import SyncNode
 from tokens import NodePermissions
 
@@ -59,7 +64,12 @@ __all__ = [
 
 class ModelSyncLayer(models.Model):
 
-    """ Necessary glue-stuff to synchronize any model remotely. """
+    """ Necessary glue-stuff to synchronize any model remotely.
+
+    .. note:: all fields / properties names must contain `sync`, to
+        distinguish with other model attributes coming from other
+        classes / mixins.
+    """
 
     class Meta:
         abstract = True
@@ -69,13 +79,13 @@ class ModelSyncLayer(models.Model):
 
     # —————————————————————————————————————————————————————————————— Attributes
 
-    prefered_nodes = models.ManyToManyField(
+    prefered_sync_nodes = models.ManyToManyField(
         SyncNode, verbose_name=_(u'Prefered nodes'),
         null=True, blank=True,
         help_text=_(u'Put here the nodes you want yours '
                     u'to sync onto in priority.'))
 
-    last_node = models.ForeignKey(
+    last_sync_node = models.ForeignKey(
         SyncNode, verbose_name=_(u'Last node used'),
         null=True, blank=True)
 
@@ -83,26 +93,31 @@ class ModelSyncLayer(models.Model):
         verbose_name=_(u'Last synchronization date'),
         null=True, blank=True)
 
-    is_sync_active = models.BooleanField(
-        verbose_name=_(u'Active'),
-        default=True, blank=True,
-        help_text=_(u'Do we currently synchronize this model?'))
-
     sync_status = models.IntegerField(
         choices=SYNC_STATUS.get_choices(),
-        default=SYNC_STATUS.AUTH_WAIT, blank=True,
+        default=default_sync_status, blank=True,
         verbose_name=_(u'Synchronization status'))
 
-    sync_error = models.CharField(max_length=255)
+    sync_error = models.TextField(null=True, blank=True)
 
-    permissions = models.ManyToManyField(
+    sync_strategy = models.IntegerField(
+        verbose_name=_(u'Strategy'),
+        choices=SYNC_STRATEGIES.get_choices(),
+        blank=True, default=default_sync_strategy,
+        help_text=_(u'Synchronization strategy advertised by the node. '
+                    u'On local node, this defines the system-wide '
+                    u'strategy for all models whose value is set to '
+                    u'“global”. Does not affect current sync process if '
+                    u'already running.'))
+
+    sync_permissions = models.ManyToManyField(
         NodePermissions,
         null=True, blank=True,
         verbose_name=_(u'Nodes permissions'),
-        help_text=_(u'Define here global or fine-grained permissions '
-                    u'for synchronization nodes (only relevant if you '
-                    u'setup fine-grained permissions at the global level, '
-                    u'or at least for one host.'))
+        help_text=_(u'Define here global or fine-grained model-level '
+                    u'permissions for synchronization nodes (only relevant '
+                    u'if you set fine-grained permissions at the global '
+                    u'level, or at least for one host.'))
 
     # —————————————————————————————————————————————————————————————— Properties
 

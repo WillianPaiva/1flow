@@ -70,14 +70,33 @@ NODE_PERMISSIONS = NamedTupleChoices(
 SYNC_STATUS = NamedTupleChoices(
     'SYNC_STATUS',
 
-    ('AUTH_WAIT', 99, _(u'Waiting for authorization')),
+    ('AUTH', -1, _(u'Not yet authorized')),
 
     ('IDLE', 0, _(u'Idle')),
 
     ('SYNCHRONIZING', 1, _(u'Synchronizing')),
     # ('RESYNC', 2, _(u'Re-synchronizing')),
 
+    # Eg. only 2 nodes (small and big) use BIG & SMALL respectively.
+    ('INCOMPAT', 7, _(u'Incompatible synchronization strategies')),
+
+    # Remote host refused for whatever reason, but we need to retry soon.
+    ('RETRY', 8, _(u'Synchronization delayed')),
+
+    # Something went wrong.
     ('FAILED', 9, _(u'Synchronization failed')),
+)
+
+SYNC_STRATEGIES = NamedTupleChoices(
+    'SYNC_STRATEGIES',
+
+    ('GLOBAL', 0, _(u'Use global strategy')),
+
+    ('COOP', 1, _(u'Be cooperative')),
+
+    ('PULL', 2, _(u'Pull from other nodes')),
+
+    ('PUSH', 3, _(u'Push to other nodes')),
 )
 
 
@@ -91,6 +110,18 @@ def default_node_permission():
     """ Return the global choice. """
 
     return NODE_PERMISSIONS.GLOBAL
+
+
+def default_sync_strategy():
+    """ Return the global choice. """
+
+    return SYNC_STRATEGIES.GLOBAL
+
+
+def default_sync_status():
+    """ Return default sync status. """
+
+    return SYNC_STATUS.AUTH
 
 
 def generate_token():
