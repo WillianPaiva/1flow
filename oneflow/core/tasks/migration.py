@@ -592,7 +592,7 @@ def migrate_read(mongo_read):
         # Has the article been created by a feed refresh ?
         # If so, data must be transfered, else we are going
         # to create a duplicate.
-        if read.date_created <= mongo_read.date_added:
+        if read.date_created <= mongo_read.date_created:
             return read, False
 
     read.date_created = mongo_read.date_created
@@ -1289,8 +1289,7 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
 
         # ————————————————————————————————————————————————————————————— masters
 
-        master_tags = MongoTag.objects.filter(MQ(duplicate_of__exist=False)
-                                              | MQ(duplicate_of=None))
+        master_tags = master_documents(all_tags)
 
         master_tags_count = master_tags.count()
 
@@ -1298,7 +1297,7 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
 
         # —————————————————————————————————————————————————————————— duplicates
 
-        duplicate_tags = MongoTag.objects.filter(MQ(duplicate_of__ne=None))
+        duplicate_tags = all_tags.filter(MQ(duplicate_of__ne=None))
         duplicate_tags_count = duplicate_tags.count()
 
         migrate_tags(duplicate_tags)
