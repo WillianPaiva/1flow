@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-"""
-Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
+u"""
+Copyright 2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
 
@@ -16,27 +16,22 @@ GNU Affero General Public License for more details.
 
 You should have received a copy of the GNU Affero General Public
 License along with 1flow.  If not, see http://www.gnu.org/licenses/
-
 """
 
-from .preferences import (HomePreferencesForm, ReadPreferencesForm,  # NOQA
-                          SelectorPreferencesForm, StaffPreferencesForm)
+import logging
 
-from .selector import (ManageFolderForm, ManageSubscriptionForm,  # NOQA
-                       AddSubscriptionForm, )
+from django import forms
 
-from .importers import WebPagesImportForm  # NOQA
+from ..models import SyncNode
 
-from .read import ReadShareForm  # NOQA
+LOGGER = logging.getLogger(__name__)
 
-from mailaccount import MailAccountForm  # NOQA
 
-from mailfeed import MailFeedForm  # NOQA
+class SyncNodeForm(forms.ModelForm):
 
-from mailfeedrule import (  # NOQA
-    MailFeedRuleForm,
-    MailFeedRulePositionForm,
-    MailFeedRuleGroupForm,
-)
+    """ A simple sync node model form. """
 
-from sync import SyncNodeForm  # NOQA
+    class Meta:
+        model = SyncNode
+        fields = ('name', 'is_active', 'permission',
+                  'local_token', 'remote_token', 'broadcast', )

@@ -634,6 +634,8 @@ from article import article_content, article_image  # NOQA
 
 from contacts import import_contacts, import_contacts_authorized  # NOQA
 
+from sync import SyncNodeListCreateView, SyncNodeDeleteView  # NOQA
+
 from preferences import (  # NOQA
     preferences,
     set_preference,

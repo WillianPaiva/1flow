@@ -669,6 +669,7 @@ def core_icon(klass_name):
         'MailFeed': 'envelope',
         'MailFeedRule': 'random',
         'Profile': 'user',
+        'SyncNode': 'cloud',
         'HistoryEntry': 'book',
     }[klass_name])
 

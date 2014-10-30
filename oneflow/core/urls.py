@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -321,6 +321,16 @@ urlpatterns = patterns(
         name='historyentry_delete'),
 
     # —————————————————————————————————————————————————————————————— Staff only
+
+    url(_(ur'^syncnode/?$'),
+        staff_member_required(never_cache(
+            views.SyncNodeListCreateView.as_view())),
+        name='syncnode_list_create'),
+
+    url(_(ur'^syncnode/(?P<pk>\d+)/delete/?$'),
+        staff_member_required(never_cache(
+            views.SyncNodeDeleteView.as_view())),
+        name='syncnode_delete'),
 
     url(_(ur'^feed/(?P<feed_id>\w+)/close/toggle/$'),
         staff_member_required(views.feed_closed_toggle),
