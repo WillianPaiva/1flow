@@ -58,8 +58,14 @@ class DuplicateUrl(models.Model):
 
     """ A simple model to store duplicates URLs pointing to real ones. """
 
-    url = models.URLField(verbose_name=_(u'URL'), primary_key=True)
-    real_url = models.URLField(verbose_name=_(u'Real URL'))
+    # We can have extremely long URLs, notably via
+    # google which wraps the entire world in their URLs.
+    url = models.URLField(max_length=784,
+                          verbose_name=_(u'URL'),
+                          primary_key=True)
+
+    real_url = models.URLField(max_length=512,
+                               verbose_name=_(u'Real URL'))
 
     @classmethod
     def resolve(cls, url, clean=False):
@@ -95,7 +101,9 @@ class UrlItem(models.Model):
         verbose_name = _(u'URL item')
         verbose_name_plural = _(u'URL items')
 
-    url = models.URLField(unique=True, verbose_name=_(u'Public URL'))
+    url = models.URLField(unique=True,
+                          max_length=512,
+                          verbose_name=_(u'Public URL'))
 
     url_absolute = models.BooleanField(
         verbose_name=_(u'Absolute URL'),
