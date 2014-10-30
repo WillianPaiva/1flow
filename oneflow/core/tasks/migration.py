@@ -512,7 +512,7 @@ def migrate_folder(mongo_folder):
         children = []
 
         for mongo_child in mongo_folder.children:
-            child, created = migrate_folder(mongo_folder.parent)
+            child, created = migrate_folder(mongo_child)
             children.append(child)
 
     else:
