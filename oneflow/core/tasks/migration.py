@@ -49,7 +49,8 @@ from ..models.reldb import (
     WebSite,
     Author,
 
-    BaseFeed, RssAtomFeed,
+    # BaseFeed,
+    RssAtomFeed,
     Article, OriginalData,
     Subscription,
     Read,
@@ -149,7 +150,7 @@ def get_feed_from_mongo_feed(mongo_feed):
         return get_internal_feed_from_mongo_feed(mongo_feed)
 
     else:
-        return BaseFeed.objects.get(url=mongo_feed.url)
+        return RssAtomFeed.objects.get(url=mongo_feed.url)
 
 
 def get_internal_feed_from_mongo_feed(mongo_feed):
