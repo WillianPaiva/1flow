@@ -302,7 +302,7 @@ def migrate_feed(mongo_feed):
     """  Migrate a non-internal feed from mongdb to PG. """
 
     try:
-        return get_feed_from_mongo_feed(url=mongo_feed.url), False
+        return get_feed_from_mongo_feed(mongo_feed), False
 
     except RssAtomFeed.DoesNotExist:
         pass
@@ -328,8 +328,7 @@ def migrate_feed(mongo_feed):
     # We assume the master is already created.
     # See the master migration task for details.
     if mongo_feed.duplicate_of:
-        feed.duplicate_of = get_feed_from_mongo_feed(
-            url=mongo_feed.duplicate_of.url)
+        feed.duplicate_of = get_feed_from_mongo_feed(mongo_feed.duplicate_of)
 
     if mongo_feed.created_by:
         feed.user = mongo_feed.created_by.django
