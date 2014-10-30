@@ -28,6 +28,7 @@ from celery import task
 from inspect_model import InspectModel
 
 from mongoengine import Q as MQ
+from mongoengine.fields import DBRef
 
 # from django.db.models import Q
 from django.db import connection
@@ -449,7 +450,12 @@ def migrate_article(mongo_article):
     feeds = []
 
     for mongo_feed in mongo_article.feeds:
-        feeds.append(get_feed_from_mongo_feed(mongo_feed))
+        if isinstance(mongo_feed, DBRef):
+            LOGGER.warning(u'Dangling DBRef %s to a non-existing feed '
+                           u'in article %s', mongo_feed, mongo_article)
+
+        else:
+            feeds.append(get_feed_from_mongo_feed(mongo_feed))
 
     if feeds:
         # LOGGER.debug(u'Feeds for article %s: %s', article, feeds)
@@ -635,8 +641,14 @@ def migrate_read(mongo_read):
     subscriptions = []
 
     for mongo_subscription in mongo_read.subscriptions:
-        subscriptions.append(
-            get_subscription_from_mongo_subscription(mongo_subscription))
+
+        if isinstance(mongo_subscription, DBRef):
+            LOGGER.warning(u'Dangling DBRef %s to a non-existing subscription '
+                           u'in read %s', mongo_subscription, mongo_read)
+
+        else:
+            subscriptions.append(
+                get_subscription_from_mongo_subscription(mongo_subscription))
 
     read.subscriptions.add(*subscriptions)
 
@@ -682,7 +694,6 @@ def migrate_tag(mongo_tag):
 
         else:
             LOGGER.warning(u'Unhandled origin: %s for tag %s', origin, tag)
-
             pg_origin = None
 
         if pg_origin:
