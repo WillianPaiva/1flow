@@ -50,9 +50,10 @@ class Author(models.Model):
         app_label = 'core'
         verbose_name = _(u'Author')
         verbose_name_plural = _(u'Authors')
-        unique_together = ('name', 'website', )
+        unique_together = ('origin_name', 'website', )
 
-    name = models.CharField(max_length=255, blank=True,
+    name = models.CharField(max_length=255,
+                            null=True, blank=True,
                             verbose_name=_(u'Name'))
 
     website = models.ForeignKey(
@@ -77,7 +78,12 @@ class Author(models.Model):
 
     user = models.ForeignKey(
         User, null=True, blank=True,
-        help_text=_(u'Link an internet author to a 1flow user.'))
+        verbose_name=_('Creator'))
+
+    users = models.ManyToManyField(
+        User, null=True, blank=True,
+        verbose_name=_('1flow accounts'), related_name='authors',
+        help_text=_('1flow accounts linked to this author'))
 
     duplicate_of = models.ForeignKey('self', null=True, blank=True)
 
