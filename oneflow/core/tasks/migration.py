@@ -34,6 +34,8 @@ from django.db import connection
 # from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
 
+from sparks.foundations.classes import SimpleObject
+
 from oneflow.base.utils import RedisExpiringLock
 from oneflow.base.utils.dateutils import benchmark
 
@@ -765,58 +767,60 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
                            u'locked, aborting.')
             return
 
+    # Allow internal function to write counters
+    # without passing them as argument everytime.
+    counters = SimpleObject()
+
     all_websites = MongoWebSite.objects.all().no_cache()
     all_websites_count = all_websites.count()
-    created_websites_count = 0
-    migrated_websites_count = 0
+    counters.created_websites_count = 0
+    counters.migrated_websites_count = 0
 
     all_authors = MongoAuthor.objects.all().no_cache()
     all_authors_count = all_authors.count()
-    created_authors_count = 0
-    migrated_authors_count = 0
+    counters.created_authors_count = 0
+    counters.migrated_authors_count = 0
 
     all_users = MongoUser.objects.all().no_cache()
     all_users_count = all_users.count()
-    # created_users_count = 0  # useless because we can't know
-    migrated_users_count = 0
+    # created_users_count = 0  # We can't know yet; computed later
+    counters.migrated_users_count = 0
 
     all_feeds = MongoFeed.objects.all().no_cache()
     all_feeds_count = all_feeds
-    created_feeds_count = 0
-    migrated_feeds_count = 0
+    counters.created_feeds_count = 0
+    counters.migrated_feeds_count = 0
 
     all_tags = MongoTag.objects.all().no_cache()
     all_tags_count = all_tags.count()
-    created_tags_count = 0
-    migrated_tags_count = 0
+    counters.created_tags_count = 0
+    counters.migrated_tags_count = 0
 
     all_articles = MongoArticle.objects.all().no_cache()
     all_articles_count = all_articles.count()
-    created_articles_count = 0
-    migrated_articles_count = 0
+    counters.created_articles_count = 0
+    counters.migrated_articles_count = 0
 
     all_folders = MongoFolder.objects.all().no_cache()
     all_folders_count = all_folders.count()
-    created_folders_count = 0
-    migrated_folders_count = 0
+    counters.created_folders_count = 0
+    counters.migrated_folders_count = 0
 
     all_subscriptions = MongoSubscription.objects.all().no_cache()
     all_subscriptions_count = all_subscriptions.count()
-    created_subscriptions_count = 0
-    migrated_subscriptions_count = 0
+    counters.created_subscriptions_count = 0
+    counters.migrated_subscriptions_count = 0
 
     all_reads = MongoRead.objects.all().no_cache()
     all_reads_count = all_reads.count()
-    created_reads_count = 0
-    migrated_reads_count = 0
+    counters.created_reads_count = 0
+    counters.migrated_reads_count = 0
 
     # ———————————————————————————————————————————————— Models groups migrations
 
     # NOT NEEDED: def migrate_users_and_preferences(users):
 
     def migrate_websites(websites):
-
-        global created_websites_count, migrated_websites_count
 
         for mongo_website in not_yet_migrated(websites):
             try:
@@ -837,17 +841,15 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
                 mongo_website.update(set__bigmig_migrated=True)
 
             if created:
-                created_websites_count += 1
+                counters.created_websites_count += 1
 
-            migrated_websites_count += 1
+            counters.migrated_websites_count += 1
 
-            if migrated_websites_count % 500 == 0:
+            if counters.migrated_websites_count % 500 == 0:
                 vacuum_analyze(u'(at {0} websites)'.format(
-                    migrated_websites_count))
+                    counters.migrated_websites_count))
 
     def migrate_authors(authors):
-
-        global created_authors_count, migrated_authors_count
 
         for mongo_author in not_yet_migrated(authors):
             try:
@@ -868,17 +870,15 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
                 mongo_author.update(set__bigmig_migrated=True)
 
             if created:
-                created_authors_count += 1
+                counters.created_authors_count += 1
 
-            migrated_authors_count += 1
+            counters.migrated_authors_count += 1
 
-            if migrated_authors_count % 500 == 0:
+            if counters.migrated_authors_count % 500 == 0:
                 vacuum_analyze(u'(at {0} authors)'.format(
-                    migrated_authors_count))
+                    counters.migrated_authors_count))
 
     def migrate_feeds(feeds):
-
-        global created_feeds_count, migrated_feeds_count
 
         for mongo_feed in not_yet_migrated(feeds):
             try:
@@ -898,12 +898,13 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
                 mongo_feed.update(set__bigmig_migrated=True)
 
             if created:
-                created_feeds_count += 1
+                counters.created_feeds_count += 1
 
-            migrated_feeds_count += 1
+            counters.migrated_feeds_count += 1
 
-            if migrated_feeds_count % 500 == 0:
-                vacuum_analyze(u'(at {0} feeds)'.format(migrated_feeds_count))
+            if counters.migrated_feeds_count % 500 == 0:
+                vacuum_analyze(u'(at {0} feeds)'.format(
+                    counters.migrated_feeds_count))
 
     # NOT NEEDED: def migrate_folders(folders):
 
@@ -912,8 +913,6 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
     # NOT NEEDED: def migrate_reads(reads):
 
     def migrate_tags(tags):
-
-        global created_tags_count, migrated_tags_count
 
         for mongo_tag in not_yet_migrated(tags):
             try:
@@ -933,23 +932,23 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
                 mongo_tag.update(set__bigmig_migrated=True)
 
             if created:
-                created_tags_count += 1
+                counters.created_tags_count += 1
 
-            migrated_tags_count += 1
+            counters.migrated_tags_count += 1
 
-            if migrated_tags_count % 10000 == 0:
-                vacuum_analyze(u'(at {0} tags)'.format(migrated_tags_count))
+            if counters.migrated_tags_count % 10000 == 0:
+                vacuum_analyze(u'(at {0} tags)'.format(
+                    counters.migrated_tags_count))
 
     def migrate_articles(articles):
-
-        global created_articles_count, migrated_articles_count
 
         for mongo_article in not_yet_migrated(articles):
             try:
                 article, created = migrate_article(mongo_article)
 
             except:
-                LOGGER.exception(u'Could not migrate article %s', mongo_article)
+                LOGGER.exception(u'Could not migrate article %s',
+                                 mongo_article)
 
                 if stop_on_exception:
                     raise StopMigration('article')
@@ -962,18 +961,17 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
                 mongo_article.update(set__bigmig_migrated=True)
 
             if created:
-                created_articles_count += 1
+                counters.created_articles_count += 1
 
-            migrated_articles_count += 1
+            counters.migrated_articles_count += 1
 
-            if migrated_articles_count % 10000 == 0:
-                vacuum_analyze(u'(at {0} tags)'.format(migrated_articles_count))
+            if counters.migrated_articles_count % 10000 == 0:
+                vacuum_analyze(u'(at {0} tags)'.format(
+                    counters.migrated_articles_count))
 
     # ——————————————————————————————————————————————————————— Models migrations
 
     def migrate_all_users_and_preferences():
-
-        global migrated_users_count
 
         for mongo_user in not_yet_migrated(MongoUser.objects.all()):
 
@@ -994,14 +992,14 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
                 # Avoid a full save() cycle, we don't need it anyway.
                 mongo_user.update(set__bigmig_migrated=True)
 
-            migrated_users_count += 1
+            counters.migrated_users_count += 1
 
-            if migrated_users_count % 25 == 0:
+            if counters.migrated_users_count % 25 == 0:
                 vacuum_analyze(u'(at {0} users)'.format(
-                    migrated_users_count))
+                    counters.migrated_users_count))
 
         LOGGER.info(u'Users migrated: {0}/{1}.'.format(
-                    migrated_users_count,
+                    counters.migrated_users_count,
                     all_users_count,
                     ))
 
@@ -1019,10 +1017,11 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
 
         LOGGER.info(u'Web sites migrated: {0}/{1}, '
                     u' {2} dupes, {3} already there.'.format(
-                        migrated_websites_count,
+                        counters.migrated_websites_count,
                         all_websites_count,
                         duplicates_websites_count,
-                        migrated_websites_count - created_websites_count
+                        counters.migrated_websites_count
+                        - counters.created_websites_count
                     ))
 
     def migrate_all_authors():
@@ -1039,10 +1038,11 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
 
         LOGGER.info(u'Authors migrated: {0}/{1}, '
                     u' {2} dupes, {3} already there.'.format(
-                        migrated_authors_count,
+                        counters.migrated_authors_count,
                         all_authors_count,
                         duplicates_authors_count,
-                        migrated_authors_count - created_authors_count
+                        counters.migrated_authors_count
+                        - counters.created_authors_count
                     ))
 
     def migrate_all_feeds():
@@ -1067,17 +1067,16 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
 
         LOGGER.info(u'RSS/Atom feeds migrated: {0}/{1} (total {2}), '
                     u' {3} dupes, {4} already there.'.format(
-                        migrated_feeds_count,
+                        counters.migrated_feeds_count,
                         external_feeds_count,
                         all_feeds_count,
                         duplicates_external_count,
-                        migrated_feeds_count - created_feeds_count
+                        counters.migrated_feeds_count
+                        - counters.created_feeds_count
                     ))
 
     def check_internal_users_feeds_and_subscriptions():
         """ Create internal feeds and subscriptions for all users. """
-
-        global created_users_count
 
         current_users_count = User.objects.all().count()
         internal_feeds_count = UserFeeds.objects.all().count()
@@ -1129,18 +1128,15 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
 
         LOGGER.info(u'Articles migrated: {0}/{1} (total {2}), '
                     u' {3} dupes, {4} already there.'.format(
-                        migrated_articles_count,
+                        counters.migrated_articles_count,
                         master_articles_count,
                         all_articles_count,
                         duplicate_articles_count,
-                        migrated_articles_count - created_articles_count
+                        counters.migrated_articles_count
+                        - counters.created_articles_count
                     ))
 
     def migrate_all_folders():
-
-        # ————————————————————————————————————————————————————————————— masters
-
-        global created_folders_count, migrated_folders_count
 
         mongo_folders = not_yet_migrated(all_folders)
         mongo_folders_count = mongo_folders.count()
@@ -1165,30 +1161,24 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
                 mongo_folder.update(set__bigmig_migrated=True)
 
             if created:
-                created_folders_count += 1
+                counters.created_folders_count += 1
 
-            migrated_folders_count += 1
+            counters.migrated_folders_count += 1
 
-            if migrated_folders_count % 50 == 0:
+            if counters.migrated_folders_count % 50 == 0:
                 vacuum_analyze(u'(at {0} folders)'.format(
-                    migrated_folders_count))
-
-        # ————————————————————————————————————————————————————————————————— end
+                    counters.migrated_folders_count))
 
         LOGGER.info(u'Folders migrated: {0}/{1} (total {2}), '
                     u'{3} already there.'.format(
-                        migrated_folders_count,
+                        counters.migrated_folders_count,
                         mongo_folders_count,
                         all_folders_count,
-                        migrated_folders_count
-                        - created_folders_count
+                        counters.migrated_folders_count
+                        - counters.created_folders_count
                     ))
 
     def migrate_all_subscriptions():
-
-        # ————————————————————————————————————————————————————————————— masters
-
-        global created_subscriptions_count, migrated_subscriptions_count
 
         mongo_subscriptions = not_yet_migrated(all_subscriptions)
         mongo_subscriptions_count = mongo_subscriptions.count()
@@ -1213,30 +1203,24 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
                 mongo_subscription.update(set__bigmig_migrated=True)
 
             if created:
-                created_subscriptions_count += 1
+                counters.created_subscriptions_count += 1
 
-            migrated_subscriptions_count += 1
+            counters.migrated_subscriptions_count += 1
 
-            if migrated_subscriptions_count % 500 == 0:
+            if counters.migrated_subscriptions_count % 500 == 0:
                 vacuum_analyze(u'(at {0} subscriptions)'.format(
-                    migrated_subscriptions_count))
-
-        # ————————————————————————————————————————————————————————————————— end
+                    counters.migrated_subscriptions_count))
 
         LOGGER.info(u'Subscriptions migrated: {0}/{1} (total {2}), '
                     u' {3} already there.'.format(
-                        migrated_subscriptions_count,
+                        counters.migrated_subscriptions_count,
                         mongo_subscriptions_count,
                         all_subscriptions_count,
-                        migrated_subscriptions_count
-                        - created_subscriptions_count
+                        counters.migrated_subscriptions_count
+                        - counters.created_subscriptions_count
                     ))
 
     def migrate_all_reads():
-
-        # ————————————————————————————————————————————————————————————— masters
-
-        global created_reads_count, migrated_reads_count
 
         mongo_reads = not_yet_migrated(all_reads)
         mongo_reads_count = mongo_reads.count()
@@ -1261,28 +1245,24 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
                 mongo_read.update(set__bigmig_migrated=True)
 
             if created:
-                created_reads_count += 1
+                counters.created_reads_count += 1
 
-            migrated_reads_count += 1
+            counters.migrated_reads_count += 1
 
-            if migrated_reads_count % 100000 == 0:
+            if counters.migrated_reads_count % 100000 == 0:
                 vacuum_analyze(u'(at {0} reads)'.format(
-                    migrated_reads_count))
-
-        # ————————————————————————————————————————————————————————————————— end
+                    counters.migrated_reads_count))
 
         LOGGER.info(u'Reads migrated: {0}/{1} (total {2}), '
                     u' {3} already there.'.format(
-                        migrated_reads_count,
+                        counters.migrated_reads_count,
                         mongo_reads_count,
                         all_reads_count,
-                        migrated_reads_count
-                        - created_reads_count
+                        counters.migrated_reads_count
+                        - counters.created_reads_count
                     ))
 
     def migrate_all_tags():
-
-        global created_tags_count, migrated_tags_count
 
         # ————————————————————————————————————————————————————————————— masters
 
@@ -1302,35 +1282,33 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
 
         LOGGER.info(u'Tags migrated: {0}/{1} (total {2}), '
                     u' {3} dupes, {4} already there.'.format(
-                        migrated_tags_count,
+                        counters.migrated_tags_count,
                         master_tags_count,
                         all_tags_count,
                         duplicate_tags_count,
-                        migrated_tags_count - created_tags_count
+                        counters.migrated_tags_count
+                        - counters.created_tags_count
                     ))
 
     def reassign_all_tags():
 
-        reassigned_objects_count = 0
-        reassigned_tags_count = 0
-        failed_objects_count = 0
+        counters.reassigned_objects_count = 0
+        counters.reassigned_tags_count = 0
+        counters.failed_objects_count = 0
 
         def reassign_tags_on_feeds():
-
-            global reassigned_objects_count
-            global reassigned_tags_count
-            global failed_objects_count
 
             LOGGER.info(u'Starting to reassign tags on feeds. '
                         u'This will take a while…')
 
             for feed in no_tags_reassigned(all_feeds):
                 try:
-                    reassigned_tags_count += reassign_tags_on_feed(feed)
-                    reassigned_objects_count += 1
+                    counters.reassigned_tags_count += \
+                        reassign_tags_on_feed(feed)
+                    counters.reassigned_objects_count += 1
 
                 except:
-                    failed_objects_count += 1
+                    counters.failed_objects_count += 1
                     LOGGER.exception(u'Could not reassign tags on feed %s',
                                      feed)
 
@@ -1346,21 +1324,17 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
 
         def reassign_tags_on_subscriptions():
 
-            global reassigned_objects_count
-            global reassigned_tags_count
-            global failed_objects_count
-
             LOGGER.info(u'Starting to reassign tags on subscriptions. '
                         u'This will take a while…')
 
             for subscription in no_tags_reassigned(all_subscriptions):
                 try:
-                    reassigned_tags_count += \
+                    counters.reassigned_tags_count += \
                         reassign_tags_on_subscription(subscription)
-                    reassigned_objects_count += 1
+                    counters.reassigned_objects_count += 1
 
                 except:
-                    failed_objects_count += 1
+                    counters.failed_objects_count += 1
                     LOGGER.exception(u'Could not reassign tags on '
                                      u'subscription %s', subscription)
 
@@ -1376,20 +1350,17 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
 
         def reassign_tags_on_articles():
 
-            global reassigned_objects_count
-            global reassigned_tags_count
-            global failed_objects_count
-
             LOGGER.info(u'Starting to reassign tags on articles. '
                         u'This will take a while…')
 
             for article in no_tags_reassigned(all_articles):
                 try:
-                    reassigned_tags_count += reassign_tags_on_article(article)
-                    reassigned_objects_count += 1
+                    counters.reassigned_tags_count += \
+                        reassign_tags_on_article(article)
+                    counters.reassigned_objects_count += 1
 
                 except:
-                    failed_objects_count += 1
+                    counters.failed_objects_count += 1
                     LOGGER.exception(u'Could not reassign tags on article %s',
                                      article)
 
@@ -1405,20 +1376,17 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
 
         def reassign_tags_on_reads():
 
-            global reassigned_objects_count
-            global reassigned_tags_count
-            global failed_objects_count
-
             LOGGER.info(u'Starting to reassign tags on reads. '
                         u'This will take a while…')
 
             for read in no_tags_reassigned(all_reads):
                 try:
-                    reassigned_tags_count += reassign_tags_on_read(read)
-                    reassigned_objects_count += 1
+                    counters.reassigned_tags_count += \
+                        reassign_tags_on_read(read)
+                    counters.reassigned_objects_count += 1
 
                 except:
-                    failed_objects_count += 1
+                    counters.failed_objects_count += 1
                     LOGGER.exception(u'Could not reassign tags on read %s',
                                      read)
 
@@ -1444,13 +1412,15 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
         with benchmark('Re-assign tags on reads'):
             reassign_tags_on_reads()
 
-        total_impacted_objects = reassigned_objects_count + failed_objects_count
+        total_impacted_objects = \
+            counters.reassigned_objects_count + counters.failed_objects_count
 
         LOGGER.info(u'Successfully reassigned %s tags on %s objects '
                     u'of a %s total, %s reassignation failed.',
-                    reassigned_tags_count, reassigned_objects_count,
+                    counters.reassigned_tags_count,
+                    counters.reassigned_objects_count,
                     total_impacted_objects,
-                    failed_objects_count
+                    counters.failed_objects_count
                     )
 
     # ————————————————————————————————————————————————————————— The global task
