@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -664,13 +664,14 @@ def read_status_css_styles():
 def core_icon(klass_name):
     """ Centralize all model icons and render them. """
 
-    return u'<i class="icon icon-{0} icon-fixed-width"></i>'.format({
+    return u"<i class='icon icon-{0} icon-fixed-width'></i>".format({
         'MailAccount': 'inbox',
         'MailFeed': 'envelope',
         'MailFeedRule': 'random',
         'Profile': 'user',
-        'SyncNode': 'cloud',
+        'SyncNode': 'sitemap',
         'HistoryEntry': 'book',
+        'SystemStatistics': 'tasks',
     }[klass_name])
 
 

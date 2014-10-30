@@ -33,11 +33,12 @@ LOGGER = logging.getLogger(__name__)
 
 class SyncNodeListCreateView(mixins.ExtraContext,
                              mixins.ListCreateViewMixin,
-                             generic.CreateView,):
+                             generic.CreateView):
 
     """ Mix create and list views for sync nodes. """
 
     model = models.SyncNode
+    queryset = models.SyncNode.objects.exclude(is_local_instance=True)
     default_sort_param = 'name'
     default_filter_param = 'all'
     form_class = forms.SyncNodeForm
@@ -46,13 +47,6 @@ class SyncNodeListCreateView(mixins.ExtraContext,
     extra_context = {
         'local_node': models.SyncNode.get_local_node()
     }
-
-    def get_queryset(self):
-        """ Exclude the local instance from the list. """
-
-        qs = super(SyncNodeListCreateView, self).get_queryset()
-
-        return qs.exclude(is_local_instance=True)
 
     def form_valid(self, form):
         """ Give the SyncNode to its owner on the fly. """
@@ -67,13 +61,7 @@ class SyncNodeDeleteView(mixins.OwnerQuerySetMixin,
     """ Delete a sync node, provided it's not the local one. """
 
     model = models.SyncNode
+    queryset = models.SyncNode.objects.exclude(is_local_instance=True)
     # form_class = forms.SyncNodeForm
     # template_name = 'syncnode/list-create.html'
     success_url = reverse_lazy('syncnode_list_create')
-
-    def get_queryset(self):
-        """ Exclude the local instance from the list of deletable objects. """
-
-        qs = super(SyncNodeListCreateView, self).get_queryset()
-
-        return qs.exclude(is_local_instance=True)

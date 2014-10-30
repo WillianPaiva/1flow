@@ -190,9 +190,15 @@
                       <strong>{{settings.MONGODB_NAME_ARCHIVE}}</strong></div>
                   </div>
                   <div class='spacer15'></div>
-                  <div>
+                  <div class='row'>
                     <div class='col-xs-12'>
-                    <a class='btn btn-info btn-block centered' href='{% url 'admin_status' %}'>{% trans "System statistics" %}</a>
+                    <a class='btn btn-info btn-block centered' href='{% url 'admin_status' %}'>{% core_icon 'SystemStatistics' %}&nbsp;{% trans "System statistics" %}</a>
+                    </div>
+                  </div>
+                  <div class='spacer5'></div>
+                  <div class='row'>
+                    <div class='col-xs-12'>
+                    <a class='btn btn-info btn-block centered' href='{% url 'syncnode_list_create' %}'>{% core_icon 'SyncNode' %}&nbsp;{% trans "Sync network" %}</a>
                     </div>
                   </div>
               "
