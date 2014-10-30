@@ -29,47 +29,47 @@ from constance import config
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _  # , pgettext_lazy
 # from django.utils.safestring import mark_safe
-from django.contrib.auth import get_user_model
-# from django.contrib.auth.admin import UserAdmin
 from django.core.urlresolvers import reverse
 
 # from django_markdown.widgets import MarkdownWidget
 # from writingfield import FullScreenTextarea
 
 # from models.common import CONTENT_TYPES
-
-from ..models.reldb import (
-    HelpContent,
-    HistoryEntry, UserImport,
-
-    MailAccount,
-    MailFeed, MailFeedRule,
-
-    RssAtomFeed, Article,
-
-    # CombinedFeed, CombinedFeedRule,
-    Subscription, Read,
-
-    WebSite,
-    Author,
-    Folder,
-    Language,
-)
 from django.contrib import admin
-
+from mptt.admin import MPTTModelAdmin
 
 from sparks.django.utils import languages, truncate_field
 
 # from ..base.admin import CSVAdminMixin
 from oneflow.base.utils.dateutils import naturaldelta, naturaltime
 
-# NOTE: using "from base.models import User" will generate
-# a "cannot proxy swapped model base.User" when creating the
-# GriUser class. Using `get_user_model()` works and is the
-# Django recommended way of doing it.
-User = get_user_model()
+
+from ..models.reldb import (
+    # DjangoUser as User,
+
+    HelpContent,
+    HistoryEntry, UserImport,
+
+    MailAccount,
+    MailFeed, MailFeedRule,
+
+    RssAtomFeed,
+    Article,
+    OriginalData,
+
+    # CombinedFeed, CombinedFeedRule,
+    Subscription,
+    Read,
+
+    WebSite,
+    Author,
+    Folder,
+    Language,
+    SimpleTag as Tag,
+)
 
 LOGGER = logging.getLogger(__name__)
+
 
 if settings.FULL_ADMIN:
     name_fields_names = tuple(('name_' + code)
@@ -136,7 +136,15 @@ admin.site.register(WebSite)
 admin.site.register(Author)
 admin.site.register(Folder)
 admin.site.register(Language)
+admin.site.register(OriginalData)
 admin.site.register(MailAccount)
+
+# admin.site.register(CombinedFeedRule)
+
+admin.site.register(HistoryEntry)
+admin.site.register(UserImport)
+admin.site.register(Subscription)
+admin.site.register(Read)
 
 
 class RssAtomFeedAdmin(admin.ModelAdmin):
@@ -180,7 +188,7 @@ class RssAtomFeedAdmin(admin.ModelAdmin):
         'website__short_description_en',
         'website__short_description_fr',
     )
-    exclude = ('tags', )
+    # exclude = ('tags', )
     raw_id_fields = ('duplicate_of', 'created_by', )
     ordering = ('-date_last_fetch', )
     list_filter = ('is_active', 'date_last_fetch', )
@@ -412,13 +420,22 @@ class MailFeedRuleAdmin(admin.ModelAdmin):
 
 admin.site.register(MailFeedRule, MailFeedRuleAdmin)
 
-# admin.site.register(CombinedFeedRule)
 
-admin.site.register(HistoryEntry)
-admin.site.register(UserImport)
+class TagAdmin(MPTTModelAdmin):
 
-admin.site.register(Subscription)
-admin.site.register(Read)
+    """ Tag admin class. """
+
+    list_display = ('id', 'name', )
+    list_display_links = ('id', 'name', )
+    # list_filter = ('parent', )
+    ordering = ('name', 'parent', )
+    # date_hierarchy = 'date_joined'
+    change_list_template = "admin/change_list_filter_sidebar.html"
+    change_list_filter_template = "admin/filter_listing.html"
+    search_fields = ('name', )
+
+
+admin.site.register(Tag, TagAdmin)
 
 
 # TODO: remove this when migration is finished
