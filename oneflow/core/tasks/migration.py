@@ -499,8 +499,12 @@ def migrate_folder(mongo_folder):
     # HEADS UP: we always try to get_or_create(), because our current
     #           PG DB can already have the folder even if not migrated.
     #
-    if mongo_folder.parent:
+    # HEADS UP: we manually avoid to go up to __root__, else it will create
+    #           __root__ folders indefinitely, or crash at some point.
+    #
+    if mongo_folder.parent and mongo_folder.parent != u'__root__':
         parent, created = migrate_folder(mongo_folder.parent)
+
     else:
         parent = None
 
