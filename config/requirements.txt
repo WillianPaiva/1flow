@@ -12,6 +12,8 @@
 -e git+https://github.com/nickstenning/honcho.git@master#egg=honcho
 -e git+https://github.com/noirbizarre/django.js.git@master#egg=django.js
 -e git+https://github.com/pinax/django-user-accounts.git@f92825b4673022e3bef6306347f24ad051b77e65#egg=accounts
+git+git://github.com/bookieio/breadability.git
+git+git://github.com/grangier/python-goose.git
 anyjson==0.3.3
 astroid==1.1.0
 beautifulsoup4==4.3.2
@@ -85,6 +87,7 @@ markdown2==2.2.1
 MarkupSafe==0.21
 mistune==0.2.0
 mongoengine==0.8.7
+newspaper==0.0.8
 paramiko==1.13.0
 Pillow==2.4.0
 psutil==2.1.3
