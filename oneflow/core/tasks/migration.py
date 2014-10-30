@@ -114,15 +114,29 @@ def master_documents(mongo_queryset):
 
 # ———————————————————————————————————————————————————— Get equivalent instances
 
+def get_article_from_mongo_article(mongo_article):
+    """ Find an article in PG from one in MongoDB. """
 
-def get_folder_from_mongodb_folder(mongo_folder):
+    return Article.objects.get(mongo_article.url)
+
+
+def get_read_from_mongo_read(mongo_read):
+    """ Find a read in PG from one in MongoDB. """
+
+    return Read.objects.get(
+        item=get_article_from_mongo_article(mongo_read.article),
+        user=mongo_read.user.django,
+    )
+
+
+def get_folder_from_mongo_folder(mongo_folder):
     """ Get the PG equivalent of a mongodb folder. """
 
     return Folder.objects.get(
         name=mongo_folder.name,
         user=mongo_folder.owner.django,
         parent=None if mongo_folder.parent is None
-        else get_folder_from_mongodb_folder(mongo_folder.parent)
+        else get_folder_from_mongo_folder(mongo_folder.parent)
     )
 
 
@@ -168,45 +182,10 @@ def get_internal_feed_from_mongo_feed(mongo_feed):
 def get_subscription_from_mongo_subscription(mongo_subscription):
     """ Return the PG equivalent of a mongoDB subscription, internal or not. """
 
-    if mongo_subscription.feed.is_internal:
-        return get_internal_subscription_from_mongo_subscription(
-            mongo_subscription)
-
-    else:
-        return Subscription.objects.get(
-            user=mongo_subscription.user.django,
-            feed=BaseFeed.objects.get(url=mongo_subscription.feed.url))
-
-
-def get_internal_subscription_from_mongo_subscription(mongo_subscription):
-    """ Get the PostgreSQL equivalent of a, internal Mongo subscription. """
-
-    mongo_feed = mongo_subscription.feed
-
-    match = MONGO_INTERNAL_FEED_URL_RE.match(mongo_feed.url)
-
-    if match is not None:
-        uid = match.group('uid')
-        user = MongoUser.objects.get(id=uid)
-
-    else:
-        return None
-
-    # This is probably not the best way of
-    # finding which feed it is, but it works:
-
-    if mongo_feed == user.web_import_feed:
-        return user.django.user_subscriptions.imported_items
-
-    if mongo_feed == user.sent_items_feed:
-        return user.django.user_subscriptions.sent_items
-
-    if mongo_feed == user.received_items:
-        return user.django.user_subscriptions.received_items
-
-    # NOTE: there are no `written_items` in the MongoDB database.
-
-    return None
+    return Subscription.objects.get(
+        user=mongo_subscription.user.django,
+        feed=get_feed_from_mongo_feed(mongo_subscription.feed)
+    )
 
 
 # —————————————————————————————————————————————————————————————— Migrate models
@@ -318,7 +297,7 @@ def migrate_feed(mongo_feed):
     """  Migrate a non-internal feed from mongdb to PG. """
 
     try:
-        return RssAtomFeed.objects.get(url=mongo_feed.url), False
+        return get_feed_from_mongo_feed(url=mongo_feed.url), False
 
     except RssAtomFeed.DoesNotExist:
         pass
@@ -344,7 +323,7 @@ def migrate_feed(mongo_feed):
     # We assume the master is already created.
     # See the master migration task for details.
     if mongo_feed.duplicate_of:
-        feed.duplicate_of = RssAtomFeed.objects.get(
+        feed.duplicate_of = get_feed_from_mongo_feed(
             url=mongo_feed.duplicate_of.url)
 
     if mongo_feed.created_by:
@@ -383,35 +362,48 @@ def migrate_article(mongo_article):
     """ Migrate a MongoDB article into PostgreSQL. """
 
     try:
-        return Article.objects.get(url=mongo_article.url), False
+        article = get_article_from_mongo_article(mongo_article)
 
     except Article.DoesNotExist:
-        pass
+        article = Article(
 
-    article = Article(
+            # BaseItem
+            name=mongo_article.title,
 
-        # BaseItem
-        name=mongo_article.title,
-        origin=mongo_article.origin_type,
-        date_published=mongo_article.date_published,
-        is_restricted=mongo_article.is_restricted,
-        default_rating=mongo_article.default_rating,
-        text_direction=mongo_article.text_direction,
+            # UrlItem
+            url=mongo_article.url,
+        )
 
-        date_created=mongo_article.date_added,
+    else:
+        # Has the article been created by a feed refresh ?
+        # If so, data must be transfered, else we are going
+        # to create a duplicate.
+        if article.date_created <= mongo_article.date_added:
+            return article, False
 
-        # UrlItem
-        url=mongo_article.url,
-        is_orphaned=mongo_article.orphaned,
-        url_absolute=mongo_article.url_absolute,
+    # BaseItem
+    # article.name is already set at creation
+    article.origin = mongo_article.origin_type
+    article.date_published = mongo_article.date_published
+    article.is_restricted = mongo_article.is_restricted
+    article.default_rating = mongo_article.default_rating
+    article.text_direction = mongo_article.text_direction
 
-        # ContentItem
-        image_url=mongo_article.image_url,
-        excerpt=mongo_article.excerpt,
-        content=mongo_article.content,
-        content_type=mongo_article.content_type,
-        content_error=mongo_article.content_error,
-    )
+    # Reset the creation date to match the old database.
+    article.date_created = mongo_article.date_added
+
+    # UrlItem
+    # article.url is already set at creation
+    article.is_orphaned = mongo_article.orphaned
+    article.url_absolute = mongo_article.url_absolute
+    article.url_error = mongo_article.url_error
+
+    # ContentItem
+    article.image_url = mongo_article.image_url
+    article.excerpt = mongo_article.excerpt
+    article.content = mongo_article.content
+    article.content_type = mongo_article.content_type
+    article.content_error = mongo_article.content_error
 
     # Needed for ManyToManyField() to succeed.
     article.save()
@@ -419,16 +411,12 @@ def migrate_article(mongo_article):
     needs_save = False
 
     if mongo_article.duplicate_of:
-        article.duplicate_of = Article.objects.get(
-            url=mongo_article.duplicate_of.url)
+        article.duplicate_of = get_article_from_mongo_article(
+            mongo_article.duplicate_of)
         needs_save = True
 
     if mongo_article.created_by:
         article.user = mongo_article.created_by.django
-        needs_save = True
-
-    if not mongo_article.url_absolute:
-        article.url_error = mongo_article.url_error
         needs_save = True
 
     if mongo_article.authors:
@@ -443,9 +431,9 @@ def migrate_article(mongo_article):
 
     if mongo_article.source:
         try:
-            Article.sources.add([
-                Article.objects.get(url=mongo_article.source.url)
-            ])
+            Article.sources.add(
+                get_article_from_mongo_article(mongo_article.source)
+            )
             needs_save = True
 
         except:
@@ -531,7 +519,10 @@ def migrate_subscription(mongo_subscription):
     """ Migrate a subscription from MongoDB to PostgreSQL. """
 
     user = mongo_subscription.user.django
-    feed = RssAtomFeed.objects.get(url=mongo_subscription.feed.url)
+
+    # HEADS UP: perhaps it's an internal feed;
+    #           RssAtomFeed.objects.get() won't work.
+    feed = get_feed_from_mongo_feed(mongo_subscription.feed)
 
     try:
         return Subscription.objects.get(user=user, feed=feed), False
@@ -553,7 +544,7 @@ def migrate_subscription(mongo_subscription):
         folders = []
 
         for mongo_folder in mongo_subscription.folders:
-            folders.append(get_folder_from_mongodb_folder(mongo_folder))
+            folders.append(get_folder_from_mongo_folder(mongo_folder))
 
         subscription.folders.add(*folders)
 
@@ -564,56 +555,62 @@ def migrate_read(mongo_read):
     """ Migrate a read from MongoDB to PostgreSQL. """
 
     user = mongo_read.user.django
-    item = Article.objects.get(url=mongo_read.article.url)
+    item = get_article_from_mongo_article(mongo_read.article)
 
     try:
-        return Read.objects.get(user=user, item=item), False
+        read = Read.objects.get(user=user, item=item)
 
     except Read.DoesNotExist:
         pass
 
-    read = Read(
-        user=user,
-        item=item,
-        name=mongo_read.name,
+        read = Read(
+            user=user,
+            item=item,
+        )
 
-        date_created=mongo_read.date_created,
-        is_good=mongo_read.is_good,
+    else:
+        # Has the article been created by a feed refresh ?
+        # If so, data must be transfered, else we are going
+        # to create a duplicate.
+        if read.date_created <= mongo_read.date_added:
+            return read, False
 
-        is_read=mongo_read.is_read,
-        date_read=mongo_read.date_read,
-        is_auto_read=mongo_read.is_auto_read,
-        date_auto_read=mongo_read.date_auto_read,
-        is_archived=mongo_read.is_archived,
-        date_archived=mongo_read.date_archived,
-        is_starred=mongo_read.is_starred,
-        date_starred=mongo_read.date_starred,
-        is_bookmarked=mongo_read.is_bookmarked,
-        date_bookmarked=mongo_read.date_bookmarked,
-        bookmark_type=mongo_read.bookmark_type,
+    read.date_created = mongo_read.date_created
+    read.is_good = mongo_read.is_good
 
-        is_fact=mongo_read.is_fact,
-        date_fact=mongo_read.date_fact,
-        is_quote=mongo_read.is_quote,
-        date_quote=mongo_read.date_quote,
-        is_number=mongo_read.is_number,
-        date_number=mongo_read.date_number,
-        is_analysis=mongo_read.is_analysis,
-        date_analysis=mongo_read.date_analysis,
-        is_prospective=mongo_read.is_prospective,
-        date_prospective=mongo_read.date_prospective,
-        is_knowhow=mongo_read.is_knowhow,
-        date_knowhow=mongo_read.date_knowhow,
-        is_rules=mongo_read.is_rules,
-        date_rules=mongo_read.date_rules,
-        is_knowledge=mongo_read.is_knowledge,
-        date_knowledge=mongo_read.date_knowledge,
-        knowledge_type=mongo_read.knowledge_type,
-        is_fun=mongo_read.is_fun,
-        date_fun=mongo_read.date_fun,
+    read.is_read = mongo_read.is_read
+    read.date_read = mongo_read.date_read
+    read.is_auto_read = mongo_read.is_auto_read
+    read.date_auto_read = mongo_read.date_auto_read
+    read.is_archived = mongo_read.is_archived
+    read.date_archived = mongo_read.date_archived
+    read.is_starred = mongo_read.is_starred
+    read.date_starred = mongo_read.date_starred
+    read.is_bookmarked = mongo_read.is_bookmarked
+    read.date_bookmarked = mongo_read.date_bookmarked
+    read.bookmark_type = mongo_read.bookmark_type
 
-        rating=mongo_read.rating,
-    )
+    read.is_fact = mongo_read.is_fact
+    read.date_fact = mongo_read.date_fact
+    read.is_quote = mongo_read.is_quote
+    read.date_quote = mongo_read.date_quote
+    read.is_number = mongo_read.is_number
+    read.date_number = mongo_read.date_number
+    read.is_analysis = mongo_read.is_analysis
+    read.date_analysis = mongo_read.date_analysis
+    read.is_prospective = mongo_read.is_prospective
+    read.date_prospective = mongo_read.date_prospective
+    read.is_knowhow = mongo_read.is_knowhow
+    read.date_knowhow = mongo_read.date_knowhow
+    read.is_rules = mongo_read.is_rules
+    read.date_rules = mongo_read.date_rules
+    read.is_knowledge = mongo_read.is_knowledge
+    read.date_knowledge = mongo_read.date_knowledge
+    read.knowledge_type = mongo_read.knowledge_type
+    read.is_fun = mongo_read.is_fun
+    read.date_fun = mongo_read.date_fun
+
+    read.rating = mongo_read.rating
 
     read.save()
 
@@ -659,21 +656,15 @@ def migrate_tag(mongo_tag):
 
         elif isinstance(origin, MongoArticle):
 
-            pg_origin = Article.objects.get(url=origin.url)
+            pg_origin = get_article_from_mongo_article(origin)
 
         elif isinstance(origin, MongoSubscription):
 
-            pg_origin = Subscription.objects.get(
-                feed=get_feed_from_mongo_feed(origin.feed),
-                user=origin.user.django,
-            )
+            pg_origin = get_subscription_from_mongo_subscription(origin)
 
         elif isinstance(origin, MongoRead):
 
-            pg_origin = Read.objects.get(
-                item=Article.objects.get(url=origin.article.url),
-                user=origin.user.django,
-            )
+            pg_origin = get_read_from_mongo_read(origin)
 
         else:
             LOGGER.warning(u'Unhandled origin: %s for tag %s', origin, tag)
@@ -708,8 +699,7 @@ def reassign_tags_on_subscription(mongo_subscription):
 
     subscription = get_subscription_from_mongo_subscription(mongo_subscription)
 
-    tags = Tag.get_tags_set(
-        tuple(t.name for t in mongo_subscription.tags))
+    tags = Tag.get_tags_set(tuple(t.name for t in mongo_subscription.tags))
 
     subscription.tags.add(*tags)
 
@@ -719,10 +709,9 @@ def reassign_tags_on_subscription(mongo_subscription):
 def reassign_tags_on_article(mongo_article):
     """ Set the same tags on a PG article that are on a mongo one. """
 
-    article = Article.objects.get(url=mongo_article.url)
+    article = get_article_from_mongo_article(url=mongo_article.url)
 
-    tags = Tag.get_tags_set(
-        tuple(t.name for t in mongo_article.tags))
+    tags = Tag.get_tags_set(tuple(t.name for t in mongo_article.tags))
 
     article.tags.add(*tags)
 
@@ -732,12 +721,9 @@ def reassign_tags_on_article(mongo_article):
 def reassign_tags_on_read(mongo_read):
     """ Set the same tags on a PG read that are on a mongo one. """
 
-    read = Read.objects.get(
-        user=mongo_read.user.django,
-        item=Article.objects.get(url=mongo_read.article.url))
+    read = get_read_from_mongo_read(mongo_read)
 
-    tags = Tag.get_tags_set(
-        tuple(t.name for t in mongo_read.tags))
+    tags = Tag.get_tags_set(tuple(t.name for t in mongo_read.tags))
 
     read.tags.add(*tags)
 
