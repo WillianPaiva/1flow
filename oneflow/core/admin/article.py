@@ -19,15 +19,10 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
-from humanize.i18n import django_language
-
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _  # , pgettext_lazy
 
 from django.contrib import admin
-
-from oneflow.base.utils.dateutils import naturaldelta, naturaltime
-
 
 from ..models.reldb import (  # NOQA
     CONTENT_TYPES,

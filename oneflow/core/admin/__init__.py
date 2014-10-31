@@ -32,9 +32,6 @@ from ..models.reldb import (
     MailAccount,
 
     # CombinedFeed, CombinedFeedRule,
-    Subscription,
-    Read,
-
     WebSite,
     Author,
     Folder,
@@ -60,8 +57,6 @@ admin.site.register(MailAccount)
 
 admin.site.register(HistoryEntry)
 admin.site.register(UserImport)
-admin.site.register(Subscription)
-admin.site.register(Read)
 admin.site.register(SyncNode)
 admin.site.register(NodePermissions)
 
@@ -78,10 +73,15 @@ admin.site.register(MailFeed)
 admin.site.register(MailFeedRule, MailFeedRuleAdmin)
 # admin.site.register(CombinedFeed)
 
+from subscription import Subscription, SubscriptionAdmin
+admin.site.register(Subscription, SubscriptionAdmin)
+
 from article import Article, ArticleAdmin, OriginalData
 admin.site.register(Article, ArticleAdmin)
 admin.site.register(OriginalData)
 
+from read import Read, ReadAdmin
+admin.site.register(Read, ReadAdmin)
 
 from tag import Tag, TagAdmin
 admin.site.register(Tag, TagAdmin)
