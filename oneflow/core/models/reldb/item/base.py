@@ -231,10 +231,9 @@ class BaseItem(PolymorphicModel,
                 read.save()
 
             except IntegrityError:
-                LOGGER.exception(u'Read %s already has master item %s '
-                                 u'instead of duplicate %s?!?',
-                                 read, self, duplicate)
-                # Already registered, simply delete the read.
+                # The user has already a Read with the master item.
+                # The one we are trying to save() would be the same.
+                # Just delete it.
                 read.delete()
 
             except:
