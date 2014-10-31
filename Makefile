@@ -88,7 +88,17 @@ syncdb:
 	fab local sdf.syncdb
 	fab local sdf.migrate
 
+shelldeploy-superfast:
+	git bkp ||true
+	git upa
+	fab prod R:shell pull restart:1
+
 webdeploy-superfast:
+	git bkp ||true
+	git upa
+	fab prod R:web pull restart:1
+
+webshell-superfast:
 	git bkp ||true
 	git upa
 	fab prod R:web,shell pull restart:1
