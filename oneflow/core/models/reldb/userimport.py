@@ -22,6 +22,7 @@ import json
 import logging
 
 # from statsd import statsd
+from random import randrange
 from json_field import JSONField
 from dateutil import parser as date_parser
 
@@ -38,7 +39,7 @@ from async_messages import message_user
 from sparks.django.utils import NamedTupleChoices
 
 from oneflow.base.utils import register_task_method
-from oneflow.base.utils.dateutils import now
+from oneflow.base.utils.dateutils import now, timedelta, naturaldelta
 
 from history import HistoryEntry
 
@@ -61,6 +62,7 @@ IMPORT_STATUS = NamedTupleChoices(
     ('RUNNING', 1, _(u'running')),
     ('FINISHED', 2, _(u'finished')),
     ('FAILED', 3, _(u'failed')),
+    ('RETRY', 4, _('Retried')),
 )
 
 
@@ -343,9 +345,28 @@ class UserImport(HistoryEntry):
     def run(self):
         """ Run the import. """
 
-        self.status = self.STATUS_RUNNING
+        self.status = IMPORT_STATUS.RUNNING
         self.date_started = now()
         self.save()
+
+        try:
+            return self.run_internal()
+
+        except:
+            countdown = randrange(1800, 3600)
+            LOGGER.exception(u'Import %s failed (retry in %s)',
+                             self, naturaldelta(timedelta(seconds=countdown)))
+
+            # HEADS UP: this task is declared by
+            # the register_task_method call below.
+            userimport_run_task.apply_async((self.id, ),  # NOQA
+                                            countdown=countdown)
+
+            self.status = IMPORT_STATUS.RETRY
+            self.save()
+
+    def run_internal(self):
+        """ Import dirty work. """
 
         self._import_validator_ = URLValidator()
         self._import_to_create_ = set()
@@ -377,10 +398,10 @@ class UserImport(HistoryEntry):
         }
 
         if self._import_created_['articles'] or self._import_created_['feeds']:
-            self.status = self.STATUS_FINISHED
+            self.status = IMPORT_STATUS.FINISHED
 
         elif self._import_failed_:
-            self.status = self.STATUS_FAILED
+            self.status = IMPORT_STATUS.FAILED
 
         self.date_finished = now()
         self.save()
@@ -401,7 +422,7 @@ def userimport_post_save(instance, **kwargs):
         # the register_task_method call below.
         userimport_run_task.delay(instance.id)  # NOQA
 
-    elif instance.status == UserImport.STATUS_NEW:
+    elif instance.status == IMPORT_STATUS.NEW:
         # relaunch the importer task.
 
         # HEADS UP: this task is declared by
