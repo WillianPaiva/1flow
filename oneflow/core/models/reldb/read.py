@@ -65,7 +65,7 @@ BOOKMARK_TYPES = NamedTupleChoices(
 BOOKMARK_TYPE_DEFAULT = u'U'
 
 
-class Read(models.Model, AbstractTaggedModel):
+class Read(AbstractTaggedModel):
 
     """ Link a user to any item. """
 
