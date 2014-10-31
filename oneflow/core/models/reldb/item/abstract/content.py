@@ -27,6 +27,8 @@ import mistune
 import requests
 import strainer
 import html2text
+import newspaper
+import breadability.readable
 
 from bs4 import BeautifulSoup
 from statsd import statsd
@@ -204,10 +206,6 @@ class ContentItem(models.Model):
         return False
 
     def fetch_content(self, force=False, verbose=False, commit=True):
-
-        # In tasks, doing this is often useful, if
-        # the task waited a long time before running.
-        self.safe_reload()
 
         if self.fetch_content_must_abort(force=force, commit=commit):
             return
@@ -438,13 +436,33 @@ class ContentItem(models.Model):
             # self.feed can be None…
             return False
 
+    # ——————————————————————————————————————————————— TO_MERGE_WITH ABSTRACT/URL
+
+    def likely_multipage_content(self):
+
+        try:
+            # TODO: this should be coming from the website, not the feed.
+            return self.feed.has_option(CONTENT_FETCH_LIKELY_MULTIPAGE)
+
+        except:
+            LOGGER.exception(u'Not Implemented…')
+            return False
+
+    def get_next_page_link(self, from_content):
+        """ Try to find a “next page” link in the partial content given as
+            parameter. """
+
+        # soup = BeautifulSoup(from_content)
+
+        return None
+
     # ————————————————————————————————————————————————————————— Content related
 
     def extract_and_set_title(self, content=None, force=False, commit=True):
         """ Try to extract title from the HTML content, and set the article
             title from there. """
 
-        if self.origin_type != ORIGINS.WEBIMPORT and not force:
+        if self.origin != ORIGINS.WEBIMPORT and not force:
             LOGGER.warning(u'Skipped title extraction on non-imported article '
                            u'#%s (use `force=True`).', self.id)
             return
@@ -552,18 +570,50 @@ class ContentItem(models.Model):
                             u'\n%s\n'
                             u'————————— end #%s HTML —————————',
                             self.id, content.__class__.__name__, encoding,
-                            unicode(str(content), encoding), self.id)
+                            content.decode(encoding), self.id)
             except:
                 LOGGER.exception(u'Could not log source HTML content of '
                                  u'article %s.', self)
 
         self.extract_and_set_title(content, commit=False)
 
-        STRAINER_EXTRACTOR = strainer.Strainer(parser='lxml', add_score=True)
-        content = STRAINER_EXTRACTOR.feed(content, encoding=encoding)
+        successfully_parsed = False
 
-        del STRAINER_EXTRACTOR
-        gc.collect()
+        for parser in ('lxml', 'html5lib', ):
+
+            STRAINER_EXTRACTOR = strainer.Strainer(parser=parser,
+                                                   add_score=True)
+
+            try:
+                content = STRAINER_EXTRACTOR.feed(content, encoding=encoding)
+                successfully_parsed = True
+
+            except:
+                LOGGER.exception(u'Strainer extraction [parser=%s] '
+                                 u'failed for article %s', parser, self)
+
+            del STRAINER_EXTRACTOR
+            gc.collect()
+
+            if successfully_parsed:
+                break
+
+        if not successfully_parsed:
+            try:
+                breadability_article = breadability.readable.Article(
+                    content, url=self.url)
+                content = breadability_article.readable
+                successfully_parsed = True
+
+            except:
+                LOGGER.exception(u'Breadability extraction failed for '
+                                 u'article %s', self)
+
+        if not successfully_parsed:
+            newspaper_article = newspaper.Article(url=self.url)
+            newspaper_article.download()
+            # newspaper_article.parse()
+            content = newspaper_article.html
 
         # TODO: remove noscript blocks ?
         #
@@ -584,7 +634,7 @@ class ContentItem(models.Model):
                             u'\n%s\n'
                             u'————————— end #%s CLEANED —————————',
                             self.id, content.__class__.__name__, encoding,
-                            unicode(str(content), encoding), self.id)
+                            content.decode(encoding), self.id)
             except:
                 LOGGER.exception(u'Could not log cleaned HTML content of '
                                  u'article %s.', self)
@@ -625,19 +675,13 @@ class ContentItem(models.Model):
                 # then: InvalidStringData: strings in documents must be valid UTF-8 (MongoEngine says) # NOQA
                 content, encoding = self.fetch_content_text_one_page()
 
-                # TRICK: `content` is a BS4 Tag, which cannot be
-                # "automagically" converted by MongoEngine for
-                # some unknown reason. There is also the famous:
-                # TypeError: coercing to Unicode: need string or buffer, Tag found # NOQA
-                #
-                # Thus, we force it to unicode because this is the safe
-                # pivot value in Python/MongoEngine, and MongoDB will
-                # convert to an utf8 string internally.
-                #
-                # NOTE: We can be sure of the utf8 encoding, because
-                # str(content) outputs utf8, this is documented in BS4.
-                #
-                self.content = unicode(str(content), 'utf-8')
+                if type(content) == type(u''):
+                    # A modern too already did the job.
+                    self.content = content
+
+                else:
+                    # Strainer gives us a non-unicode boo-boo.
+                    self.content = content.decode(encoding)
 
             self.content_type = CONTENT_TYPES.HTML
 
