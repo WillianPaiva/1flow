@@ -216,10 +216,12 @@ class Read(models.Model):
     def check_set_subscriptions_131004(self):
         """ Fix a bug where reads had too much subscriptions. """
 
-        if isinstance(self.user, DBRef) or self.user is None:
-            self.delete()
-            sys.stderr.write(u'u')
-            return
+        raise NotImplementedError('review for reldb.')
+
+        # if isinstance(self.user, DBRef) or self.user is None:
+        #     self.delete()
+        #     sys.stderr.write(u'u')
+        #     return
 
         if self.subscriptions.count() == 1:
             # Don't bother doing CPU-intensive tasks,
@@ -837,11 +839,11 @@ class Read(models.Model):
 
                     updated_folders = []
 
-                    for subscription in self.subscriptions:
+                    for subscription in self.subscriptions.all():
                         setattr(subscription, attr_name,
                                 op(getattr(subscription, attr_name), 1))
 
-                        for folder in subscription.folders:
+                        for folder in subscription.folders.all():
                             if folder in updated_folders:
                                 continue
 
