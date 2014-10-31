@@ -1,22 +1,22 @@
 # -*- coding: utf-8 -*-
 """
-    1flow fabfile, which relies on sparks.
+1flow fabfile, which relies on sparks.
 
-    Example calls:
+Example calls:
 
-        # migrate() must have the *named* `args` argument,
-        # else it will conflicts with the implicit `remote_configuration`.
-        fab local sdf.migrate:args='redisboard --fake'
+    # migrate() must have the *named* `args` argument,
+    # else it will conflicts with the implicit `remote_configuration`.
+    fab local sdf.migrate:args='redisboard --fake'
 
-        # Thus, this won't work:
-        fab local sdf.migrate:'redisboard --fake'
+    # Thus, this won't work:
+    fab local sdf.migrate:'redisboard --fake'
 
-        # copy model data from a DB to another:
-        fab test sdf.getdata:landing
-        fab local sdf.putdata
+    # copy model data from a DB to another:
+    fab test sdf.getdata:landing
+    fab local sdf.putdata
 
-        # and then to production:
-        fab production sdf.putdata
+    # and then to production:
+    fab production sdf.putdata
 
 """
 import os
@@ -64,16 +64,21 @@ else:
     env.root = '/home/1flow/www/src'
 
 env.environment  = 'test'
-env.repository   = 'git@dev.1flow.net:1flow.git'
+# env.repository   = 'git@dev.1flow.net:1flow.git'
+env.repository   = 'git@github.com:1flow/1flow.git'
 
 
 def get_current_git_branch():
+    """ Get current git branch (on local machine). """
+
     return fablocal('git rev-parse --abbrev-ref HEAD',
                     capture=True).strip()
 
 
 @task
 def local():
+    """ The local-development task. """
+
     # NOTE: in theory a local environment doesn't need any roledef, because
     # we use Profile.development for running processes and all fabric
     # operations should be run via local(). BUT, in fact, they are run via
@@ -105,9 +110,9 @@ def local():
 
 @task(alias='test')
 def preview(branch=None):
-    """ This is the default config, we don't need to set anything more.
+    """ Default config. We don't need to set anything more.
 
-        To create a new test environment:
+    To create a new test environment:
 
         adapt .ssh/config
         ssh duncan
@@ -182,6 +187,8 @@ def workers(with_shell=False, with_flower=False):
 
 @task(aliases=('kill', ))
 def reboot(more=False):
+    """ Remotely reboot all systems. """
+
     run_command("ps ax | grep 'celery.*worker' | grep -v grep "
                 "| awk '{print $1}' | sudo xargs -I% kill % || true")
     if more:
@@ -191,12 +198,16 @@ def reboot(more=False):
 
 @task
 def count():
+    """ Remotely count all worker processes. """
+
     run_command("ps ax | grep 'celery.*worker' | grep -v grep "
                 "| wc -l")
 
 
 @task(alias='prod')
 def production():
+    """ The 1flow.io production configuration task. """
+
     # we force the user because we can login as standard user there
     env.user        = '1flow'
     env.environment = 'production'
@@ -242,15 +253,12 @@ def production():
         },
 
         'ionice_arguments': {
-            #'shell': '-n -1',
+            # 'shell': '-n -1',
         },
 
-        'repository': {
-            # We need to patch this because worker-04 is an LXC on the same
-            # physical host than dev.1flow.net, and getting from it directly
-            # doesn't work because of my NAT configuration.
-            '__all__': 'git@10.0.3.110:1flow.git',
-        },
+        # 'repository': {
+        #     '__all__': 'git@10.0.3.110:1flow.git',
+        # },
 
         'autoscale': {
             'worker_swarm': '32,2',
@@ -270,7 +278,8 @@ def production():
             # we still face the problem of slowly leaking workers. Surely it
             # comes from our code, but I didn't find an easy way to find out
             # exactly where. Thus, we relaunch workers every now and then.
-            #'worker_swarm': '16',
+            #
+            # 'worker_swarm': '16',
 
             # Fetchers can literally eat memory. RECYCLE.
             'worker_fetch': '8',
@@ -356,6 +365,7 @@ def oneflowapp():
 @task
 @with_remote_configuration
 def testapps(remote_configuration):
+    """ Get the remote list of Django apps, to see if settings load. """
 
     project_apps = (app.split('.', 1)[1] for app
                     in remote_configuration.django_settings.INSTALLED_APPS
@@ -368,29 +378,36 @@ def testapps(remote_configuration):
 @roles('db')
 def firstdata():
     """ Used when deploying a new http://1flow.io/ production environment.
-        On other environments (eg. development, other domains), the
-        `oneflow.landing` app is not installed, and calling this task will
-        fail.
+
+    On other environments (eg. development, other domains), the
+    `oneflow.landing` app is not installed, and calling this task will
+    fail.
     """
 
-    sdf.putdata('./oneflow/landing/fixtures/landing_2013-05-14_final-before-beta-opening.json') # NOQA
+    sdf.putdata('./oneflow/landing/fixtures/landing_2013-05-14_final-before-beta-opening.json')  # NOQA
     minimal_content()
     # No need, this will fail in many cases,
     # and the first run will do it anyway.
-    #sdf.putdata('./oneflow/fixtures/djcelery_2013-06-30_0001.json')
+    #
+    # sdf.putdata('./oneflow/fixtures/djcelery_2013-06-30_0001.json')
 
 
 @task
 @roles('db')
 def minimal_content():
-    sdf.putdata('./oneflow/base/fixtures/base_2013-05-14_final-before-beta-opening.json') # NOQA
+    """ Load minimal content in the database. """
+
+    sdf.putdata('./oneflow/base/fixtures/base_2013-05-14_final-before-beta-opening.json')  # NOQA
 
     # No need, this will fail in many cases,
     # and the first run will do it anyway.
-    #sdf.putdata('./oneflow/fixtures/djcelery_2013-06-30_0001.json')
+    #
+    # sdf.putdata('./oneflow/fixtures/djcelery_2013-06-30_0001.json')
 
 
 @task(aliases=('first', ))
 def firstdeploy():
+    """ First deployment (anywhere). deploy() then firstdata(). """
+
     deploy()
     firstdata()
