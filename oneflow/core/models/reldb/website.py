@@ -28,7 +28,7 @@ from transmeta import TransMeta
 from json_field import JSONField
 
 from django.db import models
-from django.db.models.signals import post_save  # pre_save, pre_delete
+from django.db.models.signals import post_save, pre_save  # , pre_delete
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
 
@@ -238,11 +238,8 @@ class WebSite(six.with_metaclass(WebSiteMeta, MPTTModel,
 # ————————————————————————————————————————————————————————————————————— Signals
 
 
-def website_post_save(instance, **kwargs):
+def website_pre_save(instance, **kwargs):
     """ Method meant to be run from a celery task. """
-
-    if not kwargs.get('created', False):
-        return
 
     website = instance
 
@@ -255,7 +252,12 @@ def website_post_save(instance, **kwargs):
 
         website.save()
 
+
+def website_post_save(instance, **kwargs):
+
+    if kwargs.get('created', False):
         statsd.gauge('websites.counts.total', 1, delta=True)
 
 
+pre_save.connect(website_pre_save, sender=WebSite)
 post_save.connect(website_post_save, sender=WebSite)
