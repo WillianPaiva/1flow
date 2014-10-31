@@ -35,6 +35,8 @@ from django.utils.text import slugify
 from mptt.models import MPTTModelBase, MPTTModel, TreeForeignKey
 from sparks.django.models import DiffMixin
 
+from duplicate import AbstractDuplicateAwareModel
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -118,7 +120,8 @@ class WebSiteMeta(MPTTModelBase, TransMeta):
     pass
 
 
-class WebSite(six.with_metaclass(WebSiteMeta, MPTTModel, DiffMixin)):
+class WebSite(six.with_metaclass(WebSiteMeta, MPTTModel,
+              DiffMixin, AbstractDuplicateAwareModel)):
 
     """ Web site object. Used to hold options for a whole website. """
 
@@ -131,14 +134,21 @@ class WebSite(six.with_metaclass(WebSiteMeta, MPTTModel, DiffMixin)):
     class MPTTMeta:
         order_insertion_by = ['name']
 
-    name = models.CharField(max_length=128, verbose_name=_(u'name'), blank=True)
-    slug = models.CharField(max_length=128, verbose_name=_(u'slug'), blank=True)
+    name = models.CharField(
+        max_length=128,
+        verbose_name=_(u'name'),
+        null=True, blank=True
+    )
+
+    slug = models.CharField(
+        max_length=128,
+        verbose_name=_(u'slug'),
+        null=True, blank=True
+    )
     url  = models.URLField(unique=True, verbose_name=_(u'url'), blank=True)
+
     parent = TreeForeignKey('self', null=True, blank=True,
                             related_name='children')
-
-    duplicate_of = models.ForeignKey('self', null=True, blank=True,
-                                     verbose_name=_(u'Duplicate of'))
 
     # TODO: move this into Website to avoid too much parallel fetches
     # when using multiple feeds from the same origin website.
