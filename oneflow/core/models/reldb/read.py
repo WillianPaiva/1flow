@@ -771,28 +771,28 @@ class Read(models.Model):
 
         self.update_cached_descriptors(update_only=update_only)
 
-    def remove_tags(self, tags=[]):
-        """ If the user remove his own tags from a Read, it will get back the
-            default tags from the article it comes from. """
+    def remove_tags(self, tags=None):
+        """ Remove some tags from a read. `tags` is a list of strings.
+
+        If no tag remains after removal, the read gets back the
+        default tags from the article it comes from.
+        """
+
+        if tags is None:
+            tags = []
 
         if tags:
-            for tag in Tag.get_tags_set(tags, origin=self):
-                self.update(pull__tags=tag)
-
-            self.safe_reload()
+            self.tags.remove(*Tag.get_tags_set(tags, origin=self))
 
         if self.tags == []:
-            self.tags = self.item.tags.copy()
-            self.save()
+            self.tags.add(*self.item.tags.all())
+
             # NO update_cached_descriptors() here.
 
     def add_tags(self, tags):
+        """ Add some tags to current read. ``tags`` is a list of strings. """
 
-        for tag in Tag.get_tags_set(tags, origin=self):
-            self.update(add_to_set__tags=tag)
-
-        self.safe_reload()
-        # NO update_cached_descriptors() here.
+        self.tags.add(*Tag.get_tags_set(tags, origin=self))
 
     # ————————————————————————————————————————————— Update subscriptions caches
 
