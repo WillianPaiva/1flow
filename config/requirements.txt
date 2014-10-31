@@ -113,6 +113,7 @@ selenium==2.41.0
 setproctitle==1.1.8
 simplejson==3.4.0
 South==0.8.4
+six==1.8
 sphinx-me==0.2.1
 statsd==2.1.2
 ua-parser==0.3.5
