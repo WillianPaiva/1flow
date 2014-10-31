@@ -219,7 +219,7 @@ def migrate_user_and_preferences(mongo_user):
         except IntegrityError:
             # The same username already exists. Just
             # update the Mongo One to match the ID.
-            return
+            return None, None
 
     # If already existing, preferences could have not been created yet.
     try:
