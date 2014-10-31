@@ -53,6 +53,14 @@
 			 <h4>{% inplace_edit "mailfeed.finish_action" tag_name_cover:'span' %}</h4>
 			</div>
 		</div>
+		<div class="row">
+			<div class="col-md-4 right">
+				<h4 class="muted">{% trans "Inter-rule/groups operation:" %}</h4>
+			</div>
+			<div class="col-md-8">
+			 <h4>{% inplace_edit "mailfeed.rules_operation" tag_name_cover:'span' %}</h4>
+			</div>
+		</div>
 
 		<div class="spacer50"></div>
 
@@ -62,26 +70,23 @@
 		  {% include "mailfeedrule/form.html" %}
 
 		  <tr>
-			<th>{% trans "Mail account" %}</th>
-			{# <th>{% trans "Mailbox" %}</th> #}
-			<th>{% trans "Header" %}</th>
-			<th>{% trans "Custom header" %}</th>
-			<th>{% trans "Match type" %}</th>
-			<th>{% trans "Value" %}</th>
+			<th class="col-sm-2">{% trans "Header" %}</th>
+			<th class="col-sm-2">{% trans "Custom header" %}</th>
+			<th class="col-sm-2">{% trans "Match type" %}</th>
+			<th class="col-sm-2">{% trans "Value" %}</th>
+
+			{% comment %}
 			<th>{% trans "Result" %}</th>
 			<th>{% trans "Finish" %}</th>
+			{% endcomment %}
 
-			<th class="centered">{% trans "Status" %}</th>
-			<th class="right">{% trans "Actions" %}</th>
+			<th class="col-sm-2 centered">{% trans "Status" %}</th>
+			<th class="col-sm-2 right">{% trans "Actions" %}</th>
 		  </tr>
 		</thead>
 		<tbody>
-		{% for mailfeedrule in mailfeedrule_list %}
+		{% for previous, mailfeedrule, next in mailfeedrule_list|prevcurnext %}
 			<tr>
-				<td>{% inplace_edit 'mailfeedrule.account' edit_empty_value=_('All') %}</td>
-
-				{# <td>{% inplace_edit 'mailfeedrule.mailbox' %}</td> #}
-
 				<td>{% inplace_edit 'mailfeedrule.header_field' %}</td>
 				<td>
 				{% if mailfeedrule.header_field != 'other' %}
@@ -96,12 +101,18 @@
 				</td>
 				<td>{% inplace_edit 'mailfeedrule.match_type' %}</td>
 				<td>{% inplace_edit 'mailfeedrule.match_value' %}</td>
+
+				{% comment %}
 				<td>{% inplace_edit 'mailfeedrule.match_action' edit_empty_value=_('global feed action') %}</td>
 				<td>{% inplace_edit 'mailfeedrule.finish_action' edit_empty_value=_('global feed action') %}</td>
+				{% endcomment %}
 
 				<td class="centered">{% mail_is_usable_to_icon mailfeedrule %}</td>
 
 				<td class="right">
+					{% url 'mailfeedrule_group' mailfeed.pk mailfeedrule.pk as group_url %}
+					{% include "widgets/group-buttons.html" with obj=mailfeedrule is_first=forloop.first is_last=forloop.last previous=previous next=next items_count=mailfeedrule_list|length %}
+
 					{% url 'mailfeedrule_position' mailfeed.pk mailfeedrule.pk as position_url %}
 					{% include "widgets/position-buttons.html" with obj=mailfeedrule position_first=forloop.first position_last=forloop.last %}
 

@@ -1,31 +1,35 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
+Copyright 2012-2014 Olivier Cortès <oc@1flow.io>.
 
-    The :class:`User` and :class:`UserManager` classes can completely and
-    transparently replace the one from Django.
+____________________________________________________________________
 
-    We don't use the `username` attribute, but it is implemented as a
-    readonly property, returning the `email`, which we use as required
-    user name field.
 
-    ____________________________________________________________________
+The :class:`User` and :class:`UserManager` classes can completely and
+transparently replace the one from Django.
 
-    Copyright 2012-2014 Olivier Cortès <oc@1flow.io>
+We don't use the `username` attribute, but it is implemented as a
+readonly property, returning the `email`, which we use as required
+user name field.
 
-    This file is part of the 1flow project.
+____________________________________________________________________
 
-    1flow is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation, either version 3 of
-    the License, or (at your option) any later version.
+Copyright 2012-2014 Olivier Cortès <oc@1flow.io>
 
-    1flow is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
+This file is part of the 1flow project.
 
-    You should have received a copy of the GNU Affero General Public
-    License along with 1flow.  If not, see http://www.gnu.org/licenses/
+1flow is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+
+1flow is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public
+License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
@@ -40,13 +44,15 @@ from django.contrib.auth.models import (BaseUserManager,
                                         PermissionsMixin)
 from django.utils.translation import ugettext_lazy as _
 
+from mptt.models import MPTTModel, TreeForeignKey
+
 from ..profiles.models import AbstractUserProfile
 from ..base.utils.dateutils import now
 
 LOGGER = logging.getLogger(__name__)
 
 
-# ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••• Classes
+# —————————————————————————————————————————————————————————————————————— Models
 
 
 class EmailContent(models.Model):
@@ -69,9 +75,11 @@ class EmailContent(models.Model):
 
 
 class UserManager(BaseUserManager):
-    """ This is a free adaptation of
-        https://github.com/django/django/blob/master/django/contrib/auth/models.py  # NOQA
-        as of 20130526. """
+    """ This is a free adaptation of Django's user manager.
+
+        See https://github.com/django/django/blob/master/django/contrib/auth/models.py  # NOQA
+        as of 20130526.
+    """
 
     def create_user(self, username, email, password=None, **extra_fields):
         """ Creates and saves a User with the given username,
@@ -152,6 +160,58 @@ class User(AbstractBaseUser, PermissionsMixin, AbstractUserProfile):
     # NOTE: self.email_user() comes from the AbstractUserProfile class
 
 
+class Configuration(MPTTModel):
+
+    """ Hierarchical key/value (de-)activable configuration system. """
+
+    name = models.CharField(verbose_name=_(u'Name'),
+                            max_length=128, unique=True)
+    value = models.TextField(verbose_name=_(u'Value'),
+                             null=True, blank=True)
+    notes = models.TextField(verbose_name=_(u'Notes'),
+                             null=True, blank=True)
+
+    is_active = models.BooleanField(verbose_name=_(u'Is active'),
+                                    default=True, blank=True)
+
+    parent   = TreeForeignKey('self', null=True, blank=True,
+                              related_name='children')
+
+    class Meta:
+        app_label = 'base'
+        verbose_name = _(u'Configuration')
+        verbose_name_plural = _(u'Configurations')
+
+    def __unicode__(self):
+        return self.name
+
+    @classmethod
+    def check_token(cls, token):
+        """ Check if a token is valid or not.
+
+        The method will lookup configuration records which icontain ``token``
+        in their name, with the exact value of :param:`token`, and which are
+        currently active.
+        """
+
+        try:
+            cls.objects.get(name__icontains='token',
+                            value=token, is_active=True)
+
+        except cls.DoesNotExist:
+            return False
+
+        except:
+            LOGGER.exception('Exception occured while checking token')
+            return False
+
+        else:
+            return True
+
+
+# ————————————————————————————————————————————————————————— Permission adapters
+
+
 class OwnerOrSuperuserEditAdaptor(object):
     """ This is the custom adaptor for django-inplaceedit permissions.
 
@@ -194,6 +254,9 @@ class OwnerOrSuperuserEditAdaptor(object):
 
         if user.is_anonymous():
             return False
+
+        elif user.is_superuser:
+            return True
 
         elif user.mongo.has_staff_access:
             return True

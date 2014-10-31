@@ -1,0 +1,67 @@
+
+{% if obj.group %}
+	<div class="group-identifier {% if obj.group != previous.group %}group-first{% endif %} {% if obj.group != next.group %}group-last{% endif %}"
+		style="background-color: #{{ obj.group|randcolor }}">
+
+		{% if obj.group != previous.group %}
+
+			<form action="{{ group_url }}" method="POST" role="form" class="inline">
+				{% csrf_token %}
+				<input type="hidden" name="switch" value="1" />
+				<button type="submit" class="btn btn-default btn-xs"
+					title="{{ obj.group_operation|operation_to_switch_text }}">
+					  <i class="icon icon-{{ obj.group_operation|operation_to_icon }}"></i>
+					</span>
+				</button>
+			</form>
+
+		{% endif %}
+
+	</div>
+
+
+	<form action="{{ group_url }}" method="POST" role="form" class="inline">
+		{% csrf_token %}
+		<input type="hidden" name="split" value="1" />
+		<button type="submit" class="btn btn-warning btn-xs"
+			title="{% trans "Merge with previous entry/group" %}">
+			  <i class="icon icon-unlink"></i>
+			</span>
+		</button>
+	</form>
+
+{% else %}
+	{% if items_count > 1 %}
+
+		<form action="{{ group_url }}" method="POST" role="form" class="inline">
+			{% csrf_token %}
+			<input type="hidden" name="merge_with" value="{{ previous.id }}" />
+			<button type="submit" class="btn btn-primary btn-xs"
+				title="{% trans "Merge with previous entry/group" %}"
+				{% if is_first %}disabled="disabled"{% endif %}>
+				  <i class="icon icon-long-arrow-up"></i>
+				  <i class="icon icon-link"></i>
+				</span>
+
+			</button>
+		</form>
+
+		<form action="{{ group_url }}" method="POST" role="form" class="inline">
+			{% csrf_token %}
+			<input type="hidden" name="merge_with" value="{{ next.id }}" />
+			<button type="submit" class="btn btn-primary btn-xs"
+				title="{% trans "Merge with next entry/group" %}"
+				{% if is_last %}disabled="disabled"{% endif %}>
+				  <i class="icon icon-link"></i>
+				  <i class="icon icon-long-arrow-down"></i>
+			</button>
+		</form>
+
+	{% endif %}
+
+{% endif %}
+
+
+
+
+

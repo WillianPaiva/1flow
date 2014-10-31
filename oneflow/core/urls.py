@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -284,12 +284,17 @@ urlpatterns = patterns(
             views.MailFeedRulePositionUpdateView.as_view())),
         name='mailfeedrule_position'),
 
+    url(_(ur'^mailfeed/(?P<mailfeed_pk>\d+)/rule/(?P<pk>\d+)/group/?$'),
+        login_required(never_cache(
+            views.MailFeedRuleGroupUpdateView.as_view())),
+        name='mailfeedrule_group'),
+
     url(_(ur'^mailfeed/(?P<mailfeed_pk>\d+)/rule/(?P<pk>\d+)/delete/?$'),
         login_required(never_cache(
             views.MailFeedRuleDeleteView.as_view())),
         name='mailfeedrule_delete'),
 
-    # •••••••••••••••••••••••••••••••••••••••••••••••••••••••••••  Google Reader
+    # ——————————————————————————————————————————————————————————  Google Reader
 
     url(_(ur'^grimport/(?:(?P<user_id>\d+)/)?$'),
         login_required(views.google_reader_import),
@@ -303,11 +308,46 @@ urlpatterns = patterns(
     url(_(ur'^grstatus/$'), login_required(views.google_reader_import_status),
         name='google_reader_import_status'),
 
-    # •••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••• Staff only
+    # ————————————————————————————————————————————————————————————————— History
+
+    url(_(ur'^history/$'),
+        login_required(never_cache(
+                       views.HistoryEntryListView.as_view())),
+        name='historyentry_list'),
+
+    url(_(ur'^history/(?P<pk>\d+)/delete/?$'),
+        login_required(never_cache(
+                       views.HistoryEntryDeleteView.as_view())),
+        name='historyentry_delete'),
+
+    # —————————————————————————————————————————————————————————————— Staff only
+
+    url(_(ur'^syncnode/?$'),
+        staff_member_required(never_cache(
+            views.SyncNodeListCreateView.as_view())),
+        name='syncnode_list_create'),
+
+    url(_(ur'^syncnode/(?P<pk>\d+)/delete/?$'),
+        staff_member_required(never_cache(
+            views.SyncNodeDeleteView.as_view())),
+        name='syncnode_delete'),
 
     url(_(ur'^feed/(?P<feed_id>\w+)/close/toggle/$'),
         staff_member_required(views.feed_closed_toggle),
         name='feed_closed_toggle'),
+
+    # ———————————————————————————————————————————————————————————— JSON exports
+
+    url(_(ur'^export/folder/(?P<folder_id>\w{24,24})/'
+          ur'(?P<since>[^/]+)/(?P<token>\w{32,32})/?$'),
+        never_cache(views.export_content),
+        name='export_folder_content'),
+
+    url(_(ur'^export/(?P<since>[^/]+)/(?P<token>\w{32,32})/?$'),
+        never_cache(views.export_content),
+        name='export_content'),
+
+    # ——————————————————————————————————————————————————————————— Read patterns
 
     *read_patterns
 )

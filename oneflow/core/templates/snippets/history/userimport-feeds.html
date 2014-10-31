@@ -1,0 +1,34 @@
+
+{% if subscriptions %}
+	{% if feeds %}
+		<h4>{% trans "Still subscribed" %}</h4>
+	{% endif %}
+
+	<ul>
+	{% for subscription in subscriptions %}
+		{% if subscription.feed.closed %}
+			<li class='strike'>{{ subscription.name }}</li>
+
+		{% else %}
+			<li><a href='{% url 'source_selector' %}#{{ subscription.id }}'>{{ subscription.name }}</a></li>
+
+		{% endif %}
+	{% endfor %}
+	</ul>
+{% endif %}
+
+{% if feeds %}
+	<h4>{% trans "Not subscribed anymore" %}</h4>
+	<ul>
+	{% for feed in feeds %}
+		{% if feed.closed %}
+			<li class='strike'>{{ feed.name }}</li>
+
+		{% else %}
+			<li>{{ feed.name }}</li>
+
+		{% endif %}
+	{% endfor %}
+	</ul>
+{% endif %}
+

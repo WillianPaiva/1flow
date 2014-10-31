@@ -23,10 +23,20 @@ from .preferences import (HomePreferencesForm, ReadPreferencesForm,  # NOQA
                           SelectorPreferencesForm, StaffPreferencesForm)
 
 from .selector import (ManageFolderForm, ManageSubscriptionForm,  # NOQA
-                       AddSubscriptionForm, WebPagesImportForm)
+                       AddSubscriptionForm, )
+
+from .importers import WebPagesImportForm  # NOQA
 
 from .read import ReadShareForm  # NOQA
 
 from mailaccount import MailAccountForm  # NOQA
+
 from mailfeed import MailFeedForm  # NOQA
-from mailfeedrule import MailFeedRuleForm, MailFeedRulePositionForm  # NOQA
+
+from mailfeedrule import (  # NOQA
+    MailFeedRuleForm,
+    MailFeedRulePositionForm,
+    MailFeedRuleGroupForm,
+)
+
+from sync import SyncNodeForm  # NOQA

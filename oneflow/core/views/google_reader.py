@@ -104,20 +104,6 @@ def google_reader_can_import_toggle(request, user_id):
                                 reverse('admin:index')))
 
 
-# This one is protected directly in urls.py
-def feed_closed_toggle(request, feed_id):
-
-    feed = Feed.objects.get(id=feed_id)
-
-    if feed.closed:
-        feed.reopen()
-    else:
-        feed.close(u'Closed via the admin toggle button')
-
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER',
-                                reverse('admin:index')))
-
-
 def google_reader_import_stop(request, user_id):
 
     def info(text):

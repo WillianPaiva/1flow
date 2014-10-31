@@ -4,7 +4,7 @@
 #       because it uses the BROKER_URL that should have been
 #       defined in these.
 #
-"""
+u"""
 Copyright 2013 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -27,8 +27,10 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 # from datetime import timedelta
 import djcelery
 djcelery.setup_loader()
+
 from celery.schedules import crontab
 from kombu import Exchange, Queue
+from random import randint
 
 # Avoid sharing the same celery states file
 # when multiple workers run on the same machine.
@@ -126,11 +128,17 @@ CELERYBEAT_SCHEDULE = {
 
     'refresh-all-feeds': {
         'task': 'oneflow.core.tasks.refresh_all_feeds',
-        'schedule': crontab(hour='*', minute='*'),
+        'schedule': crontab(minute='*'),
     },
+
     'refresh-all-mailaccounts': {
         'task': 'oneflow.core.tasks.refresh_all_mailaccounts',
         'schedule': crontab(hour='*/4', minute='4'),
+    },
+
+    'sync-all-nodes': {
+        'task': 'oneflow.core.tasks.sync_all_nodes',
+        'schedule': crontab(minute=unicode(randint(0, 59))),
     },
 
     'global-checker-task': {

@@ -59,7 +59,8 @@ class MailAccountListCreateView(mixins.ListCreateViewMixin,
 #     success_url = reverse_lazy('mailaccount_index')
 
 
-class MailAccountDeleteView(generic.DeleteView):
+class MailAccountDeleteView(mixins.OwnerQuerySetMixin,
+                            generic.DeleteView):
 
     """ Delete a mail account. """
 

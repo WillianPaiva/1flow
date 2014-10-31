@@ -40,6 +40,14 @@
                         If you <em>purge</em> it, <strong>everything inside will be deleted</strong> (and subscriptions cancelled). Use with caution, there is no confirmation.
                     {% endblocktrans %}</div>
                     </div>
+
+                    {% if config.INTERFACE_SHOW_EXPORT_IDS %}
+                        <hr />
+                        <div class="row">
+                            <div class="col-xs-12 centered" style="font-size: 120%">{% trans "Folder identifier:" %} <code>{{ folder.id }}</code></div>
+                        </div>
+                        {% endif %}
+
                     {% endif %}
                 </form>
 

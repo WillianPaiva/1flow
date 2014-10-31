@@ -19,12 +19,13 @@
 
 """
 
-from ....base.utils import connect_mongoengine_signals
+from oneflow.base.utils import connect_mongoengine_signals
 
 #
 # Make everything comfortly available to the outside.
 #
 
+from ..common import *  # NOQA
 from .common import * # NOQA
 from .preferences  import * # NOQA
 

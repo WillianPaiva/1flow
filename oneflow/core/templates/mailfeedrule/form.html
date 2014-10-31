@@ -11,15 +11,17 @@
     <tr class="{% if not form.errors %}collapse{% endif %} collapsible">
 
         {% for field in form %}
-        	<td>
+        	<td {% if forloop.last %}colspan="2"{% endif %}>
 
             {% include "widgets/forms/field-generic.html" with field=field field_label_css_class='col-sm-12' field_input_css_class='col-sm-12' %}
 
             {% if forloop.last %}
 
             	</td>
-            	<td class="right" colspan="2">
+            	<td>
 
+                    <div class="spacer5"></div>
+                    <div class="spacer40"></div>
 			    	<input class="btn btn-primary" type="submit"
 			    		value="{% trans "Save" %}" />
 

@@ -25,6 +25,7 @@ import feedparser
 
 from statsd import statsd
 from constance import config
+from collections import OrderedDict
 
 from xml.sax import SAXParseException
 
@@ -53,9 +54,8 @@ from ....base.utils.dateutils import (now, timedelta, today, datetime,
 from .common import (DocumentHelperMixin,
                      FeedIsHtmlPageException,
                      FeedFetchException,
-                     CONTENT_NOT_PARSED,
-                     ORIGIN_TYPE_FEEDPARSER,
-                     ORIGIN_TYPE_WEBIMPORT,
+                     CONTENT_TYPES,
+                     ORIGINS,
                      USER_FEEDS_SITE_URL,
                      BAD_SITE_URL_BASE,
                      SPECIAL_FEEDS_DATA)
@@ -63,8 +63,10 @@ from .common import (DocumentHelperMixin,
 from .tag import Tag
 from .article import Article
 from .user import User
+from .website import WebSite
 
-from ..reldb import MailFeed
+# from ..reldb.mailfeed import MailFeed
+
 
 LOGGER                = logging.getLogger(__name__)
 feedparser.USER_AGENT = settings.DEFAULT_USER_AGENT
@@ -150,6 +152,12 @@ def feed_subscriptions_count_default(feed, *args, **kwargs):
 
 
 class Feed(Document, DocumentHelperMixin):
+
+    # BIG DB migration 20141028
+    bigmig_migrated = BooleanField(default=False)
+    bigmig_reassigned = BooleanField(default=False)
+    # END BIG DB migration
+
     name           = StringField(verbose_name=_(u'name'))
     url            = URLField(unique=True, verbose_name=_(u'url'))
     is_internal    = BooleanField(default=False)
@@ -225,10 +233,10 @@ class Feed(Document, DocumentHelperMixin):
                                             u'must know it and manually enter '
                                             u'the feed address.'))
     thumbnail_url  = URLField(verbose_name=_(u'Thumbnail URL'),
+                              required=False,
                               help_text=_(u'Full URL of the thumbnail '
                                           u'displayed in the feed selector. '
-                                          u'Can be hosted outside of 1flow.'),
-                              default=u'')
+                                          u'Can be hosted outside of 1flow.'))
     description_fr = StringField(verbose_name=_(u'Description (FR)'),
                                  help_text=_(u'Public description of the feed '
                                              u'in French language. '
@@ -595,16 +603,6 @@ class Feed(Document, DocumentHelperMixin):
                 # by the register_task_method() call.
                 feed_refresh_task.delay(feed.id)  # NOQA
 
-        else:
-            if feed.is_mailfeed:
-                # HEADS UP: we use save() to forward the
-                # name change to the Subscription instance
-                # without duplicating the code to do it here.
-                mailfeed = MailFeed.get_from_stream_url(feed.url)
-                mailfeed.name = feed.name
-                mailfeed.is_public = not feed.restricted
-                mailfeed.save()
-
     def has_option(self, option):
         return option in self.options
 
@@ -629,16 +627,6 @@ class Feed(Document, DocumentHelperMixin):
                     self, self.closed_reason)
 
         self.safe_reload()
-
-    @property
-    def is_mailfeed(self):
-        """ Return ``True`` if the current document originates from a MailFeed.
-
-        .. warning:: please synchronize the conditions
-            with :mod:`~oneflow.core.models.reldb.MailFeed`.
-        """
-
-        return MailFeed.is_stream_url(self.url)
 
     @property
     def articles(self):
@@ -784,7 +772,7 @@ class Feed(Document, DocumentHelperMixin):
             new_article, created = Article.create_article(
                 url=url.replace(' ', '%20'),
                 title=_(u'Imported item from {0}').format(clean_url(url)),
-                feeds=[self], origin_type=ORIGIN_TYPE_WEBIMPORT)
+                feeds=[self], origin_type=ORIGINS.WEBIMPORT)
 
         except:
             # NOTE: duplication handling is already
@@ -815,11 +803,11 @@ class Feed(Document, DocumentHelperMixin):
         """ Take a feedparser item and a list of Feed subscribers and
             feed tags, and create the corresponding Article and Read(s). """
 
-        feedparser_content = getattr(article, 'content', CONTENT_NOT_PARSED)
+        feedparser_content = getattr(article, 'content', None)
 
         if isinstance(feedparser_content, list):
             feedparser_content = feedparser_content[0]
-            content = feedparser_content.get('value', CONTENT_NOT_PARSED)
+            content = feedparser_content.get('value', None)
 
         else:
             content = feedparser_content
@@ -860,7 +848,7 @@ class Feed(Document, DocumentHelperMixin):
                 title=getattr(article, 'title', u' '),
 
                 excerpt=content, date_published=date_published,
-                feeds=[self], tags=tags, origin_type=ORIGIN_TYPE_FEEDPARSER)
+                feeds=[self], tags=tags, origin_type=ORIGINS.FEEDPARSER)
 
         except:
             # NOTE: duplication handling is already
@@ -903,10 +891,25 @@ class Feed(Document, DocumentHelperMixin):
         # Don't forget the parenthesis else we return ``False`` everytime.
         return created or (None if mutualized else False)
 
-    def build_refresh_kwargs(self):
+    def create_article_from_mail(self, article):
+        """ Take a feedparser item and a list of Feed subscribers and
+            feed tags, and create the corresponding Article and Read(s). """
+
+        return
+
+    def build_refresh_kwargs(self, for_type=None):
         """ Return a kwargs suitable for internal feed refreshing methods. """
 
+        if for_type is None:
+            for_type = ORIGINS.FEEDPARSER
+
         kwargs = {}
+
+        if for_type == ORIGINS.EMAIL_FEED:
+            kwargs['since'] = self.last_fetch
+            return kwargs
+
+        # ——————————————————————————————————————————————— RSS specifics
 
         # Implement last-modified & etag headers to save BW.
         # Cf. http://pythonhosted.org/feedparser/http-etag.html
@@ -944,6 +947,8 @@ class Feed(Document, DocumentHelperMixin):
             # task will call us again anyway at next global check.
             LOGGER.info(u'Feed %s refresh disabled by configuration.', self)
             return True
+
+        # ————————————————————————————————————————————————  Try to acquire lock
 
         if not self.refresh_lock.acquire():
             if force:
@@ -1097,23 +1102,10 @@ class Feed(Document, DocumentHelperMixin):
 
         return interval
 
-    def refresh(self, force=False):
-        """ Find new articles in an RSS feed.
+    def refresh_rss_feed(self, force=False):
+        """ Refresh an RSS feed. """
 
-            .. note:: we don't release the lock, this is intentional. The
-                next refresh should not occur within the feed official
-                refresh interval, this would waste resources.
-        """
-
-        # In tasks, doing this is often useful, if
-        # the task waited a long time before running.
-        self.safe_reload()
-
-        if self.refresh_must_abort(force=force):
-            self.refresh_lock.release()
-            return
-
-        LOGGER.info(u'Refreshing feed %s…', self)
+        LOGGER.info(u'Refreshing RSS feed %s…', self)
 
         feedparser_kwargs, http_logger = self.build_refresh_kwargs()
         parsed_feed = feedparser.parse(self.url, **feedparser_kwargs)
@@ -1146,11 +1138,12 @@ class Feed(Document, DocumentHelperMixin):
             self.close(reason=unicode(e))
             return
 
+        new_articles  = 0
+        duplicates    = 0
+        mutualized    = 0
+
         if feed_status == 304:
             LOGGER.info(u'No new content in feed %s.', self)
-
-            with statsd.pipeline() as spipe:
-                spipe.incr('feeds.refresh.fetch.global.unchanged')
 
         else:
             tags = Tag.get_tags_set(getattr(parsed_feed, 'tags', []),
@@ -1164,13 +1157,6 @@ class Feed(Document, DocumentHelperMixin):
                 LOGGER.info(u'Updating tags of feed %s from %s to %s.',
                             self.tags, tags)
                 self.tags = list(tags)
-
-            new_articles  = 0
-            duplicates    = 0
-            mutualized    = 0
-
-            with statsd.pipeline() as spipe:
-                spipe.incr('feeds.refresh.fetch.global.updated')
 
             for article in parsed_feed.entries:
                 created = self.create_article_from_feedparser(article, tags)
@@ -1191,34 +1177,73 @@ class Feed(Document, DocumentHelperMixin):
             self.last_modified = getattr(parsed_feed, 'modified', None)
             self.last_etag     = getattr(parsed_feed, 'etag', None)
 
-            if not force:
-                # forcing the refresh is most often triggered by admins
-                # and developers. It should not trigger the adaptative
-                # throttling computations, because it generates a lot
-                # of false-positive duplicates, and will.
+        return new_articles, duplicates, mutualized
 
-                new_interval = Feed.throttle_fetch_interval(self.fetch_interval,
-                                                            new_articles,
-                                                            mutualized,
-                                                            duplicates,
-                                                            self.last_etag,
-                                                            self.last_modified)
+    def refresh(self, force=False):
+        """ Look for new content in a 1flow feed. """
 
-                if new_interval != self.fetch_interval:
-                    LOGGER.info(u'Fetch interval changed from %s to %s '
-                                u'for feed %s (%s new article(s), %s '
-                                u'duplicate(s)).', self.fetch_interval,
-                                new_interval, self, new_articles, duplicates)
+        # In tasks, doing this is often useful, if
+        # the task waited a long time before running.
+        self.safe_reload()
 
-                    self.fetch_interval = new_interval
+        # HEADS UP: refresh_must_abort() has already acquire()'d our lock.
+        if self.refresh_must_abort(force=force):
+            self.refresh_lock.release()
+            return
+
+        try:
+            data = self.refresh_rss_feed(force=force)
+
+        except:
+            LOGGER.exception(u'Could not refresh feed %s', self)
+            self.refresh_lock.release()
+            return
+
+        if data is None:
+            # An error occured and the feed has already been closed.
+            self.refresh_lock.release()
+            return
+
+        new_articles, duplicates, mutualized = data
+
+        if new_articles == duplicates == mutualized == 0:
 
             with statsd.pipeline() as spipe:
-                spipe.incr('feeds.refresh.global.fetched', new_articles)
-                spipe.incr('feeds.refresh.global.duplicates', duplicates)
-                spipe.incr('feeds.refresh.global.mutualized', mutualized)
+                spipe.incr('feeds.refresh.fetch.global.unchanged')
+
+        else:
+            with statsd.pipeline() as spipe:
+                spipe.incr('feeds.refresh.fetch.global.updated')
+
+        if not force:
+            # forcing the refresh is most often triggered by admins
+            # and developers. It should not trigger the adaptative
+            # throttling computations, because it generates a lot
+            # of false-positive duplicates, and will.
+
+            new_interval = Feed.throttle_fetch_interval(self.fetch_interval,
+                                                        new_articles,
+                                                        mutualized,
+                                                        duplicates,
+                                                        self.last_etag,
+                                                        self.last_modified)
+
+            if new_interval != self.fetch_interval:
+                LOGGER.info(u'Fetch interval changed from %s to %s '
+                            u'for feed %s (%s new article(s), %s '
+                            u'duplicate(s)).', self.fetch_interval,
+                            new_interval, self, new_articles, duplicates)
+
+                self.fetch_interval = new_interval
+
+        with statsd.pipeline() as spipe:
+            spipe.incr('feeds.refresh.global.fetched', new_articles)
+            spipe.incr('feeds.refresh.global.duplicates', duplicates)
+            spipe.incr('feeds.refresh.global.mutualized', mutualized)
 
         # Everything went fine, be sure to reset the "error counter".
-        self.errors[:]  = []
+        self.errors[:] = []
+
         self.last_fetch = now()
         self.save()
 
@@ -1305,3 +1330,141 @@ def get_or_create_special_feed(user, url_template, default_name):
 User.web_import_feed     = property(User_web_import_feed_property_get)
 User.sent_items_feed     = property(User_sent_items_feed_property_get)
 User.received_items_feed = property(User_received_items_feed_property_get)
+
+
+# ——————————————————————————————————————————————————————————————————————— Utils
+
+
+def feed_export_content_classmethod(cls, since, folder=None):
+    """ Pull articles & feeds since :param:`param` and return them in a dict.
+
+        if a feed has no new article, it's not represented at all. The returned
+        dict is suitable to be converted to JSON.
+    """
+
+    def origin_type(origin_type):
+
+        if origin_type in (ORIGINS.FEEDPARSER,
+                           ORIGINS.GOOGLE_READER):
+            return u'rss'
+
+        if origin_type == ORIGINS.TWITTER:
+            return u'twitter'
+
+        if origin_type == ORIGINS.EMAIL_FEED:
+            return u'email'
+
+        # implicit:
+        # if origin_type == (ORIGINS.NONE,
+        #                   ORIGINS.WEBIMPORT):
+        return u'web'
+
+    def content_type(content_type):
+
+        if content_type == CONTENT_TYPES.MARKDOWN:
+            return u'markdown'
+
+        if content_type == CONTENT_TYPES.HTML:
+            return u'html'
+
+        if content_type == CONTENT_TYPES.IMAGE:
+            return u'image'
+
+        if content_type == CONTENT_TYPES.VIDEO:
+            return u'video'
+
+        if content_type == CONTENT_TYPES.BOOKMARK:
+            return u'bookmark'
+
+    if folder is None:
+        active_feeds = Feed.objects.filter(closed=False,
+                                           is_internal=False).no_cache()
+        active_feeds_count = active_feeds.count()
+
+    else:
+        # Avoid import cycle…
+        from subscription import Subscription
+
+        subscriptions = Subscription.objects.filter(folders=folder).no_cache()
+        active_feeds = [s.feed for s in subscriptions if not s.feed.closed]
+        active_feeds_count = len(active_feeds)
+
+    exported_websites = {}
+    exported_feeds = []
+    total_exported_articles_count = 0
+
+    if active_feeds_count:
+        LOGGER.info(u'Starting feeds/articles export procedure with %s '
+                    u'active feeds…', active_feeds_count)
+    else:
+        LOGGER.warning(u'Not running export procedure, we have '
+                       u'no active feed. Is this possible?')
+        return
+
+    for feed in active_feeds:
+        new_articles = feed.good_articles.filter(date_published__gte=since)
+        new_articles_count = new_articles.count()
+
+        if not new_articles_count:
+            continue
+
+        exported_articles = []
+
+        for article in new_articles:
+            exported_articles.append(OrderedDict(
+                id=unicode(article.id),
+                title=article.title,
+                pages_url=[article.url],
+                image_url=article.image_url,
+                excerpt=article.excerpt,
+                content=article.content,
+                media=origin_type(article.origin_type),
+                content_type=content_type(article.content_type),
+                date_published=article.date_published,
+
+                authors=[(a.name or a.origin_name) for a in article.authors],
+                date_updated=None,
+                language=article.language,
+                text_direction=article.text_direction,
+                tags=[t.name for t in article.tags],
+            ))
+
+        exported_articles_count = len(exported_articles)
+        total_exported_articles_count += exported_articles_count
+
+        website = WebSite.get_from_url(feed.site_url)
+
+        try:
+            exported_website = exported_websites[website.url]
+
+        except:
+            exported_website = OrderedDict(
+                id=unicode(website.id),
+                name=website.name,
+                slug=website.slug,
+                url=website.url,
+            )
+
+            exported_websites[website.url] = exported_website
+
+        exported_feeds.append(OrderedDict(
+            id=unicode(feed.id),
+            name=feed.name,
+            url=feed.url,
+            thumbnail_url=feed.thumbnail_url,
+            tags=[t.name for t in feed.tags],
+            articles=exported_articles,
+            website=exported_website,
+        ))
+
+        LOGGER.info(u'%s articles exported in feed %s.',
+                    exported_articles_count, feed)
+
+    exported_feeds_count = len(exported_feeds)
+
+    LOGGER.info(u'%s feeds and %s total articles exported.',
+                exported_feeds_count, total_exported_articles_count)
+
+    return exported_feeds
+
+setattr(Feed, 'export_content', classmethod(feed_export_content_classmethod))

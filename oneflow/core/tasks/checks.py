@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -33,7 +33,9 @@ from django.core.urlresolvers import reverse
 from django.core.mail import mail_managers
 from django.utils.translation import ugettext_lazy as _
 
-from ..models import (Article, Feed, Read, User as MongoUser)
+from ..models import Article, BaseFeed, Read
+from ..models.nonrel import User as MongoUser
+from ..models.reldb.common import DjangoUser  # , REDIS
 
 from oneflow.base.utils import RedisExpiringLock
 from oneflow.base.utils.dateutils import (now, timedelta,
@@ -41,11 +43,10 @@ from oneflow.base.utils.dateutils import (now, timedelta,
 
 LOGGER = logging.getLogger(__name__)
 
-# from common import User, REDIS
 from archive import archive_documents
 
 
-@task(queue='high')
+@task(name="oneflow.core.tasks.global_checker_task", queue='high')
 def global_checker_task(*args, **kwargs):
     """ Just run all tasks in a celery chain.
 
@@ -61,6 +62,7 @@ def global_checker_task(*args, **kwargs):
         global_duplicates_checker.si(),
         archive_documents.si(),
 
+        global_users_checker.si(),
         global_feeds_checker.si(),
         global_subscriptions_checker.si(),
         global_reads_checker.si(),
@@ -69,9 +71,11 @@ def global_checker_task(*args, **kwargs):
     return global_check_chain.delay()
 
 
-@task(queue='low')
+@task(name="oneflow.core.tasks.global_feeds_checker", queue='low')
 def global_feeds_checker():
     """ Check all RSS feeds and their dependants. Close them if needed. """
+
+    raise NotImplementedError('Review for relational DB port.')
 
     def pretty_print_feed(feed):
 
@@ -107,9 +111,9 @@ def global_feeds_checker():
     limit_days   = config.FEED_CLOSED_WARN_LIMIT
     closed_limit = dtnow - timedelta(days=limit_days)
 
-    feeds = Feed.objects(Q(closed=True)
-                         & (Q(date_closed__exists=False)
-                            | Q(date_closed__gte=closed_limit)))
+    feeds = BaseFeed.objects(Q(closed=True)
+                             & (Q(date_closed__exists=False)
+                                | Q(date_closed__gte=closed_limit)))
 
     count = feeds.count()
 
@@ -143,10 +147,12 @@ def global_feeds_checker():
                 naturaldelta(pytime.time() - start_time))
 
 
-@task(queue='low')
+@task(name="oneflow.core.tasks.global_subscriptions_checker", queue='low')
 def global_subscriptions_checker(force=False, limit=None, from_feeds=True,
                                  from_users=False, extended_check=False):
     """ A conditionned version of :meth:`Feed.check_subscriptions`. """
+
+    raise NotImplementedError('Review for relational DB port.')
 
     if config.CHECK_SUBSCRIPTIONS_DISABLED:
         LOGGER.warning(u'Subscriptions checks disabled in configuration.')
@@ -180,7 +186,7 @@ def global_subscriptions_checker(force=False, limit=None, from_feeds=True,
         if from_feeds:
             with benchmark("Check all subscriptions from feeds"):
 
-                feeds           = Feed.good_feeds.no_cache()
+                feeds           = BaseFeed.good_feeds.no_cache()
                 feeds_count     = feeds.count()
                 processed_count = 0
                 checked_count   = 0
@@ -258,7 +264,7 @@ def global_subscriptions_checker(force=False, limit=None, from_feeds=True,
         my_lock.release()
 
 
-@task(queue='low')
+@task(name="oneflow.core.tasks.global_duplicates_checker", queue='low')
 def global_duplicates_checker(limit=None, force=False):
     """ Check that duplicate articles have no more Reads anywhere.
 
@@ -333,7 +339,7 @@ def global_duplicates_checker(limit=None, force=False):
                 total_reads_count)
 
 
-@task(queue='low')
+@task(name="oneflow.core.tasks.global_reads_checker", queue='low')
 def global_reads_checker(limit=None, force=False, verbose=False,
                          break_on_exception=False, extended_check=False):
     """ Check all Reads and their dependants.
@@ -459,3 +465,68 @@ def global_reads_checker(limit=None, force=False, verbose=False,
                 wiped_reads_count * 100.0 / processed_reads,
                 skipped_count,
                 skipped_count * 100.0 / processed_reads)
+
+
+@task(name="oneflow.core.tasks.global_users_checker", queue='low')
+def global_users_checker(limit=None, force=False, verbose=False,
+                         break_on_exception=False, extended_check=False):
+    """ Check all Users and their dependants. """
+
+    if config.CHECK_USERS_DISABLED:
+        LOGGER.warning(u'Users check disabled in configuration.')
+        return
+
+    # This task runs twice a day. Acquire the lock for just a
+    # little more time (13h, because Redis doesn't like floats)
+    # to avoid over-parallelized runs.
+    my_lock = RedisExpiringLock('check_all_users', expire_time=3600 * 13)
+
+    if not my_lock.acquire():
+        if force:
+            my_lock.release()
+            my_lock.acquire()
+            LOGGER.warning(u'Forcing users check…')
+
+        else:
+            # Avoid running this task over and over again in the queue
+            # if the previous instance did not yet terminate. Happens
+            # when scheduled task runs too quickly.
+            LOGGER.warning(u'global_users_checker() is alusery '
+                           u'locked, aborting.')
+            return
+
+    if limit is None:
+        limit = 0
+
+    active_users      = DjangoUser.objects.filter(is_active=True)
+    total_users_count = active_users.count()
+    processed_users   = 0
+    changed_users     = 0
+    skipped_count     = 0
+
+    with benchmark(u"Check {0}/{1} users".format(limit, total_users_count)):
+        try:
+            for user in active_users:
+
+                processed_users += 1
+
+                if limit and changed_users >= limit:
+                    break
+
+                userfeeds = user.feeds
+                userfeeds.check()
+
+                if extended_check:
+                    pass
+
+        finally:
+            my_lock.release()
+
+    LOGGER.info(u'global_users_checker(): %s/%s users processed '
+                u'(%.2f%%), %s corrected (%.2f%%), %s skipped (%.2f%%).',
+                processed_users, total_users_count,
+                processed_users * 100.0 / total_users_count,
+                changed_users,
+                changed_users * 100.0 / processed_users,
+                skipped_count,
+                skipped_count * 100.0 / processed_users)

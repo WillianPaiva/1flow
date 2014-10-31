@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -19,13 +19,10 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
-from sparks.foundations.classes import SimpleObject
+from common import *  # NOQA
 
-from .reldb import *  # NOQA
-from .nonrel import *  # NOQA
-from .keyval import *  # NOQA
+from reldb import *  # NOQA
 
-RATINGS = SimpleObject(from_dict={
-    'STARRED': 5.0,
-    'RETWEET': 10.0,
-})
+# from nonrel import *  # NOQA
+
+from keyval import *  # NOQA

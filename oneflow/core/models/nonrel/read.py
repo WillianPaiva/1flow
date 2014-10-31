@@ -33,7 +33,7 @@ from mongoengine.fields import (StringField, BooleanField,
                                 GenericReferenceField, DBRef)
 from mongoengine.errors import NotUniqueError, ValidationError
 
-#from cache_utils.decorators import cached
+# from cache_utils.decorators import cached
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _, pgettext_lazy
@@ -64,6 +64,12 @@ READ_BOOKMARK_TYPE_CHOICES = (
 
 
 class Read(Document, DocumentHelperMixin):
+
+    # BIG DB migration 20141028
+    bigmig_migrated = BooleanField(default=False)
+    bigmig_reassigned = BooleanField(default=False)
+    # END BIG DB migration
+
     user = ReferenceField('User', reverse_delete_rule=CASCADE)
     article = ReferenceField('Article', unique_with='user',
                              reverse_delete_rule=CASCADE)

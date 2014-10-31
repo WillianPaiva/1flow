@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-09 12:19+0200\n"
-"PO-Revision-Date: 2014-10-09 12:28+0009\n"
+"POT-Creation-Date: 2014-10-16 17:39+0200\n"
+"PO-Revision-Date: 2014-10-16 17:46+0009\n"
 "Last-Translator: Olivier Cortes <karmak23@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -88,94 +88,95 @@ msgstr "autoriser"
 msgid "Permission"
 msgstr "Permission"
 
-#: admin.py:76
+#: admin.py:77
 msgid "Main"
 msgstr "Principal"
 
-#: admin.py:81
+#: admin.py:82
 msgid "Translators notes"
 msgstr "Notes des traducteurs"
 
-#: admin.py:88
+#: admin.py:89
 msgid "Contents (English)"
 msgstr "Contenu (Anglais)"
 
-#: admin.py:94
+#: admin.py:95
 msgid "Contents (French)"
 msgstr "Contenu (Français)"
 
-#: admin.py:145
+#: admin.py:146
 msgid "Parents"
 msgstr "Parents"
 
-#: admin.py:159
+#: admin.py:160
 msgid "Children"
 msgstr "Enfants"
 
-#: admin.py:206
+#: admin.py:207
 msgid "Staff?"
 msgstr "Staff ?"
 
-#: admin.py:214
+#: admin.py:215
 msgid "Superuser?"
 msgstr "Super-utilisateur ?"
 
-#: admin.py:350 models/nonrel/article.py:172 models/nonrel/read.py:163
-#: models/nonrel/subscription.py:118
+#: admin.py:351 models/nonrel/article.py:172 models/nonrel/read.py:163
+#: models/nonrel/subscription.py:118 models/reldb/tag.py:71
 msgid "Tags"
 msgstr "Tags"
 
-#: admin.py:364 models/nonrel/article.py:237 models/nonrel/tag.py:63
+#: admin.py:365 models/nonrel/article.py:237 models/nonrel/tag.py:63
+#: models/reldb/language.py:45 models/reldb/tag.py:62
 msgid "Duplicate of"
 msgstr "Duplicata de"
 
-#: admin.py:375 models/nonrel/article.py:196
+#: admin.py:376 models/nonrel/article.py:196
 msgid "Content"
 msgstr "Contenu"
 
-#: admin.py:381
+#: admin.py:382
 #, python-brace-format
 msgid "<span title=\"{0}\" style=\"cursor: pointer; font-size: 300%\">•••</span>"
 msgstr "<span title=\"{0}\" style=\"cursor: pointer; font-size: 300%\">•••</span>"
 
-#: admin.py:388
+#: admin.py:389
 msgid "Fetch err."
 msgstr "Err. récup."
 
-#: admin.py:394
+#: admin.py:395
 #, python-brace-format
 msgid "<span title=\"{0}\" style=\"cursor: pointer; font-size: 300%;\">•••</span>"
 msgstr "<span title=\"{0}\" style=\"cursor: pointer; font-size: 300%;\">•••</span>"
 
-#: admin.py:401
+#: admin.py:402
 msgid "URL err."
 msgstr "Erreur d'URL"
 
-#: admin.py:458
+#: admin.py:459 admin.py:797
 msgid "User"
 msgstr "Utilisateur"
 
-#: admin.py:474
+#: admin.py:475
 msgid "Article"
 msgstr "Article"
 
-#: admin.py:489 forms/selector.py:53
+#: admin.py:490 forms/selector.py:53
 msgid "Subscriptions"
 msgstr "Abonnements"
 
-#: admin.py:598
+#: admin.py:599
 msgid "ID"
 msgstr "ID"
 
-#: admin.py:611
+#: admin.py:612
 msgid "URLs"
 msgstr "URLs"
 
-#: admin.py:625
+#: admin.py:626
 msgid "Dupe of"
 msgstr "Dupe de"
 
-#: admin.py:637
+#: admin.py:638
 #, python-brace-format
 msgid ""
 "<span title=\"Last 3 errors:\n"
@@ -184,66 +185,70 @@ msgstr ""
 "<span title=\"3 dernières erreurs :\n"
 "{0}\" style=\"cursor: pointer\">{1} erreur(s)</span>"
 
-#: admin.py:640
+#: admin.py:641
 #, python-brace-format
 msgid "{0}: {1}"
 msgstr "{0} : {1}"
 
-#: admin.py:646
+#: admin.py:647
 msgid "Errors"
 msgstr "Erreurs"
 
-#: admin.py:654
+#: admin.py:655
 msgid "Restr.?"
 msgstr "Restr. ?"
 
-#: admin.py:662
+#: admin.py:663
 msgid "Sys?"
 msgstr "Sys ?"
 
-#: admin.py:670
+#: admin.py:671
 msgid "Shown?"
 msgstr "Affiché ?"
 
-#: admin.py:678
+#: admin.py:679
 msgid "Recent"
 msgstr "Récents"
 
-#: admin.py:685
+#: admin.py:686
 msgid "Total"
 msgstr "Total"
 
-#: admin.py:696
+#: admin.py:697
 msgid "Latest"
 msgstr "Derniers"
 
-#: admin.py:704
+#: admin.py:705
 msgid "Added"
 msgstr "Ajouté(e)"
 
-#: admin.py:715
+#: admin.py:716
 msgid "Interval"
 msgstr "Intervalle"
 
-#: admin.py:724
+#: admin.py:725
 msgid "never"
 msgstr "jamais"
 
-#: admin.py:729
+#: admin.py:730
 msgid "Refreshed"
 msgstr "Rafraîchi(e)"
 
-#: admin.py:736
+#: admin.py:737
 msgid "Subs."
 msgstr "Sous…"
 
-#: admin.py:753
+#: admin.py:754
 msgid "The feed is open"
 msgstr "Le flux est ouvert"
 
-#: admin.py:755
+#: admin.py:756
 msgid "Run?"
 msgstr "Actif ?"
+
+#: admin.py:791
+msgid "Mail feed"
+msgstr "Flux de mails"
 
 #: urls.py:52
 msgctxt "part of url regex"
@@ -284,9 +289,8 @@ msgid "^preferences/$"
 msgstr "^preferences/$"
 
 #: urls.py:112
-#, fuzzy
 msgid "^status/?$"
-msgstr "^etatgr/$"
+msgstr "^etat/?$"
 
 #: urls.py:118
 msgid "^read/all/$"
@@ -337,118 +341,145 @@ msgid "^folder/(?P<folder>(?:[0-9a-f]{24,24})+)/delete$"
 msgstr "^dossier/(?P<folder>(?:[0-9a-f]{24,24})+)/supprimer$"
 
 #: urls.py:175
+#, fuzzy
+msgid "^folder/(?P<folder>(?:[0-9a-f]{24,24})+)/purge$"
+msgstr "^dossier/(?P<folder>(?:[0-9a-f]{24,24})+)$"
+
+#: urls.py:179
 msgid "^folder/(?P<folder>(?:[0-9a-f]{24,24})+)$"
 msgstr "^dossier/(?P<folder>(?:[0-9a-f]{24,24})+)$"
 
-#: urls.py:181
+#: urls.py:185
 msgid "^feed/add/nosub/(.*)$"
 msgstr "^flux/ajouter/pasdab/(.*)$"
 
-#: urls.py:185
+#: urls.py:189
 msgid "^feed/add/(.*)$"
 msgstr "^flux/ajouter/(.*)$"
 
-#: urls.py:190
+#: urls.py:194
 msgid "^subscription/new/$"
 msgstr "^abonnement/nouveau/$"
 
-#: urls.py:198
+#: urls.py:202
 msgid "^json/feeds-completer/$"
 msgstr "^json/feeds-completer/$"
 
-#: urls.py:203
+#: urls.py:207
 msgid "^subscription/(?P<subscription>(?:[0-9a-f]{24,24})+)/cancel$"
 msgstr "^abonnement/(?P<subscription>(?:[0-9a-f]{24,24})+)/resilier$"
 
-#: urls.py:207
+#: urls.py:211
 msgid "^subscription/(?P<subscription>(?:[0-9a-f]{24,24})+)/cancel/do$"
 msgstr "^abonnement/(?P<subscription>(?:[0-9a-f]{24,24})+)/resilier/vraiment$"
 
-#: urls.py:211
+#: urls.py:215
 msgid "^subscription/(?P<subscription>(?:[0-9a-f]{24,24})+)$"
 msgstr "^abonnement/(?P<subscription>(?:[0-9a-f]{24,24})+)$"
 
-#: urls.py:215
+#: urls.py:219
 msgid "^import/contacts/$"
 msgstr "^importer/contacts/$"
 
-#: urls.py:225
+#: urls.py:229
 msgid "^import/url/(.*)$"
 msgstr "^importer/url/(.*)$"
 
-#: urls.py:229
+#: urls.py:233
 msgid "^status/article/([0-9a-f]{24,24})/$"
 msgstr "^etat/article/([0-9a-f]{24,24})/$"
 
-#: urls.py:233
+#: urls.py:237
 msgid "^webimport/$"
 msgstr "^import-web/$"
 
-#: urls.py:237
+#: urls.py:241
 msgid "^(?P<klass>\\w+)/(?P<oid>\\w+)/toggle/(?P<key>\\w+.\\w+)/?$"
 msgstr "^(?P<klass>\\w+)/(?P<oid>\\w+)/toggle/(?P<key>\\w+.\\w+)/?$"
 
-#: urls.py:240
+#: urls.py:244
 msgid "^help/$"
 msgstr "^aide/$"
 
-#: urls.py:242
+#: urls.py:246
 msgid "^signin_error/$"
 msgstr "^erreur_connexion/$"
 
-#: urls.py:247
-#, fuzzy
+#: urls.py:251
 msgid "^mailaccount/?$"
-msgstr "Comptes de réseaux sociaux"
+msgstr "^comptemail/?$"
 
-#: urls.py:252
+#: urls.py:256
 msgid "^mailaccount/(?P<pk>\\d+)/delete/?$"
 msgstr ""
 
-#: urls.py:263
+#: urls.py:267
 msgid "^mailfeed/?$"
-msgstr ""
+msgstr "^fluxmail/?$"
 
-#: urls.py:268
+#: urls.py:272
 #, fuzzy
 msgid "^mailfeed/(?P<pk>\\d+)/delete/?$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: urls.py:273
+#: urls.py:277
 #, fuzzy
 msgid "^mailfeed/(?P<mailfeed_pk>\\d+)/rules/?$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: urls.py:278
+#: urls.py:282
 #, fuzzy
 msgid "^mailfeed/(?P<mailfeed_pk>\\d+)/rule/(?P<pk>\\d+)/position/?$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: urls.py:283
+#: urls.py:287
+#, fuzzy
+msgid "^mailfeed/(?P<mailfeed_pk>\\d+)/rule/(?P<pk>\\d+)/group/?$"
+msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
+
+#: urls.py:292
 msgid "^mailfeed/(?P<mailfeed_pk>\\d+)/rule/(?P<pk>\\d+)/delete/?$"
 msgstr ""
 
-#: urls.py:290
+#: urls.py:299
 msgid "^grimport/(?:(?P<user_id>\\d+)/)?$"
 msgstr "^importgr/(?:(?P<user_id>\\d+)/)?$"
 
-#: urls.py:293
+#: urls.py:302
 msgid "^grstop/(?P<user_id>\\d+)/$"
 msgstr "^stopgr/(?P<user_id>\\d+)/$"
 
-#: urls.py:296
+#: urls.py:305
 msgid "^grtoggle/(?P<user_id>\\d+)/$"
 msgstr "^basculergr/(?P<user_id>\\d+)/$"
 
-#: urls.py:299
+#: urls.py:308
 msgid "^grstatus/$"
 msgstr "^etatgr/$"
 
-#: urls.py:304
+#: urls.py:313
+msgid "^history/$"
+msgstr "^historique/$"
+
+#: urls.py:318
+#, fuzzy
+msgid "^history/(?P<pk>\\d+)/delete/?$"
+msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
+
+#: urls.py:325
 msgid "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: forms/mailfeedrule.py:79
+#: urls.py:331
+msgid ""
+"^export/folder/(?P<folder_id>\\w{24,24})/(?P<since>[^/]+)/(?P<token>\\w{32,32})/?$"
+msgstr ""
+
+#: urls.py:336
+msgid "^export/(?P<since>[^/]+)/(?P<token>\\w{32,32})/?$"
+msgstr ""
+
+#: forms/mailfeedrule.py:82
 msgid "Common"
 msgstr "Communes"
 
@@ -514,7 +545,7 @@ msgstr ""
 msgid "(None)"
 msgstr "(aucun)"
 
-#: forms/selector.py:49 models/nonrel/folder.py:83
+#: forms/selector.py:49 models/nonrel/folder.py:84
 msgid "Parent folder"
 msgstr "Dossier parent"
 
@@ -576,15 +607,7 @@ msgstr "#ajout-dabonnement"
 msgid "You have to fill at least one of the two fields."
 msgstr "Vous devez remplir au moins un des deux champs."
 
-#: forms/selector.py:385
-msgid "Web addresses"
-msgstr "Adresses web"
-
-#: forms/selector.py:419
-msgid "Readability JSON export format detected."
-msgstr "Format d'export Readability détecté."
-
-#: models/nonrel/article.py:129
+#: models/nonrel/article.py:129 models/reldb/feed/combinedrule.py:68
 msgid "Title"
 msgstr "Titre"
 
@@ -622,7 +645,8 @@ msgstr ""
 "Dans le cas d'un article multi-pages, les URLs des pages supplémentaires "
 "sont là."
 
-#: models/nonrel/article.py:145 models/nonrel/feed.py:148
+#: models/nonrel/article.py:145 models/nonrel/feed.py:188
+#: models/reldb/feed/base.py:145
 msgid "restricted"
 msgstr "restreint"
 
@@ -645,7 +669,7 @@ msgstr ""
 "Cet article n'a plus d'URL publique, ou son contenu n'est plus récupérable "
 "pour un autre raison."
 
-#: models/nonrel/article.py:157
+#: models/nonrel/article.py:157 models/reldb/feed/combinedrule.py:76
 msgid "Word count"
 msgstr "Nombre de mots"
 
@@ -835,19 +859,22 @@ msgstr ""
 "{0} est déjà dans la chaine de parents de {1}. Enregistrer ce dernier comme "
 "parent du premier cité provoquerait un cycle et ce n'est pas autorisé."
 
-#: models/nonrel/feed.py:124 models/nonrel/tag.py:49
+#: models/nonrel/feed.py:164 models/nonrel/tag.py:49
+#: models/reldb/language.py:38 models/reldb/tag.py:49
+#: models/reldb/website.py:60 models/reldb/feed/base.py:132
 msgid "name"
 msgstr "nom"
 
-#: models/nonrel/feed.py:125
+#: models/nonrel/feed.py:165 models/reldb/website.py:62
+#: models/reldb/feed/rssatom.py:43
 msgid "url"
 msgstr "url"
 
-#: models/nonrel/feed.py:128
+#: models/nonrel/feed.py:168 models/reldb/feed/rssatom.py:46
 msgid "web site"
 msgstr "site web"
 
-#: models/nonrel/feed.py:129
+#: models/nonrel/feed.py:169 models/reldb/feed/rssatom.py:47
 msgid ""
 "Website public URL, linked to the globe icon in the source selector. This is"
 " not the XML feed URL."
@@ -855,16 +882,18 @@ msgstr ""
 "URL publique du site web, liée à l'icone « globe » dans le sélecteur de "
 "sources. Ce n'est PAS l'adresse du flux XML."
 
-#: models/nonrel/feed.py:132 models/nonrel/tag.py:50
-#: models/nonrel/website.py:56
+#: models/nonrel/feed.py:172 models/nonrel/tag.py:50
+#: models/nonrel/website.py:56 models/reldb/tag.py:50
+#: models/reldb/website.py:61 models/reldb/feed/base.py:133
 msgid "slug"
 msgstr "slug"
 
-#: models/nonrel/feed.py:134
+#: models/nonrel/feed.py:174 models/reldb/feed/combinedrule.py:69
+#: models/reldb/feed/rssatom.py:51
 msgid "tags"
 msgstr "tags"
 
-#: models/nonrel/feed.py:135
+#: models/nonrel/feed.py:175 models/reldb/feed/rssatom.py:52
 msgid ""
 "This tags are used only when articles from this feed have no tags already. "
 "They are assigned to new subscriptions too."
@@ -872,11 +901,11 @@ msgstr ""
 "Ces tags sont assignés aux nouveaux articles quand ils n'en ont pas eux-"
 "mêmes. Aux nouveaux abonnements aussi."
 
-#: models/nonrel/feed.py:141
+#: models/nonrel/feed.py:181 models/reldb/feed/base.py:136
 msgid "Languages"
 msgstr "Langues"
 
-#: models/nonrel/feed.py:143
+#: models/nonrel/feed.py:183 models/reldb/feed/base.py:137
 msgid ""
 "Set this to more than one language to help article language detection if "
 "none is set in articles."
@@ -884,22 +913,22 @@ msgstr ""
 "Activez une ou plusieurs langues qui aideront à détecter la langue des "
 "articles s'ils n'en ont pas."
 
-#: models/nonrel/feed.py:147
+#: models/nonrel/feed.py:187
 msgid "date added"
 msgstr "date d'ajout"
 
-#: models/nonrel/feed.py:149
+#: models/nonrel/feed.py:189 models/reldb/feed/base.py:146
 msgid ""
 "Is this feed available only to paid subscribers on its publisher's web site?"
 msgstr ""
 "Le flux est-il accessible seulement aux abonnés payants sur le site "
 "d'origine qui le propose ?"
 
-#: models/nonrel/feed.py:152
+#: models/nonrel/feed.py:192
 msgid "closed"
 msgstr "fermé"
 
-#: models/nonrel/feed.py:153
+#: models/nonrel/feed.py:193
 msgid ""
 "Indicate that the feed is not fetched anymore (see “closed_reason” for why)."
 " /!\\ WARNING: do not just tick the checkbox; there is a programmatic "
@@ -909,27 +938,27 @@ msgstr ""
 " /!\\ ATTENTION : ne cochez pas simplement la case, il y a une procédure "
 "programmée pour fermer proprement un flux."
 
-#: models/nonrel/feed.py:160
+#: models/nonrel/feed.py:200 models/reldb/feed/base.py:151
 msgid "date closed"
 msgstr "date de fermeture"
 
-#: models/nonrel/feed.py:161
+#: models/nonrel/feed.py:201 models/reldb/feed/base.py:153
 msgid "closed reason"
 msgstr "raison de la fermeture"
 
-#: models/nonrel/feed.py:164
+#: models/nonrel/feed.py:204 models/reldb/feed/base.py:158
 msgid "fetch interval"
 msgstr "intervalle de récupération"
 
-#: models/nonrel/feed.py:165
+#: models/nonrel/feed.py:205 models/reldb/feed/base.py:159
 msgid "last fetch"
 msgstr "dernière récupération"
 
-#: models/nonrel/feed.py:170
+#: models/nonrel/feed.py:210 models/reldb/website.py:72
 msgid "fetch limit"
 msgstr "limite de récupération"
 
-#: models/nonrel/feed.py:171
+#: models/nonrel/feed.py:211
 #, python-format
 msgid ""
 "The maximum number of articles that can be fetched from the feed in "
@@ -937,27 +966,28 @@ msgid ""
 "from real-life results."
 msgstr ""
 
-#: models/nonrel/feed.py:179
+#: models/nonrel/feed.py:219 models/reldb/feed/rssatom.py:57
 msgid "last etag"
 msgstr "dernier Etag"
 
-#: models/nonrel/feed.py:180 views/folder.py:76
+#: models/nonrel/feed.py:220 models/reldb/feed/rssatom.py:60
+#: views/folder.py:76
 msgid "modified"
 msgstr "modifié"
 
-#: models/nonrel/feed.py:186
+#: models/nonrel/feed.py:226 models/reldb/feed/base.py:170
 msgid "Notes"
 msgstr "Notes"
 
-#: models/nonrel/feed.py:187
+#: models/nonrel/feed.py:227 models/reldb/feed/base.py:171
 msgid "Internal notes for 1flow staff related to this feed."
 msgstr "Notes internes au personnel de 1flow, à propos de ce flux."
 
-#: models/nonrel/feed.py:190
+#: models/nonrel/feed.py:230 models/reldb/feed/base.py:174
 msgid "Shown in selector"
 msgstr "Affiché dans le sélecteur"
 
-#: models/nonrel/feed.py:192
+#: models/nonrel/feed.py:232 models/reldb/feed/base.py:175
 msgid ""
 "Make this feed available to new subscribers in the selector wizard. Without "
 "this, the user can still subscribe but he must know it and manually enter "
@@ -967,11 +997,13 @@ msgstr ""
 "recherche. Sans celà, les utilisateurs peuvent toujours s'abonner, mais il "
 "leur faut connaître et saisir l'adresse exacte du flux. "
 
-#: models/nonrel/feed.py:198
+#: models/nonrel/feed.py:238 models/reldb/website.py:89
+#: models/reldb/feed/base.py:188
 msgid "Thumbnail URL"
 msgstr "URL de vignette"
 
-#: models/nonrel/feed.py:199
+#: models/nonrel/feed.py:240 models/reldb/website.py:90
+#: models/reldb/feed/base.py:189
 msgid ""
 "Full URL of the thumbnail displayed in the feed selector. Can be hosted "
 "outside of 1flow."
@@ -979,69 +1011,69 @@ msgstr ""
 "URL complète de la vignette affichée dans le sélecteur. Peut être hébergée "
 "en dehors de 1flow."
 
-#: models/nonrel/feed.py:203
+#: models/nonrel/feed.py:243
 msgid "Description (FR)"
 msgstr "Description (FR)"
 
-#: models/nonrel/feed.py:204
+#: models/nonrel/feed.py:244
 msgid "Public description of the feed in French language. As Markdown."
 msgstr ""
 "Description publique du flux en langue française. Apparaîtra dans le "
 "sélecteur. En Markdown."
 
-#: models/nonrel/feed.py:207
+#: models/nonrel/feed.py:247
 msgid "Description (EN)"
 msgstr "Description (EN)"
 
-#: models/nonrel/feed.py:208
+#: models/nonrel/feed.py:248
 msgid "Public description of the feed in English language. As Markdown."
 msgstr "Public description of the feed in English language. As Markdown."
 
-#: models/nonrel/feed.py:331 models/nonrel/folder.py:115
+#: models/nonrel/feed.py:371 models/nonrel/folder.py:116
 #, python-brace-format
 msgid "{0} (#{1})"
 msgstr "{0} (#{1})"
 
-#: models/nonrel/feed.py:544
+#: models/nonrel/feed.py:584
 msgid "comments feed"
 msgstr "flux de commentaires"
 
-#: models/nonrel/feed.py:546
+#: models/nonrel/feed.py:586
 msgid "comments for"
 msgstr "commentaires pour "
 
-#: models/nonrel/feed.py:548
+#: models/nonrel/feed.py:588
 msgid "comments on"
 msgstr "commentaires sur "
 
-#: models/nonrel/feed.py:757
+#: models/nonrel/feed.py:797
 #, python-brace-format
 msgid "Imported item from {0}"
 msgstr "Élément importé depuis {0}"
 
-#: models/nonrel/folder.py:78 models/nonrel/subscription.py:114
+#: models/nonrel/folder.py:79 models/nonrel/subscription.py:114
 msgid "Name"
 msgstr "Nom"
 
-#: models/nonrel/folder.py:80
+#: models/nonrel/folder.py:81 models/reldb/history.py:49
 msgid "Owner"
 msgstr "Propriétaire"
 
-#: models/nonrel/folder.py:86
+#: models/nonrel/folder.py:87
 msgid "Children folders"
 msgstr "Dossier(s) enfant(s)"
 
-#: models/nonrel/folder.py:110
+#: models/nonrel/folder.py:111
 #, python-brace-format
 msgid "{0} (#{1}) for user {2}{3}{4}"
 msgstr "{0} (#{1}) de l'utilisateur {2}{3}{4}"
 
-#: models/nonrel/folder.py:112
+#: models/nonrel/folder.py:113
 #, python-brace-format
 msgid ", parent: {0} (#{1})"
 msgstr ", parent : {0} (#{1})"
 
-#: models/nonrel/folder.py:114
+#: models/nonrel/folder.py:115
 #, python-brace-format
 msgid ", children: {0}"
 msgstr ", enfant(s) : {0}"
@@ -2360,7 +2392,7 @@ msgstr "{0}+{1} (#{2})"
 msgid "language"
 msgstr "langue"
 
-#: models/nonrel/tag.py:57
+#: models/nonrel/tag.py:57 models/reldb/feed/combinedrule.py:73
 msgid "Origin"
 msgstr "Origine"
 
@@ -2372,13 +2404,13 @@ msgstr ""
 "Origine initiale de création du tag. Ça peut éventuellement servir plus tard"
 " à définir d'autres attributs."
 
-#: models/nonrel/tag.py:64
+#: models/nonrel/tag.py:64 models/reldb/tag.py:63
 msgid ""
 "Put a \"master\" tag here to help avoiding too much different tags (eg. "
 "singular and plurals) with the same meaning and loss of information."
 msgstr ""
 
-#: models/nonrel/tag.py:82
+#: models/nonrel/tag.py:82 models/reldb/tag.py:85
 #, python-brace-format
 msgid "{0} {1}⚐ (#{2})"
 msgstr "{0} {1}⚐ (#{2})"
@@ -2421,7 +2453,7 @@ msgstr ""
 "Ce champ ne devrait pas être éditable par les utilisateurs, ni dans "
 "l'interface d'administration."
 
-#: models/nonrel/website.py:63
+#: models/nonrel/website.py:63 models/reldb/website.py:115
 #, python-format
 msgid "(dupe of #%s)"
 msgstr "(duplicata de #%s)"
@@ -2485,18 +2517,78 @@ msgstr "Section d'aide"
 msgid "Help contents"
 msgstr "Contenu de l'aide"
 
-#: models/reldb/mailaccount.py:106
+#: models/reldb/history.py:46
+msgid "history line"
+msgstr "Entrée d'historique"
+
+#: models/reldb/history.py:47
+msgid "History lines"
+msgstr "Entrées d'historique"
+
+#: models/reldb/history.py:51 models/reldb/feed/base.py:141
+msgid "date created"
+msgstr "date de création"
+
+#: models/reldb/index.py:58
 #, fuzzy
+msgid "INdex name"
+msgstr "Nom du flux"
+
+#: models/reldb/index.py:60
+msgid "Index URI"
+msgstr "URI d'index"
+
+#: models/reldb/index.py:62
+msgid "Authorization token"
+msgstr "Jeton d'autorisation"
+
+#: models/reldb/index.py:63 models/reldb/index.py:73 models/reldb/index.py:86
+msgid "Active"
+msgstr "Actif"
+
+#: models/reldb/index.py:65 models/reldb/index.py:75
+msgid "Do we synchronize with this index?"
+msgstr ""
+
+#: models/reldb/index.py:83
+#, fuzzy
+msgid "Remote model name"
+msgstr "Nom du flux"
+
+#: models/reldb/index.py:85
+msgid "Remote model URI"
+msgstr ""
+
+#: models/reldb/index.py:88
+msgid "Do we synchronize this remote model locally?"
+msgstr ""
+
+#: models/reldb/language.py:39
+msgid "Django code"
+msgstr "Code Django"
+
+#: models/reldb/language.py:49
+msgid "models.language.verbose_name"
+msgstr "Language"
+
+#: models/reldb/language.py:50
+msgid "models.language.verbose_name_plural"
+msgstr "Languages"
+
+#: models/reldb/language.py:58
+#, python-brace-format
+msgid "{0}⚐ (#{1})"
+msgstr "{0}⚐ (#{1})"
+
+#: models/reldb/mailaccount.py:106
 msgid "Drafts"
 msgstr "Brouillons"
 
 #: models/reldb/mailaccount.py:107
-#, fuzzy
 msgid "Trash"
 msgstr "Corbeille"
 
 #: models/reldb/mailaccount.py:108
-#, fuzzy
 msgid "Sent Messages"
 msgstr "Message envoyés"
 
@@ -2513,14 +2605,12 @@ msgid "Junk"
 msgstr "Pourriel"
 
 #: models/reldb/mailaccount.py:112
-#, fuzzy
 msgid "Deleted Messages"
 msgstr "Messages supprimés"
 
 #: models/reldb/mailaccount.py:114
-#, fuzzy
 msgid "Archives"
-msgstr "Archiver"
+msgstr "Archives"
 
 #: models/reldb/mailaccount.py:116
 msgid "INBOX.Drafts"
@@ -2551,23 +2641,20 @@ msgid "INBOX.Deleted Messages"
 msgstr "Messages supprimés"
 
 #: models/reldb/mailaccount.py:123
-#, fuzzy
 msgid "INBOX.Archive"
-msgstr "Archiver"
+msgstr "INBOX.Archive"
 
 #: models/reldb/mailaccount.py:124
-#, fuzzy
 msgid "INBOX.Archives"
-msgstr "Archiver"
+msgstr "INBOX.Archives"
 
 #: models/reldb/mailaccount.py:126
 msgid "INBOX.INBOX.Junk"
 msgstr "Spam"
 
 #: models/reldb/mailaccount.py:127
-#, fuzzy
 msgid "INBOX.INBOX.Drafts"
-msgstr "Brouillons"
+msgstr "INBOX.INBOX.Brouillons"
 
 #: models/reldb/mailaccount.py:128
 #, fuzzy
@@ -2607,6 +2694,11 @@ msgstr "Spam"
 #: models/reldb/mailaccount.py:138 templates/snippets/selector/selector.html:9
 msgid "Inbox"
 msgstr "Boîte de réception"
+
+#: models/reldb/mailaccount.py:143 models/reldb/mailfeed.py:68
+#: models/reldb/feed/combined.py:45
+msgid "Creator"
+msgstr "Créateur"
 
 #: models/reldb/mailaccount.py:144 templates/mailaccount/list-create.html:57
 msgid "Account name"
@@ -2656,25 +2748,33 @@ msgstr "marquer l'e-mail lu"
 msgid "delete e-mail"
 msgstr "supprimer l'e-mail"
 
-#: models/reldb/mailfeed.py:60 templates/mailfeed/list-create.html:54
+#: models/reldb/mailfeed.py:61
+msgid "All rules must match"
+msgstr "Toutes les règles doivent correspondre"
+
+#: models/reldb/mailfeed.py:62
+msgid "Any rule matches"
+msgstr "N'importe laquelle des règles correspond"
+
+#: models/reldb/mailfeed.py:67 models/reldb/feed/combined.py:44
+#: templates/mailfeed/list-create.html:54
 msgid "Feed name"
 msgstr "Nom du flux"
 
-#: models/reldb/mailfeed.py:62 templates/mailfeed/list-create.html:56
-#, fuzzy
+#: models/reldb/mailfeed.py:69 templates/mailfeed/list-create.html:56
 msgid "Public"
-msgstr "URL publique"
+msgstr "Public"
 
-#: models/reldb/mailfeed.py:64
+#: models/reldb/mailfeed.py:71 models/reldb/feed/combined.py:48
 #, fuzzy
 msgid "Can other 1flow users subscribe to this feed?"
 msgstr "Notes internes au personnel de 1flow, à propos de ce flux."
 
-#: models/reldb/mailfeed.py:68
+#: models/reldb/mailfeed.py:75
 msgid "Match action"
 msgstr "Action si correspondance"
 
-#: models/reldb/mailfeed.py:71
+#: models/reldb/mailfeed.py:78
 msgid ""
 "Defines a global match action for all rules of the feed. You can override "
 "this value at the rule level, only for the ones you want."
@@ -2682,11 +2782,12 @@ msgstr ""
 "Définit une action globale pour toutes les règles du flux. Vous pouvez "
 "l'outrepasser au niveau des règles individuelles."
 
-#: models/reldb/mailfeed.py:78 models/reldb/mailfeedrule.py:124
+#: models/reldb/mailfeed.py:85 models/reldb/mailfeedrule.py:135
+#: models/reldb/feed/combinedrule.py:133
 msgid "Finish action"
 msgstr "Action de terminaison"
 
-#: models/reldb/mailfeed.py:81
+#: models/reldb/mailfeed.py:88
 msgid ""
 "Defines a global finish action for all rules of the feed. You can override "
 "this value at the rule level, only for the ones you want."
@@ -2694,188 +2795,208 @@ msgstr ""
 "Définit une action globale de terminaison pour toutes les règles du flux. "
 "Vous pouvez l'outrepasser au niveau des règles individuelles."
 
-#: models/reldb/mailfeed.py:92
+#: models/reldb/mailfeed.py:95
+msgid "Rules operation"
+msgstr "Opération sur les règles"
+
+#: models/reldb/mailfeed.py:98
+msgid "Condition between rules or rules groups."
+msgstr "Condition entre les règles"
+
+#: models/reldb/mailfeed.py:105
 msgid "Scrape whitelist"
 msgstr "Liste blanche d'inspection"
 
-#: models/reldb/mailfeed.py:93
+#: models/reldb/mailfeed.py:106
 msgid ""
 "Eventually refine URLs you want to scrape in the email body. Type a list of "
 "valid URLs patterns, and start with “re:” if you want to use a regular "
 "expression."
 msgstr ""
 
-#: models/reldb/mailfeed.py:100
+#: models/reldb/mailfeed.py:113
 msgid "Use scrape blacklist"
 msgstr "Utiliser la liste-noire ?"
 
-#: models/reldb/mailfeed.py:101
+#: models/reldb/mailfeed.py:114
 msgid ""
 "Use 1flow adblocker to avoid scrapeing email adds, unsubscribe links and the"
 " like."
 msgstr ""
 
-#: models/reldb/mailfeed.py:364
+#: models/reldb/mailfeed.py:378
 #, python-format
 msgid "%s, creator of the mail feed, closed it."
 msgstr ""
 
-#: models/reldb/mailfeedrule.py:59
+#: models/reldb/mailfeedrule.py:61
 msgid "Subject"
 msgstr "Sujet"
 
-#: models/reldb/mailfeedrule.py:60
+#: models/reldb/mailfeedrule.py:62
 msgid "Sender"
 msgstr "Expéditeur"
 
-#: models/reldb/mailfeedrule.py:61
-#, fuzzy
+#: models/reldb/mailfeedrule.py:63
 msgid "Recipient (To:, Cc: or Bcc:)"
 msgstr "Destinataire (À:, Cc: ou Cci:)"
 
-#: models/reldb/mailfeedrule.py:62
+#: models/reldb/mailfeedrule.py:64
 msgid "Mailing-list"
 msgstr "Liste de diffusion"
 
-#: models/reldb/mailfeedrule.py:63
+#: models/reldb/mailfeedrule.py:65
 msgid "Other header (please specify)"
 msgstr "Autre en-tête (spécifiez SVP)"
 
-#: models/reldb/mailfeedrule.py:67
+#: models/reldb/mailfeedrule.py:69 models/reldb/feed/combinedrule.py:80
 msgid "contains"
 msgstr "contient"
 
-#: models/reldb/mailfeedrule.py:68
+#: models/reldb/mailfeedrule.py:70 models/reldb/feed/combinedrule.py:81
 msgid "does not contain"
 msgstr "ne contient pas"
 
-#: models/reldb/mailfeedrule.py:69
+#: models/reldb/mailfeedrule.py:71 models/reldb/feed/combinedrule.py:82
 msgid "starts with"
 msgstr "commence par"
 
-#: models/reldb/mailfeedrule.py:70
+#: models/reldb/mailfeedrule.py:72 models/reldb/feed/combinedrule.py:83
 msgid "does not start with"
 msgstr "ne commence pas par"
 
-#: models/reldb/mailfeedrule.py:71
+#: models/reldb/mailfeedrule.py:73 models/reldb/feed/combinedrule.py:84
 msgid "ends with"
 msgstr "Se termine par"
 
-#: models/reldb/mailfeedrule.py:72
+#: models/reldb/mailfeedrule.py:74 models/reldb/feed/combinedrule.py:85
 msgid "does not end with"
 msgstr "ne se termine pas par"
 
-#: models/reldb/mailfeedrule.py:73
+#: models/reldb/mailfeedrule.py:75 models/reldb/feed/combinedrule.py:86
 msgid "strictly equals"
 msgstr "est strictement égal à"
 
-#: models/reldb/mailfeedrule.py:74
+#: models/reldb/mailfeedrule.py:76 models/reldb/feed/combinedrule.py:87
 msgid "is not equal to"
 msgstr "n'est pas égal à"
 
-#: models/reldb/mailfeedrule.py:75
-#, fuzzy
+#: models/reldb/mailfeedrule.py:77 models/reldb/feed/combinedrule.py:96
 msgid "matches regular expression"
-msgstr "Expression rationelle manuelle"
+msgstr "Correspond à l'expression rationelle"
 
-#: models/reldb/mailfeedrule.py:76
+#: models/reldb/mailfeedrule.py:78 models/reldb/feed/combinedrule.py:97
 msgid "does not match reg. expr."
 msgstr "ne correspond pas à l'expr. ratio."
 
-#: models/reldb/mailfeedrule.py:81 templates/mailfeedrule/list-create.html:65
+#: models/reldb/mailfeedrule.py:81
+msgid "Rules group"
+msgstr "Groupe de règles"
+
+#: models/reldb/mailfeedrule.py:85
+msgid "Rules group operation"
+msgstr "Opération sur les règles du groupe"
+
+#: models/reldb/mailfeedrule.py:88
+msgid "Condition between rules of this group."
+msgstr "Condition entre les règles de ce groupe"
+
+#: models/reldb/mailfeedrule.py:92 templates/mailfeedrule/list-create.html:73
 msgid "Mail account"
 msgstr "Compte e-mail"
 
-#: models/reldb/mailfeedrule.py:82
+#: models/reldb/mailfeedrule.py:93
 msgid "To apply this rule to all accounts, just don't choose any."
 msgstr "Pour appliquer cette règle à tous les comptes, n'en choisissez pas."
 
-#: models/reldb/mailfeedrule.py:85
+#: models/reldb/mailfeedrule.py:96
 msgid "Mailbox"
 msgstr "Boite e-mail"
 
-#: models/reldb/mailfeedrule.py:88
+#: models/reldb/mailfeedrule.py:99
 msgid "Recurse mailbox"
 msgstr "Recherche récursive"
 
-#: models/reldb/mailfeedrule.py:90 templates/mailfeedrule/list-create.html:67
+#: models/reldb/mailfeedrule.py:101 templates/mailfeedrule/list-create.html:75
 msgid "Header"
 msgstr "En-tête"
 
-#: models/reldb/mailfeedrule.py:93
+#: models/reldb/mailfeedrule.py:104 models/reldb/feed/combinedrule.py:107
 msgid "E-mail field on which the match type is applied."
 msgstr "En-tête de l'e-mail sur lequel la correspondance est appliquée"
 
-#: models/reldb/mailfeedrule.py:95
+#: models/reldb/mailfeedrule.py:106
 msgid "Other header"
 msgstr "En-tête personnalisé"
 
-#: models/reldb/mailfeedrule.py:97
+#: models/reldb/mailfeedrule.py:108
 msgid "Specify here if you chose “Other header” in previous field."
 msgstr "Spécifiez ici si vous avez précédemment choisi « autre en-tête »."
 
-#: models/reldb/mailfeedrule.py:100 templates/mailfeedrule/list-create.html:69
+#: models/reldb/mailfeedrule.py:111 models/reldb/feed/combinedrule.py:109
+#: templates/mailfeedrule/list-create.html:77
 msgid "Match type"
 msgstr "Opération"
 
-#: models/reldb/mailfeedrule.py:103
+#: models/reldb/mailfeedrule.py:114 models/reldb/feed/combinedrule.py:112
 msgid "Operation applied on the header to compare with match value."
 msgstr "Opération utilisée pour comparer votre valeur à celle de l'en-tête."
 
-#: models/reldb/mailfeedrule.py:106
-#, fuzzy
+#: models/reldb/mailfeedrule.py:117 models/reldb/feed/combinedrule.py:115
 msgid "Match case"
-msgstr "Correspondance"
+msgstr "Tenir compte de la casse"
 
-#: models/reldb/mailfeedrule.py:108
+#: models/reldb/mailfeedrule.py:119 models/reldb/feed/combinedrule.py:117
 msgid "Do we care about uppercase and lowercase characters?"
 msgstr "Les caractères majuscules et minuscules sont-ils importants ?"
 
-#: models/reldb/mailfeedrule.py:110
+#: models/reldb/mailfeedrule.py:121 models/reldb/feed/combinedrule.py:119
 msgid "Match value"
 msgstr "Correspondance"
 
-#: models/reldb/mailfeedrule.py:112
+#: models/reldb/mailfeedrule.py:123 models/reldb/feed/combinedrule.py:121
 msgid "Examples: “Tweet de”, “Google Alert:”. Can be any text."
 msgstr "Exemples : « Tweet de », « Alertes Google : ». N'importe quel texte."
 
-#: models/reldb/mailfeedrule.py:117
+#: models/reldb/mailfeedrule.py:128 models/reldb/feed/combinedrule.py:126
 msgid "Action when matched"
 msgstr "Action sur corresp."
 
-#: models/reldb/mailfeedrule.py:120 models/reldb/mailfeedrule.py:127
+#: models/reldb/mailfeedrule.py:131 models/reldb/mailfeedrule.py:138
+#: models/reldb/feed/combinedrule.py:129 models/reldb/feed/combinedrule.py:136
 msgid "Choose nothing to execute action defined at the feed level."
 msgstr ""
 "Ne choisissez rien pour utiliser l'action globale définie au niveau du flux."
 
-#: models/reldb/mailfeedrule.py:133
+#: models/reldb/mailfeedrule.py:145 models/reldb/feed/combinedrule.py:142
 msgid "Checked and valid"
 msgstr "Vérifiée et validé"
 
-#: models/reldb/mailfeedrule.py:207
+#: models/reldb/mailfeedrule.py:219 models/reldb/feed/combinedrule.py:216
 #, python-brace-format
 msgid "Rule #{2}: {3}, applied to {0} for MailFeed {1}"
 msgstr "Règle #{2} : {3}, appliquée à {0} pour flux de mail {1}"
 
-#: models/reldb/mailfeedrule.py:208
+#: models/reldb/mailfeedrule.py:220 models/reldb/feed/combinedrule.py:217
 msgid "all accounts"
 msgstr "tous les comptes"
 
-#: models/reldb/mailfeedrule.py:209
+#: models/reldb/mailfeedrule.py:221 models/reldb/feed/combinedrule.py:218
 #, python-brace-format
 msgid "account {0}"
 msgstr "compte {0}"
 
-#: models/reldb/mailfeedrule.py:212
+#: models/reldb/mailfeedrule.py:224 models/reldb/feed/combinedrule.py:221
 #, python-brace-format
 msgid "{0} {1} “{2}” → {3} → {4}"
 msgstr "{0} {1} « {2} » → {3} → {4}"
 
-#: models/reldb/mailfeedrule.py:219 models/reldb/mailfeedrule.py:221
+#: models/reldb/mailfeedrule.py:231 models/reldb/mailfeedrule.py:233
+#: models/reldb/feed/combinedrule.py:228 models/reldb/feed/combinedrule.py:230
 msgid "feed default"
 msgstr "directive du flux"
 
-#: models/reldb/mailfeedrule.py:253
+#: models/reldb/mailfeedrule.py:265 models/reldb/feed/combinedrule.py:262
 #, python-brace-format
 msgid ""
 "Unrecognized header name “{0}”. Please look at http://bit.ly/smtp-headers to"
@@ -2885,19 +3006,226 @@ msgstr ""
 "/smtp-headers (en anglais), vous y trouverez une liste d'en-têtes valides. "
 "Ça ne serait pas juste une faute de frappe ?"
 
-#: models/reldb/mailfeedrule.py:264
-#, fuzzy, python-brace-format
+#: models/reldb/mailfeedrule.py:276 models/reldb/feed/combinedrule.py:273
+#, python-brace-format
 msgid "Invalid regular expression “{0}”: {1}"
-msgstr "Expression rationelle manuelle"
+msgstr "Expression rationnelle « {0} » invalide : {1}"
+
+#: models/reldb/tag.py:70
+msgid "Tag"
+msgstr "Mot-clef"
+
+#: models/reldb/userimport.py:59
+msgid "User import"
+msgstr "Import utilisateur"
+
+#: models/reldb/userimport.py:60
+msgid "User imports"
+msgstr "Imports utilisateur"
+
+#: models/reldb/userimport.py:68
+msgid "new"
+msgstr "nouveau"
+
+#: models/reldb/userimport.py:69
+msgid "running"
+msgstr "en cours"
+
+#: models/reldb/userimport.py:70
+msgid "finished"
+msgstr "terminé"
+
+#: models/reldb/userimport.py:71
+msgid "failed"
+msgstr "échoué"
+
+#: models/reldb/userimport.py:75
+msgid "date started"
+msgstr "date de démarrage"
+
+#: models/reldb/userimport.py:77
+msgid "date finished"
+msgstr "date de terminaison"
+
+#: models/reldb/userimport.py:78 templates/mailaccount/list-create.html:64
+#: templates/mailfeed/list-create.html:55
+#: templates/mailfeedrule/list-create.html:82
+msgid "Status"
+msgstr "État"
+
+#: models/reldb/userimport.py:82
+msgid "Web addresses"
+msgstr "Adresses web"
+
+#: models/reldb/userimport.py:83
+msgid "lines"
+msgstr "lignes"
+
+#: models/reldb/userimport.py:90
+#, python-brace-format
+msgid "Import #{0} for user {1}"
+msgstr "Import #{0} de l'utilisateur {1}"
+
+#: models/reldb/userimport.py:187
+msgid "Readability JSON export format detected."
+msgstr "Format d'export Readability détecté."
+
+#: models/reldb/userimport.py:292
+#, python-brace-format
+msgid "Successfully subscribed to new feed “{0}”. Thank you!"
+msgstr "Abonné au nouveau flux « {0} ». Merci !"
+
+#: models/reldb/userimport.py:297
+#, python-brace-format
+msgid "Successfully subscribed to feed “{0}”."
+msgstr "Abonné au flux « {0} »."
+
+#: models/reldb/userimport.py:334
+#, python-brace-format
+msgid "Successfully imported article “{0}”."
+msgstr "Article « {0} » importé."
+
+#: models/reldb/website.py:73
+#, python-brace-format
+msgid ""
+"The maximum number of articles that can be fetched from the website in "
+"parallel. If less than {0}, do not touch: the workers have already tuned it "
+"from real-life results."
+msgstr ""
+
+#: models/reldb/website.py:82 models/reldb/feed/base.py:181
+msgid "Thumbnail"
+msgstr "Vignette"
+
+#: models/reldb/website.py:84 models/reldb/feed/base.py:183
+msgid ""
+"Use either thumbnail when 1flow instance hosts the image, or thumbnail_url "
+"when hosted elsewhere. If both are filled, thumbnail takes precedence."
+msgstr ""
+
+#: models/reldb/website.py:94 models/reldb/feed/base.py:194
+msgid "Short description"
+msgstr "Description courte"
+
+#: models/reldb/website.py:95 models/reldb/feed/base.py:195
+#, fuzzy
+msgid ""
+"Public short description of the feed, for auto-completer listing. Markdown "
+"text."
+msgstr ""
+"Description publique du flux en langue française. Apparaîtra dans le "
+"sélecteur. En Markdown."
+
+#: models/reldb/website.py:99 models/reldb/feed/base.py:199
+msgid "Description"
+msgstr "Description"
+
+#: models/reldb/website.py:100 models/reldb/feed/base.py:200
+#, fuzzy
+msgid "Public description of the feed. Markdown text."
+msgstr ""
+"Description publique du flux en langue française. Apparaîtra dans le "
+"sélecteur. En Markdown."
+
+#: models/reldb/website.py:104
+msgid "Web site"
+msgstr "Site web"
+
+#: models/reldb/website.py:105
+msgid "Web sites"
+msgstr "Sites web"
+
+#: models/reldb/feed/base.py:123
+msgid "Base feed"
+msgstr "Flux de base"
+
+#: models/reldb/feed/base.py:124
+msgid "Base feeds"
+msgstr "Flux de base"
+
+#: models/reldb/feed/base.py:142
+msgid "Internal"
+msgstr "Interne"
+
+#: models/reldb/feed/base.py:149
+msgid "active"
+msgstr "actif"
+
+#: models/reldb/feed/base.py:150
+msgid "Is the feed refreshed or dead?"
+msgstr ""
+
+#: models/reldb/feed/combined.py:46
+msgid "Restricted"
+msgstr "Restreint"
+
+#: models/reldb/feed/combinedrule.py:67
+msgid "Title or tags"
+msgstr "Titre ou mots-clefs"
+
+#: models/reldb/feed/combinedrule.py:70
+msgid "content"
+msgstr "contenu"
+
+#: models/reldb/feed/combinedrule.py:71
+msgid "Any (eg. title, tags or content)"
+msgstr "N'importe lequel (c.à d. titre, mots-clefs ou contenu)"
+
+#: models/reldb/feed/combinedrule.py:72
+msgid "Type"
+msgstr "Type"
+
+#: models/reldb/feed/combinedrule.py:74
+msgid "Language"
+msgstr "Langue"
+
+#: models/reldb/feed/combinedrule.py:75
+msgid "Is restricted"
+msgstr "restreint ?"
+
+#: models/reldb/feed/combinedrule.py:88
+msgid "is greater than"
+msgstr "est plus grand que"
+
+#: models/reldb/feed/combinedrule.py:89
+msgid "is greater or equal than"
+msgstr "est plus grand ou égal à"
+
+#: models/reldb/feed/combinedrule.py:90
+msgid "is lower than"
+msgstr "est plus petit que"
+
+#: models/reldb/feed/combinedrule.py:91
+msgid "is lower or equal than"
+msgstr "est plus petit ou égal à"
+
+#: models/reldb/feed/combinedrule.py:92
+msgid "is not greater than"
+msgstr "n'est pas supérieur à"
+
+#: models/reldb/feed/combinedrule.py:93
+msgid "is not greater or equal than"
+msgstr "n'est pas supérieur ou égal à"
+
+#: models/reldb/feed/combinedrule.py:94
+msgid "is not lower than"
+msgstr "n'est pas inférieur à"
+
+#: models/reldb/feed/combinedrule.py:95
+msgid "is not lower or equal than"
+msgstr "n'est pas plus petit ou égal à"
+
+#: models/reldb/feed/combinedrule.py:104
+msgid "Field"
+msgstr "Champ"
 
 #: tasks/__init__.py:81
 msgid "Forcing all feed refresh…"
 msgstr "Déclenchement forcé du rafraîchissement de tous les flux…"
 
 #: tasks/__init__.py:169
-#, fuzzy
 msgid "Forcing check of email accounts…"
-msgstr "Basculer vers les comptes e-mail"
+msgstr "Vérification forcée des comptes e-mail…"
 
 #: tasks/checks.py:125
 #, python-brace-format
@@ -3120,7 +3448,7 @@ msgstr "Contribuez"
 msgid "Donate:"
 msgstr "Donnez :"
 
-#: templates/help.html:3 templates/snippets/navbar.html:231
+#: templates/help.html:3 templates/snippets/navbar.html:234
 msgid "Features"
 msgstr "Fonctionnalités"
 
@@ -3314,7 +3642,7 @@ msgctxt "male singular"
 msgid "General"
 msgstr "Général"
 
-#: templates/read-endless.html:3 templates/snippets/navbar.html:110
+#: templates/read-endless.html:3 templates/snippets/navbar.html:113
 msgid "Read"
 msgstr "Lecture"
 
@@ -3344,6 +3672,144 @@ msgstr ""
 "Soit vous n'avez pas autorisé <strong>1flow</strong> à accéder à votre compte de réseau social, soit le site distant nous a envoyé une boule puante. Nous en sommes désolés.<br />\n"
 "Voulez-vous retourner <a href=\"%(home_url)s\">à l'accueil</a> ?"
 
+#: templates/history/list.html:4 templates/history/list.html.py:43
+#: templates/snippets/navbar.html:60
+msgid "History"
+msgstr "Historique"
+
+#: templates/history/list.html:19
+#, python-format
+msgid ""
+"\n"
+"\t\t \t\t    %(counter)s entry\n"
+"\t\t \t\t"
+msgid_plural ""
+"\n"
+"\t\t\t\t\t%(counter)s entries\n"
+"\t\t \t\t"
+msgstr[0] ""
+"\n"
+"%(counter)s entrée"
+msgstr[1] ""
+"\n"
+"%(counter)s entrées"
+
+#: templates/history/list.html:26
+msgid "Clear"
+msgstr "Effacer"
+
+#: templates/history/list.html:32
+msgid "Go to account"
+msgstr "Retour au compte"
+
+#: templates/history/list.html:51
+msgid "Event"
+msgstr "Évènement"
+
+#: templates/history/list.html:52
+msgid "Date"
+msgstr "Date"
+
+#: templates/history/list.html:53 templates/mailaccount/list-create.html:65
+#: templates/mailfeed/list-create.html:60
+#: templates/mailfeedrule/list-create.html:83
+msgid "Actions"
+msgstr "Actions"
+
+#: templates/history/list.html:80
+msgid ""
+"\n"
+"\t\t\t    No history yet.\n"
+"\t\t\t"
+msgstr ""
+"\n"
+"Pas encore d'historique."
+
+#: templates/history/userimport.html:7
+#, python-format
+msgid ""
+"\n"
+"\t\t   An import of %(counter)s item has not yet started\n"
+"\t\t"
+msgid_plural ""
+"\n"
+"\t\t   An import of %(counter)s items has not yet started\n"
+"\t\t"
+msgstr[0] ""
+"\n"
+"L'import d'%(counter)s élément n'a pas encore démarré"
+msgstr[1] ""
+"\n"
+"L'import de %(counter)s éléments n'a pas encore démarré"
+
+#: templates/history/userimport.html:17
+#, python-format
+msgid ""
+"\n"
+"\t\t   An import of %(counter)s item is running in the background. So far:\n"
+"\t\t"
+msgid_plural ""
+"\n"
+"\t\t   An import of %(counter)s items is running in the background. So far:\n"
+"\t\t"
+msgstr[0] ""
+"\n"
+"L'import de %(counter)s éléments est en cours à l'arrière-plan. Jusqu'à présent :"
+msgstr[1] ""
+"\n"
+"L'import d'%(counter)s élément est en cours à l'arrière-plan. Jusqu'à présent :"
+
+#: templates/history/userimport.html:30
+#, python-format
+msgid ""
+"\n"
+"\t\t   %(counter)s web item imported\n"
+"\t\t"
+msgid_plural ""
+"\n"
+"\t\t\t%(counter)s web items imported\n"
+"\t\t"
+msgstr[0] ""
+"\n"
+"%(counter)s élément web importé"
+msgstr[1] ""
+"\n"
+"%(counter)s éléments web importés"
+
+#: templates/history/userimport.html:51
+#, python-format
+msgid ""
+"\n"
+"\t   %(counter)s RSS/Atom feed subscribed to\n"
+"\t"
+msgid_plural ""
+"\n"
+"\t\t%(counter)s RSS/Atom feeds subscribed to\n"
+"\t"
+msgstr[0] ""
+"\n"
+"Abonné(e) à %(counter)s flux RSS/Atom"
+msgstr[1] ""
+"\n"
+"Abonné(e) à %(counter)s flux RSS/Atom"
+
+#: templates/history/userimport.html:72
+#, python-format
+msgid ""
+"\n"
+"\t   %(counter)s item failed to import\n"
+"\t"
+msgid_plural ""
+"\n"
+"\t\t%(counter)s items failed to import\n"
+"\t"
+msgstr[0] ""
+"\n"
+"%(counter)s élément n'a pas pu être importé"
+msgstr[1] ""
+"\n"
+"%(counter)s éléments n'ont pas pu être importés"
+
 #: templates/mailaccount/form.html:8 templates/mailfeed/form.html:9
 msgctxt "male"
 msgid "Please create your first one:"
@@ -3355,7 +3821,7 @@ msgstr "Merci de saisir les paramètres pour un nouveau compte e-mail"
 
 #: templates/mailaccount/form.html:33 templates/mailfeed/form.html:25
 #: templates/mailfeedrule/form.html:24
-#: templates/snippets/selector/manage-folder.html:52
+#: templates/snippets/selector/manage-folder.html:63
 #: templates/snippets/selector/manage-subscription.html:92
 msgid "Save"
 msgstr "Enregistrer"
@@ -3408,18 +3874,6 @@ msgstr "Port"
 #: templates/mailaccount/list-create.html:62
 msgid "password"
 msgstr "mot de passe"
-
-#: templates/mailaccount/list-create.html:64
-#: templates/mailfeed/list-create.html:55
-#: templates/mailfeedrule/list-create.html:74
-msgid "Status"
-msgstr "État"
-
-#: templates/mailaccount/list-create.html:65
-#: templates/mailfeed/list-create.html:60
-#: templates/mailfeedrule/list-create.html:75
-msgid "Actions"
-msgstr "Actions"
 
 #: templates/mailaccount/list-create.html:74
 msgid "auto"
@@ -3569,41 +4023,45 @@ msgstr "Action par défaut si correspondance :"
 msgid "Global feed final action:"
 msgstr "Action de terminaison par défaut :"
 
-#: templates/mailfeedrule/list-create.html:68
+#: templates/mailfeedrule/list-create.html:58
+msgid "Inter-rule/groups operation:"
+msgstr "Opération entre les règles / les groupes :"
+
+#: templates/mailfeedrule/list-create.html:76
 msgid "Custom header"
 msgstr "En-tête personnalisé"
 
-#: templates/mailfeedrule/list-create.html:70
+#: templates/mailfeedrule/list-create.html:78
 msgid "Value"
 msgstr "Valeur"
 
-#: templates/mailfeedrule/list-create.html:71
+#: templates/mailfeedrule/list-create.html:79
 msgid "Result"
 msgstr "Résultat"
 
-#: templates/mailfeedrule/list-create.html:72
+#: templates/mailfeedrule/list-create.html:80
 msgid "Finish"
 msgstr "Terminaison"
 
-#: templates/mailfeedrule/list-create.html:81
+#: templates/mailfeedrule/list-create.html:90
 #: templates/navbars/read-endless.html:33
 msgid "All"
 msgstr "Tout"
 
-#: templates/mailfeedrule/list-create.html:89
+#: templates/mailfeedrule/list-create.html:99
 msgid "not applicable"
 msgstr "non applicable"
 
-#: templates/mailfeedrule/list-create.html:93
+#: templates/mailfeedrule/list-create.html:103
 msgid "please edit"
 msgstr "éditez SVP"
 
-#: templates/mailfeedrule/list-create.html:99
-#: templates/mailfeedrule/list-create.html:100
+#: templates/mailfeedrule/list-create.html:109
+#: templates/mailfeedrule/list-create.html:110
 msgid "global feed action"
 msgstr "action par défaut"
 
-#: templates/mailfeedrule/list-create.html:122
+#: templates/mailfeedrule/list-create.html:135
 #, python-format
 msgid ""
 "\n"
@@ -3613,7 +4071,7 @@ msgstr ""
 "\n"
 "Pas encore de règle pour <strong>%(feed_name)s</strong>."
 
-#: templates/mailfeedrule/list-create.html:138
+#: templates/mailfeedrule/list-create.html:151
 msgid ""
 "<p>Notes:</p><ul><li><strong>all mailboxes</strong> except some specific "
 "ones (<em>Drafts</em>, <em>Sent</em>, <em>Trash</em>, <em>Spam</em>…) will "
@@ -3802,7 +4260,7 @@ msgstr ""
 #: templates/snippets/mail-collapse-js-glue.html:32
 #: templates/snippets/import/import-web-pages.html:54
 #: templates/snippets/selector/add-subscription.html:152
-#: templates/snippets/selector/manage-folder.html:49
+#: templates/snippets/selector/manage-folder.html:60
 #: templates/snippets/selector/manage-subscription.html:91
 #: templates/snippets/share/share-one.html:81
 msgid "Cancel"
@@ -3816,53 +4274,69 @@ msgstr "(dés-)activer la navigation"
 msgid "Account"
 msgstr "Compte"
 
-#: templates/snippets/navbar.html:64
+#: templates/snippets/navbar.html:67
 msgid "Constance config."
 msgstr "Config. constance"
 
-#: templates/snippets/navbar.html:65
+#: templates/snippets/navbar.html:68
 msgid "Django admin."
 msgstr "Admin. Django"
 
-#: templates/snippets/navbar.html:66
+#: templates/snippets/navbar.html:69
 msgid "1flow translations"
 msgstr "Traductions 1flow"
 
-#: templates/snippets/navbar.html:74
+#: templates/snippets/navbar.html:77
 msgid "Sign Out"
 msgstr "Déconnexion"
 
-#: templates/snippets/navbar.html:81
+#: templates/snippets/navbar.html:84
 msgid "Sign in"
 msgstr "Connexion"
 
-#: templates/snippets/navbar.html:117
+#: templates/snippets/navbar.html:120
 msgid "Write"
 msgstr "Écrire"
 
-#: templates/snippets/navbar.html:122
+#: templates/snippets/navbar.html:125
 msgid "Collaborate"
 msgstr "Collaborer"
 
-#: templates/snippets/navbar.html:132
+#: templates/snippets/navbar.html:135
 msgid "Press Shift-Alf-F to focus"
 msgstr "Pressez Shift-Alt-F pour activer"
 
-#: templates/snippets/navbar.html:156
+#: templates/snippets/navbar.html:159
 msgid "Maintenance"
 msgstr "Maintenance"
 
-#: templates/snippets/navbar.html:192
+#: templates/snippets/navbar.html:195
 msgid "System statistics"
 msgstr "Statistiques système"
 
-#: templates/snippets/navbar.html:237
+#: templates/snippets/navbar.html:240
 msgid "About"
 msgstr "À propos"
 
-#: templates/snippets/navbar.html:238
+#: templates/snippets/navbar.html:241
 msgid "Contact"
 msgstr "Contact"
+
+#: templates/snippets/history/userimport-articles.html:3
+msgid "Still in your database"
+msgstr "Présent dans vos données"
+
+#: templates/snippets/history/userimport-articles.html:12
+msgid "Not in your database anymore"
+msgstr "Supprimé de vos données"
+
+#: templates/snippets/history/userimport-feeds.html:4
+msgid "Still subscribed"
+msgstr "Encore abonné(e)"
+
+#: templates/snippets/history/userimport-feeds.html:21
+msgid "Not subscribed anymore"
+msgstr "Plus abonné(e)"
 
 #: templates/snippets/home/extrajs-footer.js.html:27
 msgid "Returning to source selector…"
@@ -4320,12 +4794,12 @@ msgid "in"
 msgstr "dans"
 
 #: templates/snippets/read/read-action-original.html:2
-#: templatetags/coretags.py:477
+#: templatetags/coretags.py:518
 msgid "Display on the original website"
 msgstr "Afficher sur le site d'origine"
 
 #: templates/snippets/read/read-action-original.html:5
-#: templatetags/coretags.py:479
+#: templatetags/coretags.py:520
 msgid "Read original"
 msgstr "Voir l'original"
 
@@ -4696,11 +5170,11 @@ msgstr "Pas d'abonnement dans « %(folder_name)s »."
 #, python-format
 msgid ""
 "\n"
-"            Successfully launched import of %(count)s web page(s).\n"
+"            Successfully launched import of %(count)s elements(s). You can follow the status in your import history.\n"
 "        "
 msgstr ""
 "\n"
-"Import de %(count)s élément(s) web lancé avec succès."
+"Import de %(count)s élément(s) lancé avec succès. Vous pouvez retrouver l'avancement dans votre historique."
 
 #: templates/snippets/selector/import-web-items-result.html:13
 msgid "No item imported"
@@ -4737,16 +5211,26 @@ msgstr "Ajouter un dossier"
 msgid "Delete this folder"
 msgstr "Supprimer ce dossier"
 
-#: templates/snippets/selector/manage-folder.html:36
+#: templates/snippets/selector/manage-folder.html:35
+msgid "Purge this folder"
+msgstr "Purger ce dossier"
+
+#: templates/snippets/selector/manage-folder.html:38
 msgid ""
 "\n"
-"                        If you delete this folder, all its subfolders will be moved one level up in the folder hierarchy. All its direct subscriptions will be moved to “unclassified”. Subscriptions in its subfolders will not be affected.\n"
+"                        If you <em>delete</em> this folder, all its subfolders will be moved one level up in the folder hierarchy. All its direct subscriptions will be moved to “unclassified”. Subscriptions in its subfolders will not be affected.<br ><br />\n"
+"                        If you <em>purge</em> it, <strong>everything inside will be deleted</strong> (and subscriptions cancelled). Use with caution, there is no confirmation.\n"
 "                    "
 msgstr ""
 "\n"
-"Si vous supprimez ce dossier, tous ses sous-dossiers seront déplacés d'un niveau vers le haut dans la hiérarchie. Tous les abonnements qu'il contient directement deviendront « non-classés ». Les abonnements des sous-dossiers ne seront pas modifiés."
+"Si vous supprimez ce dossier, tous ses sous-dossiers seront déplacés d'un niveau vers le haut dans la hiérarchie. Tous les abonnements qu'il contient directement deviendront « non-classés ». Les abonnements des sous-dossiers ne seront pas modifiés.<br ><br />\n"
+"Si vous le <em>purgez</em>, <strong>tout son contenu sera supprimé</strong> (et les abonnements résiliés). Utilisez avec discernement, il n'y a pas de confirmation."
 
-#: templates/snippets/selector/manage-folder.html:52
+#: templates/snippets/selector/manage-folder.html:47
+msgid "Folder identifier:"
+msgstr "Identificateur de dossier :"
+
+#: templates/snippets/selector/manage-folder.html:63
 msgid "Create"
 msgstr "Créer"
 
@@ -5009,69 +5493,32 @@ msgid "MongoDB"
 msgstr "MongoDB"
 
 #: templates/status/index.html:20
-#, fuzzy
 msgid "System"
-msgstr "Groupe système ?"
+msgstr "Système"
 
 #: templates/status/mongodb-database.html:3
-#, fuzzy, python-format
-msgid "Database <strong>%(dbname)s</strong>"
-msgstr ""
-"\n"
-"Règles pour <strong>%(feed_name)s</strong>"
-
-#: templates/status/mongodb-database.html:9
-msgid "occupied space"
-msgstr "espace occupé"
-
-#: templates/status/mongodb-database.html:10
-msgid "data size"
-msgstr "taille des données"
-
-#: templates/status/mongodb-database.html:11
-#, fuzzy
-msgid "collections"
-msgstr "Actions"
-
-#: templates/status/mongodb-database.html:12
-msgid "total objects"
-msgstr "objets totaux"
-
-#: templates/status/mongodb-database.html:13
 #, python-format
-msgid "index size<br /><span class='muted'>(%% of data size)</span>"
-msgstr ""
-"taille des index<br /><span class='muted'>(%% de la taille des "
-"données)</span>"
+msgid "Database <strong>%(dbname)s</strong>"
+msgstr "Base de données <strong>%(dbname)s</strong>"
 
-#: templates/status/mongodb-database.html:30
-msgid "data size:"
-msgstr "taille des données :"
-
-#: templates/status/system.html:3
-#, fuzzy
-msgid "Host information"
-msgstr "Informations d'admin."
-
-#: templates/status/system.html:6
-#, fuzzy
+#: templates/status/mongodb-database.html:10 templates/status/system.html:6
 msgid "hostname:"
-msgstr "Nom d'hote"
+msgstr "Nom d'hote :"
 
-#: templates/status/system.html:7
+#: templates/status/mongodb-database.html:11 templates/status/system.html:7
 msgid "OS:"
 msgstr "Système d'exploitation :"
 
-#: templates/status/system.html:8
+#: templates/status/mongodb-database.html:12 templates/status/system.html:8
 msgid "architecture:"
 msgstr "Architecture :"
 
-#: templates/status/system.html:13
+#: templates/status/mongodb-database.html:17 templates/status/system.html:13
 msgid "with NUMA"
 msgstr "avec NUMA"
 
-#: templates/status/system.html:15
-#, fuzzy, python-format
+#: templates/status/mongodb-database.html:19 templates/status/system.html:15
+#, python-format
 msgid ""
 "\n"
 "\t\t\t%(counter)s core\n"
@@ -5082,10 +5529,45 @@ msgid_plural ""
 "\t\t"
 msgstr[0] ""
 "\n"
-"%(counter)s règle"
+"%(counter)s cœurs"
 msgstr[1] ""
 "\n"
-"%(counter)s règles"
+"%(counter)s cœur"
+
+#: templates/status/mongodb-database.html:32
+msgid "Hosted on the same physical machine."
+msgstr ""
+
+#: templates/status/mongodb-database.html:46
+msgid "occupied space"
+msgstr "espace occupé"
+
+#: templates/status/mongodb-database.html:47
+msgid "data size"
+msgstr "taille des données"
+
+#: templates/status/mongodb-database.html:48
+msgid "collections"
+msgstr "collections"
+
+#: templates/status/mongodb-database.html:49
+msgid "total objects"
+msgstr "objets totaux"
+
+#: templates/status/mongodb-database.html:50
+#, python-format
+msgid "index size<br /><span class='muted'>(%% of data size)</span>"
+msgstr ""
+"taille des index<br /><span class='muted'>(%% de la taille des "
+"données)</span>"
+
+#: templates/status/mongodb-database.html:67
+msgid "data size:"
+msgstr "taille des données :"
+
+#: templates/status/system.html:3
+msgid "Web server information"
+msgstr "Informations sur le serveur web"
 
 #: templates/status/system.html:24
 msgid "Used memories"
@@ -5128,6 +5610,15 @@ msgstr "Espace utilisé sur %(mntpt)s : %(percent)s%% (%(value)s)"
 #: templates/widgets/delete-form-button.html:5
 msgid "delete this entry"
 msgstr "supprimer cette entrée"
+
+#: templates/widgets/group-buttons.html:27
+#: templates/widgets/group-buttons.html:40
+msgid "Merge with previous entry/group"
+msgstr "Grouper avec la règle / le groupe précédent"
+
+#: templates/widgets/group-buttons.html:53
+msgid "Merge with next entry/group"
+msgstr "Grouper avec la règle ou le groupe suivant"
 
 #: templates/widgets/position-buttons.html:7
 msgid "Move this entry up"
@@ -5254,7 +5745,7 @@ msgstr "Vous avez {0} articles contenant des citations"
 msgid "You have {0} articles marked as knowledge"
 msgstr "Vous avez {0} éléments marqués comme savoir ou connaissance"
 
-#: templatetags/coretags.py:116
+#: templatetags/coretags.py:157
 msgid ""
 "Feature coming soon. More information on the 1flow blog "
 "http://blog.1flow.io/ or Twitter @1flow_io."
@@ -5262,76 +5753,85 @@ msgstr ""
 "Fonctionnalité en cours de développement. Plus d'informations sur le blog "
 "1flow http://blog.1flow.io/ ou sur Twitter @1flow_io."
 
-#: templatetags/coretags.py:138
+#: templatetags/coretags.py:179
 msgid "Search in folder…"
 msgstr "Rechercher dans le dossier…"
 
-#: templatetags/coretags.py:141
+#: templatetags/coretags.py:182
 msgid "Search in feed…"
 msgstr "Rechercher dans le flux…"
 
-#: templatetags/coretags.py:143
+#: templatetags/coretags.py:184
 msgid "Search…"
 msgstr "Rechercher…"
 
-#: templatetags/coretags.py:280
+#: templatetags/coretags.py:321
 msgid "You have nothing in this list yet."
 msgstr "Vous n'avez rien dans cette liste"
 
-#: templatetags/coretags.py:325
+#: templatetags/coretags.py:366
 msgid "M+"
 msgstr "M+"
 
-#: templatetags/coretags.py:330
+#: templatetags/coretags.py:371
 msgid "k+"
 msgstr "k+"
 
-#: templatetags/coretags.py:345
+#: templatetags/coretags.py:386
 #, python-brace-format
 msgid "{0} articles"
 msgstr "{0} articles"
 
-#: templatetags/coretags.py:571 templatetags/coretags.py:573
+#: templatetags/coretags.py:612 templatetags/coretags.py:614
 msgid "Convert to full-text"
 msgstr "Convertir en plein-texte"
 
-#: templatetags/coretags.py:572
+#: templatetags/coretags.py:613
 msgid "Switch back to original"
 msgstr "Revenir à l'original"
 
-#: templatetags/coretags.py:574
+#: templatetags/coretags.py:615
 msgid "View original"
 msgstr "Voir l'original"
 
-#: templatetags/coretags.py:575
+#: templatetags/coretags.py:616
 msgid "converted"
 msgstr "converti"
 
-#: templatetags/coretags.py:577 templatetags/coretags.py:579
+#: templatetags/coretags.py:618 templatetags/coretags.py:620
 msgctxt "awesome-font icon name"
 msgid "exchange"
 msgstr "exchange"
 
-#: templatetags/coretags.py:647
-#, fuzzy, python-brace-format
+#: templatetags/coretags.py:692
+msgid "Any matching rule in the group will do it. Click to change."
+msgstr "N'importe laquelle des règles du groupe suffit. Cliquez pour changer."
+
+#: templatetags/coretags.py:693
+msgid "All rules of the group must match. Click to change."
+msgstr ""
+"Toutes les règles du groupe doivent être validées. Cliquez pour changer."
+
+#: templatetags/coretags.py:712
+#, python-brace-format
 msgid "Account successfully working, tested {ago} ago."
-msgstr "Compte pleinement fonctionnel, testé il y a {0}."
+msgstr "Compte pleinement fonctionnel, testé il y a {ago}."
 
-#: templatetags/coretags.py:648
-#, fuzzy, python-brace-format
+#: templatetags/coretags.py:713
+#, python-brace-format
 msgid "Account not working, tested {ago} ago. Error reported: {err}"
-msgstr "Compte non fonctionnel, testé il y a {0}. Erreur remontée : {1}"
+msgstr "Compte non fonctionnel, testé il y a {ago}. Erreur remontée : {err}"
 
-#: templatetags/coretags.py:654
+#: templatetags/coretags.py:719
 msgid "Rule validated successfully and will be used for next fetch."
 msgstr "La règle a été validée et sera utilisée aux exécutions suivantes."
 
-#: templatetags/coretags.py:656
+#: templatetags/coretags.py:721
 #, python-brace-format
 msgid "Rule did not validate. Error reported: {err}"
 msgstr "La règle n'a pu être validée. Erreur remontée : {err}"
 
-#: templatetags/coretags.py:674
+#: templatetags/coretags.py:739
 msgid ""
 "Account connectivity not yet tested. Please wait a few seconds and reload "
 "the current page."
@@ -5350,9 +5850,9 @@ msgid "Very malformed url {0}"
 msgstr "URL {0} très mal-formée"
 
 #: views/feed.py:75
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "The website at {0} does not provide any RSS/Atom feed."
-msgstr "Le site web {0} semble ne proposer aucun flux."
+msgstr "Le site web {0} semble ne proposer aucun flux RSS/Atom."
 
 #: views/feed.py:81
 #, python-brace-format
@@ -5385,6 +5885,19 @@ msgstr "de modifier"
 #: views/folder.py:83
 msgid "create"
 msgstr "de créer"
+
+#: views/folder.py:121
+#, python-brace-format
+msgid ""
+"Purging folder <em>{0}</em>, subfolders and subscriptions in the background…"
+msgstr ""
+"En train de purger le dossier <em>{0}</em>, ses sous-dossiers et leurs "
+"abonnements, merci de patienter…"
+
+#: views/folder.py:132
+#, python-brace-format
+msgid "Folder <em>{0}</em>, deleted."
+msgstr "Dossier <em>{0}</em>, supprimé."
 
 #: views/google_reader.py:64
 msgid "An import is already running for your Google Reader data."
@@ -5490,6 +6003,9 @@ msgstr ""
 #, python-brace-format
 msgid "Subscription <em>{0}</em> successfully cancelled."
 msgstr "Abonnement <em>{0}</em> résilié avec succès."
+
+#~ msgid "All messages"
+#~ msgstr "Tous les messages (pas besoin de règle)"
 
 #~ msgid ""
 #~ "Note: 1flow engine will <strong>recurse all mailboxes</strong> to look for "
@@ -6002,9 +6518,6 @@ msgstr "Abonnement <em>{0}</em> résilié avec succès."
 
 #~ msgid "Type one URL per line, as many as you want."
 #~ msgstr "Saisissez une URL par ligne. Autant que vous le souhaitez. "
-
-#~ msgid "Imported web pages of user {0}"
-#~ msgstr "Éléments importés de {0}"
 
 #~ msgid "Subscription “{0}” successfully modified."
 #~ msgstr "Abonnement « {0} » modifié avec succès."

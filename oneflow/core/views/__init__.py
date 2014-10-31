@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -39,14 +39,16 @@ from django.conf import settings
 from django.shortcuts import render, redirect
 from django.template import add_to_builtins
 
+from sparks.django.http import JsonResponse, human_user_agent
 from sparks.django.utils import HttpResponseTemporaryServerError
 from sparks.fabric import is_localhost
 
 from oneflow.base.utils.dateutils import now
+from oneflow.base.utils.decorators import token_protected
 
 from ..forms import WebPagesImportForm
 
-from ..models.nonrel import Article, Read, CONTENT_TYPES_FINAL
+from ..models.nonrel import Article, Read, Feed, Folder, CONTENT_TYPES_FINAL
 from ..models.reldb import HelpContent
 
 from ..gr_import import GoogleReaderImport
@@ -254,14 +256,19 @@ def toggle(request, klass, oid, key):
 def import_web_url(request, url):
     """ Import an URL from the web (can be anything). """
 
-    form = WebPagesImportForm({'urls': url}, request=request)
+    form = WebPagesImportForm({'urls': url})
 
     article = None
 
     if form.is_valid():
-        created, failed = form.save()
+        imp_ = form.save(request.user)
 
-        article = created[0]
+        try:
+            article = Article.objects.get(url=imp_.results['created'][0])
+
+        except:
+            # Not yet created…
+            article = Article.objects.get(url=url)
 
         # Just in case the item was previously
         # here (from another user, or the same).
@@ -309,19 +316,17 @@ def import_web_pages(request):
         return HttpResponseBadRequest('This request needs Ajax')
 
     if request.POST:
-        form = WebPagesImportForm(request.POST,
-                                  # This is our own kwargs parameter.
-                                  request=request)
+        form = WebPagesImportForm(request.POST)
 
         if form.is_valid():
-            created, failed = form.save()
+            imp_ = form.save(request.user)
 
         #
         # TODO: return a JSON when request comes from browser extensions.
         #
         return render(request,
                       'snippets/selector/import-web-items-result.html',
-                      {'created': created, 'failed': failed})
+                      {'created': imp_.lines})
 
     else:
         form = WebPagesImportForm()
@@ -559,20 +564,63 @@ def admin_status(request):
         },
     })
 
+
+@token_protected
+def export_content(request, **kwargs):
+    """ Export recent feeds/articles as JSON. """
+
+    since = kwargs.get('since')
+    format = request.GET.get('format', 'json')
+    folder_id = kwargs.get('folder_id', None)
+
+    folder = None if folder_id is None else Folder.get_or_404(folder_id)
+
+    if format == 'json':
+
+        try:
+            content = {
+                'result': 'OK',
+                'data': Feed.export_content(since, folder=folder),
+            }
+
+        except Exception as e:
+            LOGGER.exception(u'Could not export content',
+                             exc_info=True, extra={'request': request})
+
+            content = {
+                'result': 'ERR',
+                'sentry_id': request.sentry['id'],
+                'data': unicode(e),
+            }
+
+        if human_user_agent(request):
+            return JsonResponse(content, indent=2)
+
+        return JsonResponse(content)
+
+    else:
+        return HttpResponseBadRequest(u'Unknown format “%s”' % format)
+
 # ——————————————————————————————————————————————————————————————— Views imports
 
+from history import HistoryEntryListView, HistoryEntryDeleteView  # NOQA
 
 from mailaccount import MailAccountListCreateView, MailAccountDeleteView  # NOQA
+
 from mailfeed import MailFeedListCreateView, MailFeedDeleteView  # NOQA
+
 from mailfeedrule import (  # NOQA
     MailFeedRuleListCreateView,
     MailFeedRulePositionUpdateView,
+    MailFeedRuleGroupUpdateView,
     MailFeedRuleDeleteView,
 )
 
 from folder import manage_folder, delete_folder  # NOQA
 
-from feed import add_feed  # NOQA
+from mongo_feed import add_feed  # NOQA
+
+from feed import feed_closed_toggle  # NOQA
 
 from subscription import (  # NOQA
     edit_subscription, add_subscription, cancel_subscription
@@ -586,6 +634,8 @@ from article import article_content, article_image  # NOQA
 
 from contacts import import_contacts, import_contacts_authorized  # NOQA
 
+from sync import SyncNodeListCreateView, SyncNodeDeleteView  # NOQA
+
 from preferences import (  # NOQA
     preferences,
     set_preference,
@@ -595,7 +645,6 @@ from preferences import (  # NOQA
 from google_reader import (  # NOQA
     google_reader_import,
     google_reader_can_import_toggle,
-    feed_closed_toggle,
     google_reader_import_stop,
     google_reader_import_status,
 )

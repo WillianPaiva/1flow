@@ -23,8 +23,10 @@ import logging
 
 from mongodbforms import DocumentForm
 
-from ..models import (HomePreferences, ReadPreferences,
-                      SelectorPreferences, StaffPreferences)
+from ..models.nonrel import (
+    HomePreferences, ReadPreferences,
+    SelectorPreferences, StaffPreferences
+)
 
 LOGGER = logging.getLogger(__name__)
 

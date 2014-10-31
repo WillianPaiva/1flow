@@ -32,23 +32,31 @@ from oneflow.core import forms, models
 LOGGER = logging.getLogger(__name__)
 
 
-class MailFeedRuleListCreateView(mixins.ListCreateViewMixin,
-                                 generic.CreateView):
+class MailFeedRuleCommonViewsMixin(object):
 
-    """ Mix create and list views for mail feeds. """
+    """ Mixin common to all MailFeedRule views. """
 
     model = models.MailFeedRule
-    default_sort_param = 'position'
-    default_filter_param = 'all'
-    form_class = forms.MailFeedRuleForm
-    template_name = 'mailfeedrule/list-create.html'
-    list_queryset_filter = {'mailfeed': ('mailfeed_pk', models.MailFeed, None)}
 
     def get_success_url(self):
         """ Return to our mail feed rules list. """
 
         return reverse('mailfeedrule_list_create',
                        args=(self.kwargs['mailfeed_pk'], ))
+
+
+class MailFeedRuleListCreateView(MailFeedRuleCommonViewsMixin,
+                                 mixins.ListCreateViewMixin,
+                                 generic.CreateView):
+
+    """ Mix create and list views for mail feeds. """
+
+    model = models.MailFeedRule
+    default_sort_param = ('group', 'position')
+    default_filter_param = 'all'
+    form_class = forms.MailFeedRuleForm
+    template_name = 'mailfeedrule/list-create.html'
+    list_queryset_filter = {'mailfeed': ('mailfeed_pk', models.MailFeed, None)}
 
     def get_form_kwargs(self):
         """ Get the current user for the MailFeedRuleForm to get mailboxes. """
@@ -86,7 +94,9 @@ class MailFeedRuleListCreateView(mixins.ListCreateViewMixin,
 #     success_url = reverse_lazy('mailfeed_index')
 
 
-class MailFeedRulePositionUpdateView(generic.UpdateView):
+class MailFeedRulePositionUpdateView(MailFeedRuleCommonViewsMixin,
+                                     mixins.OwnerQuerySetMixin,
+                                     generic.UpdateView):
 
     """ Simple view to update mail feed rule position.
 
@@ -94,24 +104,24 @@ class MailFeedRulePositionUpdateView(generic.UpdateView):
         of model which as a position attribute.
     """
 
-    model = models.MailFeedRule
     form_class = forms.MailFeedRulePositionForm
-
-    def get_success_url(self):
-        """ Return to our mail feed rules list. """
-
-        return reverse('mailfeedrule_list_create',
-                       args=(self.kwargs['mailfeed_pk'], ))
+    ownerqueryset_filter = 'mailfeed__user'
 
 
-class MailFeedRuleDeleteView(generic.DeleteView):
+class MailFeedRuleGroupUpdateView(MailFeedRuleCommonViewsMixin,
+                                  mixins.OwnerQuerySetMixin,
+                                  generic.UpdateView):
 
-    """ Delete a mail account. """
+    """ Simple view to update mail feed rule group. """
 
-    model = models.MailFeedRule
+    form_class = forms.MailFeedRuleGroupForm
+    ownerqueryset_filter = 'mailfeed__user'
 
-    def get_success_url(self):
-        """ Return to our mail feed rules list. """
 
-        return reverse('mailfeedrule_list_create',
-                       args=(self.kwargs['mailfeed_pk'], ))
+class MailFeedRuleDeleteView(MailFeedRuleCommonViewsMixin,
+                             mixins.OwnerQuerySetMixin,
+                             generic.DeleteView):
+
+    """ Delete a mail feed rule. """
+
+    ownerqueryset_filter = 'mailfeed__user'

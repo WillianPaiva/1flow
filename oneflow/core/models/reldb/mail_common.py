@@ -18,8 +18,22 @@ You should have received a copy of the GNU Affero General Public
 License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
+import operator
+
+# from constance import config
+
+from datetime import datetime
+from email import message_from_string
+from email.header import decode_header
+from collections import OrderedDict
+
+from django.utils.translation import ugettext_lazy as _
+
+from oneflow.base.utils.dateutils import email_date_to_datetime_tz
+
 
 # No fear. See http://bit.ly/smtp-headers
+# Note: there are probably too much of them.
 OTHER_VALID_HEADERS = (
     'DL-Expansion-History',
     'Path',
@@ -188,6 +202,83 @@ BASE_HEADERS = {
               'X-Mailing-List', 'List-URL', ),
 }
 
+BASE_HEADERS[u'common'] = (
+    BASE_HEADERS[u'subject']
+    + BASE_HEADERS[u'to']
+    + BASE_HEADERS[u'from']
+)
+
+MAILBOXES_STRING_SEPARATOR = u'~|~'
+
+MAILBOXES_BLACKLIST = (
+    'Drafts',
+    'Trash',
+    'Sent Messages',
+    'Sent',
+    'Spam',
+    'Junk',
+    'Deleted Messages',
+    'Archive',
+    'Archives',
+
+    'INBOX.Drafts',
+    'INBOX.Trash',
+    'INBOX.Sent Messages',
+    'INBOX.Sent',
+    'INBOX.Spam',
+    'INBOX.Junk',
+    'INBOX.Deleted Messages',
+    'INBOX.Archive',
+    'INBOX.Archives',
+
+    'INBOX.INBOX.Junk',
+    'INBOX.INBOX.Drafts',
+    'INBOX.INBOX.Sent',
+    'INBOX.INBOX.Trash',
+    'INBOX.INBOX.Sent Messages',
+    'INBOX.INBOX.Spam',
+    'INBOX.INBOX.Deleted Messages',
+    'INBOX.INBOX.Archive',
+    'INBOX.INBOX.Archives',
+
+    _(u'Drafts'),
+    _(u'Trash'),
+    _(u'Sent Messages'),
+    _(u'Sent'),
+    _(u'Spam'),
+    _(u'Junk'),
+    _(u'Deleted Messages'),
+    _(u'Archive'),
+    _(u'Archives'),
+
+    _(u'INBOX.Drafts'),
+    _(u'INBOX.Trash'),
+    _(u'INBOX.Sent Messages'),
+    _(u'INBOX.Sent'),
+    _(u'INBOX.Spam'),
+    _(u'INBOX.Junk'),
+    _(u'INBOX.Deleted Messages'),
+    _(u'INBOX.Archive'),
+    _(u'INBOX.Archives'),
+
+    _(u'INBOX.INBOX.Junk'),
+    _(u'INBOX.INBOX.Drafts'),
+    _(u'INBOX.INBOX.Sent'),
+    _(u'INBOX.INBOX.Trash'),
+    _(u'INBOX.INBOX.Sent Messages'),
+    _(u'INBOX.INBOX.Spam'),
+    _(u'INBOX.INBOX.Deleted Messages'),
+    _(u'INBOX.INBOX.Archive'),
+    _(u'INBOX.INBOX.Archives'),
+)
+
+MAILBOXES_COMMON = OrderedDict((
+    (u'INBOX', _(u'Inbox')),
+))
+
+
+COMMON_HEADERS = reduce(operator.add, BASE_HEADERS.values())
+
 
 def email_get_first_text_block(email_message):
     """ Get the first block of a mail.
@@ -205,3 +296,82 @@ def email_get_first_text_block(email_message):
 
     elif maintype == 'text':
         return email_message.get_payload()
+
+
+def email_prettify_raw_message(raw_message):
+    """ Make a raw IMAP message usable from Python code.
+
+    Eg. decode headers and prettify everything that can be.
+    """
+
+    guess_encodings = ('utf-8', ) + tuple(
+        x.strip() for x in dconfig.MAIL_IMAP_DECODE_FALLBACK.split(u',')
+    )
+
+    def decode_with_fallback(something):
+
+        try:
+            return unicode(something)
+
+        except UnicodeDecodeError:
+
+            for encoding in guess_encodings:
+
+                try:
+                    return unicode(something, encoding)
+
+                except UnicodeDecodeError:
+                    pass
+
+            return unicode(something, errors='replace')
+
+    email_message = message_from_string(raw_message)
+
+    for header in COMMON_HEADERS:
+        try:
+            value = email_message[header]
+
+        except KeyError:
+            continue
+
+        if value is None or not value:
+            continue
+
+        decoded_header = None
+
+        if isinstance(value, unicode):
+            # Skip to the end.
+            decoded_header = value
+
+        else:
+            header_values = decode_header(value)
+
+            if len(header_values) > 1:
+                decoded_header = []
+
+                for string, charset in header_values:
+                    if charset:
+                        decoded_header.append(string.decode(charset))
+
+                    else:
+                        decoded_header.append(decode_with_fallback(string))
+
+            else:
+                string, charset = header_values[0]
+
+                if charset:
+                    decoded_header = string.decode(charset)
+
+                else:
+                    decoded_header = decode_with_fallback(string)
+
+        email_message.replace_header(header, decoded_header)
+
+        # Now, prettify the date.
+        email_datetime = email_message.get('date', None)
+
+        if not isinstance(email_datetime, datetime):
+            msg_datetime = email_date_to_datetime_tz(email_datetime)
+            email_message.replace_header('date', msg_datetime)
+
+    return email_message

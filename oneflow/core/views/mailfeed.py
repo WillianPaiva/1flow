@@ -59,9 +59,10 @@ class MailFeedListCreateView(mixins.ListCreateViewMixin,
 #     success_url = reverse_lazy('mailfeed_index')
 
 
-class MailFeedDeleteView(generic.DeleteView):
+class MailFeedDeleteView(mixins.OwnerQuerySetMixin,
+                         generic.DeleteView):
 
-    """ Delete a mail account. """
+    """ Delete a mail feed. """
 
     model = models.MailFeed
     # form_class = forms.MailFeedForm

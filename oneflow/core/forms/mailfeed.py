@@ -33,4 +33,5 @@ class MailFeedForm(forms.ModelForm):
 
     class Meta:
         model = MailFeed
-        fields = ('name', 'is_public', 'match_action', 'finish_action', )
+        fields = ('name', 'is_restricted', 'account',
+                  'match_action', 'finish_action', )

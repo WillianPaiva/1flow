@@ -18,31 +18,27 @@ You should have received a copy of the GNU Affero General Public
 License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
-import operator
 
 from datetime import datetime
-from email import message_from_string
-from email.header import decode_header
 
 import imaplib
 import logging
 
-from collections import OrderedDict
 from constance import config
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 # from django.utils.text import slugify
 
-from ....base.fields import TextRedisDescriptor
-from ....base.utils import register_task_method, list_chunks
+from oneflow.base.fields import TextRedisDescriptor
+from oneflow.base.utils import register_task_method, list_chunks
 
 from sparks.django.models import ModelDiffMixin
 
-from oneflow.base.utils.dateutils import (now, timedelta,
-                                          email_date_to_datetime_tz)
+from oneflow.base.utils.dateutils import now, timedelta
 
-from common import REDIS, long_in_the_past, DjangoUser
+from mail_common import email_prettify_raw_message
+from common import REDIS, long_in_the_past, DjangoUser as User
 import mail_common as common
 
 LOGGER = logging.getLogger(__name__)
@@ -70,77 +66,9 @@ class MailAccount(ModelDiffMixin):
     1flow create feeds from them.
     """
 
-    MAILBOXES_STRING_SEPARATOR = u'~|~'
-
-    MAILBOXES_BLACKLIST = (
-        'Drafts',
-        'Trash',
-        'Sent Messages',
-        'Sent',
-        'Spam',
-        'Junk',
-        'Deleted Messages',
-        'Archive',
-        'Archives',
-
-        'INBOX.Drafts',
-        'INBOX.Trash',
-        'INBOX.Sent Messages',
-        'INBOX.Sent',
-        'INBOX.Spam',
-        'INBOX.Junk',
-        'INBOX.Deleted Messages',
-        'INBOX.Archive',
-        'INBOX.Archives',
-
-        'INBOX.INBOX.Junk',
-        'INBOX.INBOX.Drafts',
-        'INBOX.INBOX.Sent',
-        'INBOX.INBOX.Trash',
-        'INBOX.INBOX.Sent Messages',
-        'INBOX.INBOX.Spam',
-        'INBOX.INBOX.Deleted Messages',
-        'INBOX.INBOX.Archive',
-        'INBOX.INBOX.Archives',
-
-        _(u'Drafts'),
-        _(u'Trash'),
-        _(u'Sent Messages'),
-        _(u'Sent'),
-        _(u'Spam'),
-        _(u'Junk'),
-        _(u'Deleted Messages'),
-        _(u'Archive'),
-        _(u'Archives'),
-
-        _(u'INBOX.Drafts'),
-        _(u'INBOX.Trash'),
-        _(u'INBOX.Sent Messages'),
-        _(u'INBOX.Sent'),
-        _(u'INBOX.Spam'),
-        _(u'INBOX.Junk'),
-        _(u'INBOX.Deleted Messages'),
-        _(u'INBOX.Archive'),
-        _(u'INBOX.Archives'),
-
-        _(u'INBOX.INBOX.Junk'),
-        _(u'INBOX.INBOX.Drafts'),
-        _(u'INBOX.INBOX.Sent'),
-        _(u'INBOX.INBOX.Trash'),
-        _(u'INBOX.INBOX.Sent Messages'),
-        _(u'INBOX.INBOX.Spam'),
-        _(u'INBOX.INBOX.Deleted Messages'),
-        _(u'INBOX.INBOX.Archive'),
-        _(u'INBOX.INBOX.Archives'),
-    )
-
-    MAILBOXES_COMMON = OrderedDict((
-        (u'INBOX', _(u'Inbox')),
-    ))
-
     # NOTE: MAILBOXES_BLACKLIST is in MailAccount.
 
-    user = models.ForeignKey(DjangoUser)
+    user = models.ForeignKey(User, verbose_name=_(u'Creator'))
     name = models.CharField(verbose_name=_(u'Account name'),
                             max_length=128, blank=True)
 
@@ -190,7 +118,7 @@ class MailAccount(ModelDiffMixin):
         if not _mailboxes_:
             return []
 
-        return _mailboxes_.split(self.MAILBOXES_STRING_SEPARATOR)
+        return _mailboxes_.split(common.MAILBOXES_STRING_SEPARATOR)
 
     @property
     def recently_usable(self):
@@ -199,17 +127,6 @@ class MailAccount(ModelDiffMixin):
         return self.is_usable and (
             now() - self.date_last_conn
             < timedelta(seconds=config.MAIL_ACCOUNT_REFRESH_PERIOD))
-
-    @property
-    def common_headers(self):
-        try:
-            return self._common_headers_
-
-        except AttributeError:
-            self._common_headers_ = reduce(operator.add,
-                                           common.BASE_HEADERS.values())
-
-            return self._common_headers_
 
     # —————————————————————————————————————————————————————————————————— Django
 
@@ -325,10 +242,11 @@ class MailAccount(ModelDiffMixin):
         if commit:
             self.save()
 
-    def mark_usable(self, commit=True):
+    def mark_usable(self, commit=True, verbose=True):
         """ Mark the account usable and clear error. """
 
-        LOGGER.info(u'%s is now usable.', self)
+        if verbose:
+            LOGGER.info(u'%s is now considered usable.', self)
 
         if self.is_usable:
             start_task = False
@@ -378,6 +296,9 @@ class MailAccount(ModelDiffMixin):
 
         .. note:: this method is registered as a task in Celery.
         """
+
+        if not self.recently_usable:
+            return
 
         self._mailboxes_ = mailaccount_mailboxes_default(self)
 
@@ -504,11 +425,11 @@ class MailAccount(ModelDiffMixin):
             for line in data:
                 mailbox = line.split(' "." ')[1].replace('"', '')
 
-                if mailbox not in self.MAILBOXES_BLACKLIST:
+                if mailbox not in common.MAILBOXES_BLACKLIST:
 
                     subfolder = False
 
-                    for blacklisted in self.MAILBOXES_BLACKLIST:
+                    for blacklisted in common.MAILBOXES_BLACKLIST:
                         if mailbox.startswith(blacklisted + u'.'):
                             subfolder = True
                             break
@@ -516,15 +437,20 @@ class MailAccount(ModelDiffMixin):
                     if not subfolder:
                         mailboxes.append(mailbox)
 
-            self.mark_usable()
+            # Update the last connection datetime.
+            self.mark_usable(verbose=False)
 
             if as_text:
-                return self.MAILBOXES_STRING_SEPARATOR.join(sorted(mailboxes))
+                return common.MAILBOXES_STRING_SEPARATOR.join(sorted(mailboxes))
 
             return sorted(mailboxes)
 
     def imap_search_since(self, imap_conn=None, since=None):
-        """ Search for messages in the currently selected mailbox. """
+        """ Search for messages in the currently selected mailbox.
+
+        If :param:`since` is ``None``, all mails will be returned. Prepare
+        yourself for an expensive operation.
+        """
 
         if imap_conn is None:
             imap_conn = self._imap_connection_
@@ -534,18 +460,20 @@ class MailAccount(ModelDiffMixin):
 
         def search_since(since):
 
-            result, data = imap_conn.uid('search', None,
-                                         '(SENTSINCE {date})'.format(
-                                             date=since.strftime("%d-%b-%Y")))
+            if since is None:
+                # We have no date, search for all mail.
+                result, data = imap_conn.uid('search', None, "ALL")
+
+            else:
+                result, data = imap_conn.uid(
+                    'search', None, '(SENTSINCE {date})'.format(
+                        date=since.strftime("%d-%b-%Y")))
 
             if result == 'OK':
                 if data == ['']:
                     # No new mail since ``since``…
                     LOGGER.debug(u'IMAP %s: no new mail since %s', self, since)
                     return
-
-                    # Search for all mail instead?
-                    # result, data = imap_conn.uid('search', None, "ALL")
 
                 else:
                     return data[0]
@@ -556,6 +484,7 @@ class MailAccount(ModelDiffMixin):
                              self, since, data)
                 return
 
+        ids_expiry_time = config.MAIL_IMAP_CACHE_IDS_EXPIRY
         cache_expiry_time = config.MAIL_IMAP_CACHE_EXPIRY
 
         if config.MAIL_IMAP_CACHE_MESSAGES:
@@ -573,7 +502,7 @@ class MailAccount(ModelDiffMixin):
 
                 else:
                     REDIS.setex(redis_key,
-                                cache_expiry_time,
+                                ids_expiry_time,
                                 email_ids_as_string)
 
         else:
@@ -603,6 +532,10 @@ class MailAccount(ModelDiffMixin):
                                                      msg_uid,
                                                      '(RFC822)')
                         if result == 'OK':
+                            if len(data) == 1 and data[0] is None:
+                                # Cached message ID corresponds
+                                # to nothing on the server.
+                                continue
 
                             for raw_data in data:
 
@@ -636,59 +569,9 @@ class MailAccount(ModelDiffMixin):
                         if len(raw_data) == 1:
                             continue
 
-                        yield self.email_prettify_raw_message(raw_data[1])
+                        yield email_prettify_raw_message(raw_data[1])
 
-    # —————————————————————————————————————————————————————————————————— E-mail
-
-    def email_prettify_raw_message(self, raw_message):
-        """ Make a raw IMAP message usable from Python code.
-
-        Eg. decode headers and prettify everything that can be.
-        """
-
-        email_message = message_from_string(raw_message)
-
-        for header in self.common_headers:
-            try:
-                value = email_message[header]
-
-            except KeyError:
-                continue
-
-            if value is None or not value:
-                continue
-
-            header_values = decode_header(value)
-
-            if len(header_values) > 1:
-                decoded_header = []
-
-                for string, charset in header_values:
-                    if charset:
-                        decoded_header.append(string.decode(charset))
-
-                    else:
-                        decoded_header.append(string)
-
-            else:
-                string, charset = header_values[0]
-
-                if charset:
-                    decoded_header = string.decode(charset)
-
-                else:
-                    decoded_header = string
-
-            email_message.replace_header(header, decoded_header)
-
-            # Now, prettify the date.
-            email_datetime = email_message.get('date', None)
-
-            if not isinstance(email_datetime, datetime):
-                msg_datetime = email_date_to_datetime_tz(email_datetime)
-                email_message.replace_header('date', msg_datetime)
-
-        return email_message
+# ———————————————————————————————————————————————————————————————— Celery tasks
 
 register_task_method(MailAccount, MailAccount.test_connection,
                      globals(), u'swarm')

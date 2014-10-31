@@ -26,8 +26,9 @@
             {% if forloop.last %}
 
             	</td>
-            	<td {% if not create_first %}colspan="3"{% endif %}
-                    class="right">
+            	<td {% if not create_first %}colspan="3"{% endif %}>
+
+                <div class="spacer10"></div>
 
     		    	<input class="btn btn-primary" type="submit"
     		    		value="{% trans "Save" %}" />

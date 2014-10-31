@@ -393,6 +393,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'async_messages.middleware.AsyncMiddleware',
 
     # account's MW must come after 'auth', else they crash.
     #
@@ -463,42 +464,45 @@ INSTALLED_APPS = [
     'raven.contrib.django.raven_compat',
     'django.contrib.auth',
     'account',
+    'polymorphic',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    #'django.contrib.sites',
+    # 'django.contrib.sites',
 
     # We could use Django's `humanize`, it produces more
     # detailled `*delta()` than the external `humanize` module.
-    #'django.contrib.humanize',
+    # 'django.contrib.humanize',
 
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #'grappelli.dashboard',
+    # 'grappelli.dashboard',
     'grappelli',
     'mongoadmin',
+    'json_field',
     'django.contrib.admin',
-    #'django.contrib.admindocs',
+    # 'django.contrib.admindocs',
     'django_reset',
     'django_shell_ipynb',
     'gunicorn',
     'south',
     'south_admin',
-    #'maintenancemode', — not needed at all, the middleware is sufficient.
+    # 'maintenancemode', — not needed at all, the middleware is sufficient.
     'transmeta',
+    'mptt',
     'sorting_bootstrap',
 
     # Order matters for inplace & friends.
     'inplaceeditform_bootstrap',
     'inplaceeditform',
-    #'inplaceeditform_extra_fields',
-    #'bootstrap3_datetime',
+    # 'inplaceeditform_extra_fields',
+    # 'bootstrap3_datetime',
 
     'logentry_admin',
     'constance',
     'tastypie',
     'tastypie_mongoengine',
     'overextends',
-    #'django_markdown',
+    # 'django_markdown',
     'writingfield',
     'redisboard',
     'djcelery',
@@ -510,7 +514,7 @@ INSTALLED_APPS = [
     'endless_pagination',
 
     # `infinite_pagination` doesn't work on MongoEngine QuerySet.
-    #'infinite_pagination',
+    # 'infinite_pagination',
 
     'mathfilters',
 
@@ -750,7 +754,11 @@ DEFAULT_USER_AGENT = u'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:21.0) Gec
 
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': False,
+    'disable_existing_loggers': True,
+    # 'root': {
+    #     'level': 'WARNING',
+    #     'handlers': ['sentry'],
+    # },
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
@@ -758,7 +766,7 @@ LOGGING = {
     },
     'formatters': {
         'verbose': {
-            'format': '[contactor] %(levelname)s %(asctime)s %(message)s'
+            'format': '%(levelname)s %(asctime)s %(module)s %(message)s'
         },
     },
     'handlers': {
@@ -766,6 +774,12 @@ LOGGING = {
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
+        },
+        # WARNINGs and critical errors are logged to sentry
+        'sentry': {
+            'level': 'WARNING',
+            # 'filters': ['require_debug_false'],
+            'class': 'raven.contrib.django.handlers.SentryHandler',
         },
         # Send info messages to syslog
         # 'syslog':{
@@ -784,20 +798,24 @@ LOGGING = {
             'class': 'django.utils.log.AdminEmailHandler',
             'include_html': True,
         },
-        # WARNINGs and critical errors are logged to sentry
-        'sentry': {
-            'level': 'WARNING',
-            #'filters': ['require_debug_false'],
-            'class': 'raven.contrib.django.handlers.SentryHandler',
-        },
     },
     'loggers': {
         # Don't log SQL queries, this bothers me.
         'django.db.backends': {
             'handlers': ['console'],
+            # 'level': 'DEBUG' if DEBUG else 'INFO',
             'level': 'INFO',
         },
-
+        'raven': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+            'propagate': False,
+        },
+        'sentry.errors': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+            'propagate': False,
+        },
         # This is the "catch all" logger
         '': {
             'handlers': ['console', 'mail_admins', 'sentry'],  # 'syslog',

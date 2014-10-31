@@ -9,6 +9,8 @@
 # Jenkins reports
 /reports
 
+/config/Gemfile.lock
+
 /MAINTENANCE_MODE
 /celerybeat-schedule
 /celerybeat.pid
@@ -27,3 +29,4 @@
 *~
 
 .sass-cache
+*.css.map

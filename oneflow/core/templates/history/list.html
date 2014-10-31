@@ -1,0 +1,97 @@
+{% extends 'home.html' %}
+{% load sorting_tags %}
+
+{% block title %}{% trans "History" %}{% endblock title %}
+{% block body_id %}history{% endblock body_id %}
+
+{% block application_content %}
+
+{% inplace_static %}
+
+<div class="spacer50"></div>
+
+<div class="row">
+	<div>
+	{% if historyentry_list %}
+
+		 <div class="pull-right">
+		 	<div class="btn-group very-muted">
+		 		{% blocktrans count counter=historyentry_list|length %}
+		 		    {{ counter }} entry
+		 		{% plural %}
+					{{ counter }} entries
+		 		{% endblocktrans %}
+		 	</div>
+			<div class="btn-group" style="margin-left: 50px;">
+				<a class="btn btn-warning" href="#">{% trans "Clear" %}</a>
+			</div>
+		</div>
+
+		<h1>
+			<a href="{% url 'profile' %}"
+					title="{% trans "Go to account" %}"
+					data-toggle="tooltip"
+					class="popover-top">
+				{% core_icon 'Profile' %}
+			</a>
+
+			<span class="very-muted">&nbsp;&nbsp;
+			<i class="icon icon-angle-right"></i>
+			&nbsp;&nbsp;</span>
+
+			<span>{% core_icon 'HistoryEntry' %}&nbsp;
+			{% trans "History" %}</span>
+		</h1>
+
+		<div class="spacer50"></div>
+
+		<table class="table" id="historyentry-table">
+		<thead>
+		  <tr>
+			<th class="col-sm-9">{% trans "Event" %}</th>
+			{% sort_th _("Date") 'date_created' %}
+			<th class="right col-sm-1">{% trans "Actions" %}</th>
+		  </tr>
+		</thead>
+		<tbody>
+		{% for historyentry in historyentry_list %}
+			<tr>
+				<td>
+				{% if historyentry.get_class_name == "UserImport" %}
+					{% include "history/userimport.html" %}
+
+				{% endif %}
+				</td>
+				<td>{{ historyentry.date_created }}</td>
+
+				<td class="right">
+					{% url 'historyentry_delete' historyentry.pk as delete_url %}
+					{% include "widgets/delete-form-button.html" %}
+				</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+		</table>
+	{% else %}
+
+		<h2>
+
+			<span>
+			{% core_icon 'HistoryEntry' %}&nbsp;{% blocktrans %}
+			    No history yet.
+			{% endblocktrans %}</span>
+		</h2>
+
+		<div class="spacer50"></div>
+
+	{% endif %}
+
+</div>
+{% endblock application_content %}
+
+{% block extrajs_footer %}
+    {{ block.super }}
+
+	{% include "snippets/mail-collapse-js-glue.html" with focus_name='id_name' object_list=historyentry_list %}
+
+{% endblock extrajs_footer %}

@@ -185,6 +185,10 @@ def user_fun_articles_count_default(user):
 
 class User(Document, DocumentHelperMixin):
 
+    # BIG DB migration 20141028
+    bigmig_migrated = BooleanField(default=False)
+    # END BIG DB migration
+
     # Attributes synchronized between the Django User class and this one.
     SYNCHRONIZED_ATTRS = ('is_staff', 'is_superuser',
                           'first_name', 'last_name',

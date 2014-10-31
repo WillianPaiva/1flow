@@ -1,5 +1,5 @@
 
-{# — {{read}} — {{article}} — {{article.content_type}} — {{CONTENT_TYPE_BOOKMARK}} — #}
+{# — {{read}} — {{article}} — {{article.content_type}} — {{CONTENT_TYPES.BOOKMARK}} — #}
 
 {% if read.is_restricted %}
 
@@ -9,7 +9,7 @@
       </div>
 
 {% else %}
-    {% if article.content_type == CONTENT_TYPE_MARKDOWN %}
+    {% if article.content_type == CONTENT_TYPES.MARKDOWN %}
 
       {% if content %}
 
@@ -27,14 +27,14 @@
 
       {% endif %}
 
-    {% elif article.content_type == CONTENT_TYPE_BOOKMARK %}
+    {% elif article.content_type == CONTENT_TYPES.BOOKMARK %}
 
       {% include 'snippets/read/article-content-bookmark.html' %}
 
-    {% elif article.content_type == CONTENT_TYPE_HTML %}
+    {% elif article.content_type == CONTENT_TYPES.HTML %}
       {% include 'snippets/read/article-content-not-safe.html' %}
 
-    {% elif article.content_type in CONTENT_TYPE_FINAL %}
+    {% elif article.content_type in CONTENT_TYPES.FINAL %}
       {% include 'snippets/read/article-content-not-ready.html' %}
 
     {% else %}

@@ -1,0 +1,145 @@
+{% extends 'home.html' %}
+{% load sorting_tags %}
+
+{% block title %}{% trans "Sync nodes" %}{% endblock title %}
+{% block body_id %}sync-nodes{% endblock body_id %}
+
+{% block application_content %}
+
+{% inplace_static %}
+
+<div class="spacer50"></div>
+
+<div class="row">
+	<div>
+	{% if syncnode_list %}
+
+		 <div class="actions pull-right">
+		 	<div class="btn-group very-muted">
+		 		{% blocktrans count counter=syncnode_list|length %}
+		 		    {{ counter }} node
+		 		{% plural %}
+					{{ counter }} nodes
+		 		{% endblocktrans %}
+		 	</div>
+			<div class="btn-group" style="margin-left: 50px;">
+				<button id="form-collapser" class="btn btn-primary">{% trans "Add new" %}</button>
+			</div>
+		</div>
+
+		<h1>
+			<span>
+				{% core_icon 'SyncNode' %}&nbsp;
+				{% trans "Sync nodes" %}
+			</span>
+		</h1>
+
+
+		<div class="row">
+			<div class="col-md-4 right">
+				<h4 class="muted">{% trans "Local node name:" %}</h4>
+			</div>
+			<div class="col-md-8">
+			 <h4>{% inplace_edit "local_node.name" tag_name_cover:'span' %}</h4>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-4 right">
+				<h4 class="muted">{% trans "Local node UUID:" %}</h4>
+			</div>
+			<div class="col-md-8">
+			 <h4>
+			 	<code>{{ local_node.uuid }}</code>
+				<a href="#" class="btn btn-warning btn-xs">
+					<i class="icon icon-refresh"></i>
+				</a>
+			 </h4>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-4 right">
+				<h4 class="muted">{% trans "Global nodes permission:" %}</h4>
+			</div>
+			<div class="col-md-8">
+			 <h4>{% inplace_edit "local_node.permission" tag_name_cover:'span' %}</h4>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-4 right">
+				<h4 class="muted">{% trans "Global broadcast level:" %}</h4>
+			</div>
+			<div class="col-md-8">
+			 <h4>{% inplace_edit "local_node.broadcast" tag_name_cover:'span' %}</h4>
+			</div>
+		</div>
+
+		<div class="spacer50"></div>
+
+		<table class="table table-hover">
+		<thead>
+
+		  {#{% include "syncnode/form.html" %}#}
+
+		  <tr>
+			{% sort_th _("Node name") 'name' %}
+			{% sort_th _("UUID") 'uuid' %}
+			{% sort_th _("Last seen") 'date_last_seen' %}
+			{% sort_th _("Permission") 'permission' %}
+			{% sort_th _("Local token") 'local_token' %}
+			{% sort_th _("Remote token") 'remote_token' %}
+			{% sort_th _("Broadcast?") 'broadcast' %}
+
+			<th class="right">{% trans "Actions" %}</th>
+		  </tr>
+		</thead>
+		<tbody>
+		{% for syncnode in syncnode_list %}
+			<tr>
+				<td>{% inplace_edit 'syncnode.name' %}</td>
+				<td>{{ syncnode.uuid }}</td>
+				<td>{{ syncnode.date_last_seen }}</td>
+				<td>{% inplace_edit 'syncnode.permission' %}</td>
+				<td>
+					<code>{{ syncnode.local_token }}</code>
+					<a href="#" class="btn btn-warning btn-xs">
+						<i class="icon icon-refresh"></i></a>
+				</td>
+				<td>{% inplace_edit 'syncnode.remote_token' %}</td>
+				<td>{% inplace_edit 'syncnode.broadcast' %}</td>
+
+				{% url 'syncnode_delete' syncnode.pk as delete_url %}
+				<td class="right">{% include "widgets/delete-form-button.html" %}</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+		</table>
+	{% else %}
+
+		<h2>{% core_icon 'SyncNode' %}&nbsp;{% blocktrans %}
+		    No sync node yet.
+		{% endblocktrans %}</h2>
+
+		<div class="spacer50"></div>
+
+		<table class="table">
+			<tbody>
+				{#{% include "syncnode/form.html" with create_first=1 %}"#}
+			</tbody>
+		</table>
+
+	{% endif %}
+
+	<div class="spacer50"></div>
+	<p class="muted">{% trans "Permissions of your local node define global permissions when specific hosts have " %}</p>
+
+
+	</div>
+</div>
+{% endblock application_content %}
+
+{% block extrajs_footer %}
+    {{ block.super }}
+
+	{% include "snippets/mail-collapse-js-glue.html" with focus_name='id_name' object_list=syncnode_list %}
+
+{% endblock extrajs_footer %}

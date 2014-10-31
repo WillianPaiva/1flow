@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
+Copyright 2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
 

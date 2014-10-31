@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -28,21 +28,26 @@ from celery import task
 
 from django.utils.translation import ugettext_lazy as _
 
-from ..models import MailAccount, Feed, feed_refresh_task
+from ..models.reldb import (
+    MailAccount,
+    BaseFeed, basefeed_refresh_task
+)
 
 from oneflow.base.utils import RedisExpiringLock
 from oneflow.base.utils.dateutils import (now, today, timedelta,
                                           naturaldelta, benchmark)
 
-LOGGER = logging.getLogger(__name__)
-
-# from common import User, REDIS
-
 from gr_import import clean_gri_keys
+
+from mongo import refresh_all_mongo_feeds
+from migration import migrate_all_mongo_data  # NOQA
+from sync import sync_all_nodes  # NOQA
 
 # Import this one, so that celery can find it,
 # Else it complains about a missing import.
 from checks import global_checker_task  # NOQA
+
+LOGGER = logging.getLogger(__name__)
 
 
 @task(queue='clean')
@@ -60,12 +65,15 @@ def clean_obsolete_redis_keys():
 
 @task(queue='high')
 def refresh_all_feeds(limit=None, force=False):
-    """ Refresh all feeds (RSS/Mail/Twitter…). """
+    u""" Refresh all feeds (RSS/Mail/Twitter…). """
 
     if config.FEED_FETCH_DISABLED:
         # Do not raise any .retry(), this is a scheduled task.
         LOGGER.warning(u'Feed refresh disabled in configuration.')
         return
+
+    # TODO: WIPE THIS when Mongo → PG migration is complete!
+    refresh_all_mongo_feeds.delay()
 
     # Be sure two refresh operations don't overlap, but don't hold the
     # lock too long if something goes wrong. In production conditions
@@ -87,13 +95,11 @@ def refresh_all_feeds(limit=None, force=False):
             LOGGER.warning(u'refresh_all_feeds() is already locked, aborting.')
             return
 
-    feeds = Feed.objects.filter(closed__ne=True, is_internal__ne=True)
+    # This should bring us a Polymorphic Query to refresh all feeds types.
+    feeds = BaseFeed.objects.filter(is_active=True, is_internal=False)
 
     if limit:
         feeds = feeds.limit(limit)
-
-    # No need for caching and cluttering CPU/memory for a one-shot thing.
-    feeds.no_cache()
 
     with benchmark('refresh_all_feeds()'):
 
@@ -109,28 +115,28 @@ def refresh_all_feeds(limit=None, force=False):
 
                 interval = timedelta(seconds=feed.fetch_interval)
 
-                if feed.last_fetch is None:
+                if feed.date_last_fetch is None:
 
-                    feed_refresh_task.delay(feed.id)
+                    basefeed_refresh_task.delay(feed.id)
 
                     LOGGER.info(u'Launched immediate refresh of feed %s which '
                                 u'has never been refreshed.', feed)
 
-                elif force or feed.last_fetch + interval < mynow:
+                elif force or feed.date_last_fetch + interval < mynow:
 
-                    how_late = feed.last_fetch + interval - mynow
+                    how_late = feed.date_last_fetch + interval - mynow
                     how_late = how_late.days * 86400 + how_late.seconds
 
                     if config.FEED_REFRESH_RANDOMIZE:
                         countdown = randrange(
                             config.FEED_REFRESH_RANDOMIZE_DELAY)
 
-                        feed_refresh_task.apply_async((feed.id, force),
-                                                      countdown=countdown)
+                        basefeed_refresh_task.apply_async((feed.id, force),
+                                                          countdown=countdown)
 
                     else:
                         countdown = 0
-                        feed_refresh_task.delay(feed.id, force)
+                        basefeed_refresh_task.delay(feed.id, force)
 
                     LOGGER.info(u'%s refresh of feed %s %s (%s late).',
                                 u'Scheduled randomized'
@@ -186,10 +192,11 @@ def refresh_all_mailaccounts(force=False):
 
                 except:
                     pass
+
         finally:
             my_lock.release()
 
-        LOGGER.info(u'Launched %s checks out of %s feed(s) checked.',
+        LOGGER.info(u'Launched %s checks on unusable accounts out of %s total.',
                     accounts.count(), MailAccount.objects.all().count())
 
 

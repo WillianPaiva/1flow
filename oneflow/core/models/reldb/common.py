@@ -38,3 +38,6 @@ def long_in_the_past():
     """ Return a datetime long before 1flow existed. """
 
     return datetime(2007, 1, 1)
+
+# Get all constants and strings from a module common to reldb and nonrel.
+from ..common import *  # NOQA

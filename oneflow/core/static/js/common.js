@@ -510,9 +510,27 @@ function setup_collapsibles(parent){
     // trigger the "out" when mouse gets over a sub-dropdown or a
     // sub-tooltip.
     find_start(parent, 'collapse')
-        .on('hidden', function(e){
-      e.stopPropagation();
-    });
+        .on('hidden.bs.collapse', function(e){
+            e.stopPropagation();
+        });
+
+        // find_start(parent, '[data-toggle="collapse"]')
+        //     .on('show.bs.collapse', function(e) {
+        //         var $target = e.target;
+        //         //var $parent = $target.closest($target.data('parent'));
+
+        //         console.log('collapsing…');
+        //         console.log(this);
+        //         console.log($(this));
+        //         console.log($target);
+        //         console.log($target.data('parent'));
+        //         console.log($parent);
+        //         console.log($parent.children('.in, .collapsing'));
+
+        //         if($parent) {
+        //             $parent.children('.in, .collapsing').hide();
+        //         }
+        //     });
 }
 
 function setup_tooltips(parent){

@@ -311,14 +311,22 @@ textarea::-webkit-input-placeholder {
 	padding-top: 5px !important;
 	text-transform: uppercase;
 	font-size: 11px;
-	vertical-align: top !important;
+
+	// Olive 20141017: why !important ?? it borks everything.
+	//vertical-align: top !important;
+	vertical-align: top;
+
 	border-bottom: 0px !important;
 }
-.table td{
+.table td {
 	color: #526273;
 	border-top-color: #edf2f7 !important;
-	vertical-align: middle !important;
+
+	// Olive 20141017: why middle??? it borks everything.
+	//vertical-align: middle !important;
+	vertical-align: top;
 }
+
 .table th.align-right,
 .table td.align-right {
 	text-align: right;

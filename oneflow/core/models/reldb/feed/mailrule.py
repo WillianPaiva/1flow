@@ -28,6 +28,8 @@ from positions import PositionField
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+# from mptt.models import MPTTModel, TreeForeignKey
+
 # from django.utils.translation import ugettext as _
 # from django.utils.text import slugify
 # from sparks.django.models import ModelDiffMixin
@@ -35,9 +37,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from sparks.django.models import ModelDiffMixin
 
-import mail_common as common
-from mailaccount import MailAccount
-from mailfeed import MailFeed
+from ..mail_common import OTHER_VALID_HEADERS_lower, BASE_HEADERS
+from mail import MailFeed
 
 LOGGER = logging.getLogger(__name__)
 
@@ -59,6 +60,11 @@ class MailFeedRule(ModelDiffMixin):
         (u'subject', _(u'Subject')),
         (u'from', _(u'Sender')),
         (u'to', _(u'Recipient (To:, Cc: or Bcc:)')),
+        (u'common', _(u'Subject or addresses')),
+
+        # Not ready for that.
+        # (u'body', _(u'Message body')),
+
         (u'list', _(u'Mailing-list')),
         (u'other', _(u'Other header (please specify)')),
     ))
@@ -76,17 +82,18 @@ class MailFeedRule(ModelDiffMixin):
         (u'nre_match', _(u'does not match reg. expr.')),
     ))
 
+    group = models.IntegerField(verbose_name=_(u'Rules group'),
+                                null=True, blank=True)
+
+    group_operation = models.CharField(
+        verbose_name=_(u'Rules group operation'),
+        default=MailFeed.RULES_OPERATION_ANY,
+        max_length=10, blank=True, null=True,
+        choices=tuple(MailFeed.RULES_OPERATION_CHOICES.items()),
+        help_text=_(u'Condition between rules of this group.'))
+
     mailfeed = models.ForeignKey(MailFeed)
-    account = models.ForeignKey(MailAccount, null=True, blank=True,
-                                verbose_name=_(u'Mail account'),
-                                help_text=_(u"To apply this rule to all "
-                                            u"accounts, just don't choose "
-                                            u"any."))
-    mailbox = models.CharField(verbose_name=_(u'Mailbox'),
-                               max_length=255, default=u'INBOX',
-                               null=True, blank=True)
-    recurse_mailbox = models.BooleanField(verbose_name=_(u'Recurse mailbox'),
-                                          default=True, blank=True)
+
     header_field = models.CharField(verbose_name=_(u'Header'),
                                     max_length=10, default=u'any',
                                     choices=tuple(HEADER_FIELD_CHOICES.items()),
@@ -112,31 +119,36 @@ class MailFeedRule(ModelDiffMixin):
                                    help_text=_(u"Examples: “Tweet de”, "
                                                u"“Google Alert:”. Can be "
                                                u"any text."))
-
-    match_action = models.CharField(
-        verbose_name=_(u'Action when matched'),
-        max_length=10, null=True, blank=True,
-        choices=tuple(MailFeed.MATCH_ACTION_CHOICES.items()),
-        help_text=_(u'Choose nothing to execute '
-                    u'action defined at the feed level.'))
-
-    finish_action =  models.CharField(
-        verbose_name=_(u'Finish action'),
-        max_length=10, null=True, blank=True,
-        choices=tuple(MailFeed.FINISH_ACTION_CHOICES.items()),
-        help_text=_(u'Choose nothing to execute '
-                    u'action defined at the feed level.'))
+    #
+    # De-activated, considered too complex to handle.
+    # This information is already in the mailfeed.
+    #
+    # match_action = models.CharField(
+    #     verbose_name=_(u'Action when matched'),
+    #     max_length=10, null=True, blank=True,
+    #     choices=tuple(MailFeed.MATCH_ACTION_CHOICES.items()),
+    #     help_text=_(u'Choose nothing to execute '
+    #                 u'action defined at the feed level.'))
+    #
+    # finish_action =  models.CharField(
+    #     verbose_name=_(u'Finish action'),
+    #     max_length=10, null=True, blank=True,
+    #     choices=tuple(MailFeed.FINISH_ACTION_CHOICES.items()),
+    #     help_text=_(u'Choose nothing to execute '
+    #                 u'action defined at the feed level.'))
+    #
 
     # Used to have many times the same rule in different feeds
     clone_of = models.ForeignKey('MailFeedRule', null=True, blank=True)
-    position = PositionField(collection='mailfeed', default=0, blank=True)
+    position = PositionField(collection=('mailfeed', 'group', ),
+                             default=0, blank=True)
     is_valid = models.BooleanField(verbose_name=_(u'Checked and valid'),
                                    default=True, blank=True)
     check_error = models.CharField(max_length=255, default=u'', blank=True)
 
     class Meta:
         app_label = 'core'
-        ordering = ('position', )
+        ordering = ('group', 'position', )
 
     @property
     def operation(self):
@@ -204,22 +216,35 @@ class MailFeedRule(ModelDiffMixin):
     def __unicode__(self):
         """ OMG, that's __unicode__, pep257. """
 
-        return _(u'Rule #{2}: {3}, applied to {0} for MailFeed {1}').format(
-            _(u'all accounts') if self.account is None
-            else _(u'account {0}').format(self.account),
-            self.mailfeed,
+        return _(u'Rule #{0}: {2} for MailFeed {1}').format(
             self.id,
-            _(u'{0} {1} “{2}” → {3} → {4}').format(
+            self.mailfeed,
+            _(u'{0} {1} “{2}”').format(
                 self.other_header
                 if self.header_field == u'other'
                 else self.HEADER_FIELD_CHOICES[self.header_field],
                 self.MATCH_TYPE_CHOICES[self.match_type],
                 self.match_value,
-                MailFeed.MATCH_ACTION_CHOICES.get(self.match_action,
-                                                  _(u'feed default')),
-                MailFeed.FINISH_ACTION_CHOICES.get(self.finish_action,
-                                                   _(u'feed default')),
+                # MailFeed.MATCH_ACTION_CHOICES.get(self.match_action,
+                #                                   _(u'feed default')),
+                # MailFeed.FINISH_ACTION_CHOICES.get(self.finish_action,
+                #                                    _(u'feed default')),
             ))
+
+    def repr_for_json(self):
+        """ Return our attributes in a JSON-compatible form. """
+
+        return {
+            'id': self.id,
+            'group': self.group,
+            'group_operation': self.group_operation,
+            'position': self.position,
+
+            'header_field': self.header_field,
+            'other_header': self.other_header,
+            'match_type': self.match_type,
+            'match_value': self.match_value,
+        }
 
     def save(self, *args, **kwargs):
         """ Check the rule is valid before saving. """
@@ -238,7 +263,7 @@ class MailFeedRule(ModelDiffMixin):
     # ——————————————————————————————————————————————————————————————— Internals
 
     def check_is_valid(self, commit=True):
-        """ TODO: implement this. """
+        """ Check if the rule is appliable or not, and mark it as such. """
 
         is_valid = True
 
@@ -248,7 +273,7 @@ class MailFeedRule(ModelDiffMixin):
             if other.strip().endswith(':'):
                 self.other_header = other = other.strip()[:-1]
 
-            if other.lower() not in common.OTHER_VALID_HEADERS_lower:
+            if other.lower() not in OTHER_VALID_HEADERS_lower:
                 is_valid = False
                 self.check_error = _(u'Unrecognized header name “{0}”. Please '
                                      u'look at http://bit.ly/smtp-headers '
@@ -275,7 +300,39 @@ class MailFeedRule(ModelDiffMixin):
                 self.save()
 
     def match_message(self, message):
-        """ Return ``True`` if :param:`message` matches the current rule. """
+        """ True if :param:`message` matches the current rule or its group. """
+
+        if self.group:
+            return self.match_message_in_group(message)
+
+        else:
+            return self.match_message_individual(message)
+
+    def match_message_in_group(self, message):
+        """ Return True if our rule group says so. """
+
+        operation_any = self.group_operation == MailFeed.RULES_OPERATION_ANY
+        operation_all = not operation_any
+
+        rules_group = self.mailfeed.mailfeedrule_set.filter(group=self.group)
+
+        for rule in rules_group:
+
+            if rule.match_message_individual(message):
+                if operation_any:
+                    # First match makes the group be true.
+                    return True
+
+            else:
+                if operation_all:
+                    # First non-match kills the group.
+                    return False
+
+        # OK, this is kind of a nice shortcut.
+        return operation_all
+
+    def match_message_individual(self, message):
+        """ Test message against the current rule, member of a group or not. """
 
         def match_header(header, value):
             if not self.match_case:
@@ -283,8 +340,12 @@ class MailFeedRule(ModelDiffMixin):
 
             return self.operation(header, value)
 
-        HEADERS = common.BASE_HEADERS.copy()
+        HEADERS = BASE_HEADERS.copy()
         HEADERS[u'other'] = self.other_header
+
+        #
+        # TODO: implement body searching.
+        #
 
         if self.match_case:
             value = self.match_value
@@ -295,7 +356,7 @@ class MailFeedRule(ModelDiffMixin):
             value = self.match_value.lower()
 
         for header_name in HEADERS[self.header_field]:
-            header = message.get(header_name, '')
+            header = message.get(header_name, u'')
 
             if isinstance(header, list) or isinstance(header, tuple):
                 if len(header) > 2:
