@@ -132,7 +132,7 @@ class WebSite(six.with_metaclass(WebSiteMeta, MPTTModel,
         translate = ('short_description', 'description', )
 
     class MPTTMeta:
-        order_insertion_by = ['name']
+        order_insertion_by = ['url']
 
     name = models.CharField(
         max_length=128,
