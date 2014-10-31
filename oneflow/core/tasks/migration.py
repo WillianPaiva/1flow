@@ -204,8 +204,15 @@ def get_subscription_from_mongo_subscription(mongo_subscription):
 def migrate_user_and_preferences(mongo_user):
     """  Migrate a user and his/her preferences from mongdb to PG. """
 
-    # Should create it if not already done.
-    user = mongo_user.django
+    try:
+        user = mongo_user.django
+
+    except User.DoesNotExist:
+        user = User(id=mongo_user.django_id,
+                    username=mongo_user.username,
+                    email=u'{0}@migration.1flow.io'.format(
+                        mongo_user.username))
+        user.save()
 
     # If already existing, preferences could have not been created yet.
     try:
