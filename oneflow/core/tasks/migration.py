@@ -208,7 +208,7 @@ def migrate_user_and_preferences(mongo_user):
         user = mongo_user.django
 
     except User.DoesNotExist:
-        user = User(id=mongo_user.django_id,
+        user = User(id=mongo_user.django_user,
                     username=mongo_user.username,
                     email=u'{0}@migration.1flow.io'.format(
                         mongo_user.username))
@@ -223,7 +223,7 @@ def migrate_user_and_preferences(mongo_user):
         preferences.save()
         preferences.check()
 
-    user.save()
+    # user.save()
 
     preferences = user.preferences
     mongo_preferences = mongo_user.preferences
