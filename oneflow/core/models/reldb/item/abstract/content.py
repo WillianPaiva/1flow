@@ -568,6 +568,9 @@ class ContentItem(models.Model):
 
         if config.ARTICLE_FETCHING_DEBUG:
             try:
+                raise NotImplementedError(
+                    'Review encode/decode for multi-parsers.')
+
                 LOGGER.info(u'————————— #%s HTML %s > %s —————————'
                             u'\n%s\n'
                             u'————————— end #%s HTML —————————',
@@ -632,6 +635,9 @@ class ContentItem(models.Model):
 
         if config.ARTICLE_FETCHING_DEBUG:
             try:
+                raise NotImplementedError(
+                    'Review encode/decode for multi-parsers.')
+
                 LOGGER.info(u'————————— #%s CLEANED %s > %s —————————'
                             u'\n%s\n'
                             u'————————— end #%s CLEANED —————————',
@@ -649,7 +655,7 @@ class ContentItem(models.Model):
             LOGGER.info(u'Article text fetching disabled in configuration.')
             return
 
-        if self.content_type == CONTENT_TYPES.NONE:
+        if self.content_type in (None, CONTENT_TYPES.NONE):
 
             LOGGER.info(u'Parsing text content for article %s…', self)
 
@@ -683,7 +689,7 @@ class ContentItem(models.Model):
 
                 else:
                     # Strainer gives us a non-unicode boo-boo.
-                    self.content = content.decode(encoding)
+                    self.content = content.decode(eventual_encoding=encoding)
 
             self.content_type = CONTENT_TYPES.HTML
 
