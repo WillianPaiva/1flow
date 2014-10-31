@@ -21,6 +21,17 @@
 		{% endblocktrans %}
 	</li>
 
+
+{% elif historyentry.status == 4 %}
+
+	<li>
+		{% blocktrans count counter=historyentry.lines %}
+		   An import of {{ counter }} item has been postponed for technical reasons. It will be automatically retried in a short while.
+		{% plural %}
+		   An import of {{ counter }} items has been postponed for technical reasons. It will be automatically retried in a short while.
+		{% endblocktrans %}
+	</li>
+
 {% endif %}
 
 {% if historyentry.results.created.articles %}
