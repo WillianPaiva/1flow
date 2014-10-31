@@ -30,7 +30,7 @@ from inspect_model import InspectModel
 from mongoengine import Q as MQ
 from mongoengine.fields import DBRef
 
-from django.db.models import IntegrityError
+from django.db import IntegrityError
 from django.db import connection
 # from django.core.exceptions import ObjectDoesNotExist
 # from django.utils.translation import ugettext_lazy as _
