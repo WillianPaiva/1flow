@@ -293,7 +293,7 @@ class UrlItem(models.Model):
             # went fine. We won't need to lookup again the absolute URL.
             statsd.gauge('articles.counts.absolutes', 1, delta=True)
             self.url_absolute = True
-            self.url_error    = u''
+            self.url_error = None
 
             self.url = final_url
 
@@ -304,7 +304,7 @@ class UrlItem(models.Model):
                 # LOGGER.exception(u'IntegrityError occured while saving %s',
                 #                  final_url)
 
-                original = self.objects.get(url=final_url)
+                original = BaseItem.objects.get(Article___url=final_url)
 
                 # Just to display the right "old" one in sentry errors and logs.
                 self.url = old_url
@@ -318,7 +318,7 @@ class UrlItem(models.Model):
             # Any other exception will raise. This is intentional.
             else:
                 LOGGER.info(u'Item %s (#%s) successfully absolutized URL '
-                            u'from %s to %s.', self.title, self.id,
+                            u'from %s to %s.', self.name, self.id,
                             old_url, final_url)
 
         else:
