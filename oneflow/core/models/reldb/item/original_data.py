@@ -28,19 +28,22 @@ from statsd import statsd
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from oneflow.base.utils import register_task_method
+
 from ..common import ORIGINS, CONTENT_TYPES
 from ..mail_common import email_prettify_raw_message
 from ..tag import SimpleTag as Tag
 from ..author import Author
 
 from base import BaseItem
-from article import Article
 
 LOGGER = logging.getLogger(__name__)
 
 
 __all__ = [
     'OriginalData',
+
+    # Tasks will be added from below.
 ]
 
 
@@ -150,36 +153,28 @@ def BaseItem_postprocess_original_data_method(self, force=False, commit=True):
         ORIGINS.FEEDPARSER: self.postprocess_feedparser_data,
     }
 
-    meth = methods_table.get(self.origin_type, None)
+    meth = methods_table.get(self.origin, None)
 
     if meth is None:
         LOGGER.warning(u'No method to post-process origin type %s of '
-                       u'article %s.', self.origin_type, self)
+                       u'article %s.', self.origin, self)
         return
 
     meth(force=force, commit=commit)
 
 
-BaseItem.add_original_data         = BaseItem_add_original_data_method
-BaseItem.remove_original_data      = BaseItem_remove_original_data_method
-BaseItem.postprocess_original_data = BaseItem_postprocess_original_data_method
-
-
-# ———————————————————————————————————————————————————— External Article methods
-
-
-def Article_postprocess_guess_original_data_method(self, force=False,
-                                                   commit=True):
+def BaseItem_postprocess_guess_original_data_method(self, force=False,
+                                                    commit=True):
 
     need_save = False
 
     if self.original_data.feedparser_hydrated:
-        self.origin_type = ORIGINS.FEEDPARSER
-        need_save        = True
+        self.origin = ORIGINS.FEEDPARSER
+        need_save   = True
 
     elif self.original_data.google_reader_hydrated:
-        self.origin_type = ORIGINS.GOOGLE_READER
-        need_save        = True
+        self.origin = ORIGINS.GOOGLE_READER
+        need_save   = True
 
     if need_save:
         if commit:
@@ -189,8 +184,8 @@ def Article_postprocess_guess_original_data_method(self, force=False,
         self.postprocess_original_data(force=force, commit=commit)
 
 
-def Article_postprocess_feedparser_data_method(self, force=False,
-                                               commit=True):
+def BaseItem_postprocess_feedparser_data_method(self, force=False,
+                                                commit=True):
     """ XXX: should disappear when feedparser_data is useless. """
 
     if self.original_data.feedparser_processed and not force:
@@ -281,30 +276,42 @@ def Article_postprocess_feedparser_data_method(self, force=False,
                                u'to recover orphaned article %s '
                                u'content.', self)
 
-        if self.comments_feed is None:
+        if self.comments_feed_url is None:
 
             comments_feed_url = fpod.get('wfw_commentrss', None)
 
             if comments_feed_url:
-                self.comments_feed = comments_feed_url
+                self.comments_feed_url = comments_feed_url
                 self.save()
 
         # We don't care anymore, it's already in another database.
         # self.offload_attribute('feedparser_original_data')
 
-    self.original_data.update(set__feedparser_processed=True)
+    self.original_data.feedparser_processed = True
+    self.original_data.save()
 
-
-def Article_postprocess_google_reader_data_method(self, force=False,
-                                                  commit=True):
+def BaseItem_postprocess_google_reader_data_method(self, force=False,
+                                                   commit=True):
 
     LOGGER.warning(u'postprocess_google_reader_data() is not implemented '
                    u'yet but it was called for article %s!', self)
 
 
-Article.postprocess_guess_original_data = \
-    Article_postprocess_guess_original_data_method
-Article.postprocess_feedparser_data     = \
-    Article_postprocess_feedparser_data_method
-Article.postprocess_google_reader_data  = \
-    Article_postprocess_google_reader_data_method
+BaseItem.add_original_data               = \
+    BaseItem_add_original_data_method
+BaseItem.remove_original_data            = \
+    BaseItem_remove_original_data_method
+BaseItem.postprocess_original_data       = \
+    BaseItem_postprocess_original_data_method
+BaseItem.postprocess_guess_original_data = \
+    BaseItem_postprocess_guess_original_data_method
+BaseItem.postprocess_feedparser_data     = \
+    BaseItem_postprocess_feedparser_data_method
+BaseItem.postprocess_google_reader_data  = \
+    BaseItem_postprocess_google_reader_data_method
+
+
+# HEADS UP: we need to register against BaseItem, because OriginalData
+#           cannot .objects.get() an Article in register_task_method().
+register_task_method(BaseItem, BaseItem.postprocess_original_data,
+                     globals(), queue=u'low')

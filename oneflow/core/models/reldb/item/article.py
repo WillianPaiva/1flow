@@ -50,7 +50,15 @@ from ..common import (
 )
 
 from base import BaseItem  # , baseitem_pre_save
-from abstract import UrlItem, ContentItem
+
+from abstract import (
+    UrlItem,
+    ContentItem,
+    baseitem_absolutize_url_task,
+    baseitem_fetch_content_task,
+)
+
+from original_data import baseitem_postprocess_original_data_task
 
 LOGGER = logging.getLogger(__name__)
 
@@ -198,8 +206,8 @@ class Article(BaseItem, UrlItem, ContentItem):
 
             # HEADS UP: this task name will be registered later
             # by the register_task_method call.
-            article_fetch_content_task.si(self.id),  # NOQA
-            article_postprocess_original_data_task.si(self.id),  # NOQA
+            baseitem_fetch_content_task.si(self.id),
+            baseitem_postprocess_original_data_task.si(self.id),
         )
 
         # Randomize the absolutization a little, to avoid
@@ -219,9 +227,9 @@ class Article(BaseItem, UrlItem, ContentItem):
         #
         # HEADS UP: this task name will be registered later
         # by the register_task_method call.
-        article_absolutize_url_task.apply_async((self.id, ),  # NOQA
-                                                countdown=randrange(5),
-                                                link=post_absolutize_chain)
+        baseitem_absolutize_url_task.apply_async((self.id, ),
+                                                 countdown=randrange(5),
+                                                 link=post_absolutize_chain)
 
         #
         # TODO: create short_url
@@ -258,8 +266,6 @@ register_task_method(Article, Article.post_create_task,
 # register_task_method(Article, Article.find_image,
 #                      globals(), queue=u'fetch', default_retry_delay=3600)
 # register_task_method(Article, Article.replace_duplicate_everywhere,
-#                      globals(), queue=u'low')
-# register_task_method(Article, Article.postprocess_original_data,
 #                      globals(), queue=u'low')
 
 # ————————————————————————————————————————————————————————————————————— Signals

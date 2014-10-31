@@ -65,6 +65,8 @@ from ...common import (
 )
 from ...website import WebSite
 
+from ..base import BaseItem
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -947,5 +949,7 @@ class ContentItem(models.Model):
 
 # ———————————————————————————————————————————————————————————————— Celery Tasks
 
-register_task_method(ContentItem, ContentItem.fetch_content,
+# HEADS UP: we need to register against BaseItem, because ContentItem is
+#           abstract and cannot run .objects.get() in register_task_method().
+register_task_method(BaseItem, ContentItem.fetch_content,
                      globals(), queue=u'fetch', default_retry_delay=3600)

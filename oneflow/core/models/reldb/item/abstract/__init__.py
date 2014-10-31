@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -19,6 +19,6 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
-from url import UrlItem  # NOQA
+from url import *  # NOQA
 
-from content import ContentItem  # NOQA
+from content import *  # NOQA

@@ -42,6 +42,8 @@ from oneflow.base.utils.http import clean_url
 from ...common import REQUEST_BASE_HEADERS
 from ...website import split_url
 
+from ..base import BaseItem
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -328,6 +330,7 @@ class UrlItem(models.Model):
 
 # ———————————————————————————————————————————————————————————————— Celery Tasks
 
-
-register_task_method(UrlItem, UrlItem.absolutize_url,
+# HEADS UP: we need to register against BaseItem, because UrlItem is abstract
+#           and cannot run .objects.get() in register_task_method().
+register_task_method(BaseItem, UrlItem.absolutize_url,
                      globals(), queue=u'swarm', default_retry_delay=3600)
