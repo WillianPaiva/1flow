@@ -211,7 +211,7 @@ def syncnode_pre_save(instance, **kwargs):
             sync_node.permission = NODE_PERMISSIONS.BASE
 
         if sync_node.strategy == SYNC_STRATEGIES.GLOBAL:
-            sync_node.strategy = SYNC_STRATEGIES.SMALL
+            sync_node.strategy = SYNC_STRATEGIES.PULL
 
         if sync_node.broadcast == BROADCAST_CHOICES.GLOBAL:
             sync_node.broadcast = BROADCAST_CHOICES.TRUSTED
