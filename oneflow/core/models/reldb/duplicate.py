@@ -26,7 +26,7 @@ from statsd import statsd
 # from constance import config
 
 # from json_field import JSONField
-# from celery import chain as tasks_chain
+from celery import task
 
 # from django.conf import settings
 from django.db import models
@@ -107,6 +107,7 @@ class AbstractDuplicateAwareModel(models.Model):
                      1, delta=True)
 
 
+@task(queue='background')
 def abstract_replace_duplicate_task(app_label, model_name, self_id, dupe_id):
     """ Call replace_duplicate() on all our concrete classes.
 
