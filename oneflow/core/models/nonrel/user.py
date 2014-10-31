@@ -24,7 +24,6 @@ import logging
 
 from random import randint
 
-from celery import task
 from constance import config
 
 from pymongo.errors import DuplicateKeyError
@@ -424,7 +423,7 @@ class User(Document, DocumentHelperMixin):
     def preferences(self):
         if self.preferences_data is None:
             self.preferences_data = Preferences().save()
-            #self.save()
+            # self.save()
 
         return self.preferences_data
 
@@ -547,7 +546,14 @@ class User(Document, DocumentHelperMixin):
         else:
             if user._db_name != settings.MONGODB_NAME_ARCHIVE:
 
-                django_user   = user.django
+                try:
+                    django_user   = user.django
+
+                except:
+                    # Avoid a loop in case this signal is
+                    # called while creating a PostgreSQL user.
+                    return
+
                 update_fields = []
 
                 for attr in User.SYNCHRONIZED_ATTRS:
