@@ -107,6 +107,10 @@ class UrlItem(models.Model):
                           max_length=512,
                           verbose_name=_(u'Public URL'))
 
+    comments_feed_url = models.URLField(max_length=512,
+                                        null=True, blank=True,
+                                        verbose_name=_(u'Comments feed URL'))
+
     url_absolute = models.BooleanField(
         verbose_name=_(u'Absolute URL'),
         default=False, blank=True,
@@ -323,7 +327,9 @@ class UrlItem(models.Model):
                 statsd.gauge('articles.counts.url_errors', -1, delta=True)
 
             statsd.gauge('articles.counts.absolutes', 1, delta=True)
-            self.update(set__url_absolute=True, set__url_error='')
+            self.url_absolute = True
+            self.url_error = None
+            self.save()
 
         return True
 
