@@ -17,6 +17,7 @@
 /celery.states*
 .ipynb_checkpoints
 
+/node_modules
 
 # PIP local installs
 /src
