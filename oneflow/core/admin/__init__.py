@@ -32,7 +32,6 @@ from ..models.reldb import (
     MailAccount,
 
     # CombinedFeed, CombinedFeedRule,
-    WebSite,
     Author,
     Folder,
     Language,
@@ -47,7 +46,9 @@ if settings.FULL_ADMIN:
     admin.site.register(HelpContent, HelpContentAdmin)
 
 
-admin.site.register(WebSite)
+from website import WebSite, WebSiteAdmin
+admin.site.register(WebSite, WebSiteAdmin)
+
 admin.site.register(Author)
 admin.site.register(Folder)
 admin.site.register(Language)

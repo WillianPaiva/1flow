@@ -18,6 +18,8 @@
     License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
+import re
+
 from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.conf.urls.i18n import i18n_patterns
@@ -25,6 +27,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponsePermanentRedirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import admin
+from django.views import static
 from django.views.decorators.cache import never_cache
 from django.views.generic import TemplateView
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
@@ -175,6 +178,17 @@ urlpatterns += patterns(
     '',
     url(r'^api/', include(v1_api.urls)),
 )
+
+if settings.DEBUG:
+    # Outside of DEBUG=True, the dirty work is handled directly by nginx.
+    urlpatterns += patterns(
+        '',
+
+        url(r'^%s(?P<path>.*)$' % re.escape(settings.MEDIA_URL.lstrip('/')),
+            static.serve,
+            kwargs={'document_root': settings.MEDIA_ROOT}),
+    )
+
 
 # This will add urls only when DEBUG=True
 # cf. https://docs.djangoproject.com/en/1.5/ref/contrib/staticfiles/

@@ -317,9 +317,11 @@ class RssAtomFeed(BaseFeed):
     url = models.URLField(unique=True, verbose_name=_(u'url'))
 
     website = models.ForeignKey(
-        WebSite, verbose_name=_(u'Web site'), null=True, blank=True,
-        help_text=_(u'The website is linked to the globe icon in the '
-                    u'source selector. This is not the XML feed URL.'))
+        WebSite,
+        verbose_name=_(u'Web site'),
+        null=True, blank=True,
+        related_name='feeds',
+    )
 
     # Stored directly from feedparser data to avoid wasting BW.
     last_etag = models.CharField(verbose_name=_(u'last etag'),

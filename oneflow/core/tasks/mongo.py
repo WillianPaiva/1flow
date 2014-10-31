@@ -55,7 +55,7 @@ def refresh_all_mongo_feeds(limit=None, force=False):
     # lock too long if something goes wrong. In production conditions
     # as of 20130812, refreshing all feeds takes only a moment:
     # [2013-08-12 09:07:02,028: INFO/MainProcess] Task
-    #       oneflow.core.tasks.refresh_all_feeds succeeded in 1.99886608124s.
+    #    oneflow.core.tasks.refresh_all_mongo_feeds succeeded in 1.99886608124s.
     my_lock = RedisExpiringLock('refresh_all_mongo_feeds', expire_time=120)
 
     if not my_lock.acquire():
@@ -68,7 +68,8 @@ def refresh_all_mongo_feeds(limit=None, force=False):
             # Avoid running this task over and over again in the queue
             # if the previous instance did not yet terminate. Happens
             # when scheduled task runs too quickly.
-            LOGGER.warning(u'refresh_all_feeds() is already locked, aborting.')
+            LOGGER.warning(u'refresh_all_mongo_feeds() is already '
+                           u'locked, aborting.')
             return
 
     feeds = MongoFeed.objects.filter(closed__ne=True, is_internal__ne=True)
