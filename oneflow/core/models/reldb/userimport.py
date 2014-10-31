@@ -22,7 +22,6 @@ import json
 import logging
 
 # from statsd import statsd
-from collections import OrderedDict
 from json_field import JSONField
 from dateutil import parser as date_parser
 
@@ -36,6 +35,8 @@ from django.contrib.messages import constants
 
 from async_messages import message_user
 
+from sparks.django.utils import NamedTupleChoices
+
 from oneflow.base.utils import register_task_method
 from oneflow.base.utils.dateutils import now
 
@@ -47,7 +48,20 @@ from ..nonrel import Article, Read, Feed, FeedIsHtmlPageException, Subscription
 LOGGER = logging.getLogger(__name__)
 
 
-__all__ = ['UserImport', ]
+__all__ = [
+    'UserImport',
+    'IMPORT_STATUS',
+]
+
+
+IMPORT_STATUS = NamedTupleChoices(
+    'IMPORT_STATUS',
+
+    ('NEW', 0, _(u'new')),
+    ('RUNNING', 1, _(u'running')),
+    ('FINISHED', 2, _(u'finished')),
+    ('FAILED', 3, _(u'failed')),
+)
 
 
 class UserImport(HistoryEntry):
@@ -59,25 +73,13 @@ class UserImport(HistoryEntry):
         verbose_name = _(u'User import')
         verbose_name_plural = _(u'User imports')
 
-    STATUS_NEW = 0
-    STATUS_RUNNING = 1
-    STATUS_FINISHED = 2
-    STATUS_FAILED = 3
-
-    STATUS_CHOICES = OrderedDict((
-        (STATUS_NEW, _(u'new')),
-        (STATUS_RUNNING, _(u'running')),
-        (STATUS_FINISHED, _(u'finished')),
-        (STATUS_FAILED, _(u'failed')),
-    ))
-
     date_started = models.DateTimeField(null=True, blank=True,
                                         verbose_name=_(u'date started'))
     date_finished = models.DateTimeField(null=True, blank=True,
                                          verbose_name=_(u'date finished'))
     status = models.IntegerField(verbose_name=_(u'Status'),
-                                 choices=STATUS_CHOICES.items(),
-                                 default=0, blank=True)
+                                 choices=IMPORT_STATUS.get_choices(),
+                                 default=IMPORT_STATUS.NEW, blank=True)
 
     urls = models.TextField(verbose_name=_(u'Web addresses'))
     lines = models.IntegerField(verbose_name=_(u'lines'), default=0)

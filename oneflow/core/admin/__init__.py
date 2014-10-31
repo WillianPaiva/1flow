@@ -27,7 +27,7 @@ from django.contrib import admin
 from ..models.reldb import (
     # DjangoUser as User,
 
-    HistoryEntry, UserImport,
+    HistoryEntry,
 
     MailAccount,
 
@@ -56,7 +56,10 @@ admin.site.register(MailAccount)
 # admin.site.register(CombinedFeedRule)
 
 admin.site.register(HistoryEntry)
-admin.site.register(UserImport)
+
+from userimport import UserImport, UserImportAdmin
+admin.site.register(UserImport, UserImportAdmin)
+
 admin.site.register(SyncNode)
 admin.site.register(NodePermissions)
 
