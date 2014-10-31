@@ -1739,9 +1739,9 @@ class Article(Document, DocumentHelperMixin):
 
                     # HEADS UP: this task name will be registered later
                     # by the register_task_method() call.
-                    article_post_create_task.delay(article.id)  # NOQA
+                    article_mongo_post_create_task.delay(article.id)  # NOQA
 
-    def post_create_task(self):
+    def mongo_post_create_task(self):
         """ Method meant to be run from a celery task. """
 
         if not self.slug:
@@ -1809,7 +1809,7 @@ class Article(Document, DocumentHelperMixin):
         return
 
 
-register_task_method(Article, Article.post_create_task,
+register_task_method(Article, Article.mongo_post_create_task,
                      globals(), u'high')
 register_task_method(Article, Article.absolutize_url,
                      globals(), queue=u'swarm', default_retry_delay=3600)
