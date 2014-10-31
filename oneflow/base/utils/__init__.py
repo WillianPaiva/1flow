@@ -83,8 +83,17 @@ def register_task_method(klass, meth, module_globals,
             simpler function, that requires a little more typing in the
             modules, but just works.
     """
+    class_name  = klass.__name__
+    method_name = meth.im_func.func_name
 
-    task_name = u'{0}.{1}'.format(klass.__name__, meth.im_func.func_name)
+    if method_name.lower().startswith(class_name.lower()):
+        # +1 to remove the ClassName_ trailing underscore.
+        method_name = method_name[len(class_name) + 1:]
+
+    if method_name.endswith(u'_method'):
+        method_name = method_name[:-7]
+
+    task_name = u'{0}.{1}'.format(class_name, method_name)
 
     if task_name.endswith(u'_task'):
         # The method name ends with “_class” to signify it's
@@ -114,7 +123,7 @@ def register_task_method(klass, meth, module_globals,
 
             objekt = klass.objects.get(pk=object_pk)
 
-            return getattr(objekt, meth.im_func.func_name)(*args, **kwargs)
+            return getattr(objekt, method_name)(*args, **kwargs)
 
     else:
 
@@ -124,7 +133,7 @@ def register_task_method(klass, meth, module_globals,
 
             objekt = klass.objects.get(id=object_id)
 
-            return getattr(objekt, meth.im_func.func_name)(*args, **kwargs)
+            return getattr(objekt, method_name)(*args, **kwargs)
 
     # Export the new task in the current module.
     module_globals[exported_name] = task_func
