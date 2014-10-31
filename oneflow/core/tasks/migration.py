@@ -19,6 +19,7 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 """
 
 import re
+import uuid
 import logging
 
 from constance import config
@@ -267,8 +268,8 @@ def migrate_website(mongo_website):
         pass
 
     website = WebSite(
-        name=mongo_website.name,
-        slug=mongo_website.slug,
+        name=mongo_website.name or u'Website at {0}'.format(mongo_website.url),
+        slug=mongo_website.slug or uuid.uuid4().hex,
         url=mongo_website.url,
     )
 
