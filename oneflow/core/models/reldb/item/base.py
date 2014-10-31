@@ -49,6 +49,7 @@ from ..common import (
 )
 
 from ..tag import SimpleTag
+from ..duplicate import AbstractDuplicateAwareModel
 from ..author import Author
 # from ..source import Source
 
@@ -66,7 +67,9 @@ __all__ = [
 # ——————————————————————————————————————————————————————————————————— end ghost
 #
 
-class BaseItem(PolymorphicModel):
+class BaseItem(PolymorphicModel,
+               AbstractDuplicateAwareModel,
+               AbstractTaggedModel):
 
     """ The base item in the 1flow database.
 
@@ -161,14 +164,6 @@ class BaseItem(PolymorphicModel):
         help_text=_(u'Origin of article (RSS/Atom, web import, twitter…). '
                     u'Can be None if item has a source (=internal origin).'))
 
-    # Allow quick find of duplicates if we ever want to delete them.
-    duplicate_of = models.ForeignKey(
-        'self', verbose_name=_(u'Duplicate of'), null=True, blank=True,
-        help_text=_(u'This article is a duplicate of another, which is '
-                    u'referenced here. Even if they have different URLs '
-                    u'(eg. one can be shortened, the other not), they '
-                    u'lead to the same final destination on the web.'))
-
     def __unicode__(self):
         return _(u'{0} (#{1}){2}').format(
             self.name[:40] + (self.name[40:] and u'…'), self.id,
@@ -221,32 +216,35 @@ class BaseItem(PolymorphicModel):
 
             read.tags.add(*tags)
 
-    def replace_duplicate_everywhere(self, duplicate_id, force=False):
-        """ register :param:`duplicate` as a duplicate content of myself.
+    def replace_duplicate(self, duplicate, force=False):
+        """ register :param:`duplicate` as a duplicate of myself.
 
-            redirect/modify all reads and feeds links to me, keeping all
-            attributes as they are.
+        redirect/modify all reads and feeds links to me, keeping all
+        attributes as they are.
+
+        .. warning:: this method is called INSIDE a celery
+            task (but it is not one by itself).
         """
 
-        duplicate = self.__class__.objects.get(id=duplicate_id)
+        try:
+            self.feeds.add(*duplicate.feeds.all())
 
-        for feed in duplicate.feeds:
-            try:
-                self.feeds.add(feed)
+        except:
+            # We have to continue to replace reads,
+            # and reload() at the end of the method.
+            LOGGER.exception(u'Could not update %s feeds with the ones '
+                             u'from %s!', self, duplicate)
 
-            except:
-                # We have to continue to replace reads,
-                # and reload() at the end of the method.
-                LOGGER.exception(u'Could not add feed %s to feeds of '
-                                 u'item %s!', feed, self)
-
-        for read in duplicate.reads:
-            read.article = self
+        for read in duplicate.reads.all():
+            read.item = self
 
             try:
                 read.save()
 
             except IntegrityError:
+                LOGGER.exception(u'Read %s already has master item %s '
+                                 u'instead of duplicate %s?!?',
+                                 read, self, duplicate)
                 # Already registered, simply delete the read.
                 read.delete()
 
@@ -254,23 +252,13 @@ class BaseItem(PolymorphicModel):
                 LOGGER.exception(u'Could not replace current item in '
                                  u'read %s by %s!', read, self)
 
-        try:
-            self.replace_duplicate_everywhere_internal(duplicate)
-
-        except AttributeError:
-            pass
-
-        except:
-            LOGGER.exception(u'Problem while registering duplicate of '
-                             u'%s by %s', self, duplicate)
-
         LOGGER.info(u'Item %s replaced by %s everywhere.', duplicate, self)
 
     def activate_reads(self, force=False, verbose=False, extended_check=False):
 
         if self.is_good or force:
 
-            bad_reads = self.bad_reads
+            bad_reads = self.bad_reads.all()
 
             if verbose:
                 LOGGER.info(u'Article %s activating %s bad reads…',

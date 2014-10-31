@@ -24,6 +24,8 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 from ..common import *  # NOQA
 
+from duplicate import AbstractDuplicateAwareModel  # NOQA
+
 from common import DjangoUser as User  # NOQA
 
 from helpcontent import HelpContent  # NOQA

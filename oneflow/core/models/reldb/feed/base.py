@@ -56,6 +56,7 @@ from ..common import (
     # BAD_SITE_URL_BASE,
 )
 
+from ..duplicate import AbstractDuplicateAwareModel
 from ..language import Language
 from ..item.base import BaseItem
 from ..tag import SimpleTag
@@ -148,7 +149,10 @@ class BaseFeedMeta(PolymorphicModelBase, TransMeta):
     pass
 
 
-class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
+class BaseFeed(six.with_metaclass(BaseFeedMeta,
+                                  PolymorphicModel,
+                                  AbstractDuplicateAwareModel,
+                                  DiffMixin)):
 
     """ Base 1flow feed.
 
@@ -251,8 +255,6 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta, PolymorphicModel, DiffMixin)):
 
     errors = JSONField(default=list, blank=True)
     options = JSONField(default=dict, blank=True)
-
-    duplicate_of = models.ForeignKey('self', null=True, blank=True)
 
     notes = models.TextField(
         verbose_name=_(u'Notes'), null=True, blank=True,
