@@ -57,10 +57,8 @@ class AbstractDuplicateAwareModel(models.Model):
 
     duplicate_of = models.ForeignKey(
         'self', verbose_name=_(u'Duplicate of'), null=True, blank=True,
-        help_text=_(u'This article is a duplicate of another, which is '
-                    u'referenced here. Even if they have different URLs '
-                    u'(eg. one can be shortened, the other not), they '
-                    u'lead to the same final destination on the web.'))
+        help_text=_(u'This element is a duplicate of another, which is '
+                    u'referenced here.'))
 
     # ————————————————————————————————————————————————————————————————— Methods
 
