@@ -42,7 +42,7 @@ from ..models.reldb import (
 LOGGER = logging.getLogger(__name__)
 
 
-@task(queue='low')
+@task(name="oneflow.core.tasks.sync_all_nodes", queue='low')
 def sync_all_nodes(force=False, stop_on_exception=True):
     """ Sync all 1flow nodes.
 

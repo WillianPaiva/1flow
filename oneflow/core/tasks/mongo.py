@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -38,9 +38,9 @@ from ..models.nonrel import (
 LOGGER = logging.getLogger(__name__)
 
 
-@task(queue='high')
+@task(name="oneflow.core.tasks.refresh_all_mongo_feeds", queue='high')
 def refresh_all_mongo_feeds(limit=None, force=False):
-    """ Refresh all MongoEngine feeds (RSS).
+    u""" Refresh all MongoEngine feeds (RSS).
 
     .. note:: this task should vanish when
         MongoDB → PostgreSQL migration is done.

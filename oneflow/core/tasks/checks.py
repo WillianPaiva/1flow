@@ -46,7 +46,7 @@ LOGGER = logging.getLogger(__name__)
 from archive import archive_documents
 
 
-@task(queue='high')
+@task(name="oneflow.core.tasks.global_checker_task", queue='high')
 def global_checker_task(*args, **kwargs):
     """ Just run all tasks in a celery chain.
 
@@ -71,7 +71,7 @@ def global_checker_task(*args, **kwargs):
     return global_check_chain.delay()
 
 
-@task(queue='low')
+@task(name="oneflow.core.tasks.global_feeds_checker", queue='low')
 def global_feeds_checker():
     """ Check all RSS feeds and their dependants. Close them if needed. """
 
@@ -147,7 +147,7 @@ def global_feeds_checker():
                 naturaldelta(pytime.time() - start_time))
 
 
-@task(queue='low')
+@task(name="oneflow.core.tasks.global_subscriptions_checker", queue='low')
 def global_subscriptions_checker(force=False, limit=None, from_feeds=True,
                                  from_users=False, extended_check=False):
     """ A conditionned version of :meth:`Feed.check_subscriptions`. """
@@ -264,7 +264,7 @@ def global_subscriptions_checker(force=False, limit=None, from_feeds=True,
         my_lock.release()
 
 
-@task(queue='low')
+@task(name="oneflow.core.tasks.global_duplicates_checker", queue='low')
 def global_duplicates_checker(limit=None, force=False):
     """ Check that duplicate articles have no more Reads anywhere.
 
@@ -339,7 +339,7 @@ def global_duplicates_checker(limit=None, force=False):
                 total_reads_count)
 
 
-@task(queue='low')
+@task(name="oneflow.core.tasks.global_reads_checker", queue='low')
 def global_reads_checker(limit=None, force=False, verbose=False,
                          break_on_exception=False, extended_check=False):
     """ Check all Reads and their dependants.
@@ -467,7 +467,7 @@ def global_reads_checker(limit=None, force=False, verbose=False,
                 skipped_count * 100.0 / processed_reads)
 
 
-@task(queue='low')
+@task(name="oneflow.core.tasks.global_users_checker", queue='low')
 def global_users_checker(limit=None, force=False, verbose=False,
                          break_on_exception=False, extended_check=False):
     """ Check all Users and their dependants. """
