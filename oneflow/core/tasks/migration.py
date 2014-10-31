@@ -30,7 +30,7 @@ from inspect_model import InspectModel
 from mongoengine import Q as MQ
 from mongoengine.fields import DBRef
 
-# from django.db.models import Q
+from django.db.models import IntegrityError
 from django.db import connection
 # from django.core.exceptions import ObjectDoesNotExist
 # from django.utils.translation import ugettext_lazy as _
@@ -212,7 +212,16 @@ def migrate_user_and_preferences(mongo_user):
                     username=mongo_user.username,
                     email=u'{0}@migration.1flow.io'.format(
                         mongo_user.username))
-        user.save()
+
+        try:
+            user.save()
+
+        except IntegrityError:
+            # The same username already exists. Just
+            # update the Mongo One to match the ID.
+            user = User.objects.get(username=mongo_user.username)
+            mongo_user.django_user = user.id
+            mongo_user.save()
 
     # If already existing, preferences could have not been created yet.
     try:
