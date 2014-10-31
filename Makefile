@@ -89,10 +89,12 @@ syncdb:
 	fab local sdf.migrate
 
 webdeploy-superfast:
+	git bkp ||true
 	git upa
 	fab prod R:web pull restart:1
 
 webdeploy-collectstatic:
+	git bkp ||true
 	git upa
 	fab prod R:web pull
 	fab prod -H 1flow.io -- rm -rf www/src/static
@@ -100,12 +102,14 @@ webdeploy-collectstatic:
 	fab prod R:web restart:1
 
 webdeploy-compilemessages:
+	git bkp ||true
 	git upa
 	fab prod R:web pull
 	fab prod -H 1flow.io sdf.compilemessages
 	fab prod R:web restart:1
 
 webdeploy-collectcompile:
+	git bkp ||true
 	git upa
 	fab prod R:web pull
 	fab prod -H 1flow.io -- rm -rf www/src/static
