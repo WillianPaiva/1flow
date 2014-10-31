@@ -36,7 +36,7 @@ from ...base.utils.dateutils import (now, today,
                                      naturaldelta as onef_naturaldelta)
 
 from oneflow.core import models   # , CACHE_ONE_WEEK
-
+from oneflow.core.models import nonrel as nonrel_models
 from ..context_processors import content_types
 
 LOGGER = logging.getLogger(__name__)
@@ -760,7 +760,7 @@ def userimport_feeds_details(user, feeds_urls):
 
     for url in feeds_urls:
         try:
-            feeds.append(models.Feed.objects.get(url=url))
+            feeds.append(nonrel_models.Feed.objects.get(url=url))
 
         except:
             LOGGER.exception(u'Could not get feed with URL %s', url)
@@ -792,7 +792,7 @@ def userimport_articles_details(user, articles_urls):
 
     for url in articles_urls:
         try:
-            articles.append(models.Article.objects.get(url=url))
+            articles.append(nonrel_models.Article.objects.get(url=url))
 
         except:
             LOGGER.exception(u'Could not get article with URL %s', url)

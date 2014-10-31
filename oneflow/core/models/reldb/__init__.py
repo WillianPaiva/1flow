@@ -34,7 +34,7 @@ from mailaccount import MailAccount  # NOQA
 
 from history import HistoryEntry  # NOQA
 
-from userimport import UserImport  # NOQA
+from userimport import *  # NOQA
 
 from language import Language  # NOQA
 
@@ -44,7 +44,7 @@ from author import Author  # NOQA
 
 from folder import Folder  # NOQA
 
-from tag import SimpleTag, AbstractTaggedModel  # NOQA
+from tag import *  # NOQA
 
 # —————————————————————————————————————————————————————————— Polymorphic models
 #                                                               and derivatives
