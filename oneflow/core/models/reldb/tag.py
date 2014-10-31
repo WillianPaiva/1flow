@@ -34,6 +34,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 from oneflow.base.utils import register_task_method
 
+from duplicate import AbstractDuplicateAwareModel
 from language import Language
 
 LOGGER = logging.getLogger(__name__)
@@ -42,7 +43,7 @@ LOGGER = logging.getLogger(__name__)
 __all__ = ['SimpleTag', ]
 
 
-class SimpleTag(MPTTModel):
+class SimpleTag(MPTTModel, AbstractDuplicateAwareModel):
 
     """ A simple tag model, with language and tag hierarchy if needed. """
 
@@ -57,12 +58,6 @@ class SimpleTag(MPTTModel):
     origin_type = models.ForeignKey(ContentType, null=True, blank=True)
     origin_id = models.PositiveIntegerField(null=True, blank=True)
     origin = generic.GenericForeignKey('origin_type', 'origin_id')
-
-    duplicate_of = models.ForeignKey(
-        'self', verbose_name=_(u'Duplicate of'), null=True, blank=True,
-        help_text=_(u'Put a "master" tag here to help avoiding too much '
-                    u'different tags (eg. singular and plurals) '
-                    u'with the same meaning and loss of information.'))
 
     class Meta:
         app_label = 'core'
@@ -84,30 +79,33 @@ class SimpleTag(MPTTModel):
 
         return _(u'{0} {1}⚐ (#{2})').format(self.name, self.language, self.id)
 
-    def replace_duplicate_everywhere(self, duplicate_id, *args, **kwargs):
+    def replace_duplicate(self, duplicate, *args, **kwargs):
         u""" When a Tag is marked as duplicate of another.
 
-        Do the necessary dirty work of replacing it everywhere it's
-        needed to keep the database clean, in order to eventually delete
-        the duplicate one day.
+        Do the necessary dirty work of replacing it everywhere. It's
+        needed to keep the database clean, in order to eventually do
+        something with the duplicate one day.
 
-        .. note:: for tags, deleting duplicates is not an option and is
-            even a feature, to allow keeping things unified between users
-            (eg. use the same tags in search engine…).
+        .. note:: for tags, deleting duplicates is not an option and it's
+            even a feature: this allows keeping things unified between
+            users (eg. use the same tags in search engine…).
         """
 
-        duplicate = self.__class__.objects.get(id=duplicate_id)
+        # Get all concrete classes that inherit from AbstractTaggedModel
+        for model in AbstractTaggedModel.__subclasses__():
 
-        # This method is defined in basefeed to avoid an import loop.
-        self.replace_duplicate_in_feeds(duplicate, *args, **kwargs)
+            # For each concrete class, get each instance
+            for instance in model.objects.all():
 
-        # This method is defined in baseitem to avoid an import loop.
-        self.replace_duplicate_in_items(duplicate, *args, **kwargs)
+                try:
+                    # Replace the duplicate tag by the master.
+                    instance.tags.remove(duplicate)
+                    instance.tags.add(self)
 
-        #
-        # TODO: do the same for feeds, subscriptions…
-        #
-        pass
+                except:
+                    LOGGER.exception(u'Replacing tag duplicate %s by %s '
+                                     u'failed in %s %s', duplicate, self,
+                                     model.__name__, instance)
 
     @classmethod
     def get_tags_set(cls, tags_names, origin=None):
@@ -138,16 +136,23 @@ class SimpleTag(MPTTModel):
             statsd.gauge('tags.counts.total', 1, delta=True)
 
 
+class AbstractTaggedModel(models.Model):
+
+    class Meta:
+        abstract = True
+        app_label = 'core'
+
+    tags = models.ManyToManyField(
+        SimpleTag, verbose_name=_(u'Tags'),
+        blank=True, null=True)
+
+
 # ———————————————————————————————————————————————————————————— Methods as tasks
 
 
 register_task_method(SimpleTag,
                      SimpleTag.post_create_task,
                      globals(), u'high')
-register_task_method(SimpleTag,
-                     SimpleTag.replace_duplicate_everywhere,
-                     globals(), u'low')
-
 
 # ————————————————————————————————————————————————————————————————————— Signals
 
@@ -161,3 +166,30 @@ def simpletag_post_save(instance, **kwargs):
 
 
 post_save.connect(simpletag_post_save, sender=SimpleTag)
+
+
+#   Alternative implementation
+#
+#   This implementation could have been done in the AbstractTaggedModel.
+#   It's not finished, hope you get the idea.
+#
+#    @classmethod
+#    def replace_tag_duplicate(cls, duplicate, force=False):
+#        """ Replace a duplicate of a Tag in all items/reads having it set. """
+#
+#        #
+#        # TODO: update search engine indexes…
+#        #
+#
+#        related_manager_name = cls._model.object_name.lower() + '_set'
+#        related_manager = getattr(duplicate, related_manager_name)
+#
+#        for instance in related_manager.all():
+#            instance.tags.remove(duplicate)
+#            instance.tags.add(self)
+#
+#        # Will be called because Read inherits from AbstractTaggedModel
+#        # for read in duplicate.reads.all():
+#        #     read.tags.remove(duplicate)
+#        #     read.tags.add(self)
+#

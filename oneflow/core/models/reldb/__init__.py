@@ -44,7 +44,7 @@ from author import Author  # NOQA
 
 from folder import Folder  # NOQA
 
-from tag import SimpleTag  # NOQA
+from tag import SimpleTag, AbstractTaggedModel  # NOQA
 
 # —————————————————————————————————————————————————————————— Polymorphic models
 #                                                               and derivatives

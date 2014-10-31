@@ -40,8 +40,8 @@ from folder import Folder
 # Avoid import loop.
 # from subscription import Subscription, generic_check_subscriptions_method
 
+from tag import AbstractTaggedModel, SimpleTag as Tag
 from item.base import BaseItem
-from tag import SimpleTag as Tag
 
 LOGGER = logging.getLogger(__name__)
 
@@ -65,7 +65,7 @@ BOOKMARK_TYPES = NamedTupleChoices(
 BOOKMARK_TYPE_DEFAULT = u'U'
 
 
-class Read(models.Model):
+class Read(models.Model, AbstractTaggedModel):
 
     """ Link a user to any item. """
 
@@ -190,12 +190,6 @@ class Read(models.Model):
     date_fun = models.DateTimeField(null=True, blank=True)
 
     # ———————————————————————————————————————————————————————— END make generic
-
-    # TODO: convert to UserTag to use models.ForeignKey and reverse_delete_rule.
-    tags = models.ManyToManyField(
-        Tag, verbose_name=_(u'Tags'),
-        related_name='reads', null=True, blank=True,
-        help_text=_(u'User set of tags for this read.'))
 
     # This will be set to Article.default_rating
     # until the user sets it manually.

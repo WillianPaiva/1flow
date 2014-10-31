@@ -24,8 +24,6 @@ import logging
 # from statsd import statsd
 # from constance import config
 
-# from celery import chain as tasks_chain
-
 # from humanize.time import naturaldelta
 # from humanize.i18n import django_language
 
@@ -36,10 +34,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from polymorphic import PolymorphicModel
 
-# from sparks.foundations.classes import SimpleObject
-# from sparks.django.models import DiffMixin
-
-# from oneflow.base.utils.http import clean_url
 # from oneflow.base.utils.dateutils import now
 # from oneflow.base.utils import register_task_method
 
@@ -48,8 +42,8 @@ from ..common import (
     ORIGINS,
 )
 
-from ..tag import SimpleTag
 from ..duplicate import AbstractDuplicateAwareModel
+from ..tag import AbstractTaggedModel
 from ..author import Author
 # from ..source import Source
 
@@ -112,11 +106,6 @@ class BaseItem(PolymorphicModel,
     authors = models.ManyToManyField(
         Author, null=True, blank=True,
         verbose_name=_(u'Authors'), related_name='authored_items')
-
-    tags = models.ManyToManyField(
-        SimpleTag, verbose_name=_(u'Tags'),
-        blank=True, null=True, related_name='items',
-        help_text=_(u'Default tags that will be applied to the READ objects.'))
 
     default_rating = models.FloatField(
         default=0.0, blank=True,
@@ -285,27 +274,3 @@ class BaseItem(PolymorphicModel,
             if verbose:
                 LOGGER.warning(u'Will not activate reads of bad article %s',
                                self)
-
-
-# —————————————————————————————————————————————————————— external bound methods
-#                                            Defined here to avoid import loops
-
-
-def SimpleTag_replace_duplicate_in_items_method(self, duplicate, force=False):
-    """ Replace a duplicate of a Tag in all items/reads having it set. """
-
-    #
-    # TODO: update search engine indexes…
-    #
-
-    for item in duplicate.items.all():
-        item.tags.remove(duplicate)
-        item.tags.add(self)
-
-    for read in duplicate.reads.all():
-        read.tags.remove(duplicate)
-        read.tags.add(self)
-
-
-SimpleTag.replace_duplicate_in_items = \
-    SimpleTag_replace_duplicate_in_items_method

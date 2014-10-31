@@ -57,9 +57,10 @@ from ..common import (
 )
 
 from ..duplicate import AbstractDuplicateAwareModel
+from ..tag import AbstractTaggedModel
 from ..language import Language
 from ..item.base import BaseItem
-from ..tag import SimpleTag
+# from ..tag import SimpleTag
 
 from common import throttle_fetch_interval
 
@@ -152,6 +153,7 @@ class BaseFeedMeta(PolymorphicModelBase, TransMeta):
 class BaseFeed(six.with_metaclass(BaseFeedMeta,
                                   PolymorphicModel,
                                   AbstractDuplicateAwareModel,
+                                  AbstractTaggedModel,
                                   DiffMixin)):
 
     """ Base 1flow feed.
@@ -211,13 +213,6 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
     items = models.ManyToManyField(BaseItem, blank=True, null=True,
                                    verbose_name=_(u'Feed items'),
                                    related_name='feeds')
-
-    tags = models.ManyToManyField(
-        SimpleTag, verbose_name=_(u'tags'),
-        blank=True, null=True, related_name='feeds',
-        help_text=_(u'This tags are used only when items from this '
-                    u'feed have no tags already. They are assigned to new '
-                    u'subscriptions too.'))
 
     languages = models.ManyToManyField(
         Language, verbose_name=_(u'Languages'),
@@ -879,27 +874,3 @@ def basefeed_export_content_classmethod(cls, since, folder=None):
 
 setattr(BaseFeed, 'export_content',
         classmethod(basefeed_export_content_classmethod))
-
-
-# —————————————————————————————————————————————————————— external bound methods
-#                                            Defined here to avoid import loops
-
-
-def SimpleTag_replace_duplicate_in_feeds_method(self, duplicate, force=False):
-    """ Replace a duplicate of a Tag in all feeds/subscriptions having it. """
-
-    #
-    # TODO: update search engine indexes…
-    #
-
-    for feed in duplicate.feeds.all():
-        feed.tags.remove(duplicate)
-        feed.tags.add(self)
-
-    for subscription in duplicate.subscriptions.all():
-        subscription.tags.remove(duplicate)
-        subscription.tags.add(self)
-
-
-SimpleTag.replace_duplicate_in_feeds = \
-    SimpleTag_replace_duplicate_in_feeds_method

@@ -40,10 +40,10 @@ from oneflow.base.utils.dateutils import (timedelta, today, combine,
 
 from common import DjangoUser as User
 
+from tag import AbstractTaggedModel
 from folder import Folder
 from feed import BaseFeed
 from feed.mail import MailFeed
-from tag import SimpleTag
 from read import Read
 from item import Article
 
@@ -129,7 +129,7 @@ class ActiveSubscriptionsManager(models.Manager):
                      self).get_queryset().filter(feed__is_active=True)
 
 
-class Subscription(ModelDiffMixin):
+class Subscription(ModelDiffMixin, AbstractTaggedModel):
 
     """ Link users to feeds. """
 
@@ -156,10 +156,6 @@ class Subscription(ModelDiffMixin):
     name = models.CharField(verbose_name=_(u'Name'),
                             max_length=255,
                             null=True, blank=True)
-
-    tags = models.ManyToManyField(SimpleTag, blank=True, null=True,
-                                  verbose_name=_(u'tags'),
-                                  related_name='subscriptions')
 
     folders = models.ManyToManyField(Folder, blank=True, null=True,
                                      verbose_name=_(u'Folders'),
