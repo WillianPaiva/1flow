@@ -215,7 +215,7 @@ def get_author_from_mongo_author(mongo_author):
     try:
         return authors_cache[mongo_author.id]
 
-    except AttributeError:
+    except KeyError:
         author = Author.objects.get(
             origin_name=mongo_author.origin_name,
             website=WebSite.objects.get(url=mongo_author.website.url))
@@ -253,7 +253,7 @@ def get_folder_from_mongo_folder(mongo_folder):
     try:
         return folders_cache[mongo_folder.id]
 
-    except:
+    except KeyError:
         folder = Folder.objects.get(
             name=mongo_folder.name,
             user=mongo_folder.owner.django,
@@ -272,7 +272,7 @@ def get_feed_from_mongo_feed(mongo_feed):
     try:
         return feeds_cache[mongo_feed.id]
 
-    except:
+    except KeyError:
         if mongo_feed.is_internal:
             feed = get_internal_feed_from_mongo_feed(mongo_feed)
 
@@ -323,7 +323,7 @@ def get_subscription_from_mongo_subscription(mongo_subscription):
     try:
         return subscriptions_cache[mongo_subscription.id]
 
-    except:
+    except KeyError:
         subscription = Subscription.objects.get(
             user=mongo_subscription.user.django,
             feed=get_feed_from_mongo_feed(mongo_subscription.feed)
