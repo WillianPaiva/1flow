@@ -850,7 +850,7 @@ def reassign_tags_on_read(mongo_read):
 # NOT NEEDED: def migrate_users_and_preferences(users):
 
 
-def migrate_websites(websites, stop_on_exception=True):
+def migrate_websites(websites, stop_on_exception=True, verbose=False):
     """ Migrate websites. """
 
     for mongo_website in not_yet_migrated(websites):
@@ -868,7 +868,8 @@ def migrate_websites(websites, stop_on_exception=True):
                 continue
 
         else:
-            LOGGER.info(u'Migrated website %s → %s', mongo_website, website)
+            if verbose:
+                LOGGER.info(u'Migrated website %s → %s', mongo_website, website)
 
         if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
             # Avoid a full save() cycle, we don't need it anyway.
@@ -884,7 +885,7 @@ def migrate_websites(websites, stop_on_exception=True):
                 counters.migrated_websites_count))
 
 
-def migrate_authors(authors, stop_on_exception=True):
+def migrate_authors(authors, stop_on_exception=True, verbose=False):
     """ Migrate authors. """
 
     for mongo_author in not_yet_migrated(authors):
@@ -900,8 +901,10 @@ def migrate_authors(authors, stop_on_exception=True):
 
             else:
                 continue
+
         else:
-            LOGGER.info(u'Migrated author %s → %s', mongo_author, author)
+            if verbose:
+                LOGGER.info(u'Migrated author %s → %s', mongo_author, author)
 
         if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
             # Avoid a full save() cycle, we don't need it anyway.
@@ -917,7 +920,7 @@ def migrate_authors(authors, stop_on_exception=True):
                 counters.migrated_authors_count))
 
 
-def migrate_feeds(feeds, stop_on_exception=True):
+def migrate_feeds(feeds, stop_on_exception=True, verbose=False):
     """ Migrate feeds. """
 
     for mongo_feed in not_yet_migrated(feeds):
@@ -932,8 +935,10 @@ def migrate_feeds(feeds, stop_on_exception=True):
 
             else:
                 continue
+
         else:
-            LOGGER.info(u'Migrated feed %s → %s', mongo_feed, feed)
+            if verbose:
+                LOGGER.info(u'Migrated feed %s → %s', mongo_feed, feed)
 
         if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
             # Avoid a full save() cycle, we don't need it anyway.
@@ -958,7 +963,7 @@ def migrate_feeds(feeds, stop_on_exception=True):
 # NOT NEEDED: def migrate_reads(reads):
 
 
-def migrate_articles(articles, stop_on_exception=True):
+def migrate_articles(articles, stop_on_exception=True, verbose=False):
     """ Migrate articles. """
 
     for mongo_article in not_yet_migrated(articles):
@@ -974,8 +979,10 @@ def migrate_articles(articles, stop_on_exception=True):
 
             else:
                 continue
+
         else:
-            LOGGER.info(u'Migrated article %s → %s', mongo_article, article)
+            if verbose:
+                LOGGER.info(u'Migrated article %s → %s', mongo_article, article)
 
         if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
             # Avoid a full save() cycle, we don't need it anyway.
@@ -991,7 +998,7 @@ def migrate_articles(articles, stop_on_exception=True):
                 counters.migrated_articles_count))
 
 
-def migrate_tags(tags, stop_on_exception=True):
+def migrate_tags(tags, stop_on_exception=True, verbose=False):
     """ Migrate tags. """
 
     for mongo_tag in not_yet_migrated(tags):
@@ -1006,8 +1013,10 @@ def migrate_tags(tags, stop_on_exception=True):
 
             else:
                 continue
+
         else:
-            LOGGER.info(u'Migrated tag %s → %s', mongo_tag, tag)
+            if verbose:
+                LOGGER.info(u'Migrated tag %s → %s', mongo_tag, tag)
 
         if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
             # Avoid a full save() cycle, we don't need it anyway.
@@ -1026,7 +1035,7 @@ def migrate_tags(tags, stop_on_exception=True):
 # ——————————————————————————————————————————————————————————— Tags re-assigning
 
 
-def reassign_tags_on_feeds(stop_on_exception=True):
+def reassign_tags_on_feeds(stop_on_exception=True, verbose=False):
     """ Re-assign tags on feeds. """
 
     LOGGER.info(u'Starting to reassign tags on feeds. '
@@ -1054,7 +1063,7 @@ def reassign_tags_on_feeds(stop_on_exception=True):
             feed.update(set__bigmig_reassigned=True)
 
 
-def reassign_tags_on_subscriptions(stop_on_exception=True):
+def reassign_tags_on_subscriptions(stop_on_exception=True, verbose=False):
     """ Re-assign tags on subscriptions. """
 
     LOGGER.info(u'Starting to reassign tags on subscriptions. '
@@ -1082,7 +1091,7 @@ def reassign_tags_on_subscriptions(stop_on_exception=True):
             subscription.update(set__bigmig_reassigned=True)
 
 
-def reassign_tags_on_articles(stop_on_exception=True):
+def reassign_tags_on_articles(stop_on_exception=True, verbose=False):
     """ Re-assign tags on articles. """
 
     LOGGER.info(u'Starting to reassign tags on articles. '
@@ -1110,7 +1119,7 @@ def reassign_tags_on_articles(stop_on_exception=True):
             article.update(set__bigmig_reassigned=True)
 
 
-def reassign_tags_on_reads(stop_on_exception=True):
+def reassign_tags_on_reads(stop_on_exception=True, verbose=False):
     """ Re-assign tags on reads. """
 
     LOGGER.info(u'Starting to reassign tags on reads. '
@@ -1141,7 +1150,7 @@ def reassign_tags_on_reads(stop_on_exception=True):
 # ——————————————————————————————————————————————————————— Models migrations
 
 
-def migrate_all_users_and_preferences(stop_on_exception=True):
+def migrate_all_users_and_preferences(stop_on_exception=True, verbose=False):
     """ Migrate things. """
 
     for mongo_user in not_yet_migrated(all_users):
@@ -1175,18 +1184,22 @@ def migrate_all_users_and_preferences(stop_on_exception=True):
                 ))
 
 
-def migrate_all_websites(stop_on_exception=True):
+def migrate_all_websites(stop_on_exception=True, verbose=False):
     """ Migrate things. """
 
     masters_websites = master_documents(all_websites)
     # masters_websites_count = masters_websites.count()
 
-    migrate_websites(masters_websites, stop_on_exception=stop_on_exception)
+    migrate_websites(masters_websites,
+                     stop_on_exception=stop_on_exception,
+                     verbose=verbose)
 
     duplicates_websites = all_websites.filter(duplicate_of__ne=None)
     duplicates_websites_count = duplicates_websites.count()
 
-    migrate_websites(duplicates_websites, stop_on_exception=stop_on_exception)
+    migrate_websites(duplicates_websites,
+                     stop_on_exception=stop_on_exception,
+                     verbose=verbose)
 
     LOGGER.info(u'Web sites migrated: {0}/{1}, '
                 u' {2} dupes, {3} already there.'.format(
@@ -1198,18 +1211,22 @@ def migrate_all_websites(stop_on_exception=True):
                 ))
 
 
-def migrate_all_authors(stop_on_exception=True):
+def migrate_all_authors(stop_on_exception=True, verbose=False):
     """ Migrate things. """
 
     masters_authors = master_documents(all_authors)
     # masters_authors_count = masters_authors.count()
 
-    migrate_authors(masters_authors, stop_on_exception=stop_on_exception)
+    migrate_authors(masters_authors,
+                    stop_on_exception=stop_on_exception,
+                    verbose=verbose)
 
     duplicates_authors = all_authors.filter(duplicate_of__ne=None)
     duplicates_authors_count = duplicates_authors.count()
 
-    migrate_authors(duplicates_authors, stop_on_exception=stop_on_exception)
+    migrate_authors(duplicates_authors,
+                    stop_on_exception=stop_on_exception,
+                    verbose=verbose)
 
     LOGGER.info(u'Authors migrated: {0}/{1}, '
                 u' {2} dupes, {3} already there.'.format(
@@ -1221,7 +1238,7 @@ def migrate_all_authors(stop_on_exception=True):
                 ))
 
 
-def migrate_all_feeds(stop_on_exception=True):
+def migrate_all_feeds(stop_on_exception=True, verbose=False):
     """ Migrate things. """
 
     external_feeds = all_feeds.filter(is_internal=False)
@@ -1231,14 +1248,18 @@ def migrate_all_feeds(stop_on_exception=True):
 
     master_external = master_documents(external_feeds)
 
-    migrate_feeds(master_external, stop_on_exception=stop_on_exception)
+    migrate_feeds(master_external,
+                  stop_on_exception=stop_on_exception,
+                  verbose=verbose)
 
     # —————————————————————————————————————————————————————————— duplicates
 
     duplicates_external = external_feeds.filter(duplicate_of__ne=None)
     duplicates_external_count = duplicates_external.count()
 
-    migrate_feeds(duplicates_external, stop_on_exception=stop_on_exception)
+    migrate_feeds(duplicates_external,
+                  stop_on_exception=stop_on_exception,
+                  verbose=verbose)
 
     # ————————————————————————————————————————————————————————————————— end
 
@@ -1252,7 +1273,8 @@ def migrate_all_feeds(stop_on_exception=True):
                 - counters.created_feeds_count)
 
 
-def check_internal_users_feeds_and_subscriptions(stop_on_exception=True):
+def check_internal_users_feeds_and_subscriptions(stop_on_exception=True,
+                                                 verbose=False):
     """ Create internal feeds and subscriptions for all users. """
 
     # These are django models.
@@ -1299,7 +1321,7 @@ def check_internal_users_feeds_and_subscriptions(stop_on_exception=True):
                 created_internal_feeds_count)
 
 
-def migrate_all_articles(stop_on_exception=True):
+def migrate_all_articles(stop_on_exception=True, verbose=False):
     """ Migrate things. """
 
     # ————————————————————————————————————————————————————————————— masters
@@ -1307,14 +1329,18 @@ def migrate_all_articles(stop_on_exception=True):
     master_articles = master_documents(all_articles)
     master_articles_count = master_articles.count()
 
-    migrate_articles(master_articles, stop_on_exception=stop_on_exception)
+    migrate_articles(master_articles,
+                     stop_on_exception=stop_on_exception,
+                     verbose=verbose)
 
     # —————————————————————————————————————————————————————————— duplicates
 
     duplicate_articles = all_articles.filter(duplicate_of__ne=None)
     duplicate_articles_count = duplicate_articles.count()
 
-    migrate_articles(duplicate_articles, stop_on_exception=stop_on_exception)
+    migrate_articles(duplicate_articles,
+                     stop_on_exception=stop_on_exception,
+                     verbose=verbose)
 
     LOGGER.info(u'Articles migrated: %s/%s (total %s), '
                 u'%s dupes, %s already there.',
@@ -1326,7 +1352,7 @@ def migrate_all_articles(stop_on_exception=True):
                 - counters.created_articles_count)
 
 
-def migrate_all_folders(stop_on_exception=True):
+def migrate_all_folders(stop_on_exception=True, verbose=False):
     """ Migrate things. """
 
     mongo_folders = not_yet_migrated(all_folders)
@@ -1348,7 +1374,8 @@ def migrate_all_folders(stop_on_exception=True):
                 continue
 
         else:
-            LOGGER.info(u'Migrated folder %s → %s', mongo_folder, folder)
+            if verbose:
+                LOGGER.info(u'Migrated folder %s → %s', mongo_folder, folder)
 
         if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
             # Avoid a full save() cycle, we don't need it anyway.
@@ -1372,7 +1399,7 @@ def migrate_all_folders(stop_on_exception=True):
                 - counters.created_folders_count)
 
 
-def migrate_all_subscriptions(stop_on_exception=True):
+def migrate_all_subscriptions(stop_on_exception=True, verbose=False):
     """ Migrate things. """
 
     mongo_subscriptions = not_yet_migrated(all_subscriptions)
@@ -1394,8 +1421,9 @@ def migrate_all_subscriptions(stop_on_exception=True):
                 continue
 
         else:
-            LOGGER.info(u'Migrated subscription %s → %s',
-                        mongo_subscription, subscription)
+            if verbose:
+                LOGGER.info(u'Migrated subscription %s → %s',
+                            mongo_subscription, subscription)
 
         if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
             # Avoid a full save() cycle, we don't need it anyway.
@@ -1419,7 +1447,7 @@ def migrate_all_subscriptions(stop_on_exception=True):
                 - counters.created_subscriptions_count)
 
 
-def migrate_all_reads(stop_on_exception=True):
+def migrate_all_reads(stop_on_exception=True, verbose=False):
     """ Migrate things. """
 
     mongo_reads = not_yet_migrated(all_reads)
@@ -1441,7 +1469,8 @@ def migrate_all_reads(stop_on_exception=True):
                 continue
 
         else:
-            LOGGER.info(u'Migrated read %s → %s', mongo_read, read)
+            if verbose:
+                LOGGER.info(u'Migrated read %s → %s', mongo_read, read)
 
         if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
             # Avoid a full save() cycle, we don't need it anyway.
@@ -1465,7 +1494,7 @@ def migrate_all_reads(stop_on_exception=True):
                 - counters.created_reads_count)
 
 
-def migrate_all_tags(stop_on_exception=True):
+def migrate_all_tags(stop_on_exception=True, verbose=False):
     """ Migrate things. """
 
     # ————————————————————————————————————————————————————————————— masters
@@ -1474,14 +1503,18 @@ def migrate_all_tags(stop_on_exception=True):
 
     master_tags_count = master_tags.count()
 
-    migrate_tags(master_tags, stop_on_exception=stop_on_exception)
+    migrate_tags(master_tags,
+                 stop_on_exception=stop_on_exception,
+                 verbose=verbose)
 
     # —————————————————————————————————————————————————————————— duplicates
 
     duplicate_tags = all_tags.filter(MQ(duplicate_of__ne=None))
     duplicate_tags_count = duplicate_tags.count()
 
-    migrate_tags(duplicate_tags, stop_on_exception=stop_on_exception)
+    migrate_tags(duplicate_tags,
+                 stop_on_exception=stop_on_exception,
+                 verbose=verbose)
 
     LOGGER.info(u'Tags migrated: %s/%s (total %s), '
                 u'%s dupes, %s already there.',
@@ -1493,20 +1526,24 @@ def migrate_all_tags(stop_on_exception=True):
                 - counters.created_tags_count)
 
 
-def reassign_all_tags(stop_on_exception=True):
+def reassign_all_tags(stop_on_exception=True, verbose=False):
     """ Re-assign all tags global task. """
 
     with benchmark('Re-assign tags on feeds'):
-        reassign_tags_on_feeds(stop_on_exception=stop_on_exception)
+        reassign_tags_on_feeds(stop_on_exception=stop_on_exception,
+                               verbose=verbose)
 
     with benchmark('Re-assign tags on subscriptions'):
-        reassign_tags_on_subscriptions(stop_on_exception=stop_on_exception)
+        reassign_tags_on_subscriptions(stop_on_exception=stop_on_exception,
+                                       verbose=verbose)
 
     with benchmark('Re-assign tags on articles'):
-        reassign_tags_on_articles(stop_on_exception=stop_on_exception)
+        reassign_tags_on_articles(stop_on_exception=stop_on_exception,
+                                  verbose=verbose)
 
     with benchmark('Re-assign tags on reads'):
-        reassign_tags_on_reads(stop_on_exception=stop_on_exception)
+        reassign_tags_on_reads(stop_on_exception=stop_on_exception,
+                               verbose=verbose)
 
     total_impacted_objects = \
         counters.reassigned_objects_count + counters.failed_objects_count
@@ -1524,7 +1561,7 @@ def reassign_all_tags(stop_on_exception=True):
 
 
 @task(queue='background')
-def migrate_all_mongo_data(force=False, stop_on_exception=True):
+def migrate_all_mongo_data(force=False, stop_on_exception=True, verbose=False):
     """ Copy and refresh all mongodb data into PostgreSQL. """
 
     if config.CHECK_DATABASE_MIGRATION_DISABLED:
@@ -1553,41 +1590,50 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
         try:
             with benchmark(u'Migrate users & preferences'):
                 migrate_all_users_and_preferences(
-                    stop_on_exception=stop_on_exception)
+                    stop_on_exception=stop_on_exception, verbose=verbose)
 
             with benchmark(u'Migrate Web sites'):
-                migrate_all_websites(stop_on_exception=stop_on_exception)
+                migrate_all_websites(stop_on_exception=stop_on_exception,
+                                     verbose=verbose)
 
             with benchmark(u'Migrate Authors'):
-                migrate_all_authors(stop_on_exception=stop_on_exception)
+                migrate_all_authors(stop_on_exception=stop_on_exception,
+                                    verbose=verbose)
 
             with benchmark(u'Migrate RSS/Atom feeds'):
-                migrate_all_feeds(stop_on_exception=stop_on_exception)
+                migrate_all_feeds(stop_on_exception=stop_on_exception,
+                                  verbose=verbose)
 
             with benchmark(u'Check internal feeds / subscriptions'):
                 check_internal_users_feeds_and_subscriptions(
-                    stop_on_exception=stop_on_exception)
+                    stop_on_exception=stop_on_exception, verbose=verbose)
 
             with benchmark(u'Migrate all articles'):
-                migrate_all_articles(stop_on_exception=stop_on_exception)
+                migrate_all_articles(stop_on_exception=stop_on_exception,
+                                     verbose=verbose)
 
             # Subscriptions need their folders.
             with benchmark(u'Migrate all folders'):
-                migrate_all_folders(stop_on_exception=stop_on_exception)
+                migrate_all_folders(stop_on_exception=stop_on_exception,
+                                    verbose=verbose)
 
             with benchmark(u'Migrate all subscriptions'):
-                migrate_all_subscriptions(stop_on_exception=stop_on_exception)
+                migrate_all_subscriptions(stop_on_exception=stop_on_exception,
+                                          verbose=verbose)
 
             with benchmark(u'Migrate all reads'):
-                migrate_all_reads(stop_on_exception=stop_on_exception)
+                migrate_all_reads(stop_on_exception=stop_on_exception,
+                                  verbose=verbose)
 
             # Now that all tag origins are created, we can copy all of them
             # and reassign them to feeds / articles / subscriptions / reads.
             with benchmark(u'Migrate all tags'):
-                migrate_all_tags(stop_on_exception=stop_on_exception)
+                migrate_all_tags(stop_on_exception=stop_on_exception,
+                                 verbose=verbose)
 
             with benchmark(u'Re-assign tags'):
-                reassign_all_tags(stop_on_exception=stop_on_exception)
+                reassign_all_tags(stop_on_exception=stop_on_exception,
+                                  verbose=verbose)
 
             # for each feed
             # copy subscriptions
