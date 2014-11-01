@@ -880,7 +880,7 @@ def migrate_websites(websites, stop_on_exception=True, verbose=False):
 
         counters.migrated_websites_count += 1
 
-        if counters.migrated_websites_count % 500 == 0:
+        if counters.migrated_websites_count % 1000 == 0:
             vacuum_analyze(u'(at {0} websites)'.format(
                 counters.migrated_websites_count))
 
@@ -915,7 +915,7 @@ def migrate_authors(authors, stop_on_exception=True, verbose=False):
 
         counters.migrated_authors_count += 1
 
-        if counters.migrated_authors_count % 500 == 0:
+        if counters.migrated_authors_count % 10000 == 0:
             vacuum_analyze(u'(at {0} authors)'.format(
                 counters.migrated_authors_count))
 
@@ -1027,7 +1027,7 @@ def migrate_tags(tags, stop_on_exception=True, verbose=False):
 
         counters.migrated_tags_count += 1
 
-        if counters.migrated_tags_count % 10000 == 0:
+        if counters.migrated_tags_count % 5000 == 0:
             vacuum_analyze(u'(at {0} tags)'.format(
                 counters.migrated_tags_count))
 
