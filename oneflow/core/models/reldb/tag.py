@@ -65,8 +65,8 @@ class SimpleTag(MPTTModel, AbstractDuplicateAwareModel):
         verbose_name = _(u'Tag')
         verbose_name_plural = _(u'Tags')
 
-    class MPTTMeta:
-        order_insertion_by = ['name']
+    # class MPTTMeta:
+    #     order_insertion_by = ['name']
 
     # See the `WordRelation` class before working on this.
     #
