@@ -88,10 +88,14 @@ CELERY_DISABLE_RATE_LIMITS = True
 # CELERY_MESSAGE_COMPRESSION = 'gzip'
 
 # Avoid long running and retried tasks to be run over-and-over again.
-BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 86400}
+BROKER_TRANSPORT_OPTIONS = {
+    # 86400 = 24 hours
+    # 43200 = 12 hours
+    # 21600 = 6 hours
+    'visibility_timeout': 21600
+}
 
-# Half a day is enough
-CELERY_TASK_RESULT_EXPIRES = 43200
+CELERY_TASK_RESULT_EXPIRES = 21600
 
 # The default beiing 5000, we need more than this.
 CELERY_MAX_CACHED_RESULTS = 32768
@@ -101,15 +105,16 @@ CELERYD_POOL_RESTARTS = True
 
 # Since Celery 3.1/3.2, no 'pickle' anymore.
 # JSON is my prefered option, anyway.
-CELERY_ACCEPT_CONTENT = ['pickle', 'json']
+CELERY_ACCEPT_CONTENT = ['json']
 
-CELERY_TASK_SERIALIZER = 'pickle'
+CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
 # CELERY_ALWAYS_EAGER=True
 
-CELERY_TRACK_STARTED = True
-CELERY_SEND_TASK_SENT_EVENT = True
+# Both are cool but imply too much trafic.
+# CELERY_TRACK_STARTED = True
+# CELERY_SEND_TASK_SENT_EVENT = True
 
 # Disabled by default and I like it, because we use Sentry for this.
 # CELERY_SEND_TASK_ERROR_EMAILS = False
