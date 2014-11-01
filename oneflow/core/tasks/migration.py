@@ -1013,7 +1013,7 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
 
     def migrate_all_users_and_preferences():
 
-        for mongo_user in not_yet_migrated(MongoUser.objects.all()):
+        for mongo_user in not_yet_migrated(all_users):
 
             try:
                 user, created = migrate_user_and_preferences(mongo_user)
