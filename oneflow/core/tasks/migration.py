@@ -92,53 +92,63 @@ class StopMigration(Exception):
     pass
 
 
+def common_qs_args(qs):
+    u""" Make a Mongo QS not cached and immune to timeouts.
+
+    I know “no timeout” is generally a bad practice, but we are in
+    a migration; this eases things that are already too complicated.
+    """
+
+    return qs.no_cache().timeout(False)
+
+
 # —————————————————————————————————————————————————————————— Migration counters
 
 # Allow internal function to write counters
 # without passing them as argument everytime.
 counters = SimpleObject()
 
-all_websites = MongoWebSite.objects.all().no_cache()
+all_websites = common_qs_args(MongoWebSite.objects.all())
 all_websites_count = all_websites.count()
 counters.created_websites_count = 0
 counters.migrated_websites_count = 0
 
-all_authors = MongoAuthor.objects.all().no_cache()
+all_authors = common_qs_args(MongoAuthor.objects.all())
 all_authors_count = all_authors.count()
 counters.created_authors_count = 0
 counters.migrated_authors_count = 0
 
-all_users = MongoUser.objects.all().no_cache()
+all_users = common_qs_args(MongoUser.objects.all())
 all_users_count = all_users.count()
 # created_users_count = 0  # We can't know; pseudo-computed later
 counters.migrated_users_count = 0
 
-all_feeds = MongoFeed.objects.all().no_cache()
+all_feeds = common_qs_args(MongoFeed.objects.all())
 all_feeds_count = all_feeds.count()
 counters.created_feeds_count = 0
 counters.migrated_feeds_count = 0
 
-all_tags = MongoTag.objects.all().no_cache()
+all_tags = common_qs_args(MongoTag.objects.all())
 all_tags_count = all_tags.count()
 counters.created_tags_count = 0
 counters.migrated_tags_count = 0
 
-all_articles = MongoArticle.objects.all().no_cache()
+all_articles = common_qs_args(MongoArticle.objects.all())
 all_articles_count = all_articles.count()
 counters.created_articles_count = 0
 counters.migrated_articles_count = 0
 
-all_folders = MongoFolder.objects.all().no_cache()
+all_folders = common_qs_args(MongoFolder.objects.all())
 all_folders_count = all_folders.count()
 counters.created_folders_count = 0
 counters.migrated_folders_count = 0
 
-all_subscriptions = MongoSubscription.objects.all().no_cache()
+all_subscriptions = common_qs_args(MongoSubscription.objects.all())
 all_subscriptions_count = all_subscriptions.count()
 counters.created_subscriptions_count = 0
 counters.migrated_subscriptions_count = 0
 
-all_reads = MongoRead.objects.all().no_cache()
+all_reads = common_qs_args(MongoRead.objects.all())
 all_reads_count = all_reads.count()
 counters.created_reads_count = 0
 counters.migrated_reads_count = 0
@@ -1245,6 +1255,7 @@ def migrate_all_feeds(stop_on_exception=True):
 def check_internal_users_feeds_and_subscriptions(stop_on_exception=True):
     """ Create internal feeds and subscriptions for all users. """
 
+    # These are django models.
     current_users_count = User.objects.all().count()
     internal_feeds_count = UserFeeds.objects.all().count()
 
