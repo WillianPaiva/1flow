@@ -131,8 +131,8 @@ class WebSite(six.with_metaclass(WebSiteMeta, MPTTModel,
         verbose_name_plural = _(u'Web sites')
         translate = ('short_description', 'description', )
 
-    class MPTTMeta:
-        order_insertion_by = ['url']
+    # class MPTTMeta:
+    #     order_insertion_by = ['url']
 
     name = models.CharField(
         max_length=128,
