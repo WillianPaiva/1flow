@@ -85,6 +85,69 @@ MONGO_INTERNAL_FEED_URL_RE_raw = USER_FEEDS_SITE_URL.replace(
 MONGO_INTERNAL_FEED_URL_RE = re.compile(MONGO_INTERNAL_FEED_URL_RE_raw)
 
 
+class StopMigration(Exception):
+
+    """ Raised when the migration must stop immediately. """
+
+    pass
+
+
+# —————————————————————————————————————————————————————————— Migration counters
+
+# Allow internal function to write counters
+# without passing them as argument everytime.
+counters = SimpleObject()
+
+all_websites = MongoWebSite.objects.all().no_cache()
+all_websites_count = all_websites.count()
+counters.created_websites_count = 0
+counters.migrated_websites_count = 0
+
+all_authors = MongoAuthor.objects.all().no_cache()
+all_authors_count = all_authors.count()
+counters.created_authors_count = 0
+counters.migrated_authors_count = 0
+
+all_users = MongoUser.objects.all().no_cache()
+all_users_count = all_users.count()
+# created_users_count = 0  # We can't know; pseudo-computed later
+counters.migrated_users_count = 0
+
+all_feeds = MongoFeed.objects.all().no_cache()
+all_feeds_count = all_feeds.count()
+counters.created_feeds_count = 0
+counters.migrated_feeds_count = 0
+
+all_tags = MongoTag.objects.all().no_cache()
+all_tags_count = all_tags.count()
+counters.created_tags_count = 0
+counters.migrated_tags_count = 0
+
+all_articles = MongoArticle.objects.all().no_cache()
+all_articles_count = all_articles.count()
+counters.created_articles_count = 0
+counters.migrated_articles_count = 0
+
+all_folders = MongoFolder.objects.all().no_cache()
+all_folders_count = all_folders.count()
+counters.created_folders_count = 0
+counters.migrated_folders_count = 0
+
+all_subscriptions = MongoSubscription.objects.all().no_cache()
+all_subscriptions_count = all_subscriptions.count()
+counters.created_subscriptions_count = 0
+counters.migrated_subscriptions_count = 0
+
+all_reads = MongoRead.objects.all().no_cache()
+all_reads_count = all_reads.count()
+counters.created_reads_count = 0
+counters.migrated_reads_count = 0
+
+counters.reassigned_objects_count = 0
+counters.reassigned_tags_count = 0
+counters.failed_objects_count = 0
+
+
 # —————————————————————————————————————————————————————————— Utils & QS filters
 
 
@@ -771,14 +834,655 @@ def reassign_tags_on_read(mongo_read):
     return len(tags)
 
 
+# ———————————————————————————————————————————————— Models groups migrations
+
+
+# NOT NEEDED: def migrate_users_and_preferences(users):
+
+
+def migrate_websites(websites, stop_on_exception=True):
+    """ Migrate websites. """
+
+    for mongo_website in not_yet_migrated(websites):
+        try:
+            website, created = migrate_website(mongo_website)
+
+        except:
+            LOGGER.exception(u'Could not migrate website %s',
+                             mongo_website)
+
+            if stop_on_exception:
+                raise StopMigration('website')
+
+            else:
+                continue
+
+        if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
+            # Avoid a full save() cycle, we don't need it anyway.
+            mongo_website.update(set__bigmig_migrated=True)
+
+        if created:
+            counters.created_websites_count += 1
+
+        counters.migrated_websites_count += 1
+
+        if counters.migrated_websites_count % 500 == 0:
+            vacuum_analyze(u'(at {0} websites)'.format(
+                counters.migrated_websites_count))
+
+
+def migrate_authors(authors, stop_on_exception=True):
+    """ Migrate authors. """
+
+    for mongo_author in not_yet_migrated(authors):
+        try:
+            author, created = migrate_author(mongo_author)
+
+        except:
+            LOGGER.exception(u'Could not migrate author %s',
+                             mongo_author)
+
+            if stop_on_exception:
+                raise StopMigration('author')
+
+            else:
+                continue
+
+        if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
+            # Avoid a full save() cycle, we don't need it anyway.
+            mongo_author.update(set__bigmig_migrated=True)
+
+        if created:
+            counters.created_authors_count += 1
+
+        counters.migrated_authors_count += 1
+
+        if counters.migrated_authors_count % 500 == 0:
+            vacuum_analyze(u'(at {0} authors)'.format(
+                counters.migrated_authors_count))
+
+
+def migrate_feeds(feeds, stop_on_exception=True):
+    """ Migrate feeds. """
+
+    for mongo_feed in not_yet_migrated(feeds):
+        try:
+            feed, created = migrate_feed(mongo_feed)
+
+        except:
+            LOGGER.exception(u'Could not migrate feed %s', mongo_feed)
+
+            if stop_on_exception:
+                raise StopMigration('feed')
+
+            else:
+                continue
+
+        if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
+            # Avoid a full save() cycle, we don't need it anyway.
+            mongo_feed.update(set__bigmig_migrated=True)
+
+        if created:
+            counters.created_feeds_count += 1
+
+        counters.migrated_feeds_count += 1
+
+        if counters.migrated_feeds_count % 500 == 0:
+            vacuum_analyze(u'(at {0} feeds)'.format(
+                counters.migrated_feeds_count))
+
+
+# NOT NEEDED: def migrate_folders(folders):
+
+
+# NOT NEEDED: def migrate_subscriptions(subscriptions):
+
+
+# NOT NEEDED: def migrate_reads(reads):
+
+
+def migrate_articles(articles, stop_on_exception=True):
+    """ Migrate articles. """
+
+    for mongo_article in not_yet_migrated(articles):
+        try:
+            article, created = migrate_article(mongo_article)
+
+        except:
+            LOGGER.exception(u'Could not migrate article %s',
+                             mongo_article)
+
+            if stop_on_exception:
+                raise StopMigration('article')
+
+            else:
+                continue
+
+        if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
+            # Avoid a full save() cycle, we don't need it anyway.
+            mongo_article.update(set__bigmig_migrated=True)
+
+        if created:
+            counters.created_articles_count += 1
+
+        counters.migrated_articles_count += 1
+
+        if counters.migrated_articles_count % 10000 == 0:
+            vacuum_analyze(u'(at {0} tags)'.format(
+                counters.migrated_articles_count))
+
+
+def migrate_tags(tags, stop_on_exception=True):
+    """ Migrate tags. """
+
+    for mongo_tag in not_yet_migrated(tags):
+        try:
+            tag, created = migrate_tag(mongo_tag)
+
+        except:
+            LOGGER.exception(u'Could not migrate tag %s', mongo_tag)
+
+            if stop_on_exception:
+                raise StopMigration('tag')
+
+            else:
+                continue
+
+        if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
+            # Avoid a full save() cycle, we don't need it anyway.
+            mongo_tag.update(set__bigmig_migrated=True)
+
+        if created:
+            counters.created_tags_count += 1
+
+        counters.migrated_tags_count += 1
+
+        if counters.migrated_tags_count % 10000 == 0:
+            vacuum_analyze(u'(at {0} tags)'.format(
+                counters.migrated_tags_count))
+
+
+# ——————————————————————————————————————————————————————————— Tags re-assigning
+
+
+def reassign_tags_on_feeds(stop_on_exception=True):
+    """ Re-assign tags on feeds. """
+
+    LOGGER.info(u'Starting to reassign tags on feeds. '
+                u'This will take a while…')
+
+    for feed in no_tags_reassigned(all_feeds):
+        try:
+            counters.reassigned_tags_count += \
+                reassign_tags_on_feed(feed)
+            counters.reassigned_objects_count += 1
+
+        except:
+            counters.failed_objects_count += 1
+            LOGGER.exception(u'Could not reassign tags on feed %s',
+                             feed)
+
+            if stop_on_exception:
+                raise StopMigration('reassign tags on feed')
+
+            else:
+                continue
+
+        if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
+            # Avoid a full save() cycle, we don't need it anyway.
+            feed.update(set__bigmig_reassigned=True)
+
+
+def reassign_tags_on_subscriptions(stop_on_exception=True):
+    """ Re-assign tags on subscriptions. """
+
+    LOGGER.info(u'Starting to reassign tags on subscriptions. '
+                u'This will take a while…')
+
+    for subscription in no_tags_reassigned(all_subscriptions):
+        try:
+            counters.reassigned_tags_count += \
+                reassign_tags_on_subscription(subscription)
+            counters.reassigned_objects_count += 1
+
+        except:
+            counters.failed_objects_count += 1
+            LOGGER.exception(u'Could not reassign tags on '
+                             u'subscription %s', subscription)
+
+            if stop_on_exception:
+                raise StopMigration('reassign tags on subscription')
+
+            else:
+                continue
+
+        if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
+            # Avoid a full save() cycle, we don't need it anyway.
+            subscription.update(set__bigmig_reassigned=True)
+
+
+def reassign_tags_on_articles(stop_on_exception=True):
+    """ Re-assign tags on articles. """
+
+    LOGGER.info(u'Starting to reassign tags on articles. '
+                u'This will take a while…')
+
+    for article in no_tags_reassigned(all_articles):
+        try:
+            counters.reassigned_tags_count += \
+                reassign_tags_on_article(article)
+            counters.reassigned_objects_count += 1
+
+        except:
+            counters.failed_objects_count += 1
+            LOGGER.exception(u'Could not reassign tags on article %s',
+                             article)
+
+            if stop_on_exception:
+                raise StopMigration('reassign tags on article')
+
+            else:
+                continue
+
+        if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
+            # Avoid a full save() cycle, we don't need it anyway.
+            article.update(set__bigmig_reassigned=True)
+
+
+def reassign_tags_on_reads(stop_on_exception=True):
+    """ Re-assign tags on reads. """
+
+    LOGGER.info(u'Starting to reassign tags on reads. '
+                u'This will take a while…')
+
+    for read in no_tags_reassigned(all_reads):
+        try:
+            counters.reassigned_tags_count += \
+                reassign_tags_on_read(read)
+            counters.reassigned_objects_count += 1
+
+        except:
+            counters.failed_objects_count += 1
+            LOGGER.exception(u'Could not reassign tags on read %s',
+                             read)
+
+            if stop_on_exception:
+                raise StopMigration('reassign tags on read')
+
+            else:
+                continue
+
+        if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
+            # Avoid a full save() cycle, we don't need it anyway.
+            read.update(set__bigmig_reassigned=True)
+
+
+# ——————————————————————————————————————————————————————— Models migrations
+
+
+def migrate_all_users_and_preferences(stop_on_exception=True):
+    """ Migrate things. """
+
+    for mongo_user in not_yet_migrated(all_users):
+
+        try:
+            user, created = migrate_user_and_preferences(mongo_user)
+
+        except:
+            LOGGER.exception(u'Could not migrate user %s',
+                             mongo_user)
+
+            if stop_on_exception:
+                raise StopMigration('user')
+
+            else:
+                continue
+
+        if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
+            # Avoid a full save() cycle, we don't need it anyway.
+            mongo_user.update(set__bigmig_migrated=True)
+
+        counters.migrated_users_count += 1
+
+        if counters.migrated_users_count % 25 == 0:
+            vacuum_analyze(u'(at {0} users)'.format(
+                counters.migrated_users_count))
+
+    LOGGER.info(u'Users migrated: {0}/{1}.'.format(
+                counters.migrated_users_count,
+                all_users_count,
+                ))
+
+
+def migrate_all_websites(stop_on_exception=True):
+    """ Migrate things. """
+
+    masters_websites = master_documents(all_websites)
+    # masters_websites_count = masters_websites.count()
+
+    migrate_websites(masters_websites, stop_on_exception=stop_on_exception)
+
+    duplicates_websites = all_websites.filter(duplicate_of__ne=None)
+    duplicates_websites_count = duplicates_websites.count()
+
+    migrate_websites(duplicates_websites, stop_on_exception=stop_on_exception)
+
+    LOGGER.info(u'Web sites migrated: {0}/{1}, '
+                u' {2} dupes, {3} already there.'.format(
+                    counters.migrated_websites_count,
+                    all_websites_count,
+                    duplicates_websites_count,
+                    counters.migrated_websites_count
+                    - counters.created_websites_count
+                ))
+
+
+def migrate_all_authors(stop_on_exception=True):
+    """ Migrate things. """
+
+    masters_authors = master_documents(all_authors)
+    # masters_authors_count = masters_authors.count()
+
+    migrate_authors(masters_authors, stop_on_exception=stop_on_exception)
+
+    duplicates_authors = all_authors.filter(duplicate_of__ne=None)
+    duplicates_authors_count = duplicates_authors.count()
+
+    migrate_authors(duplicates_authors, stop_on_exception=stop_on_exception)
+
+    LOGGER.info(u'Authors migrated: {0}/{1}, '
+                u' {2} dupes, {3} already there.'.format(
+                    counters.migrated_authors_count,
+                    all_authors_count,
+                    duplicates_authors_count,
+                    counters.migrated_authors_count
+                    - counters.created_authors_count
+                ))
+
+
+def migrate_all_feeds(stop_on_exception=True):
+    """ Migrate things. """
+
+    external_feeds = all_feeds.filter(is_internal=False)
+    external_feeds_count = external_feeds.count()
+
+    # ————————————————————————————————————————————————————————————— masters
+
+    master_external = master_documents(external_feeds)
+
+    migrate_feeds(master_external, stop_on_exception=stop_on_exception)
+
+    # —————————————————————————————————————————————————————————— duplicates
+
+    duplicates_external = external_feeds.filter(duplicate_of__ne=None)
+    duplicates_external_count = duplicates_external.count()
+
+    migrate_feeds(duplicates_external, stop_on_exception=stop_on_exception)
+
+    # ————————————————————————————————————————————————————————————————— end
+
+    LOGGER.info(u'RSS/Atom feeds migrated: %s/%s (total %s), '
+                u' %s dupes, %s already there.',
+                counters.migrated_feeds_count,
+                external_feeds_count,
+                all_feeds_count,
+                duplicates_external_count,
+                counters.migrated_feeds_count
+                - counters.created_feeds_count)
+
+
+def check_internal_users_feeds_and_subscriptions(stop_on_exception=True):
+    """ Create internal feeds and subscriptions for all users. """
+
+    current_users_count = User.objects.all().count()
+    internal_feeds_count = UserFeeds.objects.all().count()
+
+    for mongo_user in all_users:
+        dj_user = mongo_user.django
+
+        try:
+            user_feeds = dj_user.user_feeds
+
+        except:
+            user_feeds = UserFeeds(user=dj_user)
+            user_feeds.save()
+
+        user_feeds.check()
+
+        try:
+            user_subscriptions = dj_user.user_subscriptions
+
+        except:
+            user_subscriptions = UserSubscriptions(user=dj_user)
+            user_subscriptions.save()
+
+        user_subscriptions.check()
+
+    created_users_count = \
+        User.objects.all().count() - current_users_count
+
+    created_internal_feeds_count = \
+        UserFeeds.objects.all().count() - internal_feeds_count
+
+    LOGGER.info(u'%s users checked, %s created, and %s internal '
+                u'feeds created.',
+                all_users_count,
+                created_users_count,
+                created_internal_feeds_count)
+
+
+def migrate_all_articles(stop_on_exception=True):
+    """ Migrate things. """
+
+    # ————————————————————————————————————————————————————————————— masters
+
+    master_articles = master_documents(all_articles)
+    master_articles_count = master_articles.count()
+
+    migrate_articles(master_articles, stop_on_exception=stop_on_exception)
+
+    # —————————————————————————————————————————————————————————— duplicates
+
+    duplicate_articles = all_articles.filter(duplicate_of__ne=None)
+    duplicate_articles_count = duplicate_articles.count()
+
+    migrate_articles(duplicate_articles, stop_on_exception=stop_on_exception)
+
+    LOGGER.info(u'Articles migrated: %s/%s (total %s), '
+                u'%s dupes, %s already there.',
+                counters.migrated_articles_count,
+                master_articles_count,
+                all_articles_count,
+                duplicate_articles_count,
+                counters.migrated_articles_count
+                - counters.created_articles_count)
+
+
+def migrate_all_folders(stop_on_exception=True):
+    """ Migrate things. """
+
+    mongo_folders = not_yet_migrated(all_folders)
+    mongo_folders_count = mongo_folders.count()
+
+    for mongo_folder in mongo_folders:
+
+        try:
+            folder, created = migrate_folder(mongo_folder)
+
+        except:
+            LOGGER.exception(u'Could not migrate folder %s',
+                             mongo_folder)
+
+            if stop_on_exception:
+                raise StopMigration('folder')
+
+            else:
+                continue
+
+        if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
+            # Avoid a full save() cycle, we don't need it anyway.
+            mongo_folder.update(set__bigmig_migrated=True)
+
+        if created:
+            counters.created_folders_count += 1
+
+        counters.migrated_folders_count += 1
+
+        if counters.migrated_folders_count % 50 == 0:
+            vacuum_analyze(u'(at {0} folders)'.format(
+                counters.migrated_folders_count))
+
+    LOGGER.info(u'Folders migrated: %s/%s (total %s), '
+                u'%s already there.',
+                counters.migrated_folders_count,
+                mongo_folders_count,
+                all_folders_count,
+                counters.migrated_folders_count
+                - counters.created_folders_count)
+
+
+def migrate_all_subscriptions(stop_on_exception=True):
+    """ Migrate things. """
+
+    mongo_subscriptions = not_yet_migrated(all_subscriptions)
+    mongo_subscriptions_count = mongo_subscriptions.count()
+
+    for mongo_subscription in mongo_subscriptions:
+
+        try:
+            subscription, created = migrate_subscription(mongo_subscription)
+
+        except:
+            LOGGER.exception(u'Could not migrate subscription %s',
+                             mongo_subscription)
+
+            if stop_on_exception:
+                raise StopMigration('subscription')
+
+            else:
+                continue
+
+        if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
+            # Avoid a full save() cycle, we don't need it anyway.
+            mongo_subscription.update(set__bigmig_migrated=True)
+
+        if created:
+            counters.created_subscriptions_count += 1
+
+        counters.migrated_subscriptions_count += 1
+
+        if counters.migrated_subscriptions_count % 500 == 0:
+            vacuum_analyze(u'(at {0} subscriptions)'.format(
+                counters.migrated_subscriptions_count))
+
+    LOGGER.info(u'Subscriptions migrated: %s/%s (total %s), '
+                u'%s already there.',
+                counters.migrated_subscriptions_count,
+                mongo_subscriptions_count,
+                all_subscriptions_count,
+                counters.migrated_subscriptions_count
+                - counters.created_subscriptions_count)
+
+
+def migrate_all_reads(stop_on_exception=True):
+    """ Migrate things. """
+
+    mongo_reads = not_yet_migrated(all_reads)
+    mongo_reads_count = mongo_reads.count()
+
+    for mongo_read in mongo_reads:
+
+        try:
+            read, created = migrate_read(mongo_read)
+
+        except:
+            LOGGER.exception(u'Could not migrate read %s',
+                             mongo_read)
+
+            if stop_on_exception:
+                raise StopMigration('read')
+
+            else:
+                continue
+
+        if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
+            # Avoid a full save() cycle, we don't need it anyway.
+            mongo_read.update(set__bigmig_migrated=True)
+
+        if created:
+            counters.created_reads_count += 1
+
+        counters.migrated_reads_count += 1
+
+        if counters.migrated_reads_count % 100000 == 0:
+            vacuum_analyze(u'(at {0} reads)'.format(
+                counters.migrated_reads_count))
+
+    LOGGER.info(u'Reads migrated: %s/%s (total %s), '
+                u'%s already there.',
+                counters.migrated_reads_count,
+                mongo_reads_count,
+                all_reads_count,
+                counters.migrated_reads_count
+                - counters.created_reads_count)
+
+
+def migrate_all_tags(stop_on_exception=True):
+    """ Migrate things. """
+
+    # ————————————————————————————————————————————————————————————— masters
+
+    master_tags = master_documents(all_tags)
+
+    master_tags_count = master_tags.count()
+
+    migrate_tags(master_tags, stop_on_exception=stop_on_exception)
+
+    # —————————————————————————————————————————————————————————— duplicates
+
+    duplicate_tags = all_tags.filter(MQ(duplicate_of__ne=None))
+    duplicate_tags_count = duplicate_tags.count()
+
+    migrate_tags(duplicate_tags, stop_on_exception=stop_on_exception)
+
+    LOGGER.info(u'Tags migrated: %s/%s (total %s), '
+                u'%s dupes, %s already there.',
+                counters.migrated_tags_count,
+                master_tags_count,
+                all_tags_count,
+                duplicate_tags_count,
+                counters.migrated_tags_count
+                - counters.created_tags_count)
+
+
+def reassign_all_tags(stop_on_exception=True):
+    """ Re-assign all tags global task. """
+
+    with benchmark('Re-assign tags on feeds'):
+        reassign_tags_on_feeds(stop_on_exception=stop_on_exception)
+
+    with benchmark('Re-assign tags on subscriptions'):
+        reassign_tags_on_subscriptions(stop_on_exception=stop_on_exception)
+
+    with benchmark('Re-assign tags on articles'):
+        reassign_tags_on_articles(stop_on_exception=stop_on_exception)
+
+    with benchmark('Re-assign tags on reads'):
+        reassign_tags_on_reads(stop_on_exception=stop_on_exception)
+
+    total_impacted_objects = \
+        counters.reassigned_objects_count + counters.failed_objects_count
+
+    LOGGER.info(u'Successfully reassigned %s tags on %s objects '
+                u'of a %s total, %s reassignation failed.',
+                counters.reassigned_tags_count,
+                counters.reassigned_objects_count,
+                total_impacted_objects,
+                counters.failed_objects_count
+                )
+
+
 # ————————————————————————————————————————————————————————————————— Global task
-
-
-class StopMigration(Exception):
-
-    """ Raised when the migration must stop immediately. """
-
-    pass
 
 
 @task(queue='background')
@@ -807,698 +1511,45 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
                            u'locked, aborting.')
             return
 
-    # Allow internal function to write counters
-    # without passing them as argument everytime.
-    counters = SimpleObject()
-
-    all_websites = MongoWebSite.objects.all().no_cache()
-    all_websites_count = all_websites.count()
-    counters.created_websites_count = 0
-    counters.migrated_websites_count = 0
-
-    all_authors = MongoAuthor.objects.all().no_cache()
-    all_authors_count = all_authors.count()
-    counters.created_authors_count = 0
-    counters.migrated_authors_count = 0
-
-    all_users = MongoUser.objects.all().no_cache()
-    all_users_count = all_users.count()
-    # created_users_count = 0  # We can't know yet; computed later
-    counters.migrated_users_count = 0
-
-    all_feeds = MongoFeed.objects.all().no_cache()
-    all_feeds_count = all_feeds.count()
-    counters.created_feeds_count = 0
-    counters.migrated_feeds_count = 0
-
-    all_tags = MongoTag.objects.all().no_cache()
-    all_tags_count = all_tags.count()
-    counters.created_tags_count = 0
-    counters.migrated_tags_count = 0
-
-    all_articles = MongoArticle.objects.all().no_cache()
-    all_articles_count = all_articles.count()
-    counters.created_articles_count = 0
-    counters.migrated_articles_count = 0
-
-    all_folders = MongoFolder.objects.all().no_cache()
-    all_folders_count = all_folders.count()
-    counters.created_folders_count = 0
-    counters.migrated_folders_count = 0
-
-    all_subscriptions = MongoSubscription.objects.all().no_cache()
-    all_subscriptions_count = all_subscriptions.count()
-    counters.created_subscriptions_count = 0
-    counters.migrated_subscriptions_count = 0
-
-    all_reads = MongoRead.objects.all().no_cache()
-    all_reads_count = all_reads.count()
-    counters.created_reads_count = 0
-    counters.migrated_reads_count = 0
-
-    # ———————————————————————————————————————————————— Models groups migrations
-
-    # NOT NEEDED: def migrate_users_and_preferences(users):
-
-    def migrate_websites(websites):
-
-        for mongo_website in not_yet_migrated(websites):
-            try:
-                website, created = migrate_website(mongo_website)
-
-            except:
-                LOGGER.exception(u'Could not migrate website %s',
-                                 mongo_website)
-
-                if stop_on_exception:
-                    raise StopMigration('website')
-
-                else:
-                    continue
-
-            if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
-                # Avoid a full save() cycle, we don't need it anyway.
-                mongo_website.update(set__bigmig_migrated=True)
-
-            if created:
-                counters.created_websites_count += 1
-
-            counters.migrated_websites_count += 1
-
-            if counters.migrated_websites_count % 500 == 0:
-                vacuum_analyze(u'(at {0} websites)'.format(
-                    counters.migrated_websites_count))
-
-    def migrate_authors(authors):
-
-        for mongo_author in not_yet_migrated(authors):
-            try:
-                author, created = migrate_author(mongo_author)
-
-            except:
-                LOGGER.exception(u'Could not migrate author %s',
-                                 mongo_author)
-
-                if stop_on_exception:
-                    raise StopMigration('author')
-
-                else:
-                    continue
-
-            if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
-                # Avoid a full save() cycle, we don't need it anyway.
-                mongo_author.update(set__bigmig_migrated=True)
-
-            if created:
-                counters.created_authors_count += 1
-
-            counters.migrated_authors_count += 1
-
-            if counters.migrated_authors_count % 500 == 0:
-                vacuum_analyze(u'(at {0} authors)'.format(
-                    counters.migrated_authors_count))
-
-    def migrate_feeds(feeds):
-
-        for mongo_feed in not_yet_migrated(feeds):
-            try:
-                feed, created = migrate_feed(mongo_feed)
-
-            except:
-                LOGGER.exception(u'Could not migrate feed %s', mongo_feed)
-
-                if stop_on_exception:
-                    raise StopMigration('feed')
-
-                else:
-                    continue
-
-            if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
-                # Avoid a full save() cycle, we don't need it anyway.
-                mongo_feed.update(set__bigmig_migrated=True)
-
-            if created:
-                counters.created_feeds_count += 1
-
-            counters.migrated_feeds_count += 1
-
-            if counters.migrated_feeds_count % 500 == 0:
-                vacuum_analyze(u'(at {0} feeds)'.format(
-                    counters.migrated_feeds_count))
-
-    # NOT NEEDED: def migrate_folders(folders):
-
-    # NOT NEEDED: def migrate_subscriptions(subscriptions):
-
-    # NOT NEEDED: def migrate_reads(reads):
-
-    def migrate_tags(tags):
-
-        for mongo_tag in not_yet_migrated(tags):
-            try:
-                tag, created = migrate_tag(mongo_tag)
-
-            except:
-                LOGGER.exception(u'Could not migrate tag %s', mongo_tag)
-
-                if stop_on_exception:
-                    raise StopMigration('tag')
-
-                else:
-                    continue
-
-            if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
-                # Avoid a full save() cycle, we don't need it anyway.
-                mongo_tag.update(set__bigmig_migrated=True)
-
-            if created:
-                counters.created_tags_count += 1
-
-            counters.migrated_tags_count += 1
-
-            if counters.migrated_tags_count % 10000 == 0:
-                vacuum_analyze(u'(at {0} tags)'.format(
-                    counters.migrated_tags_count))
-
-    def migrate_articles(articles):
-
-        for mongo_article in not_yet_migrated(articles):
-            try:
-                article, created = migrate_article(mongo_article)
-
-            except:
-                LOGGER.exception(u'Could not migrate article %s',
-                                 mongo_article)
-
-                if stop_on_exception:
-                    raise StopMigration('article')
-
-                else:
-                    continue
-
-            if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
-                # Avoid a full save() cycle, we don't need it anyway.
-                mongo_article.update(set__bigmig_migrated=True)
-
-            if created:
-                counters.created_articles_count += 1
-
-            counters.migrated_articles_count += 1
-
-            if counters.migrated_articles_count % 10000 == 0:
-                vacuum_analyze(u'(at {0} tags)'.format(
-                    counters.migrated_articles_count))
-
-    # ——————————————————————————————————————————————————————— Models migrations
-
-    def migrate_all_users_and_preferences():
-
-        for mongo_user in not_yet_migrated(all_users):
-
-            try:
-                user, created = migrate_user_and_preferences(mongo_user)
-
-            except:
-                LOGGER.exception(u'Could not migrate user %s',
-                                 mongo_user)
-
-                if stop_on_exception:
-                    raise StopMigration('user')
-
-                else:
-                    continue
-
-            if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
-                # Avoid a full save() cycle, we don't need it anyway.
-                mongo_user.update(set__bigmig_migrated=True)
-
-            counters.migrated_users_count += 1
-
-            if counters.migrated_users_count % 25 == 0:
-                vacuum_analyze(u'(at {0} users)'.format(
-                    counters.migrated_users_count))
-
-        LOGGER.info(u'Users migrated: {0}/{1}.'.format(
-                    counters.migrated_users_count,
-                    all_users_count,
-                    ))
-
-    def migrate_all_websites():
-
-        masters_websites = master_documents(all_websites)
-        # masters_websites_count = masters_websites.count()
-
-        migrate_websites(masters_websites)
-
-        duplicates_websites = all_websites.filter(duplicate_of__ne=None)
-        duplicates_websites_count = duplicates_websites.count()
-
-        migrate_websites(duplicates_websites)
-
-        LOGGER.info(u'Web sites migrated: {0}/{1}, '
-                    u' {2} dupes, {3} already there.'.format(
-                        counters.migrated_websites_count,
-                        all_websites_count,
-                        duplicates_websites_count,
-                        counters.migrated_websites_count
-                        - counters.created_websites_count
-                    ))
-
-    def migrate_all_authors():
-
-        masters_authors = master_documents(all_authors)
-        # masters_authors_count = masters_authors.count()
-
-        migrate_authors(masters_authors)
-
-        duplicates_authors = all_authors.filter(duplicate_of__ne=None)
-        duplicates_authors_count = duplicates_authors.count()
-
-        migrate_authors(duplicates_authors)
-
-        LOGGER.info(u'Authors migrated: {0}/{1}, '
-                    u' {2} dupes, {3} already there.'.format(
-                        counters.migrated_authors_count,
-                        all_authors_count,
-                        duplicates_authors_count,
-                        counters.migrated_authors_count
-                        - counters.created_authors_count
-                    ))
-
-    def migrate_all_feeds():
-
-        external_feeds = all_feeds.filter(is_internal=False)
-        external_feeds_count = external_feeds.count()
-
-        # ————————————————————————————————————————————————————————————— masters
-
-        master_external = master_documents(external_feeds)
-
-        migrate_feeds(master_external)
-
-        # —————————————————————————————————————————————————————————— duplicates
-
-        duplicates_external = external_feeds.filter(duplicate_of__ne=None)
-        duplicates_external_count = duplicates_external.count()
-
-        migrate_feeds(duplicates_external)
-
-        # ————————————————————————————————————————————————————————————————— end
-
-        LOGGER.info(u'RSS/Atom feeds migrated: %s/%s (total %s), '
-                    u' %s dupes, %s already there.',
-                    counters.migrated_feeds_count,
-                    external_feeds_count,
-                    all_feeds_count,
-                    duplicates_external_count,
-                    counters.migrated_feeds_count
-                    - counters.created_feeds_count)
-
-    def check_internal_users_feeds_and_subscriptions():
-        """ Create internal feeds and subscriptions for all users. """
-
-        current_users_count = User.objects.all().count()
-        internal_feeds_count = UserFeeds.objects.all().count()
-
-        for mongo_user in all_users:
-            dj_user = mongo_user.django
-
-            try:
-                user_feeds = dj_user.user_feeds
-
-            except:
-                user_feeds = UserFeeds(user=dj_user)
-                user_feeds.save()
-
-            user_feeds.check()
-
-            try:
-                user_subscriptions = dj_user.user_subscriptions
-
-            except:
-                user_subscriptions = UserSubscriptions(user=dj_user)
-                user_subscriptions.save()
-
-            user_subscriptions.check()
-
-        created_users_count = \
-            User.objects.all().count() - current_users_count
-
-        created_internal_feeds_count = \
-            UserFeeds.objects.all().count() - internal_feeds_count
-
-        LOGGER.info(u'%s users checked, %s created, and %s internal '
-                    u'feeds created.',
-                    all_users_count,
-                    created_users_count,
-                    created_internal_feeds_count)
-
-    def migrate_all_articles():
-
-        # ————————————————————————————————————————————————————————————— masters
-
-        master_articles = master_documents(all_articles)
-        master_articles_count = master_articles.count()
-
-        migrate_articles(master_articles)
-
-        # —————————————————————————————————————————————————————————— duplicates
-
-        duplicate_articles = all_articles.filter(duplicate_of__ne=None)
-        duplicate_articles_count = duplicate_articles.count()
-
-        migrate_articles(duplicate_articles)
-
-        LOGGER.info(u'Articles migrated: %s/%s (total %s), '
-                    u'%s dupes, %s already there.',
-                    counters.migrated_articles_count,
-                    master_articles_count,
-                    all_articles_count,
-                    duplicate_articles_count,
-                    counters.migrated_articles_count
-                    - counters.created_articles_count)
-
-    def migrate_all_folders():
-
-        mongo_folders = not_yet_migrated(all_folders)
-        mongo_folders_count = mongo_folders.count()
-
-        for mongo_folder in mongo_folders:
-
-            try:
-                folder, created = migrate_folder(mongo_folder)
-
-            except:
-                LOGGER.exception(u'Could not migrate folder %s',
-                                 mongo_folder)
-
-                if stop_on_exception:
-                    raise StopMigration('folder')
-
-                else:
-                    continue
-
-            if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
-                # Avoid a full save() cycle, we don't need it anyway.
-                mongo_folder.update(set__bigmig_migrated=True)
-
-            if created:
-                counters.created_folders_count += 1
-
-            counters.migrated_folders_count += 1
-
-            if counters.migrated_folders_count % 50 == 0:
-                vacuum_analyze(u'(at {0} folders)'.format(
-                    counters.migrated_folders_count))
-
-        LOGGER.info(u'Folders migrated: %s/%s (total %s), '
-                    u'%s already there.',
-                    counters.migrated_folders_count,
-                    mongo_folders_count,
-                    all_folders_count,
-                    counters.migrated_folders_count
-                    - counters.created_folders_count)
-
-    def migrate_all_subscriptions():
-
-        mongo_subscriptions = not_yet_migrated(all_subscriptions)
-        mongo_subscriptions_count = mongo_subscriptions.count()
-
-        for mongo_subscription in mongo_subscriptions:
-
-            try:
-                subscription, created = migrate_subscription(mongo_subscription)
-
-            except:
-                LOGGER.exception(u'Could not migrate subscription %s',
-                                 mongo_subscription)
-
-                if stop_on_exception:
-                    raise StopMigration('subscription')
-
-                else:
-                    continue
-
-            if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
-                # Avoid a full save() cycle, we don't need it anyway.
-                mongo_subscription.update(set__bigmig_migrated=True)
-
-            if created:
-                counters.created_subscriptions_count += 1
-
-            counters.migrated_subscriptions_count += 1
-
-            if counters.migrated_subscriptions_count % 500 == 0:
-                vacuum_analyze(u'(at {0} subscriptions)'.format(
-                    counters.migrated_subscriptions_count))
-
-        LOGGER.info(u'Subscriptions migrated: %s/%s (total %s), '
-                    u'%s already there.',
-                    counters.migrated_subscriptions_count,
-                    mongo_subscriptions_count,
-                    all_subscriptions_count,
-                    counters.migrated_subscriptions_count
-                    - counters.created_subscriptions_count)
-
-    def migrate_all_reads():
-
-        mongo_reads = not_yet_migrated(all_reads)
-        mongo_reads_count = mongo_reads.count()
-
-        for mongo_read in mongo_reads:
-
-            try:
-                read, created = migrate_read(mongo_read)
-
-            except:
-                LOGGER.exception(u'Could not migrate read %s',
-                                 mongo_read)
-
-                if stop_on_exception:
-                    raise StopMigration('read')
-
-                else:
-                    continue
-
-            if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
-                # Avoid a full save() cycle, we don't need it anyway.
-                mongo_read.update(set__bigmig_migrated=True)
-
-            if created:
-                counters.created_reads_count += 1
-
-            counters.migrated_reads_count += 1
-
-            if counters.migrated_reads_count % 100000 == 0:
-                vacuum_analyze(u'(at {0} reads)'.format(
-                    counters.migrated_reads_count))
-
-        LOGGER.info(u'Reads migrated: %s/%s (total %s), '
-                    u'%s already there.',
-                    counters.migrated_reads_count,
-                    mongo_reads_count,
-                    all_reads_count,
-                    counters.migrated_reads_count
-                    - counters.created_reads_count)
-
-    def migrate_all_tags():
-
-        # ————————————————————————————————————————————————————————————— masters
-
-        master_tags = master_documents(all_tags)
-
-        master_tags_count = master_tags.count()
-
-        migrate_tags(master_tags)
-
-        # —————————————————————————————————————————————————————————— duplicates
-
-        duplicate_tags = all_tags.filter(MQ(duplicate_of__ne=None))
-        duplicate_tags_count = duplicate_tags.count()
-
-        migrate_tags(duplicate_tags)
-
-        LOGGER.info(u'Tags migrated: %s/%s (total %s), '
-                    u'%s dupes, %s already there.',
-                    counters.migrated_tags_count,
-                    master_tags_count,
-                    all_tags_count,
-                    duplicate_tags_count,
-                    counters.migrated_tags_count
-                    - counters.created_tags_count)
-
-    def reassign_all_tags():
-
-        counters.reassigned_objects_count = 0
-        counters.reassigned_tags_count = 0
-        counters.failed_objects_count = 0
-
-        def reassign_tags_on_feeds():
-
-            LOGGER.info(u'Starting to reassign tags on feeds. '
-                        u'This will take a while…')
-
-            for feed in no_tags_reassigned(all_feeds):
-                try:
-                    counters.reassigned_tags_count += \
-                        reassign_tags_on_feed(feed)
-                    counters.reassigned_objects_count += 1
-
-                except:
-                    counters.failed_objects_count += 1
-                    LOGGER.exception(u'Could not reassign tags on feed %s',
-                                     feed)
-
-                    if stop_on_exception:
-                        raise StopMigration('reassign tags on feed')
-
-                    else:
-                        continue
-
-                if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
-                    # Avoid a full save() cycle, we don't need it anyway.
-                    feed.update(set__bigmig_reassigned=True)
-
-        def reassign_tags_on_subscriptions():
-
-            LOGGER.info(u'Starting to reassign tags on subscriptions. '
-                        u'This will take a while…')
-
-            for subscription in no_tags_reassigned(all_subscriptions):
-                try:
-                    counters.reassigned_tags_count += \
-                        reassign_tags_on_subscription(subscription)
-                    counters.reassigned_objects_count += 1
-
-                except:
-                    counters.failed_objects_count += 1
-                    LOGGER.exception(u'Could not reassign tags on '
-                                     u'subscription %s', subscription)
-
-                    if stop_on_exception:
-                        raise StopMigration('reassign tags on subscription')
-
-                    else:
-                        continue
-
-                if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
-                    # Avoid a full save() cycle, we don't need it anyway.
-                    subscription.update(set__bigmig_reassigned=True)
-
-        def reassign_tags_on_articles():
-
-            LOGGER.info(u'Starting to reassign tags on articles. '
-                        u'This will take a while…')
-
-            for article in no_tags_reassigned(all_articles):
-                try:
-                    counters.reassigned_tags_count += \
-                        reassign_tags_on_article(article)
-                    counters.reassigned_objects_count += 1
-
-                except:
-                    counters.failed_objects_count += 1
-                    LOGGER.exception(u'Could not reassign tags on article %s',
-                                     article)
-
-                    if stop_on_exception:
-                        raise StopMigration('reassign tags on article')
-
-                    else:
-                        continue
-
-                if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
-                    # Avoid a full save() cycle, we don't need it anyway.
-                    article.update(set__bigmig_reassigned=True)
-
-        def reassign_tags_on_reads():
-
-            LOGGER.info(u'Starting to reassign tags on reads. '
-                        u'This will take a while…')
-
-            for read in no_tags_reassigned(all_reads):
-                try:
-                    counters.reassigned_tags_count += \
-                        reassign_tags_on_read(read)
-                    counters.reassigned_objects_count += 1
-
-                except:
-                    counters.failed_objects_count += 1
-                    LOGGER.exception(u'Could not reassign tags on read %s',
-                                     read)
-
-                    if stop_on_exception:
-                        raise StopMigration('reassign tags on read')
-
-                    else:
-                        continue
-
-                if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
-                    # Avoid a full save() cycle, we don't need it anyway.
-                    read.update(set__bigmig_reassigned=True)
-
-        with benchmark('Re-assign tags on feeds'):
-            reassign_tags_on_feeds()
-
-        with benchmark('Re-assign tags on subscriptions'):
-            reassign_tags_on_subscriptions()
-
-        with benchmark('Re-assign tags on articles'):
-            reassign_tags_on_articles()
-
-        with benchmark('Re-assign tags on reads'):
-            reassign_tags_on_reads()
-
-        total_impacted_objects = \
-            counters.reassigned_objects_count + counters.failed_objects_count
-
-        LOGGER.info(u'Successfully reassigned %s tags on %s objects '
-                    u'of a %s total, %s reassignation failed.',
-                    counters.reassigned_tags_count,
-                    counters.reassigned_objects_count,
-                    total_impacted_objects,
-                    counters.failed_objects_count
-                    )
-
-    # ————————————————————————————————————————————————————————— The global task
-
     with benchmark('migrate_all_mongo_data()'):
         try:
             with benchmark(u'Migrate users & preferences'):
-                migrate_all_users_and_preferences()
+                migrate_all_users_and_preferences(
+                    stop_on_exception=stop_on_exception)
 
             with benchmark(u'Migrate Web sites'):
-                migrate_all_websites()
+                migrate_all_websites(stop_on_exception=stop_on_exception)
 
             with benchmark(u'Migrate Authors'):
-                migrate_all_authors()
+                migrate_all_authors(stop_on_exception=stop_on_exception)
 
             with benchmark(u'Migrate RSS/Atom feeds'):
-                migrate_all_feeds()
+                migrate_all_feeds(stop_on_exception=stop_on_exception)
 
             with benchmark(u'Check internal feeds / subscriptions'):
-                check_internal_users_feeds_and_subscriptions()
+                check_internal_users_feeds_and_subscriptions(
+                    stop_on_exception=stop_on_exception)
 
             with benchmark(u'Migrate all articles'):
-                migrate_all_articles()
+                migrate_all_articles(stop_on_exception=stop_on_exception)
 
             # Subscriptions need their folders.
             with benchmark(u'Migrate all folders'):
-                migrate_all_folders()
+                migrate_all_folders(stop_on_exception=stop_on_exception)
 
             with benchmark(u'Migrate all subscriptions'):
-                migrate_all_subscriptions()
+                migrate_all_subscriptions(stop_on_exception=stop_on_exception)
 
             with benchmark(u'Migrate all reads'):
-                migrate_all_reads()
+                migrate_all_reads(stop_on_exception=stop_on_exception)
 
             # Now that all tag origins are created, we can copy all of them
             # and reassign them to feeds / articles / subscriptions / reads.
             with benchmark(u'Migrate all tags'):
-                migrate_all_tags()
+                migrate_all_tags(stop_on_exception=stop_on_exception)
 
             with benchmark(u'Re-assign tags'):
-                reassign_all_tags()
+                reassign_all_tags(stop_on_exception=stop_on_exception)
 
             # for each feed
             # copy subscriptions
