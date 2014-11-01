@@ -101,6 +101,15 @@ def common_qs_args(qs):
 
     return qs.no_cache().timeout(False)
 
+# ————————— Internal caches
+
+feeds_cache = {}
+subscriptions_cache = {}
+folders_cache = {}
+authors_cache = {}
+tags_cache = {}
+
+articles_ids_cache = {}
 
 # —————————————————————————————————————————————————————————— Migration counters
 
@@ -157,6 +166,11 @@ counters.reassigned_objects_count = 0
 counters.reassigned_tags_count = 0
 counters.failed_objects_count = 0
 
+# ——————————————————————————————————————————————————————————————————— Shortcuts
+
+
+get_tag = Tag.objects.get
+
 
 # —————————————————————————————————————————————————————————— Utils & QS filters
 
@@ -194,10 +208,34 @@ def master_documents(mongo_queryset):
 
 # ———————————————————————————————————————————————————— Get equivalent instances
 
+
+def get_author_from_mongo_author(mongo_author):
+    """ Find an author in PG from one in MongoDB. """
+
+    try:
+        return authors_cache[mongo_author.id]
+
+    except AttributeError:
+        author = Author.objects.get(
+            origin_name=mongo_author.origin_name,
+            website=WebSite.objects.get(url=mongo_author.website.url))
+
+        authors_cache[mongo_author.id] = author
+
+        return author
+
+
 def get_article_from_mongo_article(mongo_article):
     """ Find an article in PG from one in MongoDB. """
 
-    return Article.objects.get(url=mongo_article.url)
+    try:
+        Article.objects.get(id=articles_ids_cache[mongo_article.id])
+
+    except KeyError:
+        article = Article.objects.get(url=mongo_article.url)
+        articles_ids_cache[mongo_article.id] = article.id
+
+    return article
 
 
 def get_read_from_mongo_read(mongo_read):
@@ -212,22 +250,38 @@ def get_read_from_mongo_read(mongo_read):
 def get_folder_from_mongo_folder(mongo_folder):
     """ Get the PG equivalent of a mongodb folder. """
 
-    return Folder.objects.get(
-        name=mongo_folder.name,
-        user=mongo_folder.owner.django,
-        parent=None if mongo_folder.parent is None
-        else get_folder_from_mongo_folder(mongo_folder.parent)
-    )
+    try:
+        return folders_cache[mongo_folder.id]
+
+    except:
+        folder = Folder.objects.get(
+            name=mongo_folder.name,
+            user=mongo_folder.owner.django,
+            parent=None if mongo_folder.parent is None
+            else get_folder_from_mongo_folder(mongo_folder.parent)
+        )
+
+        folders_cache[mongo_folder.id] = folder
+
+    return folder
 
 
 def get_feed_from_mongo_feed(mongo_feed):
     """ Return the PG equivalent of a mongoDB feed, internal or not. """
 
-    if mongo_feed.is_internal:
-        return get_internal_feed_from_mongo_feed(mongo_feed)
+    try:
+        return feeds_cache[mongo_feed.id]
 
-    else:
-        return RssAtomFeed.objects.get(url=mongo_feed.url)
+    except:
+        if mongo_feed.is_internal:
+            feed = get_internal_feed_from_mongo_feed(mongo_feed)
+
+        else:
+            feed = RssAtomFeed.objects.get(url=mongo_feed.url)
+
+        feeds_cache[mongo_feed.id] = feed
+
+        return feed
 
 
 def get_internal_feed_from_mongo_feed(mongo_feed):
@@ -266,11 +320,37 @@ def get_internal_feed_from_mongo_feed(mongo_feed):
 def get_subscription_from_mongo_subscription(mongo_subscription):
     """ Return the PG equivalent of a mongoDB subscription, internal or not. """
 
-    return Subscription.objects.get(
-        user=mongo_subscription.user.django,
-        feed=get_feed_from_mongo_feed(mongo_subscription.feed)
-    )
+    try:
+        return subscriptions_cache[mongo_subscription.id]
 
+    except:
+        subscription = Subscription.objects.get(
+            user=mongo_subscription.user.django,
+            feed=get_feed_from_mongo_feed(mongo_subscription.feed)
+        )
+
+        subscriptions_cache[mongo_subscription.id] = subscription
+
+        return subscription
+
+
+def get_tags_from_mongo_tags(mongo_tags):
+    """ Return a PG Tag set from a mongo tags iterable. """
+
+    tags = set()
+
+    for mongo_tag in mongo_tags:
+        try:
+            tag = tags_cache[mongo_tag.id]
+
+        except KeyError:
+            tag = get_tag(name=mongo_tag.name)
+
+            tags_cache[mongo_tag.id] = tag
+
+        tags.add(tag)
+
+    return tags
 
 # —————————————————————————————————————————————————————————————— Migrate models
 
@@ -362,9 +442,7 @@ def migrate_author(mongo_author):
     """  Migrate an author from mongdb to PG. """
 
     try:
-        return Author.objects.get(
-            origin_name=mongo_author.origin_name,
-            website=WebSite.objects.get(url=mongo_author.website.url)), False
+        return get_author_from_mongo_author(mongo_author), False
 
     except Author.DoesNotExist:
         pass
@@ -390,6 +468,8 @@ def migrate_author(mongo_author):
         author.users.add(mongo_author.user.django)
 
     author.save()
+
+    authors_cache[mongo_author.id] = author
 
     return author, True
 
@@ -455,6 +535,8 @@ def migrate_feed(mongo_feed):
 
     feed.save()
 
+    feeds_cache[mongo_feed.id] = feed
+
     return feed, True
 
 
@@ -519,9 +601,7 @@ def migrate_article(mongo_article):
         authors = []
 
         for mongo_author in mongo_article.authors:
-            authors.append(Author.objects.get(
-                origin_name=mongo_author.origin_name,
-                website=WebSite.objects.get(url=mongo_author.website.url)))
+            authors.append(get_author_from_mongo_author(mongo_author))
 
         article.authors.add(*authors)
 
@@ -584,6 +664,8 @@ def migrate_article(mongo_article):
     if needs_save:
         article.save()
 
+    articles_ids_cache[mongo_article.id] = article.id
+
     return article, True
 
 
@@ -608,6 +690,8 @@ def migrate_folder(mongo_folder, only_parent=False):
         user=mongo_folder.owner.django,
         parent=parent,
     )
+
+    folders_cache[mongo_folder.id] = folder
 
     if only_parent:
         return folder, False
@@ -646,6 +730,8 @@ def migrate_subscription(mongo_subscription):
     )
 
     subscription.save()
+
+    subscriptions_cache[mongo_subscription.id] = subscription
 
     # tags: LATER, re-assigned in another migration part.
 
@@ -790,6 +876,8 @@ def migrate_tag(mongo_tag):
 
     tag.save()
 
+    tags_cache[mongo_tag.id] = tag
+
     return tag, created
 
 
@@ -801,7 +889,7 @@ def reassign_tags_on_feed(mongo_feed):
 
     feed = get_feed_from_mongo_feed(mongo_feed)
 
-    tags = Tag.get_tags_set(tuple(t.name for t in mongo_feed.tags))
+    tags = get_tags_from_mongo_tags(mongo_feed.tags)
 
     feed.tags.add(*tags)
 
@@ -813,7 +901,7 @@ def reassign_tags_on_subscription(mongo_subscription):
 
     subscription = get_subscription_from_mongo_subscription(mongo_subscription)
 
-    tags = Tag.get_tags_set(tuple(t.name for t in mongo_subscription.tags))
+    tags = get_tags_from_mongo_tags(mongo_subscription.tags)
 
     subscription.tags.add(*tags)
 
@@ -825,7 +913,7 @@ def reassign_tags_on_article(mongo_article):
 
     article = get_article_from_mongo_article(mongo_article)
 
-    tags = Tag.get_tags_set(tuple(t.name for t in mongo_article.tags))
+    tags = get_tags_from_mongo_tags(mongo_article.tags)
 
     article.tags.add(*tags)
 
@@ -837,7 +925,7 @@ def reassign_tags_on_read(mongo_read):
 
     read = get_read_from_mongo_read(mongo_read)
 
-    tags = Tag.get_tags_set(tuple(t.name for t in mongo_read.tags))
+    tags = get_tags_from_mongo_tags(mongo_read.tags)
 
     read.tags.add(*tags)
 
