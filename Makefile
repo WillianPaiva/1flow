@@ -91,7 +91,8 @@ syncdb:
 shelldeploy-superfast:
 	git bkp ||true
 	git upa
-	fab prod R:shell pull restart:1
+	fab prod -H w01 pull
+	fab prod R:shell pull
 
 webdeploy-superfast:
 	git bkp ||true

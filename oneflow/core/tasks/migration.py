@@ -857,6 +857,9 @@ def migrate_websites(websites, stop_on_exception=True):
             else:
                 continue
 
+        else:
+            LOGGER.info(u'Migrated website %s → %s', mongo_website, website)
+
         if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
             # Avoid a full save() cycle, we don't need it anyway.
             mongo_website.update(set__bigmig_migrated=True)
@@ -887,6 +890,8 @@ def migrate_authors(authors, stop_on_exception=True):
 
             else:
                 continue
+        else:
+            LOGGER.info(u'Migrated author %s → %s', mongo_author, author)
 
         if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
             # Avoid a full save() cycle, we don't need it anyway.
@@ -917,6 +922,8 @@ def migrate_feeds(feeds, stop_on_exception=True):
 
             else:
                 continue
+        else:
+            LOGGER.info(u'Migrated feed %s → %s', mongo_feed, feed)
 
         if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
             # Avoid a full save() cycle, we don't need it anyway.
@@ -957,6 +964,8 @@ def migrate_articles(articles, stop_on_exception=True):
 
             else:
                 continue
+        else:
+            LOGGER.info(u'Migrated article %s → %s', mongo_article, article)
 
         if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
             # Avoid a full save() cycle, we don't need it anyway.
@@ -987,6 +996,8 @@ def migrate_tags(tags, stop_on_exception=True):
 
             else:
                 continue
+        else:
+            LOGGER.info(u'Migrated tag %s → %s', mongo_tag, tag)
 
         if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
             # Avoid a full save() cycle, we don't need it anyway.
@@ -1325,6 +1336,9 @@ def migrate_all_folders(stop_on_exception=True):
             else:
                 continue
 
+        else:
+            LOGGER.info(u'Migrated folder %s → %s', mongo_folder, folder)
+
         if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
             # Avoid a full save() cycle, we don't need it anyway.
             mongo_folder.update(set__bigmig_migrated=True)
@@ -1368,6 +1382,10 @@ def migrate_all_subscriptions(stop_on_exception=True):
             else:
                 continue
 
+        else:
+            LOGGER.info(u'Migrated subscription %s → %s',
+                        mongo_subscription, subscription)
+
         if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
             # Avoid a full save() cycle, we don't need it anyway.
             mongo_subscription.update(set__bigmig_migrated=True)
@@ -1410,6 +1428,9 @@ def migrate_all_reads(stop_on_exception=True):
 
             else:
                 continue
+
+        else:
+            LOGGER.info(u'Migrated read %s → %s', mongo_read, read)
 
         if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
             # Avoid a full save() cycle, we don't need it anyway.
