@@ -224,12 +224,13 @@ def migrate_user_and_preferences(mongo_user):
 
     # If already existing, preferences could have not been created yet.
     try:
-        user.preferences
+        preferences = user.preferences
 
     except Preferences.DoesNotExist:
         preferences = Preferences(user=user)
         preferences.save()
-        preferences.check()
+
+    preferences.check()
 
     # user.save()
 
@@ -1123,22 +1124,22 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True):
             dj_user = mongo_user.django
 
             try:
-                dj_user.user_feeds
+                user_feeds = dj_user.user_feeds
 
             except:
                 user_feeds = UserFeeds(user=dj_user)
                 user_feeds.save()
 
-            dj_user.user_feeds.check()
+            user_feeds.check()
 
             try:
-                dj_user.user_subscriptions
+                user_subscriptions = dj_user.user_subscriptions
 
             except:
                 user_subscriptions = UserSubscriptions(user=dj_user)
                 user_subscriptions.save()
 
-            dj_user.user_subscriptions.check()
+            user_subscriptions.check()
 
         created_users_count = \
             User.objects.all().count() - current_users_count
