@@ -1238,7 +1238,13 @@ def check_internal_users_feeds_and_subscriptions(stop_on_exception=True):
     internal_feeds_count = UserFeeds.objects.all().count()
 
     for mongo_user in all_users:
-        dj_user = mongo_user.django
+        try:
+            dj_user = mongo_user.django
+
+        except:
+            LOGGER.warning(u'%s does not have a django equivalent.',
+                           mongo_user)
+            continue
 
         try:
             user_feeds = dj_user.user_feeds
