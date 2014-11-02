@@ -409,13 +409,10 @@ class RssAtomFeed(BaseFeed):
             # The website could not be reached? Network
             # unavailable? on my production server???
 
-            # self.refresh_lock.release() ???
-
-            if self.error(u'Could not refresh RSS/Atom feed'):
-                return
-
-            else:
-                raise basefeed_refresh_task.retry((self.id, ), exc=e)  # NOQA
+            self.error(u'Could not refresh RSS/Atom feed ({0})'.format(
+                       parsed_feed.get('bozo_exception', u'IndexError')),
+                       last_fetch=True)
+            return
 
         # Stop on HTTP errors before stopping on feedparser errors,
         # because he is much more lenient in many conditions.
