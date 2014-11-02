@@ -229,7 +229,7 @@ def get_article_from_mongo_article(mongo_article):
     """ Find an article in PG from one in MongoDB. """
 
     try:
-        Article.objects.get(id=articles_ids_cache[mongo_article.id])
+        article = Article.objects.get(id=articles_ids_cache[mongo_article.id])
 
     except KeyError:
         article = Article.objects.get(url=mongo_article.url)
