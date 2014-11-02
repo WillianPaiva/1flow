@@ -246,7 +246,7 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
         verbose_name=_(u'fetch interval'), blank=True)
 
     date_last_fetch = models.DateTimeField(verbose_name=_(u'last fetch'),
-                                           null=True, blank=True)
+                                           null=True, blank=True, db_index=True)
 
     errors = JSONField(default=list, blank=True)
     options = JSONField(default=dict, blank=True)
@@ -256,7 +256,8 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
         help_text=_(u'Internal notes for 1flow staff related to this feed.'))
 
     is_good = models.BooleanField(
-        verbose_name=_(u'Shown in selector'), default=False,
+        verbose_name=_(u'Shown in selector'),
+        default=False, db_index=True,
         help_text=_(u'Make this feed available to new subscribers in the '
                     u'selector wizard. Without this, the user can still '
                     u'subscribe but he must know it and manually enter '
