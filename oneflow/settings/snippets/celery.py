@@ -71,7 +71,7 @@ BROKER_URL = os.environ.get('BROKER_URL')
 BROKER_HEARTBEAT = 0
 
 CELERY_RESULT_BACKEND = BROKER_URL
-CELERY_RESULT_PERSISTENT = True
+CELERY_RESULT_PERSISTENT = False
 
 # Allow to recover from any unknown crash.
 CELERY_ACKS_LATE = True
@@ -98,7 +98,7 @@ BROKER_TRANSPORT_OPTIONS = {
 CELERY_TASK_RESULT_EXPIRES = 21600
 
 # The default beiing 5000, we need more than this.
-CELERY_MAX_CACHED_RESULTS = 32768
+CELERY_MAX_CACHED_RESULTS = 8192
 
 # NOTE: I don't know if this is compatible with upstart.
 CELERYD_POOL_RESTARTS = True
