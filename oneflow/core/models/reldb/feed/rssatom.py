@@ -329,7 +329,7 @@ class RssAtomFeed(BaseFeed):
                                  max_length=256, null=True,
                                  blank=True)
     last_modified  = models.CharField(verbose_name=_(u'modified'),
-                                      max_length=32, null=True,
+                                      max_length=64, null=True,
                                       blank=True)
 
     # —————————————————————————————————————————————————————— Django & Grappelli
