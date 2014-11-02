@@ -1084,7 +1084,7 @@ def migrate_articles(articles, stop_on_exception=True, verbose=False):
         counters.migrated_articles_count += 1
 
         if counters.migrated_articles_count % 10000 == 0:
-            vacuum_analyze(u'(at {0} tags)'.format(
+            vacuum_analyze(u'(at {0} articles)'.format(
                 counters.migrated_articles_count))
 
 
