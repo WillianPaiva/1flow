@@ -260,7 +260,7 @@ class Article(Document, DocumentHelperMixin):
             return _(u'{0} (#{1}) from {2}').format(
                 self.title[:40] + (self.title[40:] and u'…'), self.id, self.url)
         except:
-            return _(u'Article #{1} from {2}').format(self.id, self.url)
+            return _(u'Article #{0} from {1}').format(self.id, self.url)
 
     def validate(self, *args, **kwargs):
         try:
