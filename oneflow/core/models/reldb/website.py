@@ -250,8 +250,6 @@ def website_pre_save(instance, **kwargs):
 
         website.slug = slugify(website.name)
 
-        website.save()
-
 
 def website_post_save(instance, **kwargs):
 
