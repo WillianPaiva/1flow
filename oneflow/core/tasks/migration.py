@@ -142,7 +142,7 @@ all_tags_count = all_tags.count()
 counters.created_tags_count = 0
 counters.migrated_tags_count = 0
 
-all_articles = common_qs_args(MongoArticle.objects.all())
+all_articles = common_qs_args(MongoArticle.objects.all().order_by('-id'))
 all_articles_count = all_articles.count()
 counters.created_articles_count = 0
 counters.migrated_articles_count = 0
@@ -157,7 +157,7 @@ all_subscriptions_count = all_subscriptions.count()
 counters.created_subscriptions_count = 0
 counters.migrated_subscriptions_count = 0
 
-all_reads = common_qs_args(MongoRead.objects.all())
+all_reads = common_qs_args(MongoRead.objects.all().order_by('-id'))
 all_reads_count = all_reads.count()
 counters.created_reads_count = 0
 counters.migrated_reads_count = 0
