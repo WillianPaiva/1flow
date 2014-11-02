@@ -86,7 +86,7 @@ class Article(BaseItem, UrlItem, ContentItem):
 
     date_published = models.DateTimeField(
         verbose_name=_(u'date published'),
-        null=True, blank=True,
+        null=True, blank=True, db_index=True,
         help_text=_(u"When the article first appeared on the publisher's "
                     u"website."))
 

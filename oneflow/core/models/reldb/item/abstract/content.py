@@ -124,7 +124,7 @@ class ContentItem(models.Model):
 
     content_type = models.IntegerField(
         verbose_name=_(u'Content type'),
-        null=True, blank=True,
+        null=True, blank=True, db_index=True,
         help_text=_(u'Type of article content (HTML, Markdown…)'))
 
     content_error = models.TextField(
