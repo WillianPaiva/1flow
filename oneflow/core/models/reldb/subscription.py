@@ -161,6 +161,9 @@ class Subscription(ModelDiffMixin, AbstractTaggedModel):
                                      verbose_name=_(u'Folders'),
                                      related_name='subscriptions')
 
+    date_created = models.DateTimeField(auto_now_add=True, blank=True,
+                                        verbose_name=_(u'Date created'))
+
     notes = models.TextField(
         verbose_name=_(u'Notes'), null=True, blank=True,
         help_text=_(u'Write anything you want about this subscription. '

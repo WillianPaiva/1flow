@@ -489,6 +489,7 @@ def migrate_feed(mongo_feed):
         url=mongo_feed.url,
         is_restricted=mongo_feed.restricted,
 
+        date_created=mongo_feed.date_added,
         # `is_internal` is left untouched,
         # it's another function's job.
 

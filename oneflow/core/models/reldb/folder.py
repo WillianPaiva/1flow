@@ -97,6 +97,9 @@ class Folder(MPTTModel, DiffMixin):
     parent = TreeForeignKey('self', null=True, blank=True,
                             related_name='children')
 
+    date_created = models.DateTimeField(auto_now_add=True, blank=True,
+                                        verbose_name=_(u'Date created'))
+
     # —————————————————————————————————————————————————————— Cached descriptors
 
     all_articles_count = IntRedisDescriptor(
