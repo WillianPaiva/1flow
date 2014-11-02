@@ -551,7 +551,8 @@ def migrate_article(mongo_article):
         article = Article(
 
             # BaseItem
-            name=mongo_article.title,
+            name=mongo_article.title or u'Article from {0}'.format(
+                mongo_article.url),
 
             # UrlItem
             url=mongo_article.url,
