@@ -250,8 +250,9 @@ class Article(Document, DocumentHelperMixin):
             'url_error',
             'date_published',
             {'fields': ('duplicate_of', ), 'sparse': True},
-            {'fields': ('source', ), 'sparse': True}
-
+            {'fields': ('source', ), 'sparse': True},
+            'bigmig_migrated',
+            'bigmig_reassigned',
         ]
     }
 
