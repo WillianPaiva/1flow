@@ -314,7 +314,8 @@ class RssAtomFeed(BaseFeed):
         verbose_name = _(u'RSS/Atom feed')
         verbose_name_plural = _(u'RSS/Atom feeds')
 
-    url = models.URLField(unique=True, verbose_name=_(u'url'))
+    url = models.URLField(unique=True, max_length=512,
+                          verbose_name=_(u'url'))
 
     website = models.ForeignKey(
         WebSite,
