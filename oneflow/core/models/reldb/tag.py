@@ -152,7 +152,7 @@ class AbstractTaggedModel(models.Model):
 
 register_task_method(SimpleTag,
                      SimpleTag.post_create_task,
-                     globals(), u'high')
+                     globals(), queue=u'high')
 
 # ————————————————————————————————————————————————————————————————————— Signals
 

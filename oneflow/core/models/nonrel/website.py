@@ -176,4 +176,4 @@ class WebSite(Document, DocumentHelperMixin):
 
             statsd.gauge('websites.counts.total', 1, delta=True)
 
-register_task_method(WebSite, WebSite.post_create_task, globals(), u'high')
+register_task_method(WebSite, WebSite.post_create_task, globals(), queue=u'high')

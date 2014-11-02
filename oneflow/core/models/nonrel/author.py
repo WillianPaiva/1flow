@@ -222,4 +222,4 @@ class Author(Document, DocumentHelperMixin):
         return None
 
 
-register_task_method(Author, Author.post_create_task, globals(), u'high')
+register_task_method(Author, Author.post_create_task, globals(), queue=u'high')

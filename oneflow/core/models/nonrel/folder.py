@@ -274,7 +274,7 @@ class Folder(Document, DocumentHelperMixin, DocumentTreeMixin):
 
         self.delete()
 
-register_task_method(Folder, Folder.purge, globals(), u'low')
+register_task_method(Folder, Folder.purge, globals(), queue=u'low')
 
 # ————————————————————————————————————————————————————————— external properties
 #                                            Defined here to avoid import loops

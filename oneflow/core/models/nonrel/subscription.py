@@ -425,10 +425,10 @@ class Subscription(Document, DocumentHelperMixin):
 
 
 register_task_method(Subscription, Subscription.post_create_task,
-                     globals(), u'high')
+                     globals(), queue=u'high')
 register_task_method(Subscription, Subscription.mark_all_read_in_database,
-                     globals())
-register_task_method(Subscription, Subscription.check_reads, globals())
+                     globals(), queue=u'background')
+register_task_method(Subscription, Subscription.check_reads, globals(), queue=u'clean')
 
 # ————————————————————————————————————————————————————————— external properties
 #                                            Defined here to avoid import loops

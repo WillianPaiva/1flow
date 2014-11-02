@@ -957,7 +957,7 @@ class Read(Document, DocumentHelperMixin):
                                        update_only=['bookmarked'])
 
 
-register_task_method(Read, Read.post_create_task, globals(), u'high')
+register_task_method(Read, Read.post_create_task, globals(), queue=u'high')
 
 # ————————————————————————————————————————————————————————— external properties
 #                                            Defined here to avoid import loops

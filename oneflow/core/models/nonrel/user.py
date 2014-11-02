@@ -626,7 +626,7 @@ class User(Document, DocumentHelperMixin):
         return [s for s in self.nofolder_subscriptions if s.feed.closed]
 
 
-register_task_method(User, User.post_create_task, globals(), u'high')
+register_task_method(User, User.post_create_task, globals(), queue=u'high')
 
 
 def __mongo_user(self):
