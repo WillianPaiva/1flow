@@ -1814,7 +1814,7 @@ class Article(Document, DocumentHelperMixin):
 
 
 register_task_method(Article, Article.mongo_post_create_task,
-                     globals(), u'high')
+                     globals(), queue=u'high')
 register_task_method(Article, Article.absolutize_url,
                      globals(), queue=u'swarm', default_retry_delay=3600)
 register_task_method(Article, Article.fetch_content,

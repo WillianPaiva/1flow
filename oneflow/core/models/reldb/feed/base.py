@@ -660,7 +660,7 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
 
 
 register_task_method(BaseFeed, BaseFeed.refresh,
-                     globals(), u'medium')
+                     globals(), queue=u'medium')
 register_task_method(BaseFeed, BaseFeed.update_all_items_count,
                      globals(), queue=u'low')
 register_task_method(BaseFeed, BaseFeed.update_subscriptions_count,

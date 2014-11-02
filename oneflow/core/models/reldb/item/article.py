@@ -263,7 +263,7 @@ class Article(BaseItem, UrlItem, ContentItem):
 
 
 register_task_method(Article, Article.post_create_task,
-                     globals(), u'high')
+                     globals(), queue=u'high')
 
 # register_task_method(Article, Article.find_image,
 #                      globals(), queue=u'fetch', default_retry_delay=3600)

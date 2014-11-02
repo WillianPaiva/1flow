@@ -259,7 +259,7 @@ class Folder(MPTTModel, DiffMixin):
 
         self.delete()
 
-register_task_method(Folder, Folder.purge, globals(), u'low')
+register_task_method(Folder, Folder.purge, globals(), queue=u'low')
 
 # ————————————————————————————————————————————————————————— external properties
 #                                            Defined here to avoid import loops

@@ -1255,7 +1255,7 @@ class Feed(Document, DocumentHelperMixin):
 
 
 register_task_method(Feed, Feed.refresh,
-                     globals(), u'medium')
+                     globals(), queue=u'medium')
 register_task_method(Feed, Feed.update_all_articles_count,
                      globals(), queue=u'low')
 register_task_method(Feed, Feed.update_subscriptions_count,

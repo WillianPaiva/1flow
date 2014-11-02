@@ -217,5 +217,5 @@ class Tag(Document, DocumentHelperMixin):
             self.safe_reload()
 
 
-register_task_method(Tag, Tag.post_create_task, globals(), u'high')
-register_task_method(Tag, Tag.replace_duplicate_everywhere, globals(), u'low')
+register_task_method(Tag, Tag.post_create_task, globals(), queue=u'high')
+register_task_method(Tag, Tag.replace_duplicate_everywhere, globals(), queue=u'low')

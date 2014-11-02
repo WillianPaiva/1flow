@@ -410,7 +410,7 @@ class UserImport(HistoryEntry):
 
 
 register_task_method(UserImport, UserImport.run,
-                     globals(), u'background')
+                     globals(), queue=u'background')
 
 # ————————————————————————————————————————————————————————————————————— Signals
 

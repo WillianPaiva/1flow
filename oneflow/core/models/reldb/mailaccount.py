@@ -574,6 +574,6 @@ class MailAccount(ModelDiffMixin):
 # ———————————————————————————————————————————————————————————————— Celery tasks
 
 register_task_method(MailAccount, MailAccount.test_connection,
-                     globals(), u'swarm')
+                     globals(), queue=u'swarm')
 register_task_method(MailAccount, MailAccount.update_mailboxes,
-                     globals(), u'low')
+                     globals(), queue=u'low')
