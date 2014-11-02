@@ -528,6 +528,8 @@ class Read(Document, DocumentHelperMixin):
             ('user', 'is_good', 'is_bookmarked'),
             'article',
             ('article', 'is_good'),
+            'bigmig_migrated',
+            'bigmig_reassigned',
         ]
     }
 
