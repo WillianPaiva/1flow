@@ -71,10 +71,10 @@ BROKER_URL = os.environ.get('BROKER_URL')
 BROKER_HEARTBEAT = 0
 
 CELERY_RESULT_BACKEND = BROKER_URL
-CELERY_RESULT_PERSISTENT = True
+CELERY_RESULT_PERSISTENT = False
 
-# Allow to recover from any unknown crash.
-CELERY_ACKS_LATE = True
+# Allow to recover from any unknown crash. — disabled for RabbitMQ.
+# CELERY_ACKS_LATE = False
 
 # Sometimes, Ask asks us to enable this to debug issues.
 # BTW, it will save some CPU cycles.
@@ -92,13 +92,13 @@ BROKER_TRANSPORT_OPTIONS = {
     # 86400 = 24 hours
     # 43200 = 12 hours
     # 21600 = 6 hours
-    'visibility_timeout': 21600
+    'visibility_timeout': 3600
 }
 
-CELERY_TASK_RESULT_EXPIRES = 21600
+CELERY_TASK_RESULT_EXPIRES = 3600
 
 # The default beiing 5000, we need more than this.
-CELERY_MAX_CACHED_RESULTS = 32768
+CELERY_MAX_CACHED_RESULTS = 8192
 
 # NOTE: I don't know if this is compatible with upstart.
 CELERYD_POOL_RESTARTS = True
