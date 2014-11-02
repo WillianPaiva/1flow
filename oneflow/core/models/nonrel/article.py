@@ -256,8 +256,11 @@ class Article(Document, DocumentHelperMixin):
     }
 
     def __unicode__(self):
-        return _(u'{0} (#{1}) from {2}').format(
-            self.title[:40] + (self.title[40:] and u'…'), self.id, self.url)
+        try:
+            return _(u'{0} (#{1}) from {2}').format(
+                self.title[:40] + (self.title[40:] and u'…'), self.id, self.url)
+        except:
+            return _(u'Article #{1} from {2}').format(self.id, self.url)
 
     def validate(self, *args, **kwargs):
         try:
