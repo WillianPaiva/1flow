@@ -142,7 +142,7 @@ all_tags_count = all_tags.count()
 counters.created_tags_count = 0
 counters.migrated_tags_count = 0
 
-all_articles = common_qs_args(MongoArticle.objects.all())
+all_articles = common_qs_args(MongoArticle.objects.all().order_by('-id'))
 all_articles_count = all_articles.count()
 counters.created_articles_count = 0
 counters.migrated_articles_count = 0
@@ -157,7 +157,7 @@ all_subscriptions_count = all_subscriptions.count()
 counters.created_subscriptions_count = 0
 counters.migrated_subscriptions_count = 0
 
-all_reads = common_qs_args(MongoRead.objects.all())
+all_reads = common_qs_args(MongoRead.objects.all().order_by('-id'))
 all_reads_count = all_reads.count()
 counters.created_reads_count = 0
 counters.migrated_reads_count = 0
@@ -1050,9 +1050,6 @@ def migrate_feeds(feeds, stop_on_exception=True, verbose=False):
 # NOT NEEDED: def migrate_subscriptions(subscriptions):
 
 
-# NOT NEEDED: def migrate_reads(reads):
-
-
 def migrate_articles(articles, stop_on_exception=True, verbose=False):
     """ Migrate articles. """
 
@@ -1074,6 +1071,8 @@ def migrate_articles(articles, stop_on_exception=True, verbose=False):
             if verbose:
                 LOGGER.info(u'Migrated article %s → %s', mongo_article, article)
 
+            migrate_reads(mongo_article.reads)
+
         if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
             # Avoid a full save() cycle, we don't need it anyway.
             mongo_article.update(set__bigmig_migrated=True)
@@ -1086,6 +1085,42 @@ def migrate_articles(articles, stop_on_exception=True, verbose=False):
         if counters.migrated_articles_count % 10000 == 0:
             vacuum_analyze(u'(at {0} articles)'.format(
                 counters.migrated_articles_count))
+
+
+def migrate_reads(mongo_reads, stop_on_exception=True, verbose=False):
+    """ Migrate reads from MongoDB to PostgreSQL. """
+
+    for mongo_read in not_yet_migrated(mongo_reads):
+
+        try:
+            read, created = migrate_read(mongo_read)
+
+        except:
+            LOGGER.exception(u'Could not migrate read %s',
+                             mongo_read)
+
+            if stop_on_exception:
+                raise StopMigration('read')
+
+            else:
+                continue
+
+        else:
+            if verbose:
+                LOGGER.info(u'Migrated read %s → %s', mongo_read, read)
+
+        if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
+            # Avoid a full save() cycle, we don't need it anyway.
+            mongo_read.update(set__bigmig_migrated=True)
+
+        if created:
+            counters.created_reads_count += 1
+
+        counters.migrated_reads_count += 1
+
+        if counters.migrated_reads_count % 100000 == 0:
+            vacuum_analyze(u'(at {0} reads)'.format(
+                counters.migrated_reads_count))
 
 
 def migrate_tags(tags, stop_on_exception=True, verbose=False):
@@ -1412,37 +1447,6 @@ def check_internal_users_feeds_and_subscriptions(stop_on_exception=True,
                 created_internal_feeds_count)
 
 
-def migrate_all_articles(stop_on_exception=True, verbose=False):
-    """ Migrate things. """
-
-    # ————————————————————————————————————————————————————————————— masters
-
-    master_articles = master_documents(all_articles)
-    master_articles_count = master_articles.count()
-
-    migrate_articles(master_articles,
-                     stop_on_exception=stop_on_exception,
-                     verbose=verbose)
-
-    # —————————————————————————————————————————————————————————— duplicates
-
-    duplicate_articles = all_articles.filter(duplicate_of__ne=None)
-    duplicate_articles_count = duplicate_articles.count()
-
-    migrate_articles(duplicate_articles,
-                     stop_on_exception=stop_on_exception,
-                     verbose=verbose)
-
-    LOGGER.info(u'Articles migrated: %s/%s (total %s), '
-                u'%s dupes, %s already there.',
-                counters.migrated_articles_count,
-                master_articles_count,
-                all_articles_count,
-                duplicate_articles_count,
-                counters.migrated_articles_count
-                - counters.created_articles_count)
-
-
 def migrate_all_folders(stop_on_exception=True, verbose=False):
     """ Migrate things. """
 
@@ -1538,43 +1542,50 @@ def migrate_all_subscriptions(stop_on_exception=True, verbose=False):
                 - counters.created_subscriptions_count)
 
 
+def migrate_all_articles_and_reads(stop_on_exception=True, verbose=False):
+    """ Migrate articles & reads. """
+
+    # ————————————————————————————————————————————————————————————— masters
+
+    master_articles = master_documents(all_articles)
+    master_articles_count = master_articles.count()
+
+    migrate_articles(master_articles,
+                     stop_on_exception=stop_on_exception,
+                     verbose=verbose)
+
+    # —————————————————————————————————————————————————————————— duplicates
+
+    duplicate_articles = all_articles.filter(duplicate_of__ne=None)
+    duplicate_articles_count = duplicate_articles.count()
+
+    migrate_articles(duplicate_articles,
+                     stop_on_exception=stop_on_exception,
+                     verbose=verbose)
+
+    LOGGER.info(u'Articles migrated: %s/%s (total %s), '
+                u'%s dupes, %s already there.',
+                counters.migrated_articles_count,
+                master_articles_count,
+                all_articles_count,
+                duplicate_articles_count,
+                counters.migrated_articles_count
+                - counters.created_articles_count)
+
+
 def migrate_all_reads(stop_on_exception=True, verbose=False):
-    """ Migrate things. """
+    """ Migrate remaining reads.
+
+    There should be none, as article should have migrated all of them.
+    Thus, it's just a check.
+    """
 
     mongo_reads = not_yet_migrated(all_reads)
     mongo_reads_count = mongo_reads.count()
 
-    for mongo_read in mongo_reads:
-
-        try:
-            read, created = migrate_read(mongo_read)
-
-        except:
-            LOGGER.exception(u'Could not migrate read %s',
-                             mongo_read)
-
-            if stop_on_exception:
-                raise StopMigration('read')
-
-            else:
-                continue
-
-        else:
-            if verbose:
-                LOGGER.info(u'Migrated read %s → %s', mongo_read, read)
-
-        if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
-            # Avoid a full save() cycle, we don't need it anyway.
-            mongo_read.update(set__bigmig_migrated=True)
-
-        if created:
-            counters.created_reads_count += 1
-
-        counters.migrated_reads_count += 1
-
-        if counters.migrated_reads_count % 100000 == 0:
-            vacuum_analyze(u'(at {0} reads)'.format(
-                counters.migrated_reads_count))
+    migrate_reads(mongo_reads,
+                  stop_on_exception=stop_on_exception,
+                  verbose=verbose)
 
     LOGGER.info(u'Reads migrated: %s/%s (total %s), '
                 u'%s already there.',
@@ -1699,10 +1710,6 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True, verbose=False):
                 check_internal_users_feeds_and_subscriptions(
                     stop_on_exception=stop_on_exception, verbose=verbose)
 
-            with benchmark(u'Migrate all articles'):
-                migrate_all_articles(stop_on_exception=stop_on_exception,
-                                     verbose=verbose)
-
             # Subscriptions need their folders.
             with benchmark(u'Migrate all folders'):
                 migrate_all_folders(stop_on_exception=stop_on_exception,
@@ -1712,7 +1719,11 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True, verbose=False):
                 migrate_all_subscriptions(stop_on_exception=stop_on_exception,
                                           verbose=verbose)
 
-            with benchmark(u'Migrate all reads'):
+            with benchmark(u'Migrate all articles & reads'):
+                migrate_all_articles_and_reads(
+                    stop_on_exception=stop_on_exception, verbose=verbose)
+
+            with benchmark(u'Migrate all remaining reads'):
                 migrate_all_reads(stop_on_exception=stop_on_exception,
                                   verbose=verbose)
 
