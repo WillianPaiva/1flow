@@ -9,16 +9,10 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
 
-        # Changing field 'RssAtomFeed.last_modified'
-        db.alter_column(u'core_rssatomfeed', 'last_modified', self.gf('django.db.models.fields.CharField')(max_length=32, null=True))
-
         # Changing field 'RssAtomFeed.last_etag'
         db.alter_column(u'core_rssatomfeed', 'last_etag', self.gf('django.db.models.fields.CharField')(max_length=256, null=True))
 
     def backwards(self, orm):
-
-        # Changing field 'RssAtomFeed.last_modified'
-        db.alter_column(u'core_rssatomfeed', 'last_modified', self.gf('django.db.models.fields.CharField')(max_length=64, null=True))
 
         # Changing field 'RssAtomFeed.last_etag'
         db.alter_column(u'core_rssatomfeed', 'last_etag', self.gf('django.db.models.fields.CharField')(max_length=64, null=True))
@@ -346,7 +340,7 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'RssAtomFeed', '_ormbases': ['core.BaseFeed']},
             u'basefeed_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['core.BaseFeed']", 'unique': 'True', 'primary_key': 'True'}),
             'last_etag': ('django.db.models.fields.CharField', [], {'max_length': '256', 'null': 'True', 'blank': 'True'}),
-            'last_modified': ('django.db.models.fields.CharField', [], {'max_length': '32', 'null': 'True', 'blank': 'True'}),
+            'last_modified': ('django.db.models.fields.CharField', [], {'max_length': '64', 'null': 'True', 'blank': 'True'}),
             'url': ('django.db.models.fields.URLField', [], {'unique': 'True', 'max_length': '512'}),
             'website': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'feeds'", 'null': 'True', 'to': "orm['core.WebSite']"})
         },
