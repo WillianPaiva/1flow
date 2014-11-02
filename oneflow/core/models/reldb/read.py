@@ -91,13 +91,13 @@ class Read(AbstractTaggedModel):
         help_text=_(u'The system has validated the underlying article, and '
                     u'the read can now be shown, used by its owner, and '
                     u'counted in statistics.'),
-        default=False, blank=True)
+        default=False, blank=True, db_index=True)
 
     is_read = models.BooleanField(
         verbose_name=_(u'is read?'),
         help_text=_(u'The Owner has read the content or has manually '
                     u'marked it as such.'),
-        default=False)
+        default=False, db_index=True)
     date_read = models.DateTimeField(null=True, blank=True)
 
     is_auto_read = models.BooleanField(
@@ -122,14 +122,14 @@ class Read(AbstractTaggedModel):
         help_text=_(u'The owner has starred the content, signifying '
                     u'he/she loves it or that it is much of interest '
                     u'for him/her.'),
-        null=True, blank=True)
+        null=True, blank=True, db_index=True)
     date_starred = models.DateTimeField(null=True, blank=True)
 
     is_bookmarked = models.BooleanField(
         verbose_name=_(u'is bookmarked?'),
         help_text=_(u'This content is marked to be read later. When, '
                     u'depends on the `.bookmark_type` attribute.'),
-        default=False, blank=True)
+        default=False, blank=True, db_index=True)
     date_bookmarked = models.DateTimeField(null=True, blank=True)
     bookmark_type = models.CharField(
         verbose_name=_(u'Bookmark type'),
@@ -138,46 +138,46 @@ class Read(AbstractTaggedModel):
 
     # —————————————————————————————————————————————————————— START make generic
 
-    is_fact   = models.BooleanField(
+    is_fact = models.BooleanField(
         help_text=_(u'Qualifies a time-dependant fact.'),
         default=False, blank=True)
     date_fact = models.DateTimeField(null=True, blank=True)
 
-    is_quote   = models.BooleanField(
+    is_quote = models.BooleanField(
         help_text=_(u'Qualifies someone’s words, thoughts or intentions.'),
         default=False, blank=True)
     date_quote = models.DateTimeField(null=True, blank=True)
 
-    is_number   = models.BooleanField(
+    is_number = models.BooleanField(
         help_text=_(u'Qualifies explicitely quantized data.'),
         default=False, blank=True)
     date_number = models.DateTimeField(null=True, blank=True)
 
-    is_analysis   = models.BooleanField(
+    is_analysis = models.BooleanField(
         help_text=_(u'Qualifies in-depth analysis, studies or research '
                     u'publications.'),
         default=False, blank=True)
     date_analysis = models.DateTimeField(null=True, blank=True)
 
-    is_prospective   = models.BooleanField(
+    is_prospective = models.BooleanField(
         help_text=_(u'Qualifies things that want to watch, that will '
                     u'happen or not.'),
         default=False, blank=True)
     date_prospective = models.DateTimeField(null=True, blank=True)
 
-    is_knowhow   = models.BooleanField(
+    is_knowhow = models.BooleanField(
         help_text=_(u'Qualifies anything about How-to-do things '
                     u'and profession best-practices.'),
         default=False, blank=True)
     date_knowhow = models.DateTimeField(null=True, blank=True)
 
-    is_rules   = models.BooleanField(
+    is_rules = models.BooleanField(
         help_text=_(u'Qualifies anything about laws, governments/public '
                     u'regulations.'),
         default=False, blank=True)
     date_rules = models.DateTimeField(null=True, blank=True)
 
-    is_knowledge   = models.BooleanField(
+    is_knowledge = models.BooleanField(
         help_text=_(u'Qualifies anything that the owner wants to retain '
                     u'as a “must know”, whatever the context.'),
         default=False, blank=True)
