@@ -1329,7 +1329,8 @@ def migrate_all_authors(stop_on_exception=True, verbose=False):
 def migrate_all_feeds(stop_on_exception=True, verbose=False):
     """ Migrate things. """
 
-    external_feeds = all_feeds.filter(is_internal=False)
+    external_feeds = all_feeds.filter(MQ(is_internal__exists=False)
+                                      | MQ(is_internal=False))
     external_feeds_count = external_feeds.count()
 
     # ————————————————————————————————————————————————————————————— masters
