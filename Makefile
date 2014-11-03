@@ -102,6 +102,7 @@ webdeploy-superfast:
 webshell-superfast:
 	git bkp ||true
 	git upa
+	fab prod H:worker-01.1flow.io pull
 	fab prod R:web,shell pull restart:1
 
 webdeploy-collectstatic:
