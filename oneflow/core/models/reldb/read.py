@@ -30,7 +30,7 @@ from django.db.models.signals import pre_delete, post_save  # , pre_save
 from django.utils.translation import ugettext_lazy as _, pgettext_lazy
 
 from oneflow.base.utils import register_task_method
-from oneflow.base.utils.dateutils import now, timedelta, naturaldelta, datetime
+from oneflow.base.utils.dateutils import timedelta, naturaldelta, datetime
 
 from sparks.django.utils import NamedTupleChoices
 
@@ -87,7 +87,8 @@ class Read(AbstractTaggedModel):
         help_text=_(u'All the users that have shared the article with the '
                     u'current owner of this read.'))
 
-    date_created = models.DateTimeField(default=now, blank=True)
+    date_created = models.DateTimeField(auto_now_add=True,
+                                        db_index=True, blank=True)
 
     is_good = models.BooleanField(
         verbose_name=_('good for use?'),

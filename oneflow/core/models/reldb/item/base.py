@@ -96,7 +96,8 @@ class BaseItem(PolymorphicModel,
         default=False, blank=True)
 
     date_created = models.DateTimeField(
-        auto_now_add=True, verbose_name=_(u'Date added'),
+        auto_now_add=True, db_index=True,
+        verbose_name=_(u'Date added'),
         help_text=_(u'When the article was added to the 1flow database.'))
 
     date_updated = models.DateTimeField(
