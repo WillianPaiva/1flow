@@ -278,19 +278,6 @@ CONSTANCE_CONFIG.update({
                                   u'time. Workers should adjust the value '
                                   u'automatically as time passes.')),
 
-    'FEED_REFRESH_RANDOMIZE': (False, ugettext(u'Set this to False if you want '
-                               u'all feeds with the same fetch interval to '
-                               u'fetch at the same time. Default is to '
-                               u'randomize the refreshs not to hammer our '
-                               u'machines.')),
-
-    'FEED_REFRESH_RANDOMIZE_DELAY': (40, ugettext(u'Number of seconds max for '
-                                     u'the randomization (eg. between 0 and '
-                                     u'this number). Warning: keep this '
-                                     u'lower than the peridicity of the feed '
-                                     u'refresher, else some tasks will be '
-                                     u'duplicated.')),
-
     'FEED_ADMIN_LIST_PER_PAGE': (100, ugettext(u'How many feeds per page in '
                                  u'the Django admin. Increase only if '
                                  u'performance is acceptable; do NOT abuse!')),

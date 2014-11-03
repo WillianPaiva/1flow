@@ -21,7 +21,6 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 import logging
 import time as pytime
 
-from random import randrange
 from constance import config
 
 from celery import task
@@ -127,16 +126,8 @@ def refresh_all_feeds(limit=None, force=False):
                     how_late = feed.date_last_fetch + interval - mynow
                     how_late = how_late.days * 86400 + how_late.seconds
 
-                    if config.FEED_REFRESH_RANDOMIZE:
-                        countdown = randrange(
-                            config.FEED_REFRESH_RANDOMIZE_DELAY)
-
-                        basefeed_refresh_task.apply_async((feed.id, force),
-                                                          countdown=countdown)
-
-                    else:
-                        countdown = 0
-                        basefeed_refresh_task.delay(feed.id, force)
+                    countdown = 0
+                    basefeed_refresh_task.delay(feed.id, force)
 
                     LOGGER.info(u'%s refresh of feed %s %s (%s late).',
                                 u'Scheduled randomized'

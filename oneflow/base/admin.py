@@ -111,8 +111,6 @@ ConstanceAdmin.fieldsets = (
             'FEED_FETCH_MAX_INTERVAL',
             'FEED_FETCH_RAISE_THRESHOLD',
             'FEED_FETCH_PARALLEL_LIMIT',
-            'FEED_REFRESH_RANDOMIZE',
-            'FEED_REFRESH_RANDOMIZE_DELAY',
             'FEED_ADMIN_LIST_PER_PAGE',
             'FEED_ADMIN_MEANINGFUL_DELTA',
             'FEED_CLOSED_WARN_LIMIT',
