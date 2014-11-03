@@ -42,6 +42,7 @@ from ..common import (
     ORIGINS,
 )
 
+from ..language import Language
 from ..duplicate import AbstractDuplicateAwareModel
 from ..tag import AbstractTaggedModel
 from ..author import Author
@@ -96,7 +97,8 @@ class BaseItem(PolymorphicModel,
         default=False, blank=True)
 
     date_created = models.DateTimeField(
-        auto_now_add=True, verbose_name=_(u'Date added'),
+        auto_now_add=True, db_index=True,
+        verbose_name=_(u'Date added'),
         help_text=_(u'When the article was added to the 1flow database.'))
 
     date_updated = models.DateTimeField(
@@ -113,15 +115,14 @@ class BaseItem(PolymorphicModel,
         help_text=_(u'Rating used as a base when a user has not already '
                     u'rated the content.'))
 
-    language = models.CharField(verbose_name=_(u'Article language'),
-                                max_length=5,
-                                help_text=_(u'2 letters or 5 characters '
-                                            u'language code (eg “en”, '
-                                            u'“fr-FR”…).'))
+    language = models.ForeignKey(Language, null=True, blank=True,
+                                 verbose_name=_(u'Language'))
+
     text_direction = models.CharField(verbose_name=_(u'Text direction'),
                                       choices=((u'ltr', _(u'Left-to-Right')),
                                                (u'rtl', _(u'Right-to-Left'))),
-                                      default=u'ltr', max_length=3)
+                                      default=u'ltr', max_length=3,
+                                      db_index=True)
 
     # ———————————————————————————————————————————————————————————————— Contents
     #
