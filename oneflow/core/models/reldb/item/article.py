@@ -24,7 +24,6 @@ import logging
 import uuid
 
 from statsd import statsd
-from random import randrange
 # from constance import config
 
 from celery import chain as tasks_chain
@@ -232,7 +231,6 @@ class Article(BaseItem, UrlItem, ContentItem):
         # HEADS UP: this task name will be registered later
         # by the register_task_method call.
         baseitem_absolutize_url_task.apply_async((self.id, ),
-                                                 countdown=randrange(5),
                                                  link=post_absolutize_chain)
 
         #

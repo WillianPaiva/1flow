@@ -50,7 +50,12 @@ else:
 # peaks. All other options make the process-group master stop children to
 # ack and re-prefetch next jobs, which in turn make all other process groups
 # wait. This produce a lot of hickups in the global processing tunnel. Thus, 0.
-CELERYD_PREFETCH_MULTIPLIER = 0
+#
+# NOTE: PREFETCH=0 means “prefetch all that you can.” This has the drawback of
+# making celery master too active and eat CPU a lot because we have waayyyy
+# too much items in queues everytime. Thus, calming things a little by limiting
+# prefetched elements.
+CELERYD_PREFETCH_MULTIPLIER = 8
 
 CELERY_DEFAULT_QUEUE = 'medium'
 
