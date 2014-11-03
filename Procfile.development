@@ -11,7 +11,7 @@ web: python manage.py runserver
 shell: python manage.py shell_ipynb
 
 # No need for flower on dev machines.
-flower: python manage.py celery flower --logging=warning --broker_api=http://${AMQP_USERNAME}:${AMQP_PASSWORD}@${MAIN_SERVER}:15672/api
+flower: python manage.py celery flower --logging=warning --broker=${BROKER_URL} --broker_api=http://${AMQP_USERNAME}:${AMQP_PASSWORD}@${MAIN_SERVER}:15672/api
 
 # Beat service is cumulated with the worker to lower the process charge on dev machines.
 #beat:       python manage.py celery beat      --loglevel=warning
