@@ -108,7 +108,7 @@ subscriptions_cache = {}
 folders_cache = {}
 authors_cache = {}
 tags_cache = {}
-
+languages_cache = {}
 articles_ids_cache = {}
 
 # —————————————————————————————————————————————————————————— Migration counters
@@ -207,6 +207,20 @@ def master_documents(mongo_queryset):
 
 
 # ———————————————————————————————————————————————————— Get equivalent instances
+
+
+def get_language_from_mongo_language(mongo_language):
+    """ Find an language in PG from one in MongoDB. """
+
+    try:
+        return languages_cache[mongo_language]
+
+    except KeyError:
+        language = Language.get_by_code(mongo_language)
+
+        languages_cache[mongo_language] = language
+
+        return language
 
 
 def get_author_from_mongo_author(mongo_author):
@@ -576,6 +590,10 @@ def migrate_article(mongo_article):
     # Reset the creation date to match the old database.
     article.date_created = mongo_article.date_added
 
+    if mongo_article.language:
+        article.language = get_language_from_mongo_language(
+            mongo_article.language)
+
     # UrlItem
     # article.url is already set at creation
     article.is_orphaned = mongo_article.orphaned
@@ -844,7 +862,7 @@ def migrate_tag(mongo_tag):
     )
 
     if mongo_tag.language != u'':
-        tag.language = Language.get_by_code(mongo_tag.language)
+        tag.language = get_language_from_mongo_language(mongo_tag.language)
 
     #
     # HEADS UP: parents / children is not implemented for tags, we have none
