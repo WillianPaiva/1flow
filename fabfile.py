@@ -220,15 +220,12 @@ def production():
 
         'worker_high':       ['worker-01.1flow.io',
                               'worker-02.1flow.io',
-                              'worker-03.1flow.io',
-                              'worker-04.1flow.io', ],
+                              'worker-03.1flow.io', ],
 
         'worker_medium':     ['worker-02.1flow.io',
-                              'worker-03.1flow.io',
-                              'worker-04.1flow.io', ],
+                              'worker-03.1flow.io', ],
 
-        'worker_low':        ['worker-03.1flow.io',
-                              'worker-04.1flow.io', ],
+        'worker_low':        ['worker-03.1flow.io', ],
 
         'worker_fetch':      ['worker-02.1flow.io',
                               'worker-03.1flow.io',
@@ -253,7 +250,7 @@ def production():
         },
 
         'ionice_arguments': {
-            # 'shell': '-n -1',
+            'shell': '-c 2 -n 1',
         },
 
         # 'repository': {
@@ -262,15 +259,15 @@ def production():
 
         'autoscale': {
             'worker_swarm': '32,2',
-            'worker_fetch': '24,1',
-            'worker_background': '4,0',
-            'worker_high': '8,1',
+            'worker_fetch': '8,1',
+            'worker_background': '3,0',
+            'worker_high': '6,1',
 
             # Maximum one worker to avoid hammering
             # the database with huge requests.
             'worker_clean': '1,0',
 
-            '__all__': '8,0',
+            '__all__': '5,0',
         },
 
         'max_tasks_per_child': {
