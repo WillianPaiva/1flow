@@ -41,7 +41,7 @@ from django.utils.text import slugify
 
 from oneflow.base.utils import register_task_method
 from oneflow.base.utils.http import clean_url
-# from oneflow.base.utils.dateutils import now
+from oneflow.base.utils.dateutils import datetime
 
 from ..common import (
     DjangoUser as User,
@@ -61,6 +61,8 @@ from abstract import (
 from original_data import baseitem_postprocess_original_data_task
 
 LOGGER = logging.getLogger(__name__)
+
+MIGRATION_DATETIME = datetime(2014, 11, 1)
 
 
 __all__ = [
@@ -283,6 +285,12 @@ def article_post_save(instance, **kwargs):
         # In the archive database this is more immediate than looking
         # up the database name.
         if not (article.is_orphaned or article.duplicate_of):
+
+            #
+            # HEADS UP: MIGRATION. remove when finished.
+            if article.date_created < MIGRATION_DATETIME:
+                # SKIP everything, we already have the data from the migration.
+                return
 
             # HEADS UP: this task name will be registered later
             # by the register_task_method() call.
