@@ -278,7 +278,7 @@ CONSTANCE_CONFIG.update({
                                   u'time. Workers should adjust the value '
                                   u'automatically as time passes.')),
 
-    'FEED_REFRESH_RANDOMIZE': (True, ugettext(u'Set this to False if you want '
+    'FEED_REFRESH_RANDOMIZE': (False, ugettext(u'Set this to False if you want '
                                u'all feeds with the same fetch interval to '
                                u'fetch at the same time. Default is to '
                                u'randomize the refreshs not to hammer our '
