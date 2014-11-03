@@ -16,9 +16,6 @@ class Migration(SchemaMigration):
         db.add_column(u'core_baseitem', 'language',
                         self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.Language'], null=True))
 
-        # Adding index on 'BaseItem', fields ['language']
-        db.create_index(u'core_baseitem', ['language_id'])
-
         # Adding index on 'BaseItem', fields ['text_direction']
         db.create_index(u'core_baseitem', ['text_direction'])
 
