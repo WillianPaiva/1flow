@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 """
 Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
@@ -25,11 +26,11 @@ import operator
 
 from django.db import models
 from django.db.models.signals import pre_delete, post_save  # , pre_save
-from django.conf import settings
+# from django.conf import settings
 from django.utils.translation import ugettext_lazy as _, pgettext_lazy
 
 from oneflow.base.utils import register_task_method
-from oneflow.base.utils.dateutils import now, timedelta, naturaldelta
+from oneflow.base.utils.dateutils import now, timedelta, naturaldelta, datetime
 
 from sparks.django.utils import NamedTupleChoices
 
@@ -44,6 +45,8 @@ from tag import AbstractTaggedModel, SimpleTag as Tag
 from item.base import BaseItem
 
 LOGGER = logging.getLogger(__name__)
+
+MIGRATION_DATETIME = datetime(2014, 11, 1)
 
 
 __all__ = [
@@ -570,19 +573,6 @@ class Read(AbstractTaggedModel):
 
     # ———————————————————————————————————— Class methods & Mongo/Django related
 
-    @classmethod
-    def signal_post_save_handler(cls, sender, document,
-                                 created=False, **kwargs):
-
-        read = document
-
-        if created:
-            if read._db_name != settings.MONGODB_NAME_ARCHIVE:
-
-                # HEADS UP: this task is declared by
-                # the register_task_method call below.
-                read_post_create_task.delay(read.id)  # NOQA
-
     def post_create_task(self):
         """ Method meant to be run from a celery task. """
 
@@ -914,6 +904,11 @@ def read_post_save(instance, **kwargs):
     read = instance
 
     if kwargs.get('created', False):
+
+        if read.date_created < MIGRATION_DATETIME:
+            # HEADS UP: REMOVE THIS WHEN migration is finished
+            return
+
         read.rating = read.item.default_rating
 
         read.set_subscriptions(commit=False)
