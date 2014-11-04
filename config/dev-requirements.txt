@@ -19,3 +19,5 @@ paramiko==1.15.1
 pip-tools==0.3.4
 sqlparse==0.1.9
 Werkzeug==0.9.4
+pygraphviz==1.2
+django-extensions==1.4.5
