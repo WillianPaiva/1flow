@@ -455,6 +455,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
     # `core` processors
     'oneflow.core.context_processors.mongodb_user',
+    'oneflow.core.context_processors.models_constants',
     'oneflow.core.context_processors.social_things',
 )
 

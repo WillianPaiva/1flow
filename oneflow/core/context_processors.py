@@ -21,10 +21,13 @@
 
 from django.conf import settings
 from models.nonrel import (
-                           CONTENT_TYPES,
-                           CONTENT_TYPES_FINAL,
-                           CACHE_ONE_HOUR, CACHE_ONE_DAY,
-                           CACHE_ONE_WEEK, CACHE_ONE_MONTH, )
+    CONTENT_TYPES,
+    CONTENT_TYPES_FINAL,
+    CACHE_ONE_HOUR, CACHE_ONE_DAY,
+    CACHE_ONE_WEEK, CACHE_ONE_MONTH,
+)
+
+from models.reldb import IMPORT_STATUS
 
 
 def mongodb_user(request):
@@ -52,13 +55,15 @@ def mongodb_user(request):
     }
 
 
-def content_types(request):
+def models_constants(request):
     """ Inject content types into the context, so we can use them
         by name instead of hardcoding their integer values. """
 
     return {
         u'CONTENT_TYPES':     CONTENT_TYPES,
         u'CONTENT_TYPES_FINAL':   CONTENT_TYPES_FINAL,
+
+        u'IMPORT_STATUS': IMPORT_STATUS,
 
         u'CACHE_ONE_HOUR':        CACHE_ONE_HOUR,
         u'CACHE_ONE_DAY':         CACHE_ONE_DAY,
