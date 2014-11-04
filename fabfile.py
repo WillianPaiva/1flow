@@ -36,6 +36,7 @@ run_command, restart_services = sdf.run_command, sdf.restart_services
 stop, start, status = sdf.stop_services, sdf.start_services, sdf.status_services
 remove, pick, role = sdf.remove_services, sdf.pick, sdf.role
 push_environment, git_pull = sdf.push_environment, sdf.git_pull
+migrate, git_update = sdf.migrate, sdf.git_update
 
 USE_JENKINS  = pwd.getpwuid(os.getuid()).pw_name == 'jenkins'
 JENKINS_JOB  = os.environ.get('JOB_NAME', '1flow')
