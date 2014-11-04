@@ -55,17 +55,18 @@ class Language(MPTTModel, AbstractDuplicateAwareModel):
 
     iso639_1 = models.CharField(
         verbose_name=_(u'ISO-639-1 code'),
-        max_length=16, null=True, blank=True, unique=True,
+        max_length=16, null=True, blank=True,
         help_text=_(u'This is a 2-letters code. Some languages do not '
-                    u'have any. But all have an ISO-639-2 or -3 one.'))
+                    u'have any. But all have an ISO-639-2 or -3 one. '
+                    u'Sometimes it is the same as the IETF (Django) one.'))
 
-    iso639_2 = models.CharField(verbose_name=_(u'ISO-639-2 code'),
-                                max_length=16, unique=True,
-                                null=True, blank=True)
+    iso639_2 = models.CharField(
+        verbose_name=_(u'ISO-639-2 code'),
+        max_length=16, null=True, blank=True)
 
-    iso639_3 = models.CharField(verbose_name=_(u'ISO-639-3 code'),
-                                max_length=16, unique=True,
-                                null=True, blank=True)
+    iso639_3 = models.CharField(
+        verbose_name=_(u'ISO-639-3 code'),
+        max_length=16, null=True, blank=True)
 
     parent = TreeForeignKey('self', null=True, blank=True,
                             related_name='children')
