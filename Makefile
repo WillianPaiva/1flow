@@ -91,36 +91,36 @@ syncdb:
 shell-superfast:
 	git bkp || true
 	git upa
-	fab prod H:worker-01.1flow.io update pull
-	fab prod R:shell update pull
+	fab prod H:worker-01.1flow.io pull
+	fab prod R:shell pull
 
 web-superfast:
 	git bkp || true
 	git upa
-	fab prod R:web update pull restart:1
+	fab prod R:web pull restart:1
 
 webshell-superfast:
 	git bkp || true
 	git upa
-	fab prod H:worker-01.1flow.io update pull
-	fab prod R:web,shell update pull restart:1
+	fab prod H:worker-01.1flow.io pull
+	fab prod R:web,shell pull restart:1
 
 superfast: deploy-superfast
 
 deploy-superfast:
 	git bkp || true
 	git upa
-	fab prod update pull restart:1
+	fab prod pull restart:1
 
 migrate-superfast:
 	git bkp || true
 	git upa
-	fab prod update pull migrate restart:1
+	fab prod pull migrate restart:1
 
 web-collectstatic:
 	git bkp || true
 	git upa
-	fab prod R:web update pull
+	fab prod R:web pull
 	fab prod -H 1flow.io -- rm -rf www/src/static
 	fab prod -H 1flow.io sdf.collectstatic
 	fab prod R:web restart:1
@@ -128,14 +128,14 @@ web-collectstatic:
 web-compilemessages:
 	git bkp || true
 	git upa
-	fab prod R:web update pull
+	fab prod R:web pull
 	fab prod -H 1flow.io sdf.compilemessages
 	fab prod R:web restart:1
 
 webdeploy-collectcompile:
 	git bkp || true
 	git upa
-	fab prod R:web update pull
+	fab prod R:web pull
 	fab prod -H 1flow.io -- rm -rf www/src/static
 	fab prod -H 1flow.io sdf.collectstatic sdf.compilemessages
 	fab prod R:web restart:1
