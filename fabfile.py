@@ -211,6 +211,12 @@ def production():
     # we force the user because we can login as standard user there
     env.user        = '1flow'
     env.environment = 'production'
+
+    # Switch to develop to avoid needing to release a new version
+    # for every little patch. 1flow.io is our new testbed. In fact,
+    # It's a continuous delivery platform :-D
+    env.branch = 'develop'
+
     set_roledefs_and_parallel({
         'db': ['1flow.io'],
         'web': ['1flow.io'],
