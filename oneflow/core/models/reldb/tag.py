@@ -91,11 +91,33 @@ class SimpleTag(MPTTModel, AbstractDuplicateAwareModel):
             users (eg. use the same tags in search engine…).
         """
 
+        sub_classes = AbstractTaggedModel.__subclasses__()
+        sub_classes_count = len(sub_classes)
+
+        LOGGER.info(u'Replacing tag duplicate %s by master %s '
+                    u'in %s models (%s)…', duplicate, self,
+                    sub_classes_count,
+                    u', '.join(m.__name__ for m in sub_classes))
+
+        all_models_all_instances_count = 0
+        all_models_all_failed_count = 0
+
         # Get all concrete classes that inherit from AbstractTaggedModel
-        for model in AbstractTaggedModel.__subclasses__():
+        for model in sub_classes:
+
+            verbose_name = model._meta.verbose_name
+            verbose_name_plural = model._meta.verbose_name_plural
+
+            all_instances = model.objects.all()
+            all_instances_count = all_instances.count()
+            failed_instances_count = 0
+
+            LOGGER.info(u'Replacing tag duplicate %s by master %s '
+                        u'in %s %s instances…', duplicate, self,
+                        all_instances_count, verbose_name)
 
             # For each concrete class, get each instance
-            for instance in model.objects.all():
+            for instance in all_instances:
 
                 try:
                     # Replace the duplicate tag by the master.
@@ -103,9 +125,25 @@ class SimpleTag(MPTTModel, AbstractDuplicateAwareModel):
                     instance.tags.add(self)
 
                 except:
+                    failed_instances_count += 1
                     LOGGER.exception(u'Replacing tag duplicate %s by %s '
                                      u'failed in %s %s', duplicate, self,
-                                     model.__name__, instance)
+                                     verbose_name, instance)
+
+            all_models_all_instances_count += all_instances_count
+            all_models_all_failed_count += failed_instances_count
+
+            LOGGER.info(u'Replaced tag duplicate %s by %s in %s %s '
+                        u'(%s failed).', duplicate, self,
+                        all_instances_count - failed_instances_count,
+                        verbose_name_plural,
+                        failed_instances_count)
+
+        LOGGER.info(u'Done replacing tag duplicate %s by %s in %s models: '
+                    u'%s instances processed, %s failed.', duplicate, self,
+                    sub_classes_count,
+                    all_models_all_instances_count,
+                    all_models_all_failed_count)
 
     @classmethod
     def get_tags_set(cls, tags_names, origin=None):
@@ -153,6 +191,7 @@ class AbstractTaggedModel(models.Model):
 register_task_method(SimpleTag,
                      SimpleTag.post_create_task,
                      globals(), queue=u'high')
+
 
 # ————————————————————————————————————————————————————————————————————— Signals
 
