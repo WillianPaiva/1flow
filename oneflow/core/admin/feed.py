@@ -18,7 +18,6 @@ You should have received a copy of the GNU Affero General Public
 License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
-import json
 import dateutil.parser
 
 from humanize.i18n import django_language
@@ -31,10 +30,8 @@ from django.core.urlresolvers import reverse
 
 from django.contrib import admin
 
-
 # from ..base.admin import CSVAdminMixin
 from oneflow.base.utils.dateutils import naturaldelta, naturaltime
-
 
 from ..models.reldb import (  # NOQA
     # DjangoUser as User,
@@ -43,8 +40,6 @@ from ..models.reldb import (  # NOQA
     RssAtomFeed,
 
     MailFeed, MailFeedRule,
-
-
 )
 
 
@@ -156,9 +151,7 @@ class RssAtomFeedAdmin(admin.ModelAdmin):
         """ FILL ME, pep257. """
 
         if obj.errors:
-
-            errors = json.loads(obj.errors)
-
+            errors = obj.errors
             last3 = [z.rsplit('@@', 1) for z in errors[:3]]
 
             with django_language():
