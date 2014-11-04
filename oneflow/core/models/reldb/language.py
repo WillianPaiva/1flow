@@ -25,13 +25,15 @@ from django.utils.translation import ugettext_lazy as _
 
 from mptt.models import MPTTModel, TreeForeignKey
 
+from duplicate import AbstractDuplicateAwareModel
+
 LOGGER = logging.getLogger(__name__)
 
 
 __all__ = ['Language', ]
 
 
-class Language(MPTTModel):
+class Language(MPTTModel, AbstractDuplicateAwareModel):
 
     """ Language model, with hierarchy for grouping. """
 
@@ -52,10 +54,6 @@ class Language(MPTTModel):
     parent = TreeForeignKey('self', null=True, blank=True,
                             related_name='children')
 
-    duplicate_of = models.ForeignKey(
-        'self', null=True, blank=True,
-        verbose_name=_(u'Duplicate of'))
-
     # ————————————————————————————————————————————————————————— Python / Django
 
     def __unicode__(self):
@@ -69,10 +67,81 @@ class Language(MPTTModel):
     def get_by_code(cls, code):
         """ Return the language associated with code, creating it if needed. """
         try:
-            return cls.objects.get(dj_code=code)
+            language = cls.objects.get(dj_code=code)
 
         except cls.DoesNotExist:
             language = cls(name=code.title(), dj_code=code)
             language.save()
 
-            return language
+        if language.duplicate_of:
+            return language.duplicate_of
+
+        return language
+
+    def replace_duplicate(self, duplicate, *args, **kwargs):
+        u""" When a Tag is marked as duplicate of another.
+
+        Do the necessary dirty work of replacing it everywhere. It's
+        needed to keep the database clean, in order to eventually do
+        something with the duplicate one day.
+
+        .. note:: for tags, deleting duplicates is not an option and it's
+            even a feature: this allows keeping things unified between
+            users (eg. use the same tags in search engine…).
+        """
+
+        # Get all concrete classes that inherit from AbstractMultipleLanguagesModel  # NOQA
+        for model in AbstractMultipleLanguagesModel.__subclasses__():
+
+            # For each concrete class, get each instance
+            for instance in model.objects.all():
+
+                try:
+                    # Replace the duplicate tag by the master.
+                    instance.languages.remove(duplicate)
+                    instance.languages.add(self)
+
+                except:
+                    LOGGER.exception(u'Replacing language duplicate %s by %s '
+                                     u'failed in %s %s', duplicate, self,
+                                     model.__name__, instance)
+
+        # Get all concrete classes that inherit from AbstractLanguageAwareModel
+        for model in AbstractLanguageAwareModel.__subclasses__():
+
+            # For each concrete class, get each instance
+            for instance in model.objects.all():
+
+                try:
+                    # Replace the duplicate tag by the master.
+                    instance.language = self
+
+                except:
+                    LOGGER.exception(u'Replacing language duplicate %s by %s '
+                                     u'failed in %s %s', duplicate, self,
+                                     model.__name__, instance)
+
+                else:
+                    instance.save()
+
+
+class AbstractMultipleLanguagesModel(models.Model):
+
+    class Meta:
+        abstract = True
+        app_label = 'core'
+
+    languages = models.ManyToManyField(
+        Language, verbose_name=_(u'Languages'),
+        blank=True, null=True)
+
+
+class AbstractLanguageAwareModel(models.Model):
+
+    class Meta:
+        abstract = True
+        app_label = 'core'
+
+    language = models.ForeignKey(
+        Language, verbose_name=_(u'Language'),
+        blank=True, null=True, db_index=True)
