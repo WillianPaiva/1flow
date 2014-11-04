@@ -59,10 +59,14 @@ IMPORT_STATUS = NamedTupleChoices(
     'IMPORT_STATUS',
 
     ('NEW', 0, _(u'new')),
-    ('RUNNING', 1, _(u'running')),
-    ('FINISHED', 2, _(u'finished')),
-    ('FAILED', 3, _(u'failed')),
-    ('RETRY', 4, _('Retried')),
+
+    # Used to avoid starting the task at creation.
+    ('MANUAL', 1, _(u'manual')),
+
+    ('RUNNING', 2, _(u'running')),
+    ('FINISHED', 3, _(u'finished')),
+    ('FAILED', 4, _(u'failed')),
+    ('RETRY', 5, _('Retried')),
 )
 
 
@@ -286,23 +290,38 @@ class UserImport(HistoryEntry):
         if feeds:
             self._import_created_['feeds'].append(url)
 
-            for feed, created in feeds:
-                Subscription.subscribe_user_to_feed(self.user.mongo, feed,
-                                                    background=True)
+            imported_item_was_a_feed_url = False
 
-                if created:
-                    message_user(self.user,
-                                 _(u'Successfully subscribed to new feed '
-                                   u'“{0}”. Thank you!').format(feed.name),
-                                 constants.INFO)
-                else:
-                    message_user(self.user,
-                                 _(u'Successfully subscribed to feed '
-                                   u'“{0}”.').format(feed.name),
-                                 constants.INFO)
-            return
+            for feed, created in feeds:
+                if feed.url == url:
+                    imported_item_was_a_feed_url = True
+                    break
+
+            if imported_item_was_a_feed_url:
+                # Subscribe the user to the feed, and don't
+                # try to import an article from the URL.
+
+                for feed, created in feeds:
+
+                    Subscription.subscribe_user_to_feed(self.user.mongo, feed,
+                                                        background=True)
+
+                    if created:
+                        message_user(self.user,
+                                     _(u'Successfully subscribed to new feed '
+                                       u'“{0}”. Thank you!').format(feed.name),
+                                     constants.INFO)
+                    else:
+                        message_user(self.user,
+                                     _(u'Successfully subscribed to feed '
+                                       u'“{0}”.').format(feed.name),
+                                     constants.INFO)
+
+                return
 
         # ———————————————————————————————————————————— Try to create an article
+
+        article = None
 
         try:
             article, created = \
@@ -320,17 +339,6 @@ class UserImport(HistoryEntry):
             self._import_failed_.append((url, unicode(e)))
 
         else:
-            # We append "None" if the article was not created but
-            # already exists. This is intended, for the view to
-            # count them as "correctly imported" to the end-user.
-            # If we only append *really* created articles (in our
-            # internal DB point-of-view), this will result in:
-            #
-            #         created + failed != total_imported
-            #
-            # Which can be very confusing to the end-user, even
-            # though everything is really OK in the database and
-            # in the reading lists.
             self._import_created_['articles'].append(url)
 
             message_user(self.user,

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -32,14 +32,22 @@ LOGGER = logging.getLogger(__name__)
 
 class WebPagesImportForm(forms.ModelForm):
 
-    """ Import quasi-anything from the web (RSS feeds, web pages…). """
+    u""" Import quasi-anything from the web (RSS feeds, web pages…). """
 
     # urls = forms.CharField(label=_(u'Web addresses'), required=True,
     #                        widget=forms.Textarea())
 
     class Meta:
         model = models.UserImport
-        fields = ('urls', )
+        fields = ('urls', 'status', )
+
+    def clean_status(self):
+        """ In case this one was not submitted, get the defaut value. """
+
+        if self.cleaned_data['status'] == '':
+            self.cleaned_data['status'] = models.IMPORT_STATUS.NEW
+
+        return self.cleaned_data['status']
 
     def save(self, user):
         """ Record the current user and the lines count. """
@@ -51,4 +59,9 @@ class WebPagesImportForm(forms.ModelForm):
         self.instance.user = user
         self.instance.lines = self.instance.count
 
-        return super(WebPagesImportForm, self).save()
+        super(WebPagesImportForm, self).save()
+
+        if self.instance.status == models.IMPORT_STATUS.MANUAL:
+            self.instance.run()
+
+        return self.instance
