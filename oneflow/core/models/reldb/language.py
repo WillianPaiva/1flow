@@ -48,8 +48,24 @@ class Language(MPTTModel, AbstractDuplicateAwareModel):
     name = models.CharField(verbose_name=_(u'name'),
                             max_length=128, blank=True)
 
-    dj_code = models.CharField(verbose_name=_(u'Django code'),
-                               max_length=16, unique=True)
+    # https://docs.djangoproject.com/en/dev/topics/i18n/
+    dj_code = models.CharField(verbose_name=_(u'Language code'),
+                               max_length=16, unique=True,
+                               help_text=_(u'This is the IETF code.'))
+
+    iso639_1 = models.CharField(
+        verbose_name=_(u'ISO-639-1 code'),
+        max_length=16, null=True, blank=True, unique=True,
+        help_text=_(u'This is a 2-letters code. Some languages do not '
+                    u'have any. But all have an ISO-639-2 or -3 one.'))
+
+    iso639_2 = models.CharField(verbose_name=_(u'ISO-639-2 code'),
+                                max_length=16, unique=True,
+                                null=True, blank=True)
+
+    iso639_3 = models.CharField(verbose_name=_(u'ISO-639-3 code'),
+                                max_length=16, unique=True,
+                                null=True, blank=True)
 
     parent = TreeForeignKey('self', null=True, blank=True,
                             related_name='children')
@@ -59,15 +75,21 @@ class Language(MPTTModel, AbstractDuplicateAwareModel):
     def __unicode__(self):
         """ Unicode, pep257. """
 
-        return _(u'{0}⚐ (#{1})').format(self.name, self.id)
+        return _(u'{0} (#{1}): {2}, {3}').format(
+            self.name, self.id, self.dj_code,
+            self.iso639_1 or self.iso639_2 or self.iso639_3)
 
     # ——————————————————————————————————————————————————————————— Class methods
 
     @classmethod
     def get_by_code(cls, code):
-        """ Return the language associated with code, creating it if needed. """
+        """ Return the language associated with code (insensitive).
+
+        This will create the language if needed.
+        """
+
         try:
-            language = cls.objects.get(dj_code=code)
+            language = cls.objects.get(dj_code=code.lower())
 
         except cls.DoesNotExist:
             language = cls(name=code.title(), dj_code=code)
