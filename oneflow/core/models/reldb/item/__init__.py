@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -19,7 +19,9 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
-from base import BaseItem  # NOQA
+from base import *  # NOQA
+
+from abstract import *  # NOQA
 
 # from document import (  # NOQA
 #    Document,
@@ -29,9 +31,9 @@ from base import BaseItem  # NOQA
 #    ZipDocument,
 # )
 
-from article import Article  # NOQA
+from article import *  # NOQA
 
-from original_data import OriginalData
+from original_data import *  # NOQA
 
 # from bookmark import Bookmark  # NOQA
 
