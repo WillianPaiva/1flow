@@ -115,7 +115,7 @@ deploy-superfast:
 migrate-superfast:
 	git bkp || true
 	git upa
-	fab prod update pull sdf.migrate restart:1
+	fab prod update pull migrate restart:1
 
 web-collectstatic:
 	git bkp || true
