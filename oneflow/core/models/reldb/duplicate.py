@@ -25,7 +25,6 @@ import logging
 from statsd import statsd
 # from constance import config
 
-# from json_field import JSONField
 from celery import task
 
 # from django.conf import settings
@@ -62,7 +61,7 @@ class AbstractDuplicateAwareModel(models.Model):
 
     # ————————————————————————————————————————————————————————————————— Methods
 
-    def register_duplicate(self, duplicate, force=False):
+    def register_duplicate(self, duplicate, force=False, background=True):
         """ Register an instance as a duplicate of the current one. """
 
         verbose_name = self._meta.verbose_name
@@ -94,18 +93,32 @@ class AbstractDuplicateAwareModel(models.Model):
         duplicate.duplicate_of = self
         duplicate.save()
 
-        # NOTE: we don't directly transmit the model class
-        # to ease with celery arguments serialization.
-        abstract_replace_duplicate_task.delay(self._meta.app_label,
-                                              self._meta.object_name,
-                                              self.id,
-                                              duplicate.id)
-
         statsd.gauge('%s.counts.duplicates' % verbose_name_plural,
                      1, delta=True)
 
+        if background:
+            LOGGER.info(u'Replacing %s %s by %s in the background…',
+                        self._meta.verbose_name, self, duplicate)
 
-@task(queue='background')
+            # NOTE: we don't directly transmit the model class
+            # to ease with celery arguments serialization.
+            return abstract_replace_duplicate_task.delay(
+                self._meta.app_label, self._meta.object_name,
+                self.id, duplicate.id)
+
+        else:
+            LOGGER.info(u'Replacing %s %s by %s in the foreground…',
+                        self._meta.verbose_name, self, duplicate)
+
+            return abstract_replace_duplicate_task(self._meta.app_label,
+                                                   self._meta.object_name,
+                                                   self.id, duplicate.id)
+
+
+# ——————————————————————————————————————————————————————————————————————— Tasks
+
+
+@task(name='AbstractDuplicateAwareModel.replace_duplicate', queue='background')
 def abstract_replace_duplicate_task(app_label, model_name, self_id, dupe_id):
     """ Call replace_duplicate() on all our concrete classes.
 
@@ -126,14 +139,28 @@ def abstract_replace_duplicate_task(app_label, model_name, self_id, dupe_id):
 
     # http://stackoverflow.com/a/4094654/654755
     for base_class in inspect.getmro(self._meta.model):
+
+        if base_class == AbstractDuplicateAwareModel:
+            # This class will necessarily get brought by getmro(),
+            # but obviously we don't want it: we are looking for
+            # concrete classes only.
+            continue
+
+        try:
+            verbose_name = base_class._meta.verbose_name
+
+        except AttributeError:
+            # Probably the “NewBase” class, or another special one.
+            continue
+
         try:
             base_class.replace_duplicate(self, dupe)
 
         except AttributeError:
-            if u'oneflow' in unicode(model):
+            if u'oneflow' in unicode(base_class):
                 LOGGER.warning(u'Model %s has no `replace_duplicate()` '
-                               u'method.', model.__name__, self)
+                               u'method.', verbose_name)
 
         except:
-            LOGGER.exception(u'Problem while registering duplicate of '
-                             u'%s by %s', self, dupe)
+            LOGGER.exception(u'Problem while replacing duplicate %s '
+                             u'%s by %s', verbose_name, self, dupe)
