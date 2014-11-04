@@ -81,7 +81,7 @@ class BaseItem(PolymorphicModel,
     class Meta:
         app_label = 'core'
         verbose_name = _(u'Base item')
-        verbose_name = _(u'Base items')
+        verbose_name_plural = _(u'Base items')
 
     name = models.CharField(max_length=256, verbose_name=_(u'Name'))
     slug = models.CharField(max_length=256, null=True, blank=True)
