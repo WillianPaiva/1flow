@@ -1,7 +1,7 @@
 
 <ul class='list-unstyled' id="historyentry-{{ historyentry.id }}">
 
-{% if historyentry.status == 0 %}
+{% if historyentry.status == IMPORT_STATUS.NEW %}
 
 	<li>
 		{% blocktrans count counter=historyentry.lines %}
@@ -11,7 +11,9 @@
 		{% endblocktrans %}
 	</li>
 
-{% elif historyentry.status == 1 %}
+{# MANUAL should not show here, it's a transient state. #}
+
+{% elif historyentry.status == IMPORT_STATUS.RUNNING %}
 
 	<li>
 		{% blocktrans count counter=historyentry.lines %}
@@ -22,7 +24,7 @@
 	</li>
 
 
-{% elif historyentry.status == 4 %}
+{% elif historyentry.status == IMPORT_STATUS.RETRY %}
 
 	<li>
 		{% blocktrans count counter=historyentry.lines %}
