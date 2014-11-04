@@ -1089,7 +1089,10 @@ def migrate_articles(articles, stop_on_exception=True, verbose=False):
             if verbose:
                 LOGGER.info(u'Migrated article %s → %s', mongo_article, article)
 
-            migrate_reads(mongo_article.reads)
+            # Avoid too much messing with multiple
+            # parallel requests for too little benefit.
+            #
+            # migrate_reads(mongo_article.reads)
 
         if config.CHECK_DATABASE_MIGRATION_DEFINIVE_RUN:
             # Avoid a full save() cycle, we don't need it anyway.
@@ -1560,8 +1563,8 @@ def migrate_all_subscriptions(stop_on_exception=True, verbose=False):
                 - counters.created_subscriptions_count)
 
 
-def migrate_all_articles_and_reads(stop_on_exception=True, verbose=False):
-    """ Migrate articles & reads. """
+def migrate_all_articles(stop_on_exception=True, verbose=False):
+    """ Migrate articles. """
 
     # ————————————————————————————————————————————————————————————— masters
 
@@ -1737,11 +1740,11 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True, verbose=False):
                 migrate_all_subscriptions(stop_on_exception=stop_on_exception,
                                           verbose=verbose)
 
-            with benchmark(u'Migrate all articles & reads'):
-                migrate_all_articles_and_reads(
-                    stop_on_exception=stop_on_exception, verbose=verbose)
+            with benchmark(u'Migrate all articles'):
+                migrate_all_articles(stop_on_exception=stop_on_exception,
+                                     verbose=verbose)
 
-            with benchmark(u'Migrate all remaining reads'):
+            with benchmark(u'Migrate all reads'):
                 migrate_all_reads(stop_on_exception=stop_on_exception,
                                   verbose=verbose)
 
