@@ -22,3 +22,5 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 from feeds import UserFeeds  # NOQA
 
 from subscriptions import UserSubscriptions  # NOQA
+
+from counters import UserCounters  # NOQA
