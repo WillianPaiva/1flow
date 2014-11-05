@@ -33,7 +33,7 @@ from django.contrib.contenttypes import generic
 from mptt.models import MPTTModel, TreeForeignKey
 
 from duplicate import AbstractDuplicateAwareModel
-from language import Language
+from language import AbstractLanguageAwareModel
 
 LOGGER = logging.getLogger(__name__)
 
@@ -41,13 +41,17 @@ LOGGER = logging.getLogger(__name__)
 __all__ = ['SimpleTag', ]
 
 
-class SimpleTag(MPTTModel, AbstractDuplicateAwareModel):
+
+class SimpleTag(MPTTModel,
+                AbstractDuplicateAwareModel,
+                AbstractLanguageAwareModel):
 
     """ A simple tag model, with language and tag hierarchy if needed. """
 
     name     = models.CharField(verbose_name=_(u'name'), max_length=128)
     slug     = models.CharField(verbose_name=_(u'slug'),
-    language = models.ForeignKey(Language, null=True)
+                                max_length=128,
+                                null=True, blank=True)
 
     parent   = TreeForeignKey('self', null=True, blank=True,
                               related_name='children')
