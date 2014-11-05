@@ -130,8 +130,6 @@ class AbstractTaggedModel(models.Model):
 
 def simpletag_pre_save(instance, **kwargs):
 
-    LOGGER.info(u'--%s--', instance.slug)
-
     if not instance.slug:
         instance.slug = slugify(instance.name)
 
