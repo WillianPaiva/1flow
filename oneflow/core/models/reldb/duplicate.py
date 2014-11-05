@@ -279,6 +279,11 @@ def abstract_replace_duplicate_task(app_label, model_name, self_id, dupe_id):
                              u'#%s, #%s)', model.__name__, self.id, dupe.id)
             all_went_ok = False
 
+        if succeeded is None:
+            raise NotImplementedError(
+                u'Model {0}\'s `replace_duplicate()` method should return '
+                u'True/False but not None!'.format(verbose_name))
+
         if not succeeded:
             all_went_ok = False
 
