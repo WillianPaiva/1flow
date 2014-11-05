@@ -451,9 +451,12 @@ class RedisExpiringLock(object):
             self.expire_time = expire_time or 3600
 
         else:
-            self.lock_id = '%s:%s:%s:%s' % (self.key_base,
-                                            instance.__class__.__name__,
-                                            instance.id, lock_name or 'giant')
+            self.lock_id = '%s:%s:%s:%s' % (
+                self.key_base,
+                instance.__class__.__name__,
+                instance.id if hasattr(instance, 'id') else instance.pk,
+                lock_name or 'giant')
+
             self.expire_time = expire_time or getattr(instance,
                                                       'fetch_interval',
                                                       3600)

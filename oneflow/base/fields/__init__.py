@@ -1,21 +1,21 @@
 # -*- coding: utf-8 -*-
-"""
-    Copyright 2012-2014 Olivier Cortès <oc@1flow.io>
+u"""
+Copyright 2012-2014 Olivier Cortès <oc@1flow.io>.
 
-    This file is part of the 1flow project.
+This file is part of the 1flow project.
 
-    1flow is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation, either version 3 of
-    the License, or (at your option) any later version.
+1flow is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
 
-    1flow is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
+1flow is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU Affero General Public
-    License along with 1flow.  If not, see http://www.gnu.org/licenses/
+You should have received a copy of the GNU Affero General Public
+License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
@@ -38,39 +38,40 @@ REDIS = redis.StrictRedis(host=settings.REDIS_DESCRIPTORS_HOST,
 
 
 class RedisCachedDescriptor(object):
+
     """ A simple descriptor that uses values from a REDIS database.
 
-        Besides the REDIS storage, it implements an instance-level cache
-        to avoid the REDIS I/O on ``__get__`` calls if possible. This
-        cache doesn't affect the ``__set__`` and ``__del__`` calls,
-        which are always forwarded to REDIS.
+    Besides the REDIS storage, it implements an instance-level cache
+    to avoid the REDIS I/O on ``__get__`` calls if possible. This
+    cache doesn't affect the ``__set__`` and ``__del__`` calls,
+    which are always forwarded to REDIS.
 
-        You can disable the cache by setting :param:`cache` to ``False``
-        in the descriptor class (or any inherited class) constructor.
+    You can disable the cache by setting :param:`cache` to ``False``
+    in the descriptor class (or any inherited class) constructor.
 
-        .. note:: :param:`default` can be a callable. It will be passed
-            the instance as first argument when it is called. In this
-            particular case (and only this one), the ``default`` call
-            will be protected by a network-wide re-entrant lock. Be aware
-            that the :meth:`__get__` method call can eventually raise
-            an ``AlreadyLockedException`` if there is any kind of race
-            between callers. This should be quite rare, though. But you
-            still need to cover the case.
+    .. note:: :param:`default` can be a callable. It will be passed
+        the instance as first argument when it is called. In this
+        particular case (and only this one), the ``default`` call
+        will be protected by a network-wide re-entrant lock. Be aware
+        that the :meth:`__get__` method call can eventually raise
+        an ``AlreadyLockedException`` if there is any kind of race
+        between callers. This should be quite rare, though. But you
+        still need to cover the case.
 
-        :param set_default: in case there is no value and the default is
-            returned, store it as the new current value. Useful if your
-            default is a callable that does a lot of computations, and
-            you want to set it as a base value at some point in time.
-            Not enabled by default (eg. the default value is returned
-            but not stored).
+    :param set_default: in case there is no value and the default is
+        returned, store it as the new current value. Useful if your
+        default is a callable that does a lot of computations, and
+        you want to set it as a base value at some point in time.
+        Not enabled by default (eg. the default value is returned
+        but not stored).
     """
 
     REDIS = None
 
     def __init__(self, attr_name, cls_name=None, cache=True,
-                 default=None, set_default=False,
+                 default=None, set_default=False, field_name=None,
                  min_value=None, max_value=None):
-
+        """ Init. """
         #
         # As MongoDB IDs are unique accross databases and objects,
         # the current descriptor doesn't need class name for unicity
@@ -88,14 +89,15 @@ class RedisCachedDescriptor(object):
         self.uuid          = uuid.uuid4().hex
         self.min_value     = min_value
         self.max_value     = max_value
+        self.field_name    = 'id' if field_name is None else field_name
 
         # NOTE: we use '_' instead of the classic ':' to be compatible
         # with the instance cache, which is a standard Python attribute.
-        self.cache_key = '%s%s_' % ((cls_name.replace(
-                                    '.', '_').replace(':', '_')
-                                        + '_') if cls_name else '',
-                                    attr_name.replace(
-                                        '.', '_').replace(':', '_'))
+        self.cache_key = '%s%s_' % ((
+            cls_name.replace(
+                '.', '_').replace(':', '_') + '_') if cls_name else '',
+            attr_name.replace('.', '_').replace(':', '_')
+        )
         self.key_name = '%s%%s' % self.cache_key
 
         # LOGGER.warning(u'INIT: key_tmpl: %s, cache: %s, '
@@ -103,15 +105,14 @@ class RedisCachedDescriptor(object):
         #                self.key_name, cache, default, min_value, max_value)
 
     def defer_callable(self, instance):
-        """ This method will be run only once, at the first call of
-            ``self.default(instance)``.
+        """ Run only once, at the first call of ``self.default(instance)``.
 
-            It will try to resolve/import any eventual deferred default set
-            at instanciation time. If it succeeds, it will replace itself by
-            it, for next calls to use the resolved callable directly.
+        It will try to resolve/import any eventual deferred default set
+        at instanciation time. If it succeeds, it will replace itself by
+        it, for next calls to use the resolved callable directly.
 
-            If the resolved default is not callable, it will just return it,
-            after having replaced itsef by it for future uses too.
+        If the resolved default is not callable, it will just return it,
+        after having replaced itsef by it for future uses too.
         """
 
         self.default = eventually_deferred(self.first_default)
@@ -125,6 +126,7 @@ class RedisCachedDescriptor(object):
             return self.default
 
     def __get__(self, instance, objtype=None):
+        """ get(me). """
 
         # LOGGER.warning('GET-cache: %s %s', instance,
         #                '_r_c_d_' + self.cache_key)
@@ -156,25 +158,37 @@ class RedisCachedDescriptor(object):
             return self.__get_internal(instance)
 
     def to_python(self, value):
+        """ me to python without any conversion.
+
+        .. note:: please override this method in subclasses.
+        """
 
         # for the default descriptor, this is the identity method.
         return value
 
     def to_redis(self, value):
+        """ me to redis without any conversion.
+
+        .. note:: please override this method in subclasses.
+        """
 
         return value
 
     def __get_internal(self, instance, objtype=None):
+        """ get(my_internals). """
 
-        # LOGGER.warning('GET-redis: %s', self.key_name % instance.id)
+        # LOGGER.warning('GET-redis: %s', self.key_name % getattr(instance,
+        # self.field_name))
 
         if self.default is None:
 
             # Let REDIS return None, anyway.
-            return self.to_python(self.REDIS.get(self.key_name % instance.id))
+            return self.to_python(self.REDIS.get(
+                self.key_name % getattr(instance, self.field_name)))
 
         else:
-            val = self.REDIS.get(self.key_name % instance.id)
+            val = self.REDIS.get(self.key_name % getattr(instance,
+                                 self.field_name))
 
             if val is None:
                 if callable(self.default):
@@ -196,9 +210,12 @@ class RedisCachedDescriptor(object):
             return self.to_python(val)
 
     def __protected_default(self, instance):
-        """ This method is the only part which uses a network-enabled
-            re-entrant lock, to avoid the extra resources cost in case
-            of a non-callable default value. """
+        """ Protect the default value generation by a network-wide lock.
+
+        This method is the only part which uses a network-enabled
+        re-entrant lock, to avoid the extra resources cost in case
+        of a non-callable default value.
+        """
 
         my_lock = RedisExpiringLock(instance, lock_name=self.cache_key,
                                     lock_value=self.uuid)
@@ -234,10 +251,11 @@ class RedisCachedDescriptor(object):
                     'Too much effort required to get the lock.')
 
     def __set__(self, instance, value):
+        """ set(me). """
 
         # LOGGER.warning('SET-redis: %s %s, min/max clamps: %s/%s',
-        #                self.key_name % instance.id, value,
-        #                self.min_value, self.max_value)
+        #                self.key_name % getattr(instance, self.field_name),
+        #                value, self.min_value, self.max_value)
 
         if self.min_value is not None and value < self.min_value:
             value = self.min_value
@@ -246,7 +264,8 @@ class RedisCachedDescriptor(object):
             value = self.max_value
 
         # Always store into REDIS, whatever the cache. We need persistence.
-        self.REDIS.set(self.key_name % instance.id, self.to_redis(value))
+        self.REDIS.set(self.key_name % getattr(instance, self.field_name),
+                       self.to_redis(value))
 
         if self.cache:
             # LOGGER.warning('SET-cache: %s %s %s', instance,
@@ -256,10 +275,12 @@ class RedisCachedDescriptor(object):
             setattr(instance, '_r_c_d_' + self.cache_key, value)
 
     def __delete__(self, instance):
+        """ delete(me). """
 
-        # LOGGER.warning('DELETE-redis: %s', self.key_name % instance.id)
+        # LOGGER.warning('DELETE-redis: %s', self.key_name % getattr(instance,
+        # self.field_name))
 
-        self.REDIS.delete(self.key_name % instance.id)
+        self.REDIS.delete(self.key_name % getattr(instance, self.field_name))
 
         if self.cache:
             # LOGGER.warning('DELETE-cache: %s %s', instance,
@@ -272,11 +293,11 @@ RedisCachedDescriptor.REDIS = REDIS
 
 
 class IntRedisDescriptor(RedisCachedDescriptor):
-    """ Integer specific version of the
-        generic :class:`RedisCachedDescriptor`.
 
-        See :class:`RedisCachedDescriptor` for generic descriptor information
-        (like callable default values and network-wide locking semantics).
+    """ Integer version of the generic :class:`RedisCachedDescriptor`.
+
+    See :class:`RedisCachedDescriptor` for generic descriptor information
+    (like callable default values and network-wide locking semantics).
     """
 
     #
@@ -294,6 +315,10 @@ class IntRedisDescriptor(RedisCachedDescriptor):
     # The ListRedisProxy was a started attempt.
 
     def to_python(self, value):
+        """ convert the redis value to python via int().
+
+        Returns None if anything goes wrong.
+        """
 
         try:
             return int(value)
@@ -308,14 +333,15 @@ class IntRedisDescriptor(RedisCachedDescriptor):
 
 
 class DatetimeRedisDescriptor(RedisCachedDescriptor):
-    """ Datetime specific version of the
-        generic :class:`RedisCachedDescriptor`.
 
-        See :class:`RedisCachedDescriptor` for generic descriptor information
-        (like callable default values and network-wide locking semantics).
+    """ Datetime version of the generic :class:`RedisCachedDescriptor`.
+
+    See :class:`RedisCachedDescriptor` for generic descriptor information
+    (like callable default values and network-wide locking semantics).
     """
 
     def to_python(self, value):
+        """ Return a datetime(), or None if anything goes wrong. """
 
         try:
             return ftstamp(float(value))
@@ -324,36 +350,62 @@ class DatetimeRedisDescriptor(RedisCachedDescriptor):
             return None
 
     def to_redis(self, value):
+        """ Store a datetime() in redis by mktime()'ing it. """
 
         return time.mktime(value.timetuple())
 
 
 class TextRedisDescriptor(RedisCachedDescriptor):
+
+    """ Text specific version of the generic RedisCachedDescriptor.
+
+    In fact there is nothing specific to text.
+    This class is just some kind of alias.
+    """
+
     pass
 
 
 class ListRedisProxy(list):
 
+    """ List redis proxy.
+
+    .. todo:: as of 20141105, I think this class is not used or not finished.
+    """
+
     def __init__(self, parent_descriptor, hydrate_func=lambda x: x,
                  dehydrate_func=lambda x: x):
+        """ init(me). """
+
         self.parent = parent_descriptor
 
     def append(self, value):
+        """ Implement me. """
+
         pass
 
     def remove(self, value):
+        """ Implement me. """
+
         pass
 
     def __len__(self):
+        """ len(me). """
         return self.parent.REDIS.llen()
 
 
 class ListRedisDescriptor(RedisCachedDescriptor):
 
+    """ List version of the RedisCachedDescriptor. """
+
     PROXY = ListRedisProxy
 
     def to_python(self, value):
+        """ me to python. """
+
         return self.PROXY(self).to_python(value)
 
     def to_redis(self, value):
+        """ me to redis. """
+
         return [self.to_redis_one(x) for x in value]
