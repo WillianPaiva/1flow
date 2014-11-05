@@ -37,93 +37,93 @@ LOGGER = logging.getLogger(__name__)
 __all__ = [
     'UserCounters',
 
-    'usercounters_all_articles_count_default',
-    'usercounters_unread_articles_count_default',
-    'usercounters_starred_articles_count_default',
-    'usercounters_bookmarked_articles_count_default',
-    'usercounters_archived_articles_count_default',
+    'usercounters_all_items_count_default',
+    'usercounters_unread_items_count_default',
+    'usercounters_starred_items_count_default',
+    'usercounters_bookmarked_items_count_default',
+    'usercounters_archived_items_count_default',
 
-    'usercounters_fun_articles_count_default',
-    'usercounters_fact_articles_count_default',
-    'usercounters_number_articles_count_default',
-    'usercounters_analysis_articles_count_default',
-    'usercounters_quote_articles_count_default',
-    'usercounters_knowhow_articles_count_default',
-    'usercounters_rules_articles_count_default',
-    'usercounters_prospective_articles_count_default',
-    'usercounters_knowledge_articles_count_default',
+    'usercounters_fun_items_count_default',
+    'usercounters_fact_items_count_default',
+    'usercounters_number_items_count_default',
+    'usercounters_analysis_items_count_default',
+    'usercounters_quote_items_count_default',
+    'usercounters_knowhow_items_count_default',
+    'usercounters_rules_items_count_default',
+    'usercounters_prospective_items_count_default',
+    'usercounters_knowledge_items_count_default',
 
 ]
 
 # —————————————————————————————————————————————————————— Redis counters helpers
 
 
-def usercounters_all_articles_count_default(user_counters):
+def usercounters_all_items_count_default(user_counters):
 
     return user_counters.user.reads.count()
 
 
-def usercounters_unread_articles_count_default(user_counters):
+def usercounters_unread_items_count_default(user_counters):
 
     return user_counters.user.reads.filter(is_read__ne=True).count()
 
 
-def usercounters_starred_articles_count_default(user_counters):
+def usercounters_starred_items_count_default(user_counters):
 
     return user_counters.user.reads.filter(is_starred=True).count()
 
 
-def usercounters_archived_articles_count_default(user_counters):
+def usercounters_archived_items_count_default(user_counters):
 
     return user_counters.user.reads.filter(is_archived=True).count()
 
 
-def usercounters_bookmarked_articles_count_default(user_counters):
+def usercounters_bookmarked_items_count_default(user_counters):
 
     return user_counters.user.reads.filter(is_bookmarked=True).count()
 
 
-def usercounters_fact_articles_count_default(user_counters):
+def usercounters_fact_items_count_default(user_counters):
 
     return user_counters.user.reads.filter(is_fact=True).count()
 
 
-def usercounters_number_articles_count_default(user_counters):
+def usercounters_number_items_count_default(user_counters):
 
     return user_counters.user.reads.filter(is_number=True).count()
 
 
-def usercounters_analysis_articles_count_default(user_counters):
+def usercounters_analysis_items_count_default(user_counters):
 
     return user_counters.user.reads.filter(is_analysis=True).count()
 
 
-def usercounters_quote_articles_count_default(user_counters):
+def usercounters_quote_items_count_default(user_counters):
 
     return user_counters.user.reads.filter(is_quote=True).count()
 
 
-def usercounters_prospective_articles_count_default(user_counters):
+def usercounters_prospective_items_count_default(user_counters):
 
     return user_counters.user.reads.filter(is_prospective=True).count()
 
 
-def usercounters_knowhow_articles_count_default(user_counters):
+def usercounters_knowhow_items_count_default(user_counters):
 
     return user_counters.user.reads.filter(is_knowhow=True).count()
 
 
-def usercounters_knowledge_articles_count_default(user_counters):
+def usercounters_knowledge_items_count_default(user_counters):
 
     return user_counters.user.reads.filter(is_knowledge=True).count()
 
 
-def usercounters_rules_articles_count_default(user_counters):
+def usercounters_rules_items_count_default(user_counters):
 
     return user_counters.user.reads.filter(is_rules=True).count()
 
 
-def usercounters_fun_articles_count_default(user_counters):
+def usercounters_fun_items_count_default(user_counters):
 
     return user_counters.user.reads.filter(is_fun=True).count()
 
@@ -152,76 +152,76 @@ class UserCounters(models.Model):
 
     # —————————————————————————————————————————————————————————— Redis counters
 
-    all_articles_count = IntRedisDescriptor(
-        attr_name='uc.aa_c', field_name='user_id',
-        default=usercounters_all_articles_count_default,
+    all_items_count = IntRedisDescriptor(
+        attr_name='u.ai_c', field_name='user_id',
+        default=usercounters_all_items_count_default,
         set_default=True, min_value=0)
 
-    unread_articles_count = IntRedisDescriptor(
-        attr_name='uc.ua_c', field_name='user_id',
-        default=usercounters_unread_articles_count_default,
+    unread_items_count = IntRedisDescriptor(
+        attr_name='u.ui_c', field_name='user_id',
+        default=usercounters_unread_items_count_default,
         set_default=True, min_value=0)
 
-    starred_articles_count = IntRedisDescriptor(
-        attr_name='uc.sa_c', field_name='user_id',
-        default=usercounters_starred_articles_count_default,
+    starred_items_count = IntRedisDescriptor(
+        attr_name='u.si_c', field_name='user_id',
+        default=usercounters_starred_items_count_default,
         set_default=True, min_value=0)
 
-    archived_articles_count = IntRedisDescriptor(
-        attr_name='uc.ra_c', field_name='user_id',
-        default=usercounters_archived_articles_count_default,
+    archived_items_count = IntRedisDescriptor(
+        attr_name='u.ri_c', field_name='user_id',
+        default=usercounters_archived_items_count_default,
         set_default=True, min_value=0)
 
-    bookmarked_articles_count = IntRedisDescriptor(
-        attr_name='uc.ba_c', field_name='user_id',
-        default=usercounters_bookmarked_articles_count_default,
+    bookmarked_items_count = IntRedisDescriptor(
+        attr_name='u.bi_c', field_name='user_id',
+        default=usercounters_bookmarked_items_count_default,
         set_default=True, min_value=0)
 
     # ————————————————————————————————————————— Watch attributes Redis counters
 
-    fact_articles_count = IntRedisDescriptor(
-        attr_name='uc.fa_c', field_name='user_id',
-        default=usercounters_fact_articles_count_default,
+    fact_items_count = IntRedisDescriptor(
+        attr_name='u.fi_c', field_name='user_id',
+        default=usercounters_fact_items_count_default,
         set_default=True, min_value=0)
 
-    number_articles_count = IntRedisDescriptor(
-        attr_name='uc.na_c', field_name='user_id',
-        default=usercounters_number_articles_count_default,
+    number_items_count = IntRedisDescriptor(
+        attr_name='u.ni_c', field_name='user_id',
+        default=usercounters_number_items_count_default,
         set_default=True, min_value=0)
 
-    analysis_articles_count = IntRedisDescriptor(
-        attr_name='uc.ya_c', field_name='user_id',
-        default=usercounters_analysis_articles_count_default,
+    analysis_items_count = IntRedisDescriptor(
+        attr_name='u.yi_c', field_name='user_id',
+        default=usercounters_analysis_items_count_default,
         set_default=True, min_value=0)
 
-    quote_articles_count = IntRedisDescriptor(
-        attr_name='uc.qa_c', field_name='user_id',
-        default=usercounters_quote_articles_count_default,
+    quote_items_count = IntRedisDescriptor(
+        attr_name='u.qi_c', field_name='user_id',
+        default=usercounters_quote_items_count_default,
         set_default=True, min_value=0)
 
-    prospective_articles_count = IntRedisDescriptor(
-        attr_name='uc.pa_c', field_name='user_id',
-        default=usercounters_prospective_articles_count_default,
+    prospective_items_count = IntRedisDescriptor(
+        attr_name='u.pi_c', field_name='user_id',
+        default=usercounters_prospective_items_count_default,
         set_default=True, min_value=0)
 
-    rules_articles_count = IntRedisDescriptor(
-        attr_name='uc.ra_c', field_name='user_id',
-        default=usercounters_rules_articles_count_default,
+    rules_items_count = IntRedisDescriptor(
+        attr_name='u.ri_c', field_name='user_id',
+        default=usercounters_rules_items_count_default,
         set_default=True, min_value=0)
 
-    knowhow_articles_count = IntRedisDescriptor(
-        attr_name='uc.ka_c', field_name='user_id',
-        default=usercounters_knowhow_articles_count_default,
+    knowhow_items_count = IntRedisDescriptor(
+        attr_name='u.ki_c', field_name='user_id',
+        default=usercounters_knowhow_items_count_default,
         set_default=True, min_value=0)
 
-    knowledge_articles_count = IntRedisDescriptor(
-        attr_name='uc.oa_c', field_name='user_id',
-        default=usercounters_knowledge_articles_count_default,
+    knowledge_items_count = IntRedisDescriptor(
+        attr_name='u.oi_c', field_name='user_id',
+        default=usercounters_knowledge_items_count_default,
         set_default=True, min_value=0)
 
-    fun_articles_count = IntRedisDescriptor(
-        attr_name='uc.la_c', field_name='user_id',
-        default=usercounters_fun_articles_count_default,
+    fun_items_count = IntRedisDescriptor(
+        attr_name='u.li_c', field_name='user_id',
+        default=usercounters_fun_items_count_default,
         set_default=True, min_value=0)
 
     # —————————————————————————————————————————————————————— Django & Grappelli
