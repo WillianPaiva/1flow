@@ -90,11 +90,13 @@ class Language(MPTTModel, AbstractDuplicateAwareModel):
     def get_by_code(cls, code):
         """ Return the language associated with code (insensitive).
 
-        This will create the language if needed.
+        This will create the language if needed. If the language is not
+        lowercase, this will also trigger a register_duplicate() process
+        and return the lowercase language instead.
         """
 
         try:
-            language = cls.objects.get(dj_code=code.lower())
+            language = cls.objects.get(dj_code=code)
 
         except cls.DoesNotExist:
             language = cls(name=code.title(), dj_code=code)
@@ -102,6 +104,12 @@ class Language(MPTTModel, AbstractDuplicateAwareModel):
 
         if language.duplicate_of:
             return language.duplicate_of
+
+        if code != code.lower():
+            # We just found a duplicate !
+            lower_language = cls.get_by_code(code.lower())
+            lower_language.register_duplicate(language)
+            return lower_language
 
         return language
 
