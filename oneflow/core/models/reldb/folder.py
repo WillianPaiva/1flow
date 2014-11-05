@@ -40,40 +40,40 @@ LOGGER = logging.getLogger(__name__)
 __all__ = [
     'Folder',
 
-    'folder_all_articles_count_default',
-    'folder_starred_articles_count_default',
-    'folder_unread_articles_count_default',
-    'folder_archived_articles_count_default',
-    'folder_bookmarked_articles_count_default',
+    'folder_all_items_count_default',
+    'folder_starred_items_count_default',
+    'folder_unread_items_count_default',
+    'folder_archived_items_count_default',
+    'folder_bookmarked_items_count_default',
 ]
 
 
 # ——————————————————————————————————————————————————————————————— Redis Helpers
 
 
-def folder_all_articles_count_default(folder, *args, **kwargs):
+def folder_all_items_count_default(folder, *args, **kwargs):
 
-    return folder.reads.count()
-
-
-def folder_starred_articles_count_default(folder, *args, **kwargs):
-
-    return folder.reads(is_starred=True).count()
+    return folder.reads.all().count()
 
 
-def folder_unread_articles_count_default(folder, *args, **kwargs):
+def folder_starred_items_count_default(folder, *args, **kwargs):
 
-    return folder.reads(is_read=False).count()
-
-
-def folder_archived_articles_count_default(folder, *args, **kwargs):
-
-    return folder.reads(is_archived=True).count()
+    return folder.reads.filter(is_starred=True).count()
 
 
-def folder_bookmarked_articles_count_default(folder, *args, **kwargs):
+def folder_unread_items_count_default(folder, *args, **kwargs):
 
-    return folder.reads(is_bookmarked=True).count()
+    return folder.reads.filter(is_read=False).count()
+
+
+def folder_archived_items_count_default(folder, *args, **kwargs):
+
+    return folder.reads.filter(is_archived=True).count()
+
+
+def folder_bookmarked_items_count_default(folder, *args, **kwargs):
+
+    return folder.reads.filter(is_bookmarked=True).count()
 
 
 # —————————————————————————————————————————————————————————————————————— Models
@@ -102,25 +102,25 @@ class Folder(MPTTModel, DiffMixin):
 
     # —————————————————————————————————————————————————————— Cached descriptors
 
-    all_articles_count = IntRedisDescriptor(
-        attr_name='f.aa_c', default=folder_all_articles_count_default,
+    all_items_count = IntRedisDescriptor(
+        attr_name='f.aa_c', default=folder_all_items_count_default,
         set_default=True)
 
-    unread_articles_count = IntRedisDescriptor(
-        attr_name='f.ua_c', default=folder_unread_articles_count_default,
+    unread_items_count = IntRedisDescriptor(
+        attr_name='f.ua_c', default=folder_unread_items_count_default,
         set_default=True)
 
-    starred_articles_count = IntRedisDescriptor(
-        attr_name='f.sa_c', default=folder_starred_articles_count_default,
+    starred_items_count = IntRedisDescriptor(
+        attr_name='f.sa_c', default=folder_starred_items_count_default,
         set_default=True)
 
-    archived_articles_count = IntRedisDescriptor(
+    archived_items_count = IntRedisDescriptor(
         attr_name='f.ra_c',
-        default=folder_archived_articles_count_default,
+        default=folder_archived_items_count_default,
         set_default=True, min_value=0)
 
-    bookmarked_articles_count = IntRedisDescriptor(
-        attr_name='f.ba_c', default=folder_bookmarked_articles_count_default,
+    bookmarked_items_count = IntRedisDescriptor(
+        attr_name='f.ba_c', default=folder_bookmarked_items_count_default,
         set_default=True)
 
     # ————————————————————————————————————————————————————————— Django & Python
