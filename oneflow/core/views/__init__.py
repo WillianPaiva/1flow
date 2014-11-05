@@ -19,13 +19,7 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
-import os
-import psutil
-import pymongo
 import logging
-import platform
-
-from collections import OrderedDict, namedtuple
 
 from django.http import (
     HttpResponsePermanentRedirect,
@@ -43,7 +37,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from sparks.django.http import JsonResponse, human_user_agent
 from sparks.django.utils import HttpResponseTemporaryServerError
-from sparks.fabric import is_localhost
 
 from oneflow.base.utils.dateutils import now
 from oneflow.base.utils.decorators import token_protected
@@ -375,215 +368,26 @@ def admin_status(request):
         Disk partitions: http://stackoverflow.com/a/6397492/654755
     """
 
-    disk_ntuple = namedtuple('partition', 'device mountpoint fstype')
-    usage_ntuple = namedtuple('usage', 'total used free percent')
-
-    def disk_partitions(all=False):
-        """Return all mountd partitions as a nameduple.
-
-        If all == False return phyisical partitions only.
-        """
-
-        phydevs = []
-        f = open("/proc/filesystems", "r")
-
-        for line in f:
-            if not line.startswith("nodev"):
-                phydevs.append(line.strip())
-
-        retlist = []
-        f = open('/etc/mtab', "r")
-        dev_done = []
-
-        for line in f:
-            if not all and line.startswith('none'):
-                continue
-
-            fields = line.split()
-            device = fields[0]
-            mountpoint = fields[1]
-            fstype = fields[2]
-
-            if (not all and fstype not in phydevs) or device in dev_done:
-                continue
-
-            if device == 'none':
-                device = ''
-
-            retlist.append(disk_ntuple(device, mountpoint, fstype))
-
-            # Avoid doing devices twice. This happens in LXCs with bind mounts.
-            # All we need is that / is mounted before other for it to show
-            # instead of them. Hoppefully, it should always be the case ;-)
-            dev_done.append(device)
-
-        return retlist
-
-    def disk_usage(path):
-        """Return disk usage associated with path."""
-        st = os.statvfs(path)
-        free = (st.f_bavail * st.f_frsize)
-        total = (st.f_blocks * st.f_frsize)
-        used = (st.f_blocks - st.f_bfree) * st.f_frsize
-        try:
-            percent = (float(used) / total) * 100
-
-        except ZeroDivisionError:
-            percent = 0
-
-        # NB: the percentage is -5% than what shown by df due to
-        # reserved blocks that we are currently not considering:
-        # http://goo.gl/sWGbH
-        return usage_ntuple(total, used, free, round(percent, 1))
-
-    def find_mount_point(path):
-        path = os.path.abspath(path)
-        while not os.path.ismount(path):
-            path = os.path.dirname(path)
-        return path
-
-    # ——————————————————————————————————————————————————————————— Main database
-
-    main_client = pymongo.MongoClient(settings.MONGODB_HOST,
-                                      settings.MONGODB_PORT)
-
-    mongodb = getattr(main_client, settings.MONGODB_NAME)
-
-    mongodbstats = mongodb.command('dbstats')
-
-    mongodbcollstats = OrderedDict(
-        (collname, mongodb.command('collStats', collname))
-        for collname in sorted(mongodb.collection_names()))
-
-    # ———————————————————————————————————————————————————————— Archive database
-
-    if settings.MONGODB_HOST != settings.MONGODB_HOST_ARCHIVE:
-        archive_client = pymongo.MongoClient(settings.MONGODB_HOST_ARCHIVE,
-                                             settings.MONGODB_PORT_ARCHIVE)
-    else:
-        archive_client = main_client
-
-    archivedb = getattr(archive_client, settings.MONGODB_NAME_ARCHIVE)
-
-    archivedbstats = archivedb.command('dbstats')
-
-    archivedbcollstats = OrderedDict(
-        (collname, archivedb.command('collStats', collname))
-        for collname in sorted(archivedb.collection_names()))
-
-    # —————————————————————————————————————————————————————————— Admin database
-
-    admin_maindb       = main_client.admin
-    cmd_line_ops_main  = admin_maindb.command('getCmdLineOpts')
-    server_status_main = admin_maindb.command('serverStatus')
-
-    if is_localhost(settings.MONGODB_HOST):
-        host_infos_main = None
-
-    else:
-        host_infos_main = admin_maindb.command('hostInfo')
-
-    if settings.MONGODB_HOST != settings.MONGODB_HOST_ARCHIVE:
-
-        admin_archivedb        = archive_client.admin
-        cmd_line_ops_archive  = admin_archivedb.command('getCmdLineOpts')
-        host_infos_archive    = admin_archivedb.command('hostInfo')
-        server_status_archive = admin_archivedb.command('serverStatus')
-
-    else:
-        cmd_line_ops_archive = \
-            host_infos_archive = server_status_archive = None
-
-    # TODO: rework for multiple hosts —————————————————————————————————————————
-
-    try:
-        # MongoDB 2.6
-        mongo_mount_point = find_mount_point(
-            cmd_line_ops_main['parsed']['storage']['dbPath'])
-
-    except KeyError:
-        # MongoDB 2.4
-        mongo_mount_point = find_mount_point(
-            cmd_line_ops_main['parsed']['dbpath'])
-
-    tmp_statvfs = os.statvfs(mongo_mount_point)
-
-    mongo_statvfs = {
-        # Size of filesystem in bytes
-        'f_blocks': tmp_statvfs.f_frsize * tmp_statvfs.f_blocks,
-
-        # Actual number of free bytes
-        'f_bfree': tmp_statvfs.f_frsize * tmp_statvfs.f_bfree,
-
-        # Number of free bytes that ordinary users
-        'f_bavail': tmp_statvfs.f_frsize * tmp_statvfs.f_bavail,
-    }
-
-    # svmem(total=8289701888L, available=1996591104L, percent=75.9,
-    #       used=8050712576L, free=238989312L, active=6115635200,
-    #       inactive=1401483264, buffers=40718336L, cached=1716883456)
-
-    psutil_vm = psutil.virtual_memory()
-
-    memory = {
-        'raw': psutil_vm,
-        'active_pct': psutil_vm.active * 100.0 / psutil_vm.total,
-        'inactive_pct': psutil_vm.inactive * 100.0 / psutil_vm.total,
-        'buffers_pct': psutil_vm.buffers * 100.0 / psutil_vm.total,
-        'cached_pct': (psutil_vm.cached * 100.0 / psutil_vm.total),
-    }
-
-    memory['used_pct'] = (
-        memory['active_pct']
-        + memory['inactive_pct']
-        + memory['buffers_pct']
-        + memory['cached_pct']
-    )
-
-    if memory['used_pct'] > 100:
-        # Sometimes, the total is > 100 (I've
-        # seen 105.xxx many times while developing).
-        memory['cached_pct'] = memory['cached_pct'] - (
-            memory['used_pct'] - 100.0)
-
-    # END: rework —————————————————————————————————————————————————————————————
-
-    # ———————————————————————————————————————————————————————————————— Cleanups
-
-    for host_infos in (host_infos_main, host_infos_archive, ):
-        if host_infos is None:
-            continue
-
-        if host_infos['os']['name'].startswith('NAME="'):
-            host_infos['os']['name'] = host_infos['os']['name'][6:-1]
+    from oneflow.base.utils import stats
 
     return render(request, 'status/index.html', {
-        'mongodbstats': mongodbstats,
-        'mongodbcollstats': mongodbcollstats,
-        'archivedbstats': archivedbstats,
-        'archivedbcollstats': archivedbcollstats,
-        'host_infos_main': host_infos_main,
-        'host_infos_archive': host_infos_archive,
-        'server_status_main': server_status_main,
-        'server_status_archive': server_status_archive,
-        'cmd_line_ops_main': cmd_line_ops_main,
-        'cmd_line_ops_archive': cmd_line_ops_archive,
-        'mongo_statvfs': mongo_statvfs,
-        'host_infos': {
-            'system': {
-                'hostname': platform.node(),
-                'cpuArch': platform.machine(),
-                'numCores': psutil.cpu_count(),
-            },
-            'os': {
-                'name': platform.system(),
-                'version': platform.release(),
-            }
-        },
-        'memory': memory,
+        'mongodbstats': stats.mongodbstats(),
+        'mongodbcollstats': stats.mongodbcollstats(),
+        'archivedbstats': stats.archivedbstats(),
+        'archivedbcollstats': stats.archivedbcollstats(),
+        'host_infos_main': stats.host_infos_mongodb_main(),
+        'host_infos_archive': stats.host_infos_mongodb_archive(),
+        'server_status_main': stats.server_status_main(),
+        'server_status_archive': stats.server_status_archive(),
+        'cmd_line_ops_main': stats.cmd_line_ops_main(),
+        'cmd_line_ops_archive': stats.cmd_line_ops_archive(),
+        'mongo_statvfs': stats.mongo_statvfs(),
+        'host_infos': stats.host_infos(),
+        'pg_stats': stats.postgresql_status(),
+        'memory': stats.memory(),
         'partitions': {
-            part: disk_usage(part.mountpoint)
-            for part in disk_partitions()
+            part: stats.disk_usage(part.mountpoint)
+            for part in stats.disk_partitions()
         },
     })
 
