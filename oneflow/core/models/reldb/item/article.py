@@ -140,8 +140,9 @@ class Article(BaseItem, UrlItem, ContentItem):
             new_article.save()
 
         except IntegrityError:
-            LOGGER.info(u'Duplicate article “%s” (url: %s) in feed(s) %s.',
-                        title, url, u', '.join(unicode(f) for f in feeds))
+            LOGGER.exception(u'Integrity error while creating article “%s” '
+                             u'(url: %s) in feed(s) %s.', title, url,
+                             u', '.join(unicode(f) for f in feeds))
 
             cur_article = cls.objects.get(url=url)
 
