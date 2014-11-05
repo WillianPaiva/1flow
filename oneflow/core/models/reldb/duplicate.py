@@ -91,9 +91,20 @@ class AbstractDuplicateAwareModel(models.Model):
                 # attribute if it is not None.
 
                 LOGGER.warning(u'%s %s is already a duplicate of '
-                               u'another instance, not %s. Aborting.',
-                               verbose_name, duplicate, duplicate.duplicate_of)
+                               u'another instance %s, not %s. Aborting.',
+                               verbose_name,
+                               duplicate,
+                               duplicate.duplicate_of,
+                               self)
                 return
+
+        if duplicate.duplicate_status == DUPLICATE_STATUS.FINISHED \
+                and not force:
+            LOGGER.warning(u'%s %s is already a duplicate of %s and '
+                           u'replacing process has already taken place. '
+                           u'use force=True to re-run.',
+                           verbose_name, duplicate, self)
+            return
 
         LOGGER.info(u'Registering %s %s as duplicate of %s…',
                     verbose_name, duplicate, self)
