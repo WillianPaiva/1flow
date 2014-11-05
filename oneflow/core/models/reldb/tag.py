@@ -24,15 +24,13 @@ from statsd import statsd
 
 # from django.conf import settings
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
 from mptt.models import MPTTModel, TreeForeignKey
-
-from oneflow.base.utils import register_task_method
 
 from duplicate import AbstractDuplicateAwareModel
 from language import Language
@@ -49,7 +47,6 @@ class SimpleTag(MPTTModel, AbstractDuplicateAwareModel):
 
     name     = models.CharField(verbose_name=_(u'name'), max_length=128)
     slug     = models.CharField(verbose_name=_(u'slug'),
-                                max_length=128, null=True)
     language = models.ForeignKey(Language, null=True)
 
     parent   = TreeForeignKey('self', null=True, blank=True,
@@ -164,15 +161,6 @@ class SimpleTag(MPTTModel, AbstractDuplicateAwareModel):
 
         return tags
 
-    def post_create_task(self):
-        """ Method meant to be run from a celery task. """
-
-        if not self.slug:
-            self.slug = slugify(self.name)
-            self.save()
-
-            statsd.gauge('tags.counts.total', 1, delta=True)
-
 
 class AbstractTaggedModel(models.Model):
 
@@ -185,50 +173,22 @@ class AbstractTaggedModel(models.Model):
         blank=True, null=True)
 
 
-# ———————————————————————————————————————————————————————————— Methods as tasks
-
-
-register_task_method(SimpleTag,
-                     SimpleTag.post_create_task,
-                     globals(), queue=u'high')
-
-
 # ————————————————————————————————————————————————————————————————————— Signals
+
+
+def simpletag_pre_save(instance, **kwargs):
+
+    LOGGER.info(u'--%s--', instance.slug)
+
+    if not instance.slug:
+        instance.slug = slugify(instance.name)
 
 
 def simpletag_post_save(instance, **kwargs):
 
     if kwargs.get('created', False):
-        # HEADS UP: this task is declared by
-        # the register_task_method call below.
-        simpletag_post_create_task.delay(instance.id)  # NOQA
+        statsd.gauge('tags.counts.total', 1, delta=True)
 
 
+pre_save.connect(simpletag_pre_save, sender=SimpleTag)
 post_save.connect(simpletag_post_save, sender=SimpleTag)
-
-
-#   Alternative implementation
-#
-#   This implementation could have been done in the AbstractTaggedModel.
-#   It's not finished, hope you get the idea.
-#
-#    @classmethod
-#    def replace_tag_duplicate(cls, duplicate, force=False):
-#        """ Replace a duplicate of a Tag in all items/reads having it set. """
-#
-#        #
-#        # TODO: update search engine indexes…
-#        #
-#
-#        related_manager_name = cls._model.object_name.lower() + '_set'
-#        related_manager = getattr(duplicate, related_manager_name)
-#
-#        for instance in related_manager.all():
-#            instance.tags.remove(duplicate)
-#            instance.tags.add(self)
-#
-#        # Will be called because Read inherits from AbstractTaggedModel
-#        # for read in duplicate.reads.all():
-#        #     read.tags.remove(duplicate)
-#        #     read.tags.add(self)
-#
