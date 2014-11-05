@@ -65,7 +65,7 @@ def usercounters_all_items_count_default(user_counters):
 
 def usercounters_unread_items_count_default(user_counters):
 
-    return user_counters.user.reads.filter(is_read__ne=True).count()
+    return user_counters.user.reads.filter(is_read=False).count()
 
 
 def usercounters_starred_items_count_default(user_counters):
