@@ -109,7 +109,7 @@ class AbstractDuplicateAwareModel(models.Model):
 
         if background:
             LOGGER.info(u'Replacing %s %s by %s in the background…',
-                        self._meta.verbose_name, self, duplicate)
+                        self._meta.verbose_name, duplicate, self)
 
             # NOTE: we don't directly transmit the model class
             # to ease with celery arguments serialization.
@@ -119,7 +119,7 @@ class AbstractDuplicateAwareModel(models.Model):
 
         else:
             LOGGER.info(u'Replacing %s %s by %s in the foreground…',
-                        self._meta.verbose_name, self, duplicate)
+                        self._meta.verbose_name, duplicate, self)
 
             return abstract_replace_duplicate_task(self._meta.app_label,
                                                    self._meta.object_name,
