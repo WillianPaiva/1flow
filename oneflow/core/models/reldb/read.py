@@ -942,7 +942,7 @@ def Folder_reads_property_get(self):
 
     # We user `.reads` to get only the owner's good reads.
     return self.user.reads.filter(
-        subscriptions_in=self.subscriptions.all())
+        subscriptions__in=self.subscriptions.all())
 
 
 def BaseItem_good_reads_property_get(self):
