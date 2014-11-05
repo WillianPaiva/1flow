@@ -685,6 +685,58 @@ def Read_set_subscriptions_method(self, commit=True):
     return self.subscriptions.all()
 
 
+def User_subscriptions_property_get(self):
+    """ “Normal” subscriptions, eg. not special (immutable) ones. """
+
+    # Add all special subscriptions here.
+    return self.all_subscriptions.exclude(
+        id__in=self.user_subscriptions.all_ids
+    )
+
+
+def User_open_subscriptions_property_get(self):
+
+    # NOTE: self.subscriptions is defined
+    # in nonrel.subscription to avoid import loop.
+    return self.subscriptions.filter(feed__is_active=True)
+
+
+def User_closed_subscriptions_property_get(self):
+
+    # NOTE: self.subscriptions is defined
+    # in nonrel.subscription to avoid import loop.
+    return self.subscriptions.filter(feed__is_active=False)
+
+
+def User_nofolder_subscriptions_property_get(self):
+
+    return self.subscriptions.filter(
+        # NOTE: feed__is_internal=False would lead to NOT get subscriptions
+        #       to other users special feeds (eg. Karmak23 will not get his
+        #       own subscription to mchaignot's written_items)
+        folders=None
+    )
+
+
+def User_nofolder_open_subscriptions_property_get(self):
+
+    return self.nofolder_subscriptions.filter(feed__is_active=True)
+
+
+def User_nofolder_closed_subscriptions_property_get(self):
+
+    return self.nofolder_subscriptions.filter(feed__is_active=False)
+
+
+User.subscriptions           = property(User_subscriptions_property_get)
+User.open_subscriptions = property(User_open_subscriptions_property_get)
+User.closed_subscriptions = property(User_closed_subscriptions_property_get)
+User.nofolder_subscriptions = property(
+    User_nofolder_subscriptions_property_get)
+User.nofolder_open_subscriptions = property(
+    User_nofolder_open_subscriptions_property_get)
+User.nofolder_closed_subscriptions = property(
+    User_nofolder_closed_subscriptions_property_get)
 BaseFeed.check_subscriptions = generic_check_subscriptions_method
 User.check_subscriptions     = generic_check_subscriptions_method
 Read.check_subscriptions     = generic_check_subscriptions_method
