@@ -42,7 +42,7 @@ from ..common import (
     ORIGINS,
 )
 
-from ..language import Language
+from ..language import AbstractLanguageAwareModel
 from ..duplicate import AbstractDuplicateAwareModel
 from ..tag import AbstractTaggedModel
 from ..author import Author
@@ -64,6 +64,7 @@ __all__ = [
 
 class BaseItem(PolymorphicModel,
                AbstractDuplicateAwareModel,
+               AbstractLanguageAwareModel,
                AbstractTaggedModel):
 
     """ The base item in the 1flow database.
@@ -80,7 +81,7 @@ class BaseItem(PolymorphicModel,
     class Meta:
         app_label = 'core'
         verbose_name = _(u'Base item')
-        verbose_name = _(u'Base items')
+        verbose_name_plural = _(u'Base items')
 
     name = models.CharField(max_length=256, verbose_name=_(u'Name'))
     slug = models.CharField(max_length=256, null=True, blank=True)
@@ -114,9 +115,6 @@ class BaseItem(PolymorphicModel,
         verbose_name=_(u'default rating'),
         help_text=_(u'Rating used as a base when a user has not already '
                     u'rated the content.'))
-
-    language = models.ForeignKey(Language, null=True, blank=True,
-                                 verbose_name=_(u'Language'))
 
     text_direction = models.CharField(verbose_name=_(u'Text direction'),
                                       choices=((u'ltr', _(u'Left-to-Right')),

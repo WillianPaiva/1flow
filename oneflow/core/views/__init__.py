@@ -36,8 +36,10 @@ from django.http import (
 )
 from django.core.urlresolvers import reverse
 from django.conf import settings
+from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.template import add_to_builtins
+from django.utils.translation import ugettext_lazy as _
 
 from sparks.django.http import JsonResponse, human_user_agent
 from sparks.django.utils import HttpResponseTemporaryServerError
@@ -48,8 +50,13 @@ from oneflow.base.utils.decorators import token_protected
 
 from ..forms import WebPagesImportForm
 
-from ..models.nonrel import Article, Read, Feed, Folder, CONTENT_TYPES_FINAL
-from ..models.reldb import HelpContent
+from ..models.nonrel import (
+    Article, Read,
+    Feed, Subscription,
+    Folder, CONTENT_TYPES_FINAL
+)
+
+from ..models.reldb import HelpContent, IMPORT_STATUS
 
 from ..gr_import import GoogleReaderImport
 
@@ -256,29 +263,45 @@ def toggle(request, klass, oid, key):
 def import_web_url(request, url):
     """ Import an URL from the web (can be anything). """
 
-    form = WebPagesImportForm({'urls': url})
+    form = WebPagesImportForm({'urls': url, 'status': IMPORT_STATUS.MANUAL})
 
     article = None
 
     if form.is_valid():
-        imp_ = form.save(request.user)
+        user_import = form.save(request.user)
 
-        try:
-            article = Article.objects.get(url=imp_.results['created'][0])
+        if user_import.status == IMPORT_STATUS.FINISHED:
 
-        except:
-            # Not yet created…
-            article = Article.objects.get(url=url)
+            if 'articles' in user_import.results['created']:
+                article_url = user_import.results['created']['articles'][0]
 
-        # Just in case the item was previously
-        # here (from another user, or the same).
-        if article.content_type in CONTENT_TYPES_FINAL:
-            read = Read.get_or_404(user=request.user.mongo,
-                                   article=article)
+                article = Article.objects.get(url=article_url)
 
-            return HttpResponsePermanentRedirect(
-                u'http://' + settings.SITE_DOMAIN
-                + reverse('read_one', args=(read.id,)))
+                if article.content_type in CONTENT_TYPES_FINAL:
+                    read = Read.get_or_404(user=request.user.mongo,
+                                           article=article)
+
+                    return HttpResponsePermanentRedirect(
+                        reverse('read_one', args=(read.id,)))
+
+            else:
+                feed_url = user_import.results['created']['feeds'][0]
+
+                subscription = Subscription.objects.get(
+                    feed=Feed.objects.get(feed_url),
+                    user=request.user)
+
+                return HttpResponsePermanentRedirect(
+                    reverse('source_selector') + u"#" + subscription.id)
+
+        else:
+            messages.warning(
+                request,
+                _(u'Could not import url “<code>{0}</code>”. Check your '
+                  u'latest history entry to know why.').format(url),
+                extra_tags='sticky safe')
+
+            return HttpResponsePermanentRedirect(reverse('historyentry_list'))
 
     return render(request, 'import-web-url.html',
                   {'article': article, 'url': url,

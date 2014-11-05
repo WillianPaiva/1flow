@@ -25,7 +25,6 @@ import logging
 from statsd import statsd
 # from constance import config
 
-# from json_field import JSONField
 from celery import task
 
 # from django.conf import settings
@@ -62,7 +61,7 @@ class AbstractDuplicateAwareModel(models.Model):
 
     # ————————————————————————————————————————————————————————————————— Methods
 
-    def register_duplicate(self, duplicate, force=False):
+    def register_duplicate(self, duplicate, force=False, background=True):
         """ Register an instance as a duplicate of the current one. """
 
         verbose_name = self._meta.verbose_name
@@ -94,18 +93,120 @@ class AbstractDuplicateAwareModel(models.Model):
         duplicate.duplicate_of = self
         duplicate.save()
 
-        # NOTE: we don't directly transmit the model class
-        # to ease with celery arguments serialization.
-        abstract_replace_duplicate_task.delay(self._meta.app_label,
-                                              self._meta.object_name,
-                                              self.id,
-                                              duplicate.id)
-
         statsd.gauge('%s.counts.duplicates' % verbose_name_plural,
                      1, delta=True)
 
+        if background:
+            LOGGER.info(u'Replacing %s %s by %s in the background…',
+                        self._meta.verbose_name, self, duplicate)
 
-@task(queue='background')
+            # NOTE: we don't directly transmit the model class
+            # to ease with celery arguments serialization.
+            return abstract_replace_duplicate_task.delay(
+                self._meta.app_label, self._meta.object_name,
+                self.id, duplicate.id)
+
+        else:
+            LOGGER.info(u'Replacing %s %s by %s in the foreground…',
+                        self._meta.verbose_name, self, duplicate)
+
+            return abstract_replace_duplicate_task(self._meta.app_label,
+                                                   self._meta.object_name,
+                                                   self.id, duplicate.id)
+
+    def abstract_replace_duplicate(self, duplicate, abstract_model,
+                                   field_name, many_to_many=False):
+        """ Replace an instance of a model in concrete models of an abstract class.  # NOQA
+
+        This method was first inplemented for tags, then refactored for
+        languages.
+        """
+
+        if many_to_many:
+            def replace_duplicate_in_field(instance, field_name,
+                                           self, duplicate):
+                field = getattr(instance, field_name)
+                field.remove(duplicate)
+                field.add(self)
+
+        else:
+            def replace_duplicate_in_field(instance, field_name,
+                                           self, duplicate):
+                setattr(instance, field_name, self)
+                instance.save()
+
+        base_instance_name = self._meta.verbose_name
+        sub_classes = abstract_model.__subclasses__()
+        sub_classes_count = len(sub_classes)
+
+        LOGGER.info(u'Replacing %s duplicate %s by master %s '
+                    u'in %s models (%s)…',
+                    base_instance_name,
+                    duplicate, self,
+                    sub_classes_count,
+                    u', '.join(m.__name__ for m in sub_classes))
+
+        all_models_all_instances_count = 0
+        all_models_all_failed_count = 0
+
+        # Get all concrete classes that inherit from abstract_model
+        for model in sub_classes:
+
+            verbose_name = model._meta.verbose_name
+            verbose_name_plural = model._meta.verbose_name_plural
+
+            if many_to_many:
+                params = {field_name + '__in': duplicate}
+            else:
+                params = {field_name: duplicate}
+
+            all_instances = model.objects.filter(**params)
+            all_instances_count = all_instances.count()
+            failed_instances_count = 0
+
+            LOGGER.info(u'Replacing %s %s by %s in %s %s instances…',
+                        base_instance_name,
+                        duplicate, self,
+                        all_instances_count, verbose_name)
+
+            # For each concrete class, get each instance
+            for instance in all_instances:
+
+                try:
+                    replace_duplicate_in_field(instance, field_name,
+                                               self, duplicate)
+
+                except:
+                    failed_instances_count += 1
+                    LOGGER.exception(u'Replacing %s %s by %s '
+                                     u'failed in %s %s',
+                                     base_instance_name,
+                                     duplicate, self,
+                                     verbose_name, instance)
+
+            all_models_all_instances_count += all_instances_count
+            all_models_all_failed_count += failed_instances_count
+
+            LOGGER.info(u'Replaced %s %s by %s in %s %s (%s failed).',
+                        base_instance_name,
+                        duplicate, self,
+                        all_instances_count - failed_instances_count,
+                        verbose_name_plural,
+                        failed_instances_count)
+
+        LOGGER.info(u'Done replacing %s duplicate %s by %s in %s models: '
+                    u'%s instances processed, %s failed.',
+                    base_instance_name,
+                    duplicate, self,
+                    sub_classes_count,
+                    all_models_all_instances_count,
+                    all_models_all_failed_count)
+
+
+# ——————————————————————————————————————————————————————————————————————— Tasks
+
+
+@task(name='AbstractDuplicateAwareModel.replace_duplicate', queue='background')
 def abstract_replace_duplicate_task(app_label, model_name, self_id, dupe_id):
     """ Call replace_duplicate() on all our concrete classes.
 
@@ -126,14 +227,36 @@ def abstract_replace_duplicate_task(app_label, model_name, self_id, dupe_id):
 
     # http://stackoverflow.com/a/4094654/654755
     for base_class in inspect.getmro(self._meta.model):
+
+        if base_class == AbstractDuplicateAwareModel:
+            # This class will necessarily get brought by getmro(),
+            # but obviously we don't want it: we are looking for
+            # concrete classes only.
+            continue
+
+        try:
+            verbose_name = base_class._meta.verbose_name
+
+        except AttributeError:
+            # Probably the “NewBase” class, or another special one.
+            continue
+
         try:
             base_class.replace_duplicate(self, dupe)
 
         except AttributeError:
-            if u'oneflow' in unicode(model):
-                LOGGER.warning(u'Model %s has no `replace_duplicate()` '
-                               u'method.', model.__name__, self)
+            if base_class._meta.abstract:
+                # We don't expect abstract classes
+                # to implement replace_duplicate().
+                continue
+
+            if u'oneflow' in unicode(base_class):
+                # This is likely a developper miss.
+
+                raise NotImplementedError(
+                    u'Model {0} has to implement a `replace_duplicate()` '
+                    u'method.'.format(verbose_name))
 
         except:
-            LOGGER.exception(u'Problem while registering duplicate of '
-                             u'%s by %s', self, dupe)
+            LOGGER.exception(u'Problem while running %s.replace_duplicate('
+                             u'#%s, #%s)', model.__name__, self.id, dupe.id)

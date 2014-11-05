@@ -450,7 +450,8 @@ class RssAtomFeed(BaseFeed):
             LOGGER.info(u'Updating tags of feed %s from %s to %s.',
                         self_tags, tags)
 
-            self.tags = SimpleTag.filter(id__in=tuple(t.id for t in tags))
+            self.tags.clear()
+            self.tags.add(*tags)
 
         for article in parsed_feed.entries:
             created = self.create_article_from_feedparser(article, tags)

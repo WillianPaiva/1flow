@@ -36,6 +36,7 @@ run_command, restart_services = sdf.run_command, sdf.restart_services
 stop, start, status = sdf.stop_services, sdf.start_services, sdf.status_services
 remove, pick, role = sdf.remove_services, sdf.pick, sdf.role
 push_environment, git_pull = sdf.push_environment, sdf.git_pull
+migrate, git_update = sdf.migrate, sdf.git_update
 
 USE_JENKINS  = pwd.getpwuid(os.getuid()).pw_name == 'jenkins'
 JENKINS_JOB  = os.environ.get('JOB_NAME', '1flow')
@@ -211,6 +212,12 @@ def production():
     # we force the user because we can login as standard user there
     env.user        = '1flow'
     env.environment = 'production'
+
+    # Switch to develop to avoid needing to release a new version
+    # for every little patch. 1flow.io is our new testbed. In fact,
+    # It's a continuous delivery platform :-D
+    env.branch = 'develop'
+
     set_roledefs_and_parallel({
         'db': ['1flow.io'],
         'web': ['1flow.io'],

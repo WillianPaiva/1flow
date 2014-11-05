@@ -25,13 +25,19 @@ from django.utils.translation import ugettext_lazy as _
 
 from mptt.models import MPTTModel, TreeForeignKey
 
+from duplicate import AbstractDuplicateAwareModel
+
 LOGGER = logging.getLogger(__name__)
 
 
-__all__ = ['Language', ]
+__all__ = [
+    'Language',
+    'AbstractMultipleLanguagesModel',
+    'AbstractLanguageAwareModel',
+]
 
 
-class Language(MPTTModel):
+class Language(MPTTModel, AbstractDuplicateAwareModel):
 
     """ Language model, with hierarchy for grouping. """
 
@@ -46,33 +52,94 @@ class Language(MPTTModel):
     name = models.CharField(verbose_name=_(u'name'),
                             max_length=128, blank=True)
 
-    dj_code = models.CharField(verbose_name=_(u'Django code'),
-                               max_length=16, unique=True)
+    # https://docs.djangoproject.com/en/dev/topics/i18n/
+    dj_code = models.CharField(verbose_name=_(u'Language code'),
+                               max_length=16, unique=True,
+                               help_text=_(u'This is the IETF code.'))
+
+    iso639_1 = models.CharField(
+        verbose_name=_(u'ISO-639-1 code'),
+        max_length=16, null=True, blank=True,
+        help_text=_(u'This is a 2-letters code. Some languages do not '
+                    u'have any. But all have an ISO-639-2 or -3 one. '
+                    u'Sometimes it is the same as the IETF (Django) one.'))
+
+    iso639_2 = models.CharField(
+        verbose_name=_(u'ISO-639-2 code'),
+        max_length=16, null=True, blank=True)
+
+    iso639_3 = models.CharField(
+        verbose_name=_(u'ISO-639-3 code'),
+        max_length=16, null=True, blank=True)
 
     parent = TreeForeignKey('self', null=True, blank=True,
                             related_name='children')
-
-    duplicate_of = models.ForeignKey(
-        'self', null=True, blank=True,
-        verbose_name=_(u'Duplicate of'))
 
     # ————————————————————————————————————————————————————————— Python / Django
 
     def __unicode__(self):
         """ Unicode, pep257. """
 
-        return _(u'{0}⚐ (#{1})').format(self.name, self.id)
+        return _(u'{0} (#{1}): {2}, {3}').format(
+            self.name, self.id, self.dj_code,
+            self.iso639_1 or self.iso639_2 or self.iso639_3)
 
     # ——————————————————————————————————————————————————————————— Class methods
 
     @classmethod
     def get_by_code(cls, code):
-        """ Return the language associated with code, creating it if needed. """
+        """ Return the language associated with code (insensitive).
+
+        This will create the language if needed.
+        """
+
         try:
-            return cls.objects.get(dj_code=code)
+            language = cls.objects.get(dj_code=code.lower())
 
         except cls.DoesNotExist:
             language = cls(name=code.title(), dj_code=code)
             language.save()
 
-            return language
+        if language.duplicate_of:
+            return language.duplicate_of
+
+        return language
+
+    def replace_duplicate(self, duplicate, *args, **kwargs):
+        """ Replace a duplicate language by another. """
+
+        self.abstract_replace_duplicate(
+            duplicate=duplicate,
+            abstract_model=AbstractMultipleLanguagesModel,
+            field_name='languages',
+            many_to_many=True
+        )
+
+        self.abstract_replace_duplicate(
+            duplicate=duplicate,
+            abstract_model=AbstractLanguageAwareModel,
+            field_name='language',
+            many_to_many=False
+        )
+
+
+class AbstractMultipleLanguagesModel(models.Model):
+
+    class Meta:
+        abstract = True
+        app_label = 'core'
+
+    languages = models.ManyToManyField(
+        Language, verbose_name=_(u'Languages'),
+        blank=True, null=True)
+
+
+class AbstractLanguageAwareModel(models.Model):
+
+    class Meta:
+        abstract = True
+        app_label = 'core'
+
+    language = models.ForeignKey(
+        Language, verbose_name=_(u'Language'),
+        blank=True, null=True, db_index=True)

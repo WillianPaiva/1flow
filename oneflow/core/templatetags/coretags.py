@@ -37,7 +37,7 @@ from ...base.utils.dateutils import (now, today,
 
 from oneflow.core import models   # , CACHE_ONE_WEEK
 from oneflow.core.models import nonrel as nonrel_models
-from ..context_processors import content_types
+from ..context_processors import models_constants
 
 LOGGER = logging.getLogger(__name__)
 
@@ -585,7 +585,7 @@ def article_read_content(context, read):
     })
 
     # WHY DO I NEED TO DO THIS? WHY !?
-    context.update(content_types(None))
+    context.update(models_constants(None))
 
     return context
 

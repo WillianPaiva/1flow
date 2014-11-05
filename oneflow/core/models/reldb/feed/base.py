@@ -58,7 +58,7 @@ from ..common import (
 
 from ..duplicate import AbstractDuplicateAwareModel
 from ..tag import AbstractTaggedModel
-from ..language import Language
+from ..language import AbstractMultipleLanguagesModel
 from ..item.base import BaseItem
 # from ..tag import SimpleTag
 
@@ -153,6 +153,7 @@ class BaseFeedMeta(PolymorphicModelBase, TransMeta):
 class BaseFeed(six.with_metaclass(BaseFeedMeta,
                                   PolymorphicModel,
                                   AbstractDuplicateAwareModel,
+                                  AbstractMultipleLanguagesModel,
                                   AbstractTaggedModel,
                                   DiffMixin)):
 
@@ -206,6 +207,7 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
     name = models.CharField(verbose_name=_(u'name'),
                             null=True, blank=True,
                             max_length=255)
+
     slug = models.CharField(verbose_name=_(u'slug'),
                             max_length=255,
                             null=True, blank=True)
@@ -213,12 +215,6 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
     items = models.ManyToManyField(BaseItem, blank=True, null=True,
                                    verbose_name=_(u'Feed items'),
                                    related_name='feeds')
-
-    languages = models.ManyToManyField(
-        Language, verbose_name=_(u'Languages'),
-        blank=True, null=True, related_name='feeds',
-        help_text=_(u'Set this to more than one language to help article '
-                    u'language detection if none is set in articles.'))
 
     date_created = models.DateTimeField(auto_now_add=True, blank=True,
                                         verbose_name=_(u'Date created'))

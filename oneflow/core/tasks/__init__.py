@@ -44,7 +44,7 @@ from sync import sync_all_nodes  # NOQA
 
 # Import this one, so that celery can find it,
 # Else it complains about a missing import.
-from checks import global_checker_task  # NOQA
+from checks import *  # NOQA
 
 LOGGER = logging.getLogger(__name__)
 

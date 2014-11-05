@@ -141,8 +141,9 @@ def register_task_method(klass, meth, module_globals,
     # Make it available for celery to import it.
     module_globals['__all__'].append(exported_name)
 
-    LOGGER.info(u'Registered “%s” as Celery task “%s”.',
-                exported_name, task_name)
+    # if __debug__ and settings.DEBUG:
+    #     LOGGER.debug(u'Registered “%s” as Celery task “%s”.',
+    #                  exported_name, task_name)
 
 
 # ——————————————————————————————————————————————————————————————— utils/helpers
@@ -188,9 +189,9 @@ def connect_mongoengine_signals(module_globals):
                     if __debug__:
                         connected += 1
 
-    if __debug__ and settings.DEBUG and connected:
-        LOGGER.debug('Connected %s signal handlers to MongoEngine senders.',
-                     connected)
+    # if __debug__ and settings.DEBUG and connected:
+    #    LOGGER.debug('Connected %s signal handlers to MongoEngine senders.',
+    #                 connected)
 
 
 def request_context_celery(request, *args, **kwargs):
