@@ -214,10 +214,13 @@ class BaseItem(PolymorphicModel,
             task (but it is not one by itself).
         """
 
+        all_went_ok = True
+
         try:
             self.feeds.add(*duplicate.feeds.all())
 
         except:
+            all_went_ok = False
             # We have to continue to replace reads,
             # and reload() at the end of the method.
             LOGGER.exception(u'Could not update %s feeds with the ones '
@@ -236,10 +239,14 @@ class BaseItem(PolymorphicModel,
                 read.delete()
 
             except:
+                all_went_ok = False
                 LOGGER.exception(u'Could not replace current item in '
                                  u'read %s by %s!', read, self)
 
-        LOGGER.info(u'Item %s replaced by %s everywhere.', duplicate, self)
+        LOGGER.info(u'Item %s replaced by %s everywhere %s.', duplicate, self,
+                    u'successfully' if all_went_ok else u'with some error(s).')
+
+        return all_went_ok
 
     def activate_reads(self, force=False, verbose=False, extended_check=False):
 
