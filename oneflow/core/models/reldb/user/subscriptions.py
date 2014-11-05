@@ -87,6 +87,31 @@ class UserSubscriptions(models.Model):
         return _(u'Internal subscriptions for user {0})').format(
             self.user.username)
 
+    @property
+    def all_ids(self):
+        """ Return IDs of all user subscriptions.
+
+        .. note:: keep in sync between user/feeds.py & user/subscriptions.py
+        """
+        return [
+            self.imported_items_id,
+            self.sent_items_id,
+            self.received_items_id,
+            self.written_items_id,
+        ] + list(self.blogs.all().values_list('id', flat=True))
+
+    def all(self):
+        """ Return a QS of all user subscriptions.
+
+        .. note:: keep in sync between user/feeds.py & user/subscriptions.py
+        """
+        return Subscription.objects.filter(id__in=[
+            self.imported_items_id,
+            self.sent_items_id,
+            self.received_items_id,
+            self.written_items_id
+        ]) | self.blogs.all()
+
     def check(self, force=False):
         """ Create user feeds if they don't already exist. """
 
