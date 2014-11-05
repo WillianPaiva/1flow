@@ -87,7 +87,7 @@ class SimpleTag(MPTTModel,
     def replace_duplicate(self, duplicate, *args, **kwargs):
         """ Replace a tag duplicate by another. """
 
-        self.abstract_replace_duplicate(
+        return self.abstract_replace_duplicate(
             duplicate=duplicate,
             abstract_model=AbstractTaggedModel,
             field_name='tags',
