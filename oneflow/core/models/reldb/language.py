@@ -30,7 +30,11 @@ from duplicate import AbstractDuplicateAwareModel
 LOGGER = logging.getLogger(__name__)
 
 
-__all__ = ['Language', ]
+__all__ = [
+    'Language',
+    'AbstractMultipleLanguagesModel',
+    'AbstractLanguageAwareModel',
+]
 
 
 class Language(MPTTModel, AbstractDuplicateAwareModel):
@@ -102,50 +106,21 @@ class Language(MPTTModel, AbstractDuplicateAwareModel):
         return language
 
     def replace_duplicate(self, duplicate, *args, **kwargs):
-        u""" When a Tag is marked as duplicate of another.
+        """ Replace a duplicate language by another. """
 
-        Do the necessary dirty work of replacing it everywhere. It's
-        needed to keep the database clean, in order to eventually do
-        something with the duplicate one day.
+        self.abstract_replace_duplicate(
+            duplicate=duplicate,
+            abstract_model=AbstractMultipleLanguagesModel,
+            field_name='languages',
+            many_to_many=True
+        )
 
-        .. note:: for tags, deleting duplicates is not an option and it's
-            even a feature: this allows keeping things unified between
-            users (eg. use the same tags in search engine…).
-        """
-
-        # Get all concrete classes that inherit from AbstractMultipleLanguagesModel  # NOQA
-        for model in AbstractMultipleLanguagesModel.__subclasses__():
-
-            # For each concrete class, get each instance
-            for instance in model.objects.all():
-
-                try:
-                    # Replace the duplicate tag by the master.
-                    instance.languages.remove(duplicate)
-                    instance.languages.add(self)
-
-                except:
-                    LOGGER.exception(u'Replacing language duplicate %s by %s '
-                                     u'failed in %s %s', duplicate, self,
-                                     model.__name__, instance)
-
-        # Get all concrete classes that inherit from AbstractLanguageAwareModel
-        for model in AbstractLanguageAwareModel.__subclasses__():
-
-            # For each concrete class, get each instance
-            for instance in model.objects.all():
-
-                try:
-                    # Replace the duplicate tag by the master.
-                    instance.language = self
-
-                except:
-                    LOGGER.exception(u'Replacing language duplicate %s by %s '
-                                     u'failed in %s %s', duplicate, self,
-                                     model.__name__, instance)
-
-                else:
-                    instance.save()
+        self.abstract_replace_duplicate(
+            duplicate=duplicate,
+            abstract_model=AbstractLanguageAwareModel,
+            field_name='language',
+            many_to_many=False
+        )
 
 
 class AbstractMultipleLanguagesModel(models.Model):

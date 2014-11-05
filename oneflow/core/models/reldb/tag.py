@@ -38,8 +38,12 @@ from language import AbstractLanguageAwareModel
 LOGGER = logging.getLogger(__name__)
 
 
-__all__ = ['SimpleTag', ]
+__all__ = [
+    'SimpleTag',
+    'AbstractTaggedModel',
 
+    # tasks will be added by register_task_method()
+]
 
 
 class SimpleTag(MPTTModel,
@@ -81,70 +85,14 @@ class SimpleTag(MPTTModel,
         return _(u'{0} {1}⚐ (#{2})').format(self.name, self.language, self.id)
 
     def replace_duplicate(self, duplicate, *args, **kwargs):
-        u""" When a Tag is marked as duplicate of another.
+        """ Replace a tag duplicate by another. """
 
-        Do the necessary dirty work of replacing it everywhere. It's
-        needed to keep the database clean, in order to eventually do
-        something with the duplicate one day.
-
-        .. note:: for tags, deleting duplicates is not an option and it's
-            even a feature: this allows keeping things unified between
-            users (eg. use the same tags in search engine…).
-        """
-
-        sub_classes = AbstractTaggedModel.__subclasses__()
-        sub_classes_count = len(sub_classes)
-
-        LOGGER.info(u'Replacing tag duplicate %s by master %s '
-                    u'in %s models (%s)…', duplicate, self,
-                    sub_classes_count,
-                    u', '.join(m.__name__ for m in sub_classes))
-
-        all_models_all_instances_count = 0
-        all_models_all_failed_count = 0
-
-        # Get all concrete classes that inherit from AbstractTaggedModel
-        for model in sub_classes:
-
-            verbose_name = model._meta.verbose_name
-            verbose_name_plural = model._meta.verbose_name_plural
-
-            all_instances = model.objects.all()
-            all_instances_count = all_instances.count()
-            failed_instances_count = 0
-
-            LOGGER.info(u'Replacing tag duplicate %s by master %s '
-                        u'in %s %s instances…', duplicate, self,
-                        all_instances_count, verbose_name)
-
-            # For each concrete class, get each instance
-            for instance in all_instances:
-
-                try:
-                    # Replace the duplicate tag by the master.
-                    instance.tags.remove(duplicate)
-                    instance.tags.add(self)
-
-                except:
-                    failed_instances_count += 1
-                    LOGGER.exception(u'Replacing tag duplicate %s by %s '
-                                     u'failed in %s %s', duplicate, self,
-                                     verbose_name, instance)
-
-            all_models_all_instances_count += all_instances_count
-            all_models_all_failed_count += failed_instances_count
-
-            LOGGER.info(u'Replaced tag duplicate %s by %s in %s %s '
-                        u'(%s failed).', duplicate, self,
-                        all_instances_count - failed_instances_count,
-                        verbose_name_plural,
-                        failed_instances_count)
-
-        LOGGER.info(u'Done replacing tag duplicate %s by %s in %s models: '
-                    u'%s instances processed, %s failed.', duplicate, self,
-                    sub_classes_count,
-                    all_models_all_instances_count,
-                    all_models_all_failed_count)
+        self.abstract_replace_duplicate(
+            duplicate=duplicate,
+            abstract_model=AbstractTaggedModel,
+            field_name='tags',
+            many_to_many=True
+        )
 
     @classmethod
     def get_tags_set(cls, tags_names, origin=None):
