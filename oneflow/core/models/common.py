@@ -91,6 +91,25 @@ ORIGINS = NamedTupleChoices(
     ('INTERNAL', 99, _(u'1flow internal origin'))
 )
 
+DUPLICATE_STATUS = NamedTupleChoices(
+    'DUPLICATE_STATUS',
+
+    # The register_duplicate() method has completed, but the
+    # replace_duplicate() task has not yet started.
+    ('NOT_REPLACED', 0, _(u'not yet replaced')),
+
+    # The replace_duplicate() task is currently running.
+    ('REPLACING', 1, _(u'Replacing')),
+
+    # In this state, given what the instance type is, it
+    # can be safely deleted (eg. tags), or kept (articles).
+    ('FINISHED', 2, _(u'Finished (no occurence left)')),
+
+    # In this state, the replace_duplicate() task
+    # must be run again to complete its operation.
+    ('FAILED', 3, _(u'One or more replacing failed')),
+)
+
 CACHE_ONE_HOUR  = 3600
 CACHE_ONE_DAY   = CACHE_ONE_HOUR * 24
 CACHE_ONE_WEEK  = CACHE_ONE_DAY * 7
