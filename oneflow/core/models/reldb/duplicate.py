@@ -157,10 +157,18 @@ def abstract_replace_duplicate_task(app_label, model_name, self_id, dupe_id):
             base_class.replace_duplicate(self, dupe)
 
         except AttributeError:
+            if base_class._meta.abstract:
+                # We don't expect abstract classes
+                # to implement replace_duplicate().
+                continue
+
             if u'oneflow' in unicode(base_class):
-                LOGGER.warning(u'Model %s has no `replace_duplicate()` '
-                               u'method.', verbose_name)
+                # This is likely a developper miss.
+
+                raise NotImplementedError(
+                    u'Model {0} has to implement a `replace_duplicate()` '
+                    u'method.'.format(verbose_name))
 
         except:
-            LOGGER.exception(u'Problem while replacing duplicate %s '
-                             u'%s by %s', verbose_name, self, dupe)
+            LOGGER.exception(u'Problem while running %s.replace_duplicate('
+                             u'#%s, #%s)', model.__name__, self.id, dupe.id)
