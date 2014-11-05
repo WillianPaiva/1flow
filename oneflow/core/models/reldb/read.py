@@ -960,7 +960,7 @@ def BaseItem_bad_reads_property_get(self):
 
 def User_reads_property_get(self):
 
-    return self.reads.filter(is_good=True)
+    return self.all_reads.filter(is_good=True)
 
 
 Folder.reads        = property(Folder_reads_property_get)
