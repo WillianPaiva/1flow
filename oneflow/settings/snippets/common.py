@@ -492,6 +492,9 @@ INSTALLED_APPS = [
     'mptt',
     'sorting_bootstrap',
 
+    # Seems not working with grappelli.
+    # 'django_object_actions',
+
     # Order matters for inplace & friends.
     'inplaceeditform_bootstrap',
     'inplaceeditform',
