@@ -59,7 +59,7 @@ from ..models.reldb import (
 
     Folder,
 
-    UserFeeds, UserSubscriptions,
+    UserFeeds, UserSubscriptions, UserCounters,
     Language,
 )
 
@@ -1436,6 +1436,13 @@ def check_internal_users_feeds_and_subscriptions(stop_on_exception=True,
             LOGGER.warning(u'%s does not have a django equivalent.',
                            mongo_user)
             continue
+
+        try:
+            user_counters = dj_user.user_counters
+
+        except:
+            user_counters = UserCounters(user=dj_user)
+            user_counters.save()
 
         try:
             user_feeds = dj_user.user_feeds
