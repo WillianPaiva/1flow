@@ -35,6 +35,8 @@ from django.utils.translation import ugettext_lazy as _
 
 # from oneflow.base.utils import register_task_method
 
+from ..common import DUPLICATE_STATUS
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -58,6 +60,14 @@ class AbstractDuplicateAwareModel(models.Model):
         'self', verbose_name=_(u'Duplicate of'), null=True, blank=True,
         help_text=_(u'This element is a duplicate of another, which is '
                     u'referenced here.'))
+
+    duplicate_status = models.IntegerField(
+        verbose_name=_(u'duplicate status'),
+        null=True, blank=True,
+        choices=DUPLICATE_STATUS.get_choices(),
+        help_text=_(u'This status will be filled only if the current '
+                    u'instance is a duplicate of another. See '
+                    u'models/common.py for possible values and explanations.'))
 
     # ————————————————————————————————————————————————————————————————— Methods
 
@@ -91,6 +101,7 @@ class AbstractDuplicateAwareModel(models.Model):
         # Register the duplication immediately, for other
         # background operations to use ourselves as value.
         duplicate.duplicate_of = self
+        duplicate.duplicate_status = DUPLICATE_STATUS.NOT_REPLACED
         duplicate.save()
 
         statsd.gauge('%s.counts.duplicates' % verbose_name_plural,
@@ -120,6 +131,10 @@ class AbstractDuplicateAwareModel(models.Model):
 
         This method was first inplemented for tags, then refactored for
         languages.
+
+        Returns False if *any* instance failed to replace the duplicate,
+        True if *all* instances replaced it correctly, so that the caller
+        can know if the replacing process must take place again or not.
         """
 
         if many_to_many:
@@ -139,7 +154,7 @@ class AbstractDuplicateAwareModel(models.Model):
         sub_classes = abstract_model.__subclasses__()
         sub_classes_count = len(sub_classes)
 
-        LOGGER.info(u'Replacing %s duplicate %s by master %s '
+        LOGGER.info(u'Replacing duplicate %s %s by master %s '
                     u'in %s models (%s)…',
                     base_instance_name,
                     duplicate, self,
@@ -155,12 +170,7 @@ class AbstractDuplicateAwareModel(models.Model):
             verbose_name = model._meta.verbose_name
             verbose_name_plural = model._meta.verbose_name_plural
 
-            if many_to_many:
-                params = {field_name + '__in': duplicate}
-            else:
-                params = {field_name: duplicate}
-
-            all_instances = model.objects.filter(**params)
+            all_instances = model.objects.filter(**{field_name: duplicate})
             all_instances_count = all_instances.count()
             failed_instances_count = 0
 
@@ -202,6 +212,8 @@ class AbstractDuplicateAwareModel(models.Model):
                     all_models_all_instances_count,
                     all_models_all_failed_count)
 
+        return all_models_all_failed_count == 0
+
 
 # ——————————————————————————————————————————————————————————————————————— Tasks
 
@@ -225,6 +237,11 @@ def abstract_replace_duplicate_task(app_label, model_name, self_id, dupe_id):
     self = model.objects.get(id=self_id)
     dupe = model.objects.get(id=dupe_id)
 
+    dupe.duplicate_status = DUPLICATE_STATUS.REPLACING
+    dupe.save()
+
+    all_went_ok = True
+
     # http://stackoverflow.com/a/4094654/654755
     for base_class in inspect.getmro(self._meta.model):
 
@@ -242,7 +259,7 @@ def abstract_replace_duplicate_task(app_label, model_name, self_id, dupe_id):
             continue
 
         try:
-            base_class.replace_duplicate(self, dupe)
+            succeeded = base_class.replace_duplicate(self, dupe)
 
         except AttributeError:
             if base_class._meta.abstract:
@@ -260,3 +277,15 @@ def abstract_replace_duplicate_task(app_label, model_name, self_id, dupe_id):
         except:
             LOGGER.exception(u'Problem while running %s.replace_duplicate('
                              u'#%s, #%s)', model.__name__, self.id, dupe.id)
+            all_went_ok = False
+
+        if not succeeded:
+            all_went_ok = False
+
+    if all_went_ok:
+        dupe.duplicate_status = DUPLICATE_STATUS.FINISHED
+
+    else:
+        dupe.duplicate_status = DUPLICATE_STATUS.FAILED
+
+    dupe.save()
