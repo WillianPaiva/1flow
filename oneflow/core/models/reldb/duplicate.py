@@ -91,9 +91,20 @@ class AbstractDuplicateAwareModel(models.Model):
                 # attribute if it is not None.
 
                 LOGGER.warning(u'%s %s is already a duplicate of '
-                               u'another instance, not %s. Aborting.',
-                               verbose_name, duplicate, duplicate.duplicate_of)
+                               u'another instance %s, not %s. Aborting.',
+                               verbose_name,
+                               duplicate,
+                               duplicate.duplicate_of,
+                               self)
                 return
+
+        if duplicate.duplicate_status == DUPLICATE_STATUS.FINISHED \
+                and not force:
+            LOGGER.warning(u'%s %s is already a duplicate of %s and '
+                           u'replacing process has already taken place. '
+                           u'use force=True to re-run.',
+                           verbose_name, duplicate, self)
+            return
 
         LOGGER.info(u'Registering %s %s as duplicate of %s…',
                     verbose_name, duplicate, self)
@@ -109,7 +120,7 @@ class AbstractDuplicateAwareModel(models.Model):
 
         if background:
             LOGGER.info(u'Replacing %s %s by %s in the background…',
-                        self._meta.verbose_name, self, duplicate)
+                        self._meta.verbose_name, duplicate, self)
 
             # NOTE: we don't directly transmit the model class
             # to ease with celery arguments serialization.
@@ -119,7 +130,7 @@ class AbstractDuplicateAwareModel(models.Model):
 
         else:
             LOGGER.info(u'Replacing %s %s by %s in the foreground…',
-                        self._meta.verbose_name, self, duplicate)
+                        self._meta.verbose_name, duplicate, self)
 
             return abstract_replace_duplicate_task(self._meta.app_label,
                                                    self._meta.object_name,
@@ -278,6 +289,11 @@ def abstract_replace_duplicate_task(app_label, model_name, self_id, dupe_id):
             LOGGER.exception(u'Problem while running %s.replace_duplicate('
                              u'#%s, #%s)', model.__name__, self.id, dupe.id)
             all_went_ok = False
+
+        if succeeded is None:
+            raise NotImplementedError(
+                u'Model {0}\'s `replace_duplicate()` method should return '
+                u'True/False but not None!'.format(verbose_name))
 
         if not succeeded:
             all_went_ok = False

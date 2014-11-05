@@ -34,7 +34,6 @@ from ..models.reldb import (
     # CombinedFeed, CombinedFeedRule,
     Author,
     Folder,
-    Language,
 
     SyncNode,
     NodePermissions,
@@ -51,7 +50,10 @@ admin.site.register(WebSite, WebSiteAdmin)
 
 admin.site.register(Author)
 admin.site.register(Folder)
-admin.site.register(Language)
+
+from language import Language, LanguageAdmin
+admin.site.register(Language, LanguageAdmin)
+
 admin.site.register(MailAccount)
 
 # admin.site.register(CombinedFeedRule)

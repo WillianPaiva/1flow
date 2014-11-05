@@ -116,19 +116,25 @@ class Language(MPTTModel, AbstractDuplicateAwareModel):
     def replace_duplicate(self, duplicate, *args, **kwargs):
         """ Replace a duplicate language by another. """
 
-        self.abstract_replace_duplicate(
+        all_went_ok = True
+
+        if not self.abstract_replace_duplicate(
             duplicate=duplicate,
             abstract_model=AbstractMultipleLanguagesModel,
             field_name='languages',
             many_to_many=True
-        )
+        ):
+            all_went_ok = False
 
-        self.abstract_replace_duplicate(
+        if not self.abstract_replace_duplicate(
             duplicate=duplicate,
             abstract_model=AbstractLanguageAwareModel,
             field_name='language',
             many_to_many=False
-        )
+        ):
+            all_went_ok = False
+
+        return all_went_ok
 
 
 class AbstractMultipleLanguagesModel(models.Model):
