@@ -20,7 +20,7 @@ from oneflow.core.models.nonrel import Article as MongoArticle
 LOGGER = logging.getLogger(__name__)
 
 
-def repair_missing_baseitems():
+def repair_missing_baseitems(fix_title=False, number=None):
     """ FIX the missing base items. """
 
     cursor = connection.cursor()
@@ -32,8 +32,9 @@ def repair_missing_baseitems():
         WHERE core_article.baseitem_ptr_id NOT IN (
             SELECT id
             FROM core_baseitem
-        ) LIMIT 10000;
-        """
+        ) LIMIT %s;
+        """,
+        [number or 100000]
     )
 
     value = cursor.fetchone()
@@ -47,7 +48,7 @@ def repair_missing_baseitems():
 
                 # Set a name we can query back without
                 # messing more if anything goes wrong.
-                name="@]-[@REPAIR@]-[@",
+                name=u"@]-[@REPAIR@]-[@",
 
                 # Manually set the type to Article.
                 polymorphic_ctype_id=57
@@ -58,16 +59,17 @@ def repair_missing_baseitems():
             LOGGER.exception(u'Could not create BaseItem with ID %s', bid)
             break
 
-        try:
-            article = Article.objects.get(baseitem_ptr_id=bid)
-            article.name = MongoArticle.objects.get(
-                url=article.url).title
-            article.save()
+        if fix_title:
+            try:
+                article = Article.objects.get(baseitem_ptr_id=bid)
+                article.name = MongoArticle.objects.get(
+                    url=article.url).title
+                article.save()
 
-        except:
-            LOGGER.exception(u'Could not set title of %s', bid)
+            except:
+                LOGGER.exception(u'Could not set title of %s', bid)
 
-        LOGGER.info(u'Repaired >>> %s', article)
+        # LOGGER.info(u'Repaired >>> %s', article)
 
         value = cursor.fetchone()
 
