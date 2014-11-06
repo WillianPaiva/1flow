@@ -80,7 +80,7 @@ def add_subscription(request, **kwargs):
     """ Subscribe current user to a feed. """
 
     if request.POST:
-        form = AddSubscriptionForm(request.POST, owner=request.user.mongo)
+        form = AddSubscriptionForm(request.POST, owner=request.user)
 
         if form.is_valid():
             added = form.save()
@@ -94,7 +94,7 @@ def add_subscription(request, **kwargs):
                                         + u'#' + __(u'unclassified-streams'))
 
     else:
-        form = AddSubscriptionForm(owner=request.user.mongo)
+        form = AddSubscriptionForm(owner=request.user)
 
     context = {'form': form}
 
