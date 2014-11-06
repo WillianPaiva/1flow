@@ -231,6 +231,9 @@ def production():
             'worker-03.1flow.io',
         ],
 
+        'worker_sync': [
+            'worker-01.1flow.io',
+        ],
         'worker_high': [
             'worker-01.1flow.io',
             'worker-02.1flow.io',

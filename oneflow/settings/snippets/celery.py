@@ -74,6 +74,7 @@ CELERY_QUEUES = (
     Queue('fetch', Exchange('fetch'), routing_key='fetch'),
     Queue('swarm', Exchange('swarm'), routing_key='swarm'),
     Queue('clean', Exchange('clean'), routing_key='clean'),
+    Queue('sync', Exchange('sync'), routing_key='sync'),
     # Queue('backup', Exchange('backup'), routing_key='backup'),
     Queue('background', Exchange('background'), routing_key='background'),
 )
