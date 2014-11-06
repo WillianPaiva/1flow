@@ -4,7 +4,7 @@
 #
 #   make runable && make run
 
-web: python manage.py runserver
+web: python manage.py runserver 0.0.0.0:8000
 #web: python manage.py run_gunicorn -b 0.0.0.0:8000 -w 3
 #web: uwsgi --http :8000 -H ${WORKON_HOME}/1flow --chdir ${HOME}/sources/1flow --wsgi-file oneflow/wsgi.py --master --processes 3
 
