@@ -209,15 +209,15 @@ urlpatterns = patterns(
     #     login_required(never_cache(views.manage_folder)),
     #     name='edit_folder'),
 
-    url(_(ur'^folder/(?P<folder>\d+)/delete$'),
+    url(_(ur'^folder/(?P<folder_id>\d+)/delete$'),
         login_required(never_cache(views.delete_folder)),
         name='delete_folder'),
 
-    url(_(ur'^folder/(?P<folder>\d+)/purge$'),
+    url(_(ur'^folder/(?P<folder_id>\d+)/purge$'),
         login_required(never_cache(views.delete_folder)),
         name='purge_folder', kwargs={'purge': True}),
 
-    url(_(ur'^folder/(?P<folder>\d+)$'),
+    url(_(ur'^folder/(?P<folder_id>\d+)$'),
         login_required(never_cache(views.manage_folder)),
         name='edit_folder'),
 

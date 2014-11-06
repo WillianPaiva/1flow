@@ -270,7 +270,7 @@ class SelectorViewTest(TestCase):
         # Make Folder #2 a child of Folder #1, and rename it.
         response = self.client.post(
             reverse('edit_folder', kwargs={
-                    'folder': str(self.folders[1].id)
+                    'folder_id': str(self.folders[1].id)
                     }),
             {
                 'parent': str(self.folders[0].id),
@@ -290,7 +290,7 @@ class SelectorViewTest(TestCase):
 
         response = self.client.get(
             reverse('edit_folder', kwargs={
-                    'folder': str(self.folders[1].id)
+                    'folder_id': str(self.folders[1].id)
                     }),
             follow=True,
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
@@ -317,7 +317,7 @@ class SelectorViewTest(TestCase):
         # and rename it; Now #1, #2 #3 are a chain.
         response = self.client.post(
             reverse('edit_folder', kwargs={
-                    'folder': str(self.folders[2].id)
+                    'folder_id': str(self.folders[2].id)
                     }),
             {
                 'parent': str(self.folders[1].id),
@@ -332,7 +332,7 @@ class SelectorViewTest(TestCase):
         # and rename it; Now #3 and #4 are sibling.
         response = self.client.post(
             reverse('edit_folder', kwargs={
-                    'folder': str(self.folders[3].id)
+                    'folder_id': str(self.folders[3].id)
                     }),
             {
                 'parent': str(self.folders[1].id),
@@ -345,7 +345,7 @@ class SelectorViewTest(TestCase):
 
         response = self.client.get(
             reverse('edit_folder', kwargs={
-                    'folder': str(self.folders[2].id)
+                    'folder_id': str(self.folders[2].id)
                     }),
             follow=True,
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
@@ -373,7 +373,7 @@ class SelectorViewTest(TestCase):
         # and indirect children settable as parent.
         response = self.client.get(
             reverse('edit_folder', kwargs={
-                    'folder': str(self.folders[0].id)
+                    'folder_id': str(self.folders[0].id)
                     }),
             follow=True,
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'

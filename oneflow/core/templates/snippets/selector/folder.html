@@ -22,7 +22,7 @@
         <div class="name-wrapper level-{{ level }}">
             {% if level|divisibleby:'2' %}
                 <span class="name" style="border-top-color: {{ folder_color_border }}">{{ folder.name }}</span>&nbsp;<span class="css-hover-muted">
-                    <button href="{% url 'edit_folder' folder=folder.id %}" data-toggle="modal" data-target="#" class="btn btn-xs btn-default"><i class="icon-cog"></i> {% trans "Folder settings" %}</button>
+                    <button href="{% url 'edit_folder' folder_id=folder.id %}" data-toggle="modal" data-target="#" class="btn btn-xs btn-default"><i class="icon-cog"></i> {% trans "Folder settings" %}</button>
                 {% if level|add:1 < folder.max_depth %}
                     &nbsp;<button
                     href="{% url 'add_folder_with_parent' parent=folder.id %}"
@@ -41,7 +41,7 @@
                     data-toggle="modal" data-target="#"><i
                     class="icon-fixed-width icon-folder-close"></i>&nbsp;{% trans "Add a sub-folder" %}</button>&nbsp;
                 {% endif %}
-                    <button href="{% url 'edit_folder' folder=folder.id %}"
+                    <button href="{% url 'edit_folder' folder_id=folder.id %}"
                     data-toggle="modal" data-target="#" class="btn btn-xs btn-default"><i class="icon-cog"></i> {% trans "Folder settings" %}</button>
                 </span>&nbsp;<span class="name" style="border-top-color: {{ folder_color_border }}">{{ folder.name }}</span>
 
