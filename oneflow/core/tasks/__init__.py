@@ -71,9 +71,6 @@ def refresh_all_feeds(limit=None, force=False):
         LOGGER.warning(u'Feed refresh disabled in configuration.')
         return
 
-    # TODO: WIPE THIS when Mongo → PG migration is complete!
-    refresh_all_mongo_feeds.delay()
-
     # Be sure two refresh operations don't overlap, but don't hold the
     # lock too long if something goes wrong. In production conditions
     # as of 20130812, refreshing all feeds takes only a moment:
