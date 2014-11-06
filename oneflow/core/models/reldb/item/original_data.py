@@ -294,6 +294,7 @@ def BaseItem_postprocess_feedparser_data_method(self, force=False,
     self.original_data.feedparser_processed = True
     self.original_data.save()
 
+
 def BaseItem_postprocess_google_reader_data_method(self, force=False,
                                                    commit=True):
 
@@ -318,4 +319,4 @@ BaseItem.postprocess_google_reader_data  = \
 # HEADS UP: we need to register against BaseItem, because OriginalData
 #           cannot .objects.get() an Article in register_task_method().
 register_task_method(BaseItem, BaseItem.postprocess_original_data,
-                     globals(), queue=u'low')
+                     globals(), queue=u'background')

@@ -140,10 +140,6 @@ class Article(BaseItem, UrlItem, ContentItem):
             new_article.save()
 
         except IntegrityError:
-            LOGGER.exception(u'Integrity error while creating article “%s” '
-                             u'(url: %s) in feed(s) %s.', title, url,
-                             u', '.join(unicode(f) for f in feeds))
-
             cur_article = cls.objects.get(url=url)
 
             created_retval = False
@@ -154,6 +150,13 @@ class Article(BaseItem, UrlItem, ContentItem):
                 # it is considered at partly new. At least, it's not
                 # as bad as being a true duplicate.
                 created_retval = None
+
+                LOGGER.info(u'Mutualized article “%s” (url: %s) in feed(s) %s.',
+                            title, url, u', '.join(unicode(f) for f in feeds))
+
+            else:
+                LOGGER.info(u'Duplicate article “%s” (url: %s) in feed(s) %s.',
+                            title, url, u', '.join(unicode(f) for f in feeds))
 
             cur_article.feeds.add(*feeds)
 
@@ -267,12 +270,10 @@ class Article(BaseItem, UrlItem, ContentItem):
 
 
 register_task_method(Article, Article.post_create_task,
-                     globals(), queue=u'high')
+                     globals(), queue=u'create')
 
 # register_task_method(Article, Article.find_image,
 #                      globals(), queue=u'fetch', default_retry_delay=3600)
-# register_task_method(Article, Article.replace_duplicate_everywhere,
-#                      globals(), queue=u'low')
 
 # ————————————————————————————————————————————————————————————————————— Signals
 

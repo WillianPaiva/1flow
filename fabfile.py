@@ -147,15 +147,15 @@ def preview(branch=None):
 
     env.sparks_options = {
         'nice_arguments': {
-            'worker_low': '-n 5',
-            'worker_medium': '-n 1',
+            # 'worker_low': '-n 5',
+            # 'worker_medium': '-n 1',
             'worker_high': '-n -3',
         },
 
         'worker_concurrency': {
-            'worker_low': 4,
-            'worker_medium': 4,
-            'worker_high': 6,
+            'worker_low': 2,
+            'worker_medium': 2,
+            'worker_high': 4,
         }
     }
 
@@ -221,37 +221,76 @@ def production():
     set_roledefs_and_parallel({
         'db': ['1flow.io'],
         'web': ['1flow.io'],
-        'beat': ['worker-01.1flow.io', ],
-        'shell': ['worker-03.1flow.io', ],
-        'flower': ['worker-01.1flow.io', ],
+        'beat': [
+            'worker-01.1flow.io',
+        ],
+        'flower': [
+            'worker-02.1flow.io',
+        ],
+        'shell': [
+            'worker-03.1flow.io',
+        ],
 
-        'worker_high':       ['worker-01.1flow.io',
-                              'worker-02.1flow.io',
-                              'worker-03.1flow.io', ],
+        'worker_sync': [
+            'worker-01.1flow.io',
+        ],
+        'worker_high': [
+            'worker-01.1flow.io',
+            'worker-02.1flow.io',
+            'worker-03.1flow.io',
+        ],
 
-        'worker_medium':     ['worker-02.1flow.io',
-                              'worker-03.1flow.io', ],
+        'worker_medium': [
+            'worker-02.1flow.io',
+            'worker-03.1flow.io',
+        ],
 
-        'worker_low':        ['worker-03.1flow.io', ],
+        'worker_low': [
+            'worker-03.1flow.io',
+        ],
 
-        'worker_fetch':      ['worker-02.1flow.io',
-                              'worker-03.1flow.io',
-                              'worker-04.1flow.io', ],
+        'worker_default': [
+            'worker-03.1flow.io',
+        ],
 
-        'worker_swarm':      ['worker-03.1flow.io',
-                              'worker-04.1flow.io', ],
+        'worker_check': [
+            'worker-02.1flow.io',
+        ],
 
-        'worker_clean':      ['worker-04.1flow.io', ],
+        'worker_create': [
+            'worker-01.1flow.io',
+            'worker-02.1flow.io',
+        ],
 
-        'worker_background': ['worker-04.1flow.io', ],
+        'worker_refresh': [
+            'worker-03.1flow.io',
+            'worker-04.1flow.io',
+        ],
+
+        'worker_fetch': [
+            'worker-03.1flow.io',
+        ],
+
+        'worker_swarm': [
+            'worker-03.1flow.io',
+            'worker-04.1flow.io',
+        ],
+
+        'worker_clean': [
+            'worker-04.1flow.io',
+        ],
+
+        'worker_background': [
+            'worker-04.1flow.io',
+        ],
     })
     env.sparks_options = {
         'nice_arguments': {
-            'worker_low': '-n 3',
-            'worker_fetch': '-n 5',
-            'worker_background': '-n 10',
-            'worker_swarm': '-n 2',
-            'worker_medium': '-n 1',
+            # 'worker_low': '-n 3',
+            # 'worker_fetch': '-n 5',
+            # 'worker_background': '-n 10',
+            # 'worker_swarm': '-n 2',
+            # 'worker_medium': '-n 1',
             'worker_high': '-n -3',
             'shell': '-n -1',
         },
@@ -267,14 +306,14 @@ def production():
         'autoscale': {
             'worker_swarm': '32,2',
             'worker_fetch': '8,1',
-            'worker_background': '3,0',
-            'worker_high': '6,1',
+            'worker_background': '2,0',
+            'worker_high': '3,1',
 
             # Maximum one worker to avoid hammering
             # the database with huge requests.
             'worker_clean': '1,0',
 
-            '__all__': '5,0',
+            '__all__': '2,0',
         },
 
         'max_tasks_per_child': {
