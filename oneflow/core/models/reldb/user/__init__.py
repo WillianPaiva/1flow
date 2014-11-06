@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -19,8 +19,26 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
+from ..common import User
+
 from feeds import UserFeeds  # NOQA
 
 from subscriptions import UserSubscriptions  # NOQA
 
 from counters import UserCounters  # NOQA
+
+
+def User_is_staff_or_superuser_and_enabled_property_get(self):
+    """ Say if the user is an enabled staff member or super user.
+
+
+    Eg. he/she *is* a staff member or super user **and** he/she has
+    activated super powers in his/her preferences panel.
+    """
+
+    return ((self.is_staff or self.is_superuser)
+            and self.preferences.staff.super_powers_enabled)
+
+
+User.is_staff_or_superuser_and_enabled = property(
+    User_is_staff_or_superuser_and_enabled_property_get)
