@@ -159,11 +159,6 @@ class Article(BaseItem, UrlItem, ContentItem):
 
             return cur_article, created_retval
 
-        tags = kwargs.pop('tags', [])
-
-        if tags:
-            new_article.tags.add(*tags)
-
         need_save = False
 
         if kwargs:
@@ -184,12 +179,20 @@ class Article(BaseItem, UrlItem, ContentItem):
             # Need to save because we will reload just after.
             new_article.save()
 
-        if feeds:
-            new_article.feeds.add(*feeds)
-
         LOGGER.info(u'Created %sarticle %s in feed(s) %s.', u'orphaned '
                     if reset_url else u'', new_article,
                     u', '.join(unicode(f) for f in feeds))
+
+        # Tags & feeds are ManyToMany, they
+        # need the article to be saved before.
+
+        tags = kwargs.pop('tags', [])
+
+        if tags:
+            new_article.tags.add(*tags)
+
+        if feeds:
+            new_article.feeds.add(*feeds)
 
         return new_article, True
 

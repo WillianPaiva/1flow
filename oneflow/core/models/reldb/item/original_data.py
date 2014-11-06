@@ -180,6 +180,9 @@ def BaseItem_postprocess_guess_original_data_method(self, force=False,
         if commit:
             self.save()
 
+        LOGGER.warning(u'Found origin type %s for item %s which had '
+                       u'none before.', self.origin, self)
+
         # Now that we have an origin type, re-run the real post-processor.
         self.postprocess_original_data(force=force, commit=commit)
 

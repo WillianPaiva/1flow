@@ -559,21 +559,25 @@ class RssAtomFeed(BaseFeed):
 
         try:
             new_article, created = Article.create_article(
+                # We *NEED* a title, but as we have no article.lang yet,
+                # it must be language independant as much as possible.
+                title=getattr(article, 'title', u' ? '),
+
                 # Sometimes feedparser gives us URLs with spaces in them.
                 # Using the full `urlquote()` on an already url-quoted URL
                 # could be very destructive, thus we patch only this case.
                 #
-                # If there is no `.link`, we get '' to be able to `replace()`,
+                # If there is no `.link`, we use '' to be able to `replace()`,
                 # but in fine `None` is a more regular "no value" mean. Sorry
                 # for the weird '' or None that just does the job.
                 url=getattr(article, 'link', '').replace(' ', '%20') or None,
+                feeds=[self],
 
-                # We *NEED* a title, but as we have no article.lang yet,
-                # it must be language independant as much as possible.
-                title=getattr(article, 'title', u' '),
-
-                excerpt=content, date_published=date_published,
-                feeds=[self], tags=tags, origin_type=ORIGINS.FEEDPARSER)
+                # These go into create_article(**kwargs)
+                tags=tags,
+                excerpt=content,
+                date_published=date_published,
+                origin=ORIGINS.FEEDPARSER)
 
         except:
             # NOTE: duplication handling is already
