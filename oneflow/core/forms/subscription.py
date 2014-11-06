@@ -22,7 +22,7 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 import logging
 
 from django import forms
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext, ugettext_lazy as _
 from django.core.urlresolvers import reverse, reverse_lazy
 
 from django_file_form.forms import FileFormMixin, UploadedFileField
@@ -30,7 +30,7 @@ from django_select2.widgets import (
     Select2Widget, Select2MultipleWidget, HeavySelect2MultipleWidget,
 )
 
-from ..models import BaseFeed, Folder, Subscription
+from ..models import BaseFeed, Folder, Subscription, subscribe_user_to_feed
 
 from fields import OnlyNameChoiceField, OnlyNameMultipleChoiceField
 
@@ -137,11 +137,12 @@ class AddSubscriptionForm(forms.Form):
         # not_shown = [s.feed.id for s in self.owner.subscriptions]
         # LOGGER.warning(len(not_shown))
 
-        # NOTE: this query is replicated in the completer view.
-        self.fields['feeds'].queryset = BaseFeed.good_feeds(
-            id__nin=[s.feed.id for s in self.owner.subscriptions])
+        # HEADS: this query is replicated in the completer view.
+        potential_feeds = self.owner.unsubscribed_feeds
 
-        count = self.fields['feeds'].queryset.count()
+        self.fields['feeds'].queryset = potential_feeds
+
+        count = potential_feeds.count()
 
         self.fields['feeds'].widget = HeavySelect2MultipleWidget(
             data_url=reverse_lazy('feeds_completer'))
@@ -176,26 +177,16 @@ class AddSubscriptionForm(forms.Form):
 
         created_subscriptions = []
 
-        selector_prefs = self.owner.preferences.selector
+        base_folder, created = Folder.add_folder(
+            name=ugettext(u'☄ Recently subscribed feeds'), user=self.owner)
 
         for feed in self.cleaned_data['feeds']:
 
-            folders = []
+            subscription = subscribe_user_to_feed(user=self.owner,
+                                                  feed=feed,
+                                                  background=True)
 
-            for tag in feed.tags:
-                folders.append(Folder.add_folder_from_tag(tag, self.owner))
-
-                if not selector_prefs.subscriptions_in_multiple_folders:
-                    # One is enough.
-                    break
-
-            subscription = Subscription.subscribe_user_to_feed(self.owner, feed,
-                                                               background=True)
-
-            subscription.folders = folders
-
-            if commit:
-                subscription.save()
+            subscription.folders.add(base_folder)
 
             created_subscriptions.append(subscription)
 
