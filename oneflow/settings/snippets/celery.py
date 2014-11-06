@@ -57,15 +57,23 @@ else:
 # prefetched elements.
 CELERYD_PREFETCH_MULTIPLIER = 8
 
-CELERY_DEFAULT_QUEUE = 'medium'
+CELERY_DEFAULT_QUEUE = 'default'
 
 CELERY_QUEUES = (
     Queue('high', Exchange('high'), routing_key='high'),
     Queue('medium', Exchange('medium'), routing_key='medium'),
     Queue('low', Exchange('low'), routing_key='low'),
+    Queue('default', Exchange('default'), routing_key='default'),
+
+    Queue('create', Exchange('create'), routing_key='create'),
+    Queue('refresh', Exchange('refresh'), routing_key='refresh'),
+    # Queue('index', Exchange('index'), routing_key='index'),
+    # Queue('crawl', Exchange('crawl'), routing_key='crawl'),
+    # Queue('archive', Exchange('archive'), routing_key='archive'),
     Queue('fetch', Exchange('fetch'), routing_key='fetch'),
     Queue('swarm', Exchange('swarm'), routing_key='swarm'),
     Queue('clean', Exchange('clean'), routing_key='clean'),
+    # Queue('backup', Exchange('backup'), routing_key='backup'),
     Queue('background', Exchange('background'), routing_key='background'),
 )
 

@@ -12,4 +12,4 @@ shell: python manage.py shell_ipynb
 
 flower: python manage.py celery flower --logging=warning --broker=${BROKER_URL} --broker_api=http://${AMQP_USERNAME}:${AMQP_PASSWORD}@${MAIN_SERVER}:15672/api
 
-worker: python manage.py celery worker -E --beat --loglevel=info --queues high,medium,low,background,fetch,clean,swarm --hostname worker.${HOSTNAME} --autoscale 4,1 --maxtasksperchild 12
+worker: python manage.py celery worker -E --beat --loglevel=info --queues default,high,medium,low,create,refresh,fetch,swarm,background,clean --hostname worker.${HOSTNAME} --autoscale 4,1 --maxtasksperchild 12
