@@ -58,48 +58,48 @@ reading_lists = {
 
     'read_all':         (_(u'All articles'),
                          _(u'You have {0} articles in 1flow'),
-                         'all_articles_count'),
+                         'all_items_count'),
     'read':             (_(u"All unread"),
                          _(u'You have {0} unread articles'),
-                         'unread_articles_count'),
+                         'unread_items_count'),
     'read_later':       (_(u"Read later"),
                          _(u'You have {0} articles to read later'),
-                         'bookmarked_articles_count'),
+                         'bookmarked_items_count'),
     'read_starred':     (_(u'Starred'),
                          _(u'You have {0} starred articles'),
-                         'starred_articles_count'),
+                         'starred_items_count'),
     'read_archived':    (_(u"Archived"),
                          _(u'You have {0} archived articles'),
-                         'archived_articles_count'),
+                         'archived_items_count'),
 
     'read_fun':         (_(u'Funbox'),
                          _(u'You have {0} fun articles'),
-                         'fun_articles_count'),
+                         'fun_items_count'),
 
     'read_facts':       (_(u'Facts'),
                          _(u'You have {0} articles marked as fact(s)'),
-                         'fact_articles_count'),
+                         'fact_items_count'),
     'read_numbers':     (_(u'Numbers'),
                          _(u'You have {0} articles marked as number(s)'),
-                         'number_articles_count'),
+                         'number_items_count'),
     'read_analysis':    (_(u'Analysis'),
                          _(u'You have {0} articles marked as analysis'),
-                         'analysis_articles_count'),
+                         'analysis_items_count'),
     'read_prospective': (_(u'Prospective'),
                          _(u'You have {0} articles marked as prospective'),
-                         'prospective_articles_count'),
+                         'prospective_items_count'),
     'read_know_how':    (_(u'Best-practices'),
                          _(u'You have {0} articles marked as best-practices'),
-                         'knowhow_articles_count'),
+                         'knowhow_items_count'),
     'read_rules':       (_(u'Regulations'),
                          _(u'You have {0} articles marked as regulation/legal'),
-                         'rules_articles_count'),
+                         'rules_items_count'),
     'read_quotes':      (_(u'Quotes'),
                          _(u'You have {0} articles marked as quote(s)'),
-                         'quote_articles_count'),
+                         'quote_items_count'),
     'read_knowledge':   (_(u'Knowledge'),
                          _(u'You have {0} articles marked as knowledge'),
-                         'knowledge_articles_count'),
+                         'knowledge_items_count'),
 }
 
 
@@ -143,6 +143,7 @@ random_colors = [
     'e629dc', 'be882d', 'b63bd3', '563aec', '716490', 'e27bc0', 'a17405'
     '80d8d8', '928525', 'f07344',
 ]
+
 
 @register.filter
 def naturaldelta(the_datetime):
@@ -561,8 +562,8 @@ def article_excerpt_content_display(article):
 def article_read_content(context, read):
 
     if read.is_restricted:
-        #content = article_excerpt_content_display(article)
-        #excerpt = True
+        # content = article_excerpt_content_display(article)
+        # excerpt = True
 
         # Having None triggers the iframe display, which is more elegant
         # and directly useful to the user than displaying just an excerpt.

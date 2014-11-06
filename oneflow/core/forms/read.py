@@ -27,7 +27,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from django_select2.widgets import HeavySelect2TagWidget
 
-#from ..models import User
+# from ..models import User
 from .fields import UsersMultipleAndTagField
 
 

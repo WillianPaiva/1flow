@@ -1,21 +1,21 @@
 # -*- coding: utf-8 -*-
-"""
-    Copyright 2013-2014 Olivier Cortès <oc@1flow.io>
+u"""
+Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
-    This file is part of the 1flow project.
+This file is part of the 1flow project.
 
-    1flow is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation, either version 3 of
-    the License, or (at your option) any later version.
+1flow is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
 
-    1flow is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
+1flow is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU Affero General Public
-    License along with 1flow.  If not, see http://www.gnu.org/licenses/
+You should have received a copy of the GNU Affero General Public
+License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
@@ -28,10 +28,12 @@ LOGGER = logging.getLogger(__name__)
 
 
 class OnlyNameChoiceField(forms.ModelChoiceField):
-    """ In forms, we need something much simpler
-        than the `__unicode__()` output. """
+
+    """ In forms we need something much simpler than `__unicode__()`. """
 
     def label_from_instance(self, obj):
+        """ Get an indented label from the folder depth level. """
+
 
         root = obj.owner.root_folder
 
@@ -57,10 +59,11 @@ class OnlyNameChoiceField(forms.ModelChoiceField):
 
 
 class OnlyNameMultipleChoiceField(forms.ModelMultipleChoiceField):
-    """ In forms, we need something much simpler
-        than the `__unicode__()` output. """
+
+    """ In forms we need something much simpler than `__unicode__()`. """
 
     def label_from_instance(self, obj):
+        """ Get an indented label from depth level; only name if no depth. """
 
         try:
             root = obj.owner.root_folder
@@ -90,16 +93,18 @@ class OnlyNameMultipleChoiceField(forms.ModelMultipleChoiceField):
 
 
 class UsersMultipleAndTagField(HeavySelect2TagField):
-    """ In forms, we need something much simpler
-        than the `__unicode__()` output. """
+
+    """ In forms we need something much simpler than `__unicode__()`. """
 
     def __init__(self, *args, **kwargs):
+        """ COME AND INIT ME!. """
 
         self.owner = kwargs.pop('owner')
 
         super(UsersMultipleAndTagField, self).__init__(*args, **kwargs)
 
     def create_new_value(self, value):
+        """ Create a new entry from address book. """
 
         LOGGER.info(u'CREATING new value from %s in %s address_book',
                     value, self.owner.username)
@@ -117,4 +122,4 @@ class UsersMultipleAndTagField(HeavySelect2TagField):
 
             LOGGER.info(u'ADDED %s to %s address_book',
                         value, self.owner.username)
-            #self.owner.safe_reload()
+            # self.user.safe_reload()

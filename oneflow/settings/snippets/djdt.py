@@ -1,22 +1,22 @@
 # -*- coding: utf-8 -*-
 # Debug-toolbar related
-"""
-    Copyright 2013 Olivier Cortès <oc@1flow.io>
+u"""
+Copyright 2013 Olivier Cortès <oc@1flow.io>.
 
-    This file is part of the 1flow project.
+This file is part of the 1flow project.
 
-    1flow is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation, either version 3 of
-    the License, or (at your option) any later version.
+1flow is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
 
-    1flow is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
+1flow is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU Affero General Public
-    License along with 1flow.  If not, see http://www.gnu.org/licenses/
+You should have received a copy of the GNU Affero General Public
+License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
@@ -26,17 +26,18 @@ INSTALLED_APPS += [
     'debug_toolbar',
 
     # WARNING: user panel is not compatible with djdt 1.x
-    #'debug_toolbar_user_panel',
+    # 'debug_toolbar_user_panel',
 
-    #'template_timings_panel',
-    #'debug_toolbar_mongo',
+    # 'template_timings_panel',
+    # 'debug_toolbar_mongo',
 ]
 
 DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
 # DJDT must come first or very early.
-MIDDLEWARE_CLASSES = ('debug_toolbar.middleware.DebugToolbarMiddleware',
-                      ) + MIDDLEWARE_CLASSES
+MIDDLEWARE_CLASSES = (
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+) + MIDDLEWARE_CLASSES
 
 DEBUG_TOOLBAR_PANELS = (
     'debug_toolbar.panels.redirects.RedirectsPanel',
@@ -44,8 +45,8 @@ DEBUG_TOOLBAR_PANELS = (
     'debug_toolbar.panels.headers.HeadersPanel',
     'debug_toolbar.panels.templates.TemplatesPanel',
 
-    #'template_timings_panel.panels.TemplateTimings.TemplateTimings',
-    #'debug_toolbar_mongo.panel.MongoDebugPanel',
+    # 'template_timings_panel.panels.TemplateTimings.TemplateTimings',
+    # 'debug_toolbar_mongo.panel.MongoDebugPanel',
 
     'debug_toolbar.panels.cache.CachePanel',
     'debug_toolbar.panels.sql.SQLPanel',
@@ -54,8 +55,8 @@ DEBUG_TOOLBAR_PANELS = (
     'debug_toolbar.panels.staticfiles.StaticFilesPanel',
 
     # Not usable or no used
-    #'debug_toolbar_user_panel.panels.UserPanel',
-    #'debug_toolbar.panels.signals.SignalsPanel',
+    # 'debug_toolbar_user_panel.panels.UserPanel',
+    # 'debug_toolbar.panels.signals.SignalsPanel',
 
     'debug_toolbar.panels.logging.LoggingPanel',
     'debug_toolbar.panels.settings.SettingsPanel',
@@ -63,14 +64,14 @@ DEBUG_TOOLBAR_PANELS = (
 )
 
 # If it becomes too slow, activate this.
-#DEBUG_TOOLBAR_MONGO_STACKTRACES = False
+# DEBUG_TOOLBAR_MONGO_STACKTRACES = False
 
 DEBUG_TOOLBAR_CONFIG = {
-    #'INTERCEPT_REDIRECTS': False,
-    'ENABLE_STACKTRACES' : False,
+    # 'INTERCEPT_REDIRECTS': False,
+    'ENABLE_STACKTRACES': False,
     'JQUERY_URL': '',
     #'SHOW_TOOLBAR_CALLBACK': custom_show_toolbar,
-    #'EXTRA_SIGNALS': ['myproject.signals.MySignal'],
-    #'HIDE_DJANGO_SQL': False,
-    #'TAG': 'div',
+    # 'EXTRA_SIGNALS': ['myproject.signals.MySignal'],
+    # 'HIDE_DJANGO_SQL': False,
+    # 'TAG': 'div',
 }
