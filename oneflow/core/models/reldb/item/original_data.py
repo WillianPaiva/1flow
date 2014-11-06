@@ -33,6 +33,7 @@ from oneflow.base.utils import register_task_method
 from ..common import ORIGINS, CONTENT_TYPES
 from ..mail_common import email_prettify_raw_message
 from ..tag import SimpleTag as Tag
+from ..language import Language
 from ..author import Author
 
 from base import BaseItem
@@ -222,7 +223,7 @@ def BaseItem_postprocess_feedparser_data_method(self, force=False,
 
             if language is not None:
                 try:
-                    self.language = language.lower()
+                    self.language = Language.get_by_code(language)
                     self.save()
 
                 except:
