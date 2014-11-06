@@ -296,20 +296,23 @@ class Folder(MPTTModel, DiffMixin):
 
         return children
 
-    def purge(self):
+    def purge(self, self_delete=True):
         """ Remove a folder and all its content (subfolders, subscriptions). """
 
-        for child in self.children:
-            child.purge()
-            child.delete()
+        for child in self.children.all():
 
-        for subscription in self.user.subscriptions.filter(folders=self):
+            # Don't bother multiple queries to delete children:
+            # with MPTT, deleting us will also delete our children.
+            child.purge(self_delete=False)
+
+        for subscription in self.subscriptions.all():
             # Don't delete subscription if present in another folder, in case
             # user has activated the multi-folder subscriptions preference.
-            if len(subscription.folders) == 1:
+            if subscription.folders.count() == 1:
                 subscription.delete()
 
-        self.delete()
+        if self_delete:
+            self.delete()
 
 
 # ——————————————————————————————————————————————————————————————— Tasks methods
