@@ -52,7 +52,7 @@ class Author(models.Model):
         verbose_name_plural = _(u'Authors')
         unique_together = ('origin_name', 'website', )
 
-    name = models.CharField(max_length=640,
+    name = models.CharField(max_length=7168,
                             null=True, blank=True,
                             verbose_name=_(u'Name'))
 
@@ -61,7 +61,7 @@ class Author(models.Model):
         help_text=_(u'Web site where this author was discovered.'))
 
     origin_name = models.CharField(
-        max_length=640, blank=True,
+        max_length=7168, blank=True,
         verbose_name=_(u'name at original discover'),
         help_text=_(u'When trying to guess authors, we '
                     u'have only a "fullname" equivalent. We need to '
