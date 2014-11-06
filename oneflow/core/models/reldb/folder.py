@@ -51,6 +51,14 @@ __all__ = [
 ]
 
 
+def qs_order_by_lower_name(queryset, field=None):
+    """ Order a QuerySet by lowercase(field); field is “name” by default. """
+
+    return queryset.extra(
+        select={'_lower_order_by_field_': 'lower({0})'.format(field or 'name')}
+    ).order_by('_lower_order_by_field_')
+
+
 def get_folder_image_upload_path(instance, filename):
 
     if not filename.strip():
@@ -184,6 +192,17 @@ class Folder(MPTTModel, DiffMixin):
         return 4 \
             if self.user.preferences.selector.extended_folders_depth \
             else 2
+
+    @property
+    def children_tree(self):
+        """ Return my children and their own, in tree order. """
+
+        return self.get_descendants()
+
+    @property
+    def children_by_name(self):
+
+        return qs_order_by_lower_name(self.children.all())
 
     # ——————————————————————————————————————————————————————————— Class methods
 
@@ -323,7 +342,7 @@ def User_root_folder_property_get(self):
 
 def User_top_folders_property_get(self):
 
-    return self.folders.filter(parent=self.root_folder).order_by('name')
+    return qs_order_by_lower_name(self.folders.filter(parent=self.root_folder))
 
 
 def User_folders_tree_property_get(self):
@@ -334,18 +353,13 @@ def User_folders_tree_property_get(self):
 
 
 def User_get_folders_tree_method(self, for_parent=False):
+    """ Return the user folder tree, excluding his/her root folder. """
 
-    folders = models.QuerySet(model=Folder)
+    root_folder = self.root_folder
 
-    # Articificialy increment the level by one to limit the folder
-    # tree to the N-1 levels. This clamps the folder manager modal.
-    level = 1 if for_parent else 0
-
-    for folder in self.top_folders.order_by('name'):
-        folders.append(folder)
-        folders.extend(folder.get_subfolders(level + 1))
-
-    return folders
+    # Thanks, Django-MPTT
+    return root_folder.get_descendants().filter(
+        level__lte=root_folder.max_depth - (1 if for_parent else 0))
 
 
 User.root_folder      = property(User_root_folder_property_get)
