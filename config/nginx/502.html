@@ -18,7 +18,7 @@
 			<h1><img src="/502-favicon.png" alt="1flow logo">&nbsp;<strong>1flow.io</strong></h1>
 			<h2><br />The webapp is either <em>under maintenance</em>, or the page you were looking for <em>took too long to load</em>.</h2>
 			<p>We agree this situation is very annoying, and are sorry for the inconvenience.</p>
-			<p><br />This page will automatically reload itself in <span id="CDTimer">40</span> seconds.<br />
+			<p><br />This page will automatically reload itself in <span id="CDTimer"></span> seconds.<br />
 				<img src="/502-loading-cylon.svg" alt="Loading icon" width="100%"></p>
 			<p><br />If this situation doesn't evolve in a few minutes, <a href="http://blog.1flow.io/">head to our blog to see if there is a planned maintenance</a>, or <a href="//webchat.freenode.net/?channels=#1flow">contact us directly on the discussion channel</a>.</p>
 		</div>
@@ -27,14 +27,19 @@
 
 <script language="JavaScript" type="text/javascript">
 /*<![CDATA[*/
-var TimerVal = 40;
+var TimerVal = 3601;
 var TimerSPan = document.getElementById("CDTimer");
+
 function CountDown(){
+
    setTimeout( "CountDown()", 1000 );
-   TimerSPan.innerHTML=TimerVal;
-   TimerVal=TimerVal-1;
-   if (TimerVal<0) { TimerVal=0;
-   location.reload(true);
+
+   TimerSPan.innerHTML = TimerVal;
+   TimerVal = TimerVal - 1;
+
+   if (TimerVal < 0) {
+		TimerVal = 0;
+		location.reload(true);
    }
 }
 CountDown();
