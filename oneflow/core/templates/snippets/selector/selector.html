@@ -8,21 +8,21 @@
                     <li class="muted not-ready" {% feature_not_ready %}>
                         {% trans "Inbox" %}</li>
 
-                    <li>{% special_subscription_list_with_count mongodb_user 'web_import' %}</li>
+                    <li>{% special_subscription_list_with_count user 'imported_items' %}</li>
 
-                    <li>{% reading_list_with_count mongodb_user 'read_later' True %}</li>
-                    <li>{% reading_list_with_count mongodb_user 'read' True %}</li>
+                    <li>{% reading_list_with_count user 'read_later' True %}</li>
+                    <li>{% reading_list_with_count user 'read' True %}</li>
                 </ul>
             </div>
             <div class="col-xs-6">
                 <ul class="list-unstyled">
-                    <li>{% reading_list_with_count mongodb_user 'read_fun' %}</li>
-                    <li>{% reading_list_with_count mongodb_user 'read_starred' %}</li>
+                    <li>{% reading_list_with_count user 'read_fun' %}</li>
+                    <li>{% reading_list_with_count user 'read_starred' %}</li>
 
                     <li class="muted not-ready" {% feature_not_ready %}>
                         {% trans "Sent Articles" %}</li>
 
-                    <li>{% reading_list_with_count mongodb_user 'read_all' %}</li>
+                    <li>{% reading_list_with_count user 'read_all' %}</li>
                 </ul>
             </div>
         </div>
@@ -33,18 +33,18 @@
         <div class="row">
             <div class="col-xs-6">
                 <ul class="list-unstyled">
-                  <li>{% reading_list_with_count mongodb_user 'read_facts' %}</li>
-                  <li>{% reading_list_with_count mongodb_user 'read_numbers' %}</li>
-                  <li>{% reading_list_with_count mongodb_user 'read_analysis' %}</li>
-                  <li>{% reading_list_with_count mongodb_user 'read_prospective' %}</li>
+                  <li>{% reading_list_with_count user 'read_facts' %}</li>
+                  <li>{% reading_list_with_count user 'read_numbers' %}</li>
+                  <li>{% reading_list_with_count user 'read_analysis' %}</li>
+                  <li>{% reading_list_with_count user 'read_prospective' %}</li>
                 </ul>
             </div>
             <div class="col-xs-6">
                 <ul class="list-unstyled">
-                  <li>{% reading_list_with_count mongodb_user 'read_know_how' %}</li>
-                  <li>{% reading_list_with_count mongodb_user 'read_rules' %}</li>
-                  <li>{% reading_list_with_count mongodb_user 'read_quotes' %}</li>
-                  <li>{% reading_list_with_count mongodb_user 'read_knowledge' %}</li>
+                  <li>{% reading_list_with_count user 'read_know_how' %}</li>
+                  <li>{% reading_list_with_count user 'read_rules' %}</li>
+                  <li>{% reading_list_with_count user 'read_quotes' %}</li>
+                  <li>{% reading_list_with_count user 'read_knowledge' %}</li>
                 </ul>
             </div>
         </div>
@@ -98,7 +98,7 @@
         </div>
     </div>
 </div>
-    {% for folder in mongodb_user.top_folders %}
+    {% for folder in user.top_folders %}
         {% captureas folder_color_border %}{% html_background_color_for_name folder.name 0.5 %}{% endcaptureas %}
         {% include "snippets/selector/folder.html" with folder=folder level=0 %}
     {% endfor %}

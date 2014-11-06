@@ -45,16 +45,17 @@ register = template.Library()
 
 reading_lists = {
 
-    'web_import': (_(u'Imported elements'),
-                   # tooltip_both,
-                   _(u'You have {0} newly imported items.'),
-                   # tooltip_unread
-                   _(u'You have {0} newly imported items, out of {1} so far'),
-                   # tooltip_all,
-                   _(u'You imported {0} web items so far'),
-                   # tooltip_none
-                   _(u'You did not import anything until now'),
-                   ),
+    'imported_items': (
+        _(u'Imported elements'),
+        # tooltip_both,
+        _(u'You have {0} newly imported items.'),
+        # tooltip_unread
+        _(u'You have {0} newly imported items, out of {1} so far'),
+        # tooltip_all,
+        _(u'You imported {0} web items so far'),
+        # tooltip_none
+        _(u'You did not import anything until now'),
+    ),
 
     'read_all':         (_(u'All articles'),
                          _(u'You have {0} articles in 1flow'),
@@ -101,6 +102,9 @@ reading_lists = {
                          _(u'You have {0} articles marked as knowledge'),
                          'knowledge_items_count'),
 }
+
+# MongoDB backward compatibility:
+reading_lists['web_import'] = reading_lists['imported_items']
 
 
 # colors =["%06x" % random.randint(0,0xFFFFFF) for i in range(255)]
@@ -210,7 +214,7 @@ def reading_list_with_count(user, view_name, show_unreads=False,
     else:
         count_span = u''
 
-    count = getattr(user, count_attr_name)
+    count = getattr(user.user_counters, count_attr_name)
 
     if show_unreads and count:
         has_unread_start = u'<span class="has-unread">'
@@ -240,7 +244,7 @@ def subscription_css(subscription, folder, level):
     if subscription.has_unread:
         css_classes += u' has-unread'
 
-    if subscription.is_closed:
+    if not subscription.feed.is_active:
         css_classes += u' is_closed'
 
     # On small devices, any level takes the whole width.
@@ -300,9 +304,9 @@ def special_subscription_list_with_count(user, special_name, css_classes=None):
     list_name, tooltip_both, tooltip_unread, tooltip_all, tooltip_none = \
         reading_lists[special_name]
 
-    subscription = getattr(user, special_name + u'_subscription')
-    all_count    = subscription.all_articles_count
-    unread_count = subscription.unread_articles_count
+    subscription = getattr(user.user_subscriptions, special_name)
+    all_count    = subscription.all_items_count
+    unread_count = subscription.unread_items_count
 
     count_span = u''
     make_span  = False
@@ -353,7 +357,7 @@ def container_reading_list_with_count(view_name, container_type, container,
     # u'<a href="{0}" class="{1} {2} async-get" data-async-get="count">{3}'
     # u'<span class="count"></span></a>'
 
-    count      = getattr(container, attrname + '_articles_count')
+    count      = getattr(container, attrname + '_items_count')
     view_name += u'_' + container_type
 
     if always_show or count > 0:

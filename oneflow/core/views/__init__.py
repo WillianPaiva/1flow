@@ -183,13 +183,13 @@ def source_selector(request, **kwargs):
     else:
         template = u'selector.html'
 
-    mongo_user     = request.user.mongo
-    selector_prefs = mongo_user.preferences.selector
+    user     = request.user
+    selector_prefs = user.preferences.selector
 
     return render(request, template, {
-        'subscriptions':               mongo_user.subscriptions,
-        'nofolder_open_subscriptions': mongo_user.nofolder_open_subscriptions,
-        'closed_subscriptions':        mongo_user.nofolder_closed_subscriptions,
+        'subscriptions':               user.subscriptions,
+        'nofolder_open_subscriptions': user.nofolder_open_subscriptions,
+        'closed_subscriptions':        user.nofolder_closed_subscriptions,
         'show_closed_streams':         selector_prefs.show_closed_streams,
         'titles_show_unread_count':    selector_prefs.titles_show_unread_count,
         'folders_show_unread_count':   selector_prefs.folders_show_unread_count,
