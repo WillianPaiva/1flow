@@ -150,6 +150,7 @@ def BaseItem_postprocess_original_data_method(self, force=False, commit=True):
     """ Generic method for original data post_processing. """
 
     methods_table = {
+        None: self.postprocess_guess_original_data,
         ORIGINS.NONE: self.postprocess_guess_original_data,
         ORIGINS.FEEDPARSER: self.postprocess_feedparser_data,
     }
