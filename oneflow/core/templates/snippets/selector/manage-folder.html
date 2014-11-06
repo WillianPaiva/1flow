@@ -6,61 +6,120 @@
 
 {% endcomment %}
 <div id="manage-folder" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h3 class="modal-title">{% if folder %}{% trans "Edit folder" %}{% else %}{% trans "Add a folder" %}{% endif %}</h3>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close"
+            data-dismiss="modal"
+            aria-hidden="true">&times;</button>
+        <h3 class="modal-title">
+          {% if folder %}
+            {% trans "Edit folder" %}
+          {% else %}
+            {% trans "Add a folder" %}
+          {% endif %}
+        </h3>
+      </div>
+      <div class="modal-body">
+        <form id="manage-folder-form"
+            class="form form-horizontal file-upload-form"
+            method="POST" enctype="multipart/form-data"
+            action="{% if folder %}{% url 'edit_folder' folder_id=folder.id %}{% else %}{% url 'add_folder' %}{% endif %}" >
+
+          {% csrf_token %}
+
+<div class="panel-group" id="accordion"
+  role="tablist" aria-multiselectable="true">
+  <div>
+
+    {% include "widgets/forms/field-input-text.html" with field=form.name %}
+    {% include "widgets/forms/field-generic-unstyled.html" with field=form.parent %}
+
+    {# This one is not really a textarea, but we use the display organization to make help_text fit nicely. BTW, widget-tweaks is kind enough to make any of our field templates work with any kind of field. This is a feature, and works because our templates are widget-agnostic. #}
+    {% include "widgets/forms/field-generic-fullwidth-nohelp.html" with field=form.subscriptions %}
+    {% include "widgets/forms/field-generic-unstyled.html" with field=form.image %}
+
+  </div>
+  <div>
+    <div role="tab" id="advanced-parameters-heading">
+      <h4 class="right">
+        <a class="collapsed btn-block"
+            data-toggle="collapse"
+            data-parent="#accordion"
+            href="#advanced-parameters"
+            aria-expanded="false"
+            aria-controls="advanced-parameters">
+          {% trans "More parameters and actions" %}
+        </a>
+      </h4>
+    </div>
+    <div id="advanced-parameters"
+        class="collapse"
+        role="tabpanel"
+        aria-labelledby="headingTwo">
+      <div>
+
+        {% include "widgets/forms/field-input-text.html" with field=form.slug %}
+        {% include "widgets/forms/field-generic-unstyled.html" with field=form.image_url %}
+
+        {% if folder %}
+
+          <div class="spacer15"></div>
+
+          <div class="row">
+
+            <div class="col-xs-6 centered">
+              <a href="{% url 'delete_folder' folder_id=folder.id %}"
+                  title="{% blocktrans %}All its subfolders will be moved one level up in the folder hierarchy. All its direct subscriptions will be moved to “unclassified”. Subscriptions in its subfolders will not be affected.{% endblocktrans %}"
+                  data-toggle="tooltip"
+                  class="btn btn-warning popover-bottom">
+                {% trans "Delete this folder" %}
+              </a>
             </div>
-            <div class="modal-body">
-                <form id="manage-folder-form"
-                    class="form form-horizontal" method="POST"
-                    action="{% if folder %}{% url 'edit_folder' folder=folder.id %}{% else %}{% url 'add_folder' %}{% endif %}" >
 
-                    {% csrf_token %}
-
-                    {% include "widgets/forms/field-input-text.html" with field=form.name %}
-                    {% include "widgets/forms/field-generic-unstyled.html" with field=form.parent %}
-
-                    {# This one is not really a textarea, but we use the display organization to make help_text fit nicely. BTW, widget-tweaks is kind enough to make any of our field templates work with any kind of field. This is a feature, and works because our templates are widget-agnostic. #}
-                    {% include "widgets/forms/field-generic-fullwidth-nohelp.html" with field=form.subscriptions %}
-
-                    {% if folder %}
-                    <hr />
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="spacer10"></div>
-                            <a href="{% url 'delete_folder' folder=folder.id %}" class="btn btn-warning">{% trans "Delete this folder" %}</a>
-                            <div class="spacer10"></div>
-                            <a href="{% url 'purge_folder' folder=folder.id %}" class="btn btn-danger">{% trans "Purge this folder" %}</a>
-
-                        </div>
-                        <div class="col-md-9">{% blocktrans %}
-                        If you <em>delete</em> this folder, all its subfolders will be moved one level up in the folder hierarchy. All its direct subscriptions will be moved to “unclassified”. Subscriptions in its subfolders will not be affected.<br ><br />
-                        If you <em>purge</em> it, <strong>everything inside will be deleted</strong> (and subscriptions cancelled). Use with caution, there is no confirmation.
-                    {% endblocktrans %}</div>
-                    </div>
-
-                    {% if config.INTERFACE_SHOW_EXPORT_IDS %}
-                        <hr />
-                        <div class="row">
-                            <div class="col-xs-12 centered" style="font-size: 120%">{% trans "Folder identifier:" %} <code>{{ folder.id }}</code></div>
-                        </div>
-                        {% endif %}
-
-                    {% endif %}
-                </form>
-
+            <div class="col-xs-6 centered">
+              <a href="{% url 'purge_folder' folder_id=folder.id %}"
+                  title="{% blocktrans %}EVERYTHING inside will be deleted. Subscriptions will be cancelled. Use with caution, there is no confirmation.{% endblocktrans %}"
+                  data-toggle="tooltip"
+                  class="btn btn-danger popover-bottom">
+                {% trans "Purge this folder" %}
+              </a>
             </div>
+
+          </div><!-- .row -->
+
+          {% if config.INTERFACE_SHOW_EXPORT_IDS %}
+              <hr />
+              <div class="row">
+                <div class="col-xs-12 centered" style="font-size: 120%">{% trans "Folder identifier:" %} <code>{{ folder.id }}</code></div>
+              </div>
+          {% endif %}
+
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
+</div>
+
+              </form>
+            </div>
+
             <div class="modal-footer">
 
-                <div class="pull-left">
+              <div class="pull-left">
+                <a href="#" class="btn btn-default"
+                    data-dismiss="modal">{% trans "Cancel" %}</a>
+              </div>
 
-                    <a href="#" class="btn btn-default"
-                        data-dismiss="modal">{% trans "Cancel" %}</a>
-                </div>
-
-                <a class="btn btn-primary" href="javascript:$('#manage-folder-form').submit()">{% if folder %}{% trans "Save" %}{% else %}{% trans "Create" %}{% endif %}</a>
+              <a class="btn btn-primary"
+                  href="javascript:$('#manage-folder-form').submit()">
+                {% if folder %}
+                  {% trans "Save" %}
+                {% else %}
+                  {% trans "Create" %}
+                {% endif %}
+              </a>
             </div>
         </div>
     </div>
