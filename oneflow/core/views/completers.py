@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -20,9 +20,10 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 """
 
 import logging
-from mongoengine import Q
 
-from ..models.nonrel import Feed
+from django.conf import settings
+from django.db.models import Q
+
 from ...base.utils import word_match_consecutive_once
 
 LOGGER = logging.getLogger(__name__)
@@ -37,6 +38,27 @@ class FeedsCompleterView(Select2View):
     def get_results(self, request, term, page, context):
         """ Return feed completions. """
 
+        matching_Q = (
+            Q(BaseFeed___name__icontains=term)
+            | Q(RssAtomFeed___url__icontains=term)
+            | Q(RssAtomFeed___website__name__icontains=term)
+            | Q(RssAtomFeed___website__url__icontains=term)
+        )
+
+        for lang_code, lang_name in settings.LANGUAGES:
+            matching_Q |= (
+                Q(**{'BaseFeed___short_description_{0}__icontains'.format(
+                    lang_code): term})
+                # | Q(**{'BaseFeed___description_{0}__icontains'.format(
+                # lang_code): term})
+                | Q(**{'RssAtomFeed___website__short_description_{0}__icontains'.format(
+                    lang_code): term})
+                # | Q(**{'RssAtomFeed___website__description_{0}__icontains'.format(
+                # lang_code): term})
+            )
+
+        matching_feeds = request.user.unsubscribed_feeds.filter(matching_Q)
+
         return (
             'nil',
             False,
@@ -46,9 +68,7 @@ class FeedsCompleterView(Select2View):
             #
             # we use unicode(id) to avoid
             # “ObjectId('51c8a0858af8069f5bafbb5a') is not JSON serializable”
-            [(unicode(f.id), f.name) for f in Feed.good_feeds(
-                id__nin=[s.feed.id for s in request.user.mongo.subscriptions]
-            ).filter(Q(name__icontains=term) | Q(site_url__icontains=term))]
+            [(unicode(f.id), f.name) for f in matching_feeds]
         )
 
 
