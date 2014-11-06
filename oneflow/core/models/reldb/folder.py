@@ -161,8 +161,8 @@ class Folder(MPTTModel, DiffMixin):
     def __unicode__(self):
         """ Wake up, pep257. That's just the unicode method. """
 
-        return _(u'{0} (#{1}) for user {2}{3}{4}').format(
-            self.name, self.id, self.user,
+        return _(u'{0} (#{1}, level {2}) for user {3}{4}{5}').format(
+            self.name, self.id, self.level, self.user,
             _(u', parent: {0} (#{1})').format(self.parent.name, self.parent.id)
             if self.parent else u'',
             _(u', children: {0}').format(u', '.join(
