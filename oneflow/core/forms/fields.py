@@ -34,28 +34,12 @@ class OnlyNameChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
         """ Get an indented label from the folder depth level. """
 
+        level = obj.level - 1
 
-        root = obj.owner.root_folder
+        if level < 0:
+            level = 0
 
-        # OMG. Please don't do this anywhere else. How ugly it is.
-        if obj.parent == root:
-            prefix = u''
-        elif obj.parent.parent == root:
-            prefix = u' ' * 8
-        elif obj.parent.parent.parent == root:
-            prefix = u' ' * 16
-        elif obj.parent.parent.parent.parent == root:
-            prefix = u' ' * 24
-        elif obj.parent.parent.parent.parent.parent == root:
-            prefix = u' ' * 32
-        elif obj.parent.parent.parent.parent.parent.parent == root:
-            prefix = u' ' * 40
-        elif obj.parent.parent.parent.parent.parent.parent.parent == root:
-            prefix = u' ' * 48
-        else:
-            prefix = u' ' * 56
-
-        return prefix + obj.name
+        return (u' ' * 8 * level) + obj.name
 
 
 class OnlyNameMultipleChoiceField(forms.ModelMultipleChoiceField):
@@ -66,30 +50,15 @@ class OnlyNameMultipleChoiceField(forms.ModelMultipleChoiceField):
         """ Get an indented label from depth level; only name if no depth. """
 
         try:
-            root = obj.owner.root_folder
+            level = obj.level - 1
 
         except AttributeError:
             return obj.name
 
-        # OMG. Please don't do this anywhere else. How ugly it is.
-        if obj.parent == root:
-            prefix = u''
-        elif obj.parent.parent == root:
-            prefix = u' ' * 8
-        elif obj.parent.parent.parent == root:
-            prefix = u' ' * 16
-        elif obj.parent.parent.parent.parent == root:
-            prefix = u' ' * 24
-        elif obj.parent.parent.parent.parent.parent == root:
-            prefix = u' ' * 32
-        elif obj.parent.parent.parent.parent.parent.parent == root:
-            prefix = u' ' * 40
-        elif obj.parent.parent.parent.parent.parent.parent.parent == root:
-            prefix = u' ' * 48
-        else:
-            prefix = u' ' * 56
+        if level < 0:
+            level = 0
 
-        return prefix + obj.name
+        return (u' ' * 8 * obj.level - 1) + obj.name
 
 
 class UsersMultipleAndTagField(HeavySelect2TagField):
@@ -99,7 +68,7 @@ class UsersMultipleAndTagField(HeavySelect2TagField):
     def __init__(self, *args, **kwargs):
         """ COME AND INIT ME!. """
 
-        self.owner = kwargs.pop('owner')
+        self.user = kwargs.pop('user')
 
         super(UsersMultipleAndTagField, self).__init__(*args, **kwargs)
 
@@ -107,7 +76,7 @@ class UsersMultipleAndTagField(HeavySelect2TagField):
         """ Create a new entry from address book. """
 
         LOGGER.info(u'CREATING new value from %s in %s address_book',
-                    value, self.owner.username)
+                    value, self.user.username)
 
         value = value.strip()
 
@@ -118,8 +87,8 @@ class UsersMultipleAndTagField(HeavySelect2TagField):
             raise RuntimeError(u'BAD %s' % value)
 
         if value not in (None, u''):
-            self.owner.update(add_to_set__address_book=value)
+            self.user.update(add_to_set__address_book=value)
 
             LOGGER.info(u'ADDED %s to %s address_book',
-                        value, self.owner.username)
+                        value, self.user.username)
             # self.user.safe_reload()
