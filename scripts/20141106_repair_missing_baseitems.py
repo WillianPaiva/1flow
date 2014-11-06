@@ -20,7 +20,7 @@ from oneflow.core.models.nonrel import Article as MongoArticle
 LOGGER = logging.getLogger(__name__)
 
 
-def repair_missing_baseitems(fix_title=False, number=None):
+def repair_missing_baseitems(fix_title=True, number=None):
     """ FIX the missing base items. """
 
     cursor = connection.cursor()
@@ -37,6 +37,7 @@ def repair_missing_baseitems(fix_title=False, number=None):
         [number or 100000]
     )
 
+    done = 0
     value = cursor.fetchone()
 
     while value:
@@ -69,8 +70,10 @@ def repair_missing_baseitems(fix_title=False, number=None):
             except:
                 LOGGER.exception(u'Could not set title of %s', bid)
 
-        # LOGGER.info(u'Repaired >>> %s', article)
+        if done % 100 == 0:
+            LOGGER.info(u'Repaired (at %s) >>> %s', done, article)
 
+        done += 1
         value = cursor.fetchone()
 
     # for article in Article.objects.filter(name__startswith='@]-[@REPAIR@]-[@'):  # NOQA
