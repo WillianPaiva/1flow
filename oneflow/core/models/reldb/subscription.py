@@ -728,7 +728,30 @@ def User_nofolder_closed_subscriptions_property_get(self):
     return self.nofolder_subscriptions.filter(feed__is_active=False)
 
 
-User.subscriptions           = property(User_subscriptions_property_get)
+def User_subscriptions_by_folder_property_get(self):
+    """ Return a dict of subscriptions, keyed by folder. """
+
+    by_folders = {}
+
+    for subscription in self.subscriptions.all():
+        for folder in subscription.folders.all():
+            if folder in by_folders:
+                by_folders[folder].append(subscription)
+
+            else:
+                by_folders[folder] = [subscription]
+
+    return by_folders
+
+
+def Folder_open_subscriptions_property_get(self):
+
+    # No need to query on the user, it's already common to folder and
+    # subscription. The "duplicate folder name" problem doesn't exist.
+    return self.subscriptions.filter(feed__is_active=True)
+
+
+User.subscriptions = property(User_subscriptions_property_get)
 User.open_subscriptions = property(User_open_subscriptions_property_get)
 User.closed_subscriptions = property(User_closed_subscriptions_property_get)
 User.nofolder_subscriptions = property(
@@ -737,7 +760,12 @@ User.nofolder_open_subscriptions = property(
     User_nofolder_open_subscriptions_property_get)
 User.nofolder_closed_subscriptions = property(
     User_nofolder_closed_subscriptions_property_get)
+User.subscriptions_by_folder = property(
+    User_subscriptions_by_folder_property_get)
+
 BaseFeed.check_subscriptions = generic_check_subscriptions_method
 User.check_subscriptions     = generic_check_subscriptions_method
 Read.check_subscriptions     = generic_check_subscriptions_method
 Read.set_subscriptions       = Read_set_subscriptions_method
+
+Folder.open_subscriptions = property(Folder_open_subscriptions_property_get)
