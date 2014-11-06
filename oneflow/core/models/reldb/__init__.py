@@ -42,7 +42,7 @@ from website import WebSite  # NOQA
 
 from author import Author  # NOQA
 
-from folder import Folder  # NOQA
+from folder import *  # NOQA
 
 from tag import *  # NOQA
 

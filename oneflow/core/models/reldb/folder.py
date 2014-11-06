@@ -19,10 +19,13 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
+import uuid
 import logging
 
 from django.db import models
+from django.db.models.signals import pre_save
 from django.utils.translation import ugettext_lazy as _
+from django.utils.text import slugify
 
 from sparks.django.models import DiffMixin
 
@@ -46,6 +49,22 @@ __all__ = [
     'folder_archived_items_count_default',
     'folder_bookmarked_items_count_default',
 ]
+
+
+def get_folder_image_upload_path(instance, filename):
+
+    if not filename.strip():
+        filename = uuid.uuid4()
+
+    # The filename will be used in a shell command later. In case the
+    # user/admin forgets the '"' in the configuration, avoid problems.
+    filename = filename.replace(u' ', u'_')
+
+    if instance:
+        return 'user/{0}/folder/{1}/images/{2}'.format(
+            instance.user.username, instance.id, filename)
+
+    return u'images/%Y/%m/%d/{0}'.format(filename)
 
 
 # ——————————————————————————————————————————————————————————————— Redis Helpers
@@ -93,12 +112,26 @@ class Folder(MPTTModel, DiffMixin):
                              related_name='folders')
 
     name = models.CharField(verbose_name=_(u'Name'), max_length=255)
+    slug = models.CharField(verbose_name=_(u'slug'), max_length=255,
+                            null=True, blank=True)
 
     parent = TreeForeignKey('self', null=True, blank=True,
                             related_name='children')
 
     date_created = models.DateTimeField(auto_now_add=True, blank=True,
                                         verbose_name=_(u'Date created'))
+
+    # Allow the user to also customize the visual of his/her subscription.
+    image = models.ImageField(
+        verbose_name=_(u'Image'), null=True, blank=True,
+        upload_to=get_folder_image_upload_path,
+        help_text=_(u'A custom image for the folder. Takes precedence over '
+                    u'image_url if both are filled.'))
+
+    image_url = models.URLField(
+        verbose_name=_(u'Image URL'), null=True, blank=True,
+        help_text=_(u'A full URL of an online image, if you prefer hosting '
+                    u'it outside of 1flow.'))
 
     # —————————————————————————————————————————————————————— Cached descriptors
 
@@ -264,6 +297,19 @@ class Folder(MPTTModel, DiffMixin):
 
 
 register_task_method(Folder, Folder.purge, globals(), queue=u'background')
+
+
+
+# ————————————————————————————————————————————————————————————————————— Signals
+
+
+def folder_pre_save(instance, **kwargs):
+
+    if not instance.slug:
+        instance.slug = slugify(instance.name)
+
+
+pre_save.connect(folder_pre_save, sender=Folder)
 
 
 # ————————————————————————————————————————————————————————— external properties
