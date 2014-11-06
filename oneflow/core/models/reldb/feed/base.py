@@ -42,6 +42,7 @@ from sparks.django.models import DiffMixin
 
 from oneflow.base.fields import IntRedisDescriptor, DatetimeRedisDescriptor
 from oneflow.base.utils.dateutils import now, timedelta, today
+from oneflow.base.utils import ro_classproperty
 
 from oneflow.base.utils import (
     register_task_method,
@@ -189,6 +190,19 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
     # objects = models.Manager()
     # objects = PolymorphicManager()
     # good_feeds = GoodFeedsManager()
+
+    @ro_classproperty
+    def good_feeds(cls):
+
+        return cls.objects.filter(
+            # not internal, still open and validated by a human.
+            is_internal=False,
+            is_active=True,
+            is_good=True,
+
+            # And not being duplicate of any other feed.
+            duplicate_of_id=None,
+        )
 
     # —————————————————————————————————————————————————————————————— Attributes
 
