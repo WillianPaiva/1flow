@@ -380,7 +380,11 @@ else:
 # We always include the *Cache* middlewares. In development &
 # pre-production it's a dummy cache, allowing to keep them here.
 MIDDLEWARE_CLASSES = (
-    #'ConditionalGetMiddleware',
+    # 'ConditionalGetMiddleware',
+    #
+    # Our middleware will automatically disable itself in non-DEBUG condition.
+    'oneflow.base.utils.middleware.PrintExceptionMiddleware',
+
     ('raven.contrib.django.raven_compat.middleware.'
         'SentryResponseErrorIdMiddleware'),
     'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',
@@ -388,8 +392,10 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
+
     # TODO: test and activate this.
-    #'django.middleware.transaction.TransactionMiddleware',
+    # 'django.middleware.transaction.TransactionMiddleware',
+
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
