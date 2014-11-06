@@ -1,6 +1,48 @@
-class ManageSubscriptionForm(forms.ModelForm):
+# -*- coding: utf-8 -*-
+u"""
+Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
+
+This file is part of the 1flow project.
+
+1flow is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+
+1flow is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public
+License along with 1flow.  If not, see http://www.gnu.org/licenses/
+
+"""
+
+import logging
+
+from django import forms
+from django.utils.translation import ugettext_lazy as _
+from django.core.urlresolvers import reverse, reverse_lazy
+
+from django_file_form.forms import FileFormMixin, UploadedFileField
+from django_select2.widgets import (
+    Select2Widget, Select2MultipleWidget, HeavySelect2MultipleWidget,
+)
+
+from ..models import BaseFeed, Folder, Subscription
+
+from fields import OnlyNameChoiceField, OnlyNameMultipleChoiceField
+
+
+LOGGER = logging.getLogger(__name__)
+
+
+class ManageSubscriptionForm(FileFormMixin, forms.ModelForm):
 
     """ Edit subscription properties. """
+
+    thumbnail = UploadedFileField(required=False)
 
     class Meta:
         model = Subscription
@@ -9,10 +51,10 @@ class ManageSubscriptionForm(forms.ModelForm):
         # the value of a user preference, we MUST NOT put `folders` here in
         # `fields`, because in one of 2 cases, setting the initial value will
         # not work because of attribute being a list and field being not.
-        fields = ('name', )
-        widgets = {
-            'name': forms.TextInput(),
-        }
+        fields = ('name', 'notes', 'thumbnail_url', )
+        # widgets = {
+        #     'name': forms.TextInput(),
+        # }
 
     def __init__(self, *args, **kwargs):
         """ init(me). """
@@ -20,11 +62,14 @@ class ManageSubscriptionForm(forms.ModelForm):
         super(ManageSubscriptionForm, self).__init__(*args, **kwargs)
 
         folders_queryset = self.instance.user.folders_tree
+        preferences = self.instance.user.preferences
 
-        if self.instance.user.preferences.selector.subscriptions_in_multiple_folders:  # NOQA
+        if preferences.selector.subscriptions_in_multiple_folders:
             self.fields['folders'] = OnlyNameMultipleChoiceField(
-                queryset=folders_queryset, required=False, label=_(u'Folders'),
-                widget=Select2MultipleWidget(), initial=self.instance.folders)
+                queryset=folders_queryset,
+                required=False, label=_(u'Folders'),
+                widget=Select2MultipleWidget(),
+                initial=self.instance.folders.all())
             # no empty_label here.
 
         else:
@@ -34,7 +79,7 @@ class ManageSubscriptionForm(forms.ModelForm):
                 empty_label=_(u'(None)'))
 
             try:
-                self.fields['folders'].initial = self.instance.folders[0]
+                self.fields['folders'].initial = self.instance.folders.all()[0]
 
             except IndexError:
                 # Subscription is not in any folder yet.
