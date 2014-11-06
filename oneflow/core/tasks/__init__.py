@@ -38,7 +38,7 @@ from oneflow.base.utils.dateutils import (now, today, timedelta,
 
 from gr_import import clean_gri_keys
 
-from mongo import refresh_all_mongo_feeds
+from mongo import refresh_all_mongo_feeds  # NOQA
 from migration import migrate_all_mongo_data  # NOQA
 from sync import sync_all_nodes  # NOQA
 
@@ -62,7 +62,7 @@ def clean_obsolete_redis_keys():
                 naturaldelta(pytime.time() - start_time))
 
 
-@task(queue='high')
+@task(queue='refresh')
 def refresh_all_feeds(limit=None, force=False):
     u""" Refresh all feeds (RSS/Mail/Twitter…). """
 
@@ -145,7 +145,7 @@ def refresh_all_feeds(limit=None, force=False):
                     count, feeds.count())
 
 
-@task(queue='high')
+@task(queue='refresh')
 def refresh_all_mailaccounts(force=False):
     """ Check all unusable e-mail accounts. """
 
@@ -191,7 +191,7 @@ def refresh_all_mailaccounts(force=False):
                     accounts.count(), MailAccount.objects.all().count())
 
 
-@task(queue='low')
+@task(queue='clean')
 def synchronize_statsd_gauges(full=False):
     """ Synchronize all counters to statsd. """
 

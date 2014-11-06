@@ -270,12 +270,10 @@ class Article(BaseItem, UrlItem, ContentItem):
 
 
 register_task_method(Article, Article.post_create_task,
-                     globals(), queue=u'high')
+                     globals(), queue=u'create')
 
 # register_task_method(Article, Article.find_image,
 #                      globals(), queue=u'fetch', default_retry_delay=3600)
-# register_task_method(Article, Article.replace_duplicate_everywhere,
-#                      globals(), queue=u'low')
 
 # ————————————————————————————————————————————————————————————————————— Signals
 

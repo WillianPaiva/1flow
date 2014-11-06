@@ -474,7 +474,8 @@ class Subscription(ModelDiffMixin, AbstractTaggedModel):
 
 register_task_method(Subscription, Subscription.mark_all_read_in_database,
                      globals(), queue=u'background')
-register_task_method(Subscription, Subscription.check_reads, globals(), queue=u'clean')
+register_task_method(Subscription, Subscription.check_reads,
+                     globals(), queue=u'check')
 
 
 # ————————————————————————————————————————————————————————————————————— Signals

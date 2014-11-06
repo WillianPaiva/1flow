@@ -893,7 +893,8 @@ class Read(AbstractTaggedModel):
                                        update_only=['bookmarked'])
 
 
-register_task_method(Read, Read.post_create_task, globals(), queue=u'high')
+register_task_method(Read, Read.post_create_task,
+                     globals(), queue=u'create')
 
 
 # ————————————————————————————————————————————————————————————————————— Signals
