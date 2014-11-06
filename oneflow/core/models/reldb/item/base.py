@@ -83,8 +83,8 @@ class BaseItem(PolymorphicModel,
         verbose_name = _(u'Base item')
         verbose_name_plural = _(u'Base items')
 
-    name = models.CharField(max_length=256, verbose_name=_(u'Name'))
-    slug = models.CharField(max_length=256, null=True, blank=True)
+    name = models.CharField(max_length=1024, verbose_name=_(u'Name'))
+    slug = models.CharField(max_length=1024, null=True, blank=True)
     user = models.ForeignKey(User, null=True, blank=True,
                              verbose_name=_(u'Creator'))
 
