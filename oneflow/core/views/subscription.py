@@ -30,8 +30,8 @@ from django.shortcuts import render, redirect
 from django.utils.translation import (ugettext_lazy as _,
                                       ugettext as __)
 
-from ..forms import ManageSubscriptionForm, AddSubscriptionForm
-from ..models.nonrel import Subscription
+# from ..forms import ManageSubscriptionForm, AddSubscriptionForm
+from ..models import Subscription
 
 LOGGER = logging.getLogger(__name__)
 
