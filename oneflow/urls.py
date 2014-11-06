@@ -61,7 +61,7 @@ urlpatterns = patterns(
     url(r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^djangojs/', include('djangojs.urls')),
     url(r'^inplaceeditform/', include('inplaceeditform.urls')),
-
+    url(r'^upload/', include('django_file_form.urls')),
     #
     # HEADS UP: this URL belongs to `core` and is not translated.
     #           This is an hard-coded exception.

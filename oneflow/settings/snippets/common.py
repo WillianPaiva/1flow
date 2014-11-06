@@ -480,6 +480,7 @@ INSTALLED_APPS = [
     'grappelli',
     'mongoadmin',
     'json_field',
+
     'django.contrib.admin',
     # 'django.contrib.admindocs',
     'django_reset',
@@ -491,6 +492,9 @@ INSTALLED_APPS = [
     'transmeta',
     'mptt',
     'sorting_bootstrap',
+
+    'django_file_form',
+    'django_file_form.ajaxuploader',
 
     # Seems not working with grappelli.
     # 'django_object_actions',

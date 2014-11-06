@@ -906,6 +906,18 @@ function setup_post_processors(parent) {
     });
 }
 
+function setup_ajax_uploader(parent) {
+
+    try {
+        initUploadFields(find_start(parent, 'file-upload-form'));
+
+    } catch (err) {
+        console.warning(
+            'Exception while initializing file uploader field: '
+            + err);
+    }
+}
+
 // ———————————————————————————————————————————————— reusable setup_everything()
 
 function setup_everything(parent) {
@@ -939,6 +951,8 @@ function setup_everything(parent) {
         setup_async_images(parent);
 
         setup_post_processors(parent);
+
+        setup_ajax_uploader(parent);
 
         // not fully tested, and not needed yet.
         //launch_async_gets(parent);
