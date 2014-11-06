@@ -250,6 +250,10 @@ def production():
             'worker-03.1flow.io',
         ],
 
+        'worker_check': [
+            'worker-02.1flow.io',
+        ],
+
         'worker_create': [
             'worker-01.1flow.io',
             'worker-02.1flow.io',

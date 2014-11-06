@@ -65,6 +65,7 @@ CELERY_QUEUES = (
     Queue('low', Exchange('low'), routing_key='low'),
     Queue('default', Exchange('default'), routing_key='default'),
 
+    Queue('check', Exchange('check'), routing_key='check'),
     Queue('create', Exchange('create'), routing_key='create'),
     Queue('refresh', Exchange('refresh'), routing_key='refresh'),
     # Queue('index', Exchange('index'), routing_key='index'),
