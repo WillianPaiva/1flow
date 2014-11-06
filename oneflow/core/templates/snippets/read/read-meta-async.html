@@ -18,7 +18,7 @@
             the current page: if it's a reading list, the user's experience will
             be interupted / restarted by the final redirection of the form.n
 
-          <a href="{% url 'edit_subscription' subscription=subscription.id %}"
+          <a href="{% url 'edit_subscription' subscription_id=subscription.id %}"
             data-toggle="modal" data-target="#" class="manage"><i
             class="icon-cog popover-top" title="{% trans "Manage the properties of this stream" %}"
             data-toggle="tooltip"></i></a>

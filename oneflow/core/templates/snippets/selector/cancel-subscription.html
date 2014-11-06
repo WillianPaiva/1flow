@@ -25,7 +25,7 @@
             <div class="modal-footer">
                 <a href="#" class="btn btn-default"
                     data-dismiss="modal">{% trans "I didn't meant that" %}</a>
-                <a href="{% url 'cancel_subscription' subscription=subscription.id %}"
+                <a href="{% url 'cancel_subscription' subscription_id=subscription.id %}"
                     class="btn btn-danger">{% trans "Do it. I'm sure. I won't cry." %}</a>
             </div>
         </div>

@@ -42,7 +42,7 @@
                         data-toggle="tooltip" class="manage popover-top"><i class="icon-globe"></i></a>
                 {% endif %}
 
-                <a href="{% url 'edit_subscription' subscription=subscription.id %}"
+                <a href="{% url 'edit_subscription' subscription_id=subscription.id %}"
                     data-toggle="modal" class="manage"
                     data-target="#manage-subscription-{{ subscription.id }}"><i
                     class="icon-cog popover-top"

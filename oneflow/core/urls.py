@@ -258,15 +258,15 @@ urlpatterns = patterns(
     #     login_required(never_cache(views.edit_subscription)),
     #     name='edit_subscription'),
 
-    url(_(ur'^subscription/(?P<subscription>\d+)/cancel$'),
+    url(_(ur'^subscription/(?P<subscription_id>\d+)/cancel$'),
         login_required(never_cache(views.cancel_subscription)),
         name='cancel_subscription_display'),
 
-    url(_(ur'^subscription/(?P<subscription>\d+)/cancel/do$'),
+    url(_(ur'^subscription/(?P<subscription_id>\d+)/cancel/do$'),
         login_required(never_cache(views.cancel_subscription)),
         name='cancel_subscription', kwargs={'confirm': True}),
 
-    url(_(ur'^subscription/(?P<subscription>\d+)$'),
+    url(_(ur'^subscription/(?P<subscription_id>\d+)$'),
         login_required(never_cache(views.edit_subscription)),
         name='edit_subscription'),
 
