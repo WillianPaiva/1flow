@@ -20,6 +20,7 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 """
 
 from ..common import User
+from ..feed import BaseFeed
 
 from feeds import UserFeeds  # NOQA
 
@@ -40,5 +41,14 @@ def User_is_staff_or_superuser_and_enabled_property_get(self):
             and self.preferences.staff.super_powers_enabled)
 
 
+def User_unsubscribed_feeds_property_get(self):
+    """ Return all good feeds the user is not subscribed to. """
+
+    return BaseFeed.good_feeds.exclude(
+        id__in=self.all_subscriptions.all().values_list(
+            'feed_id', flat=True))
+
+
 User.is_staff_or_superuser_and_enabled = property(
     User_is_staff_or_superuser_and_enabled_property_get)
+User.unsubscribed_feeds = property(User_unsubscribed_feeds_property_get)
