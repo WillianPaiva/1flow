@@ -381,13 +381,13 @@ else:
 # pre-production it's a dummy cache, allowing to keep them here.
 MIDDLEWARE_CLASSES = (
     # 'ConditionalGetMiddleware',
-    #
+   
     # Our middleware will automatically disable itself in non-DEBUG condition.
     'oneflow.base.utils.middleware.PrintExceptionMiddleware',
 
     ('raven.contrib.django.raven_compat.middleware.'
         'SentryResponseErrorIdMiddleware'),
-    'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',
+    # 'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',
     'django.middleware.cache.UpdateCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
@@ -409,11 +409,11 @@ MIDDLEWARE_CLASSES = (
     # behave badly because of that. BTW again, I didn't see
     # what it brought / added to the current implementation,
     # leaving it disabled changes nothing.
-    #'account.middleware.LocaleMiddleware',
+    # 'account.middleware.LocaleMiddleware',
     'account.middleware.TimezoneMiddleware',
 
     # TODO: activate this if needed.
-    #'social_auth.middleware.SocialAuthExceptionMiddleware',
+    # 'social_auth.middleware.SocialAuthExceptionMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'maintenancemode.middleware.MaintenanceModeMiddleware',
     'django.middleware.gzip.GZipMiddleware',
@@ -450,9 +450,9 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages',
 
     # Only one of them is needed.
-    #'social_auth.context_processors.social_auth_by_name_backends',
+    # 'social_auth.context_processors.social_auth_by_name_backends',
     'social_auth.context_processors.social_auth_backends',
-    #'social_auth.context_processors.social_auth_login_redirect',
+    # 'social_auth.context_processors.social_auth_login_redirect',
 
     # `base` processors
     'oneflow.base.context_processors.oneflow_version',
@@ -558,11 +558,11 @@ ACCOUNT_PASSWORD_RESET_REDIRECT_URL = u'signin'
 INPLACEEDIT_EDIT_EMPTY_VALUE = ugettext_lazy(u'Click to edit')
 INPLACEEDIT_AUTO_SAVE = True
 INPLACEEDIT_EVENT = "click"
-#INPLACEEDIT_DISABLE_CLICK = True  # For inplace edit text into a link tag
-#INPLACEEDIT_EDIT_MESSAGE_TRANSLATION = 'Write a translation' # transmeta option
+# INPLACEEDIT_DISABLE_CLICK = True  # For inplace edit text into a link tag
+# INPLACEEDIT_EDIT_MESSAGE_TRANSLATION = 'Write a translation' # transmeta option
 INPLACEEDIT_SUCCESS_TEXT = ugettext_lazy(u'Successfully saved')
 INPLACEEDIT_UNSAVED_TEXT = ugettext_lazy(u'You have unsaved changes')
-#INPLACE_ENABLE_CLASS = 'form-control'
+# INPLACE_ENABLE_CLASS = 'form-control'
 DEFAULT_INPLACE_EDIT_OPTIONS = {
     'auto_height': 1,            # be gentle, don't try to guess anything.
     'class_inplace': 'form',     # Be a little bootstrap compatible.
@@ -572,16 +572,16 @@ DEFAULT_INPLACE_EDIT_OPTIONS = {
 # modify the behavior of the DEFAULT_INPLACE_EDIT_OPTIONS usage, if True
 # then it use the default values not specified in your template, if False
 # it uses these options only when the dictionnary is empty (when you do put
-            # any options in your template)
-#DEFAULT_INPLACE_EDIT_OPTIONS_ONE_BY_ONE = True
+# any options in your template)
+# DEFAULT_INPLACE_EDIT_OPTIONS_ONE_BY_ONE = True
 ADAPTOR_INPLACEEDIT_EDIT = 'oneflow.base.models.OwnerOrSuperuserEditAdaptor'
 ADAPTOR_INPLACEEDIT = {
-    #example: 'tiny': 'inplaceeditform_extra_fields.fields.AdaptorTinyMCEField'
-    #'date': 'inplaceeditform_bootstrap.fields.AdaptorDateBootStrapField',
-    #'datetime': 'inplaceeditform_bootstrap.fields.AdaptorDateTimeBootStrapField',
+    # example: 'tiny': 'inplaceeditform_extra_fields.fields.AdaptorTinyMCEField'
+    # 'date': 'inplaceeditform_bootstrap.fields.AdaptorDateBootStrapField',
+    # 'datetime': 'inplaceeditform_bootstrap.fields.AdaptorDateTimeBootStrapField',
 }
-#INPLACE_GET_FIELD_URL = None # to change the url where django-inplaceedit use to get a field
-#INPLACE_SAVE_URL = None # to change the url where django-inplaceedit use to save a field
+# INPLACE_GET_FIELD_URL = None # to change the url where django-inplaceedit use to get a field
+# INPLACE_SAVE_URL = None # to change the url where django-inplaceedit use to save a field
 
 # A django-inplaceedit-bootstrap setting.
 INPLACEEDIT_EDIT_TOOLTIP_TEXT = ugettext_lazy(u'Click to edit')
@@ -591,7 +591,7 @@ INPLACEEDIT_EDIT_TOOLTIP_TEXT = ugettext_lazy(u'Click to edit')
 ENDLESS_PAGINATION_PER_PAGE = 100
 
 # This is done directly in the templates.
-#ENDLESS_PAGINATION_LOADING  = ugettext_lazy(u'loading more entries…')
+# ENDLESS_PAGINATION_LOADING  = ugettext_lazy(u'loading more entries…')
 
 # —————————————————————————————————————————————————————————————— django-select2
 
@@ -682,26 +682,26 @@ API_LIMIT_PER_PAGE = 10
 AUTHENTICATION_BACKENDS = (
     # WARNING: when activating Twitter, we MUST implement the email pipeline,
     # else the social-only registration will fail because user has no mail.
-    #'social_auth.backends.twitter.TwitterBackend',
-    #'social_auth.backends.facebook.FacebookBackend',
-    #'social_auth.backends.google.GoogleOAuthBackend',
+    # 'social_auth.backends.twitter.TwitterBackend',
+    # 'social_auth.backends.facebook.FacebookBackend',
+    # 'social_auth.backends.google.GoogleOAuthBackend',
     'social_auth.backends.google.GoogleOAuth2Backend',
-    #'social_auth.backends.google.GoogleBackend',
-    #'social_auth.backends.yahoo.YahooBackend',
-    #'social_auth.backends.browserid.BrowserIDBackend',
-    #'social_auth.backends.contrib.linkedin.LinkedinBackend',
-    #'social_auth.backends.contrib.disqus.DisqusBackend',
-    #'social_auth.backends.contrib.livejournal.LiveJournalBackend',
-    #'social_auth.backends.contrib.orkut.OrkutBackend',
-    #'social_auth.backends.contrib.foursquare.FoursquareBackend',
-    #'social_auth.backends.contrib.github.GithubBackend',
-    #'social_auth.backends.contrib.vk.VKOAuth2Backend',
-    #'social_auth.backends.contrib.live.LiveBackend',
-    #'social_auth.backends.contrib.skyrock.SkyrockBackend',
-    #'social_auth.backends.contrib.yahoo.YahooOAuthBackend',
-    #'social_auth.backends.contrib.readability.ReadabilityBackend',
-    #'social_auth.backends.contrib.fedora.FedoraBackend',
-    #'social_auth.backends.OpenIDBackend',
+    # 'social_auth.backends.google.GoogleBackend',
+    # 'social_auth.backends.yahoo.YahooBackend',
+    # 'social_auth.backends.browserid.BrowserIDBackend',
+    # 'social_auth.backends.contrib.linkedin.LinkedinBackend',
+    # 'social_auth.backends.contrib.disqus.DisqusBackend',
+    # 'social_auth.backends.contrib.livejournal.LiveJournalBackend',
+    # 'social_auth.backends.contrib.orkut.OrkutBackend',
+    # 'social_auth.backends.contrib.foursquare.FoursquareBackend',
+    # 'social_auth.backends.contrib.github.GithubBackend',
+    # 'social_auth.backends.contrib.vk.VKOAuth2Backend',
+    # 'social_auth.backends.contrib.live.LiveBackend',
+    # 'social_auth.backends.contrib.skyrock.SkyrockBackend',
+    # 'social_auth.backends.contrib.yahoo.YahooOAuthBackend',
+    # 'social_auth.backends.contrib.readability.ReadabilityBackend',
+    # 'social_auth.backends.contrib.fedora.FedoraBackend',
+    # 'social_auth.backends.OpenIDBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -791,7 +791,7 @@ LOGGING = {
         },
         # WARNINGs and critical errors are logged to sentry
         'sentry': {
-            'level': 'WARNING',
+            'level': 'ERROR',
             # 'filters': ['require_debug_false'],
             'class': 'raven.contrib.django.handlers.SentryHandler',
         },
