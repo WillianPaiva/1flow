@@ -61,10 +61,22 @@ def repair_missing_baseitems(fix_title=True, number=None):
             break
 
         if fix_title:
+            article = Article.objects.get(baseitem_ptr_id=bid)
+
             try:
-                article = Article.objects.get(baseitem_ptr_id=bid)
-                article.name = MongoArticle.objects.get(
-                    url=article.url).title
+                title = MongoArticle.objects.get(url=article.url).title
+            except:
+                try:
+                    title = article.original_data.feedparser_hydrated['title']
+                except:
+                    try:
+                        title = article.original_data.google_reader_hydrated['title']  # NOQA
+
+                    except:
+                        title = '@]-[@REPAIR@]-[@'
+
+            try:
+                article.name = title
                 article.save()
 
             except:
