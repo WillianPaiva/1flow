@@ -235,7 +235,7 @@ def create_feeds_from_url(feed_url, creator=None, recurse=True):
         raise Exception(u'Unparsable feed {0}: {1}'.format(feed_url, e))
 
     else:
-        # Wow. FeedParser creates a <anything>.feed
+        # Wow. FeedParser creates a <anything>.feed . Impressive.
         fp_feed = parsed_feed.feed
         website = WebSite.get_from_url(clean_url(
                                        fp_feed.get('link', feed_url)))
@@ -247,7 +247,7 @@ def create_feeds_from_url(feed_url, creator=None, recurse=True):
                 'description',
                 fp_feed.get('subtitle', u'')),
             url=feed_url,
-            created_by=creator,
+            user=creator,
             website=website)
         new_feed.save()
 
