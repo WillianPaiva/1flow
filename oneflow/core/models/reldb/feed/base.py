@@ -744,21 +744,19 @@ def basefeed_export_content_classmethod(cls, since, folder=None):
         dict is suitable to be converted to JSON.
     """
 
-    def origin_type(origin_type):
+    def origin(origin):
 
-        if origin_type in (ORIGINS.FEEDPARSER,
-                           ORIGINS.GOOGLE_READER):
+        if origin in (ORIGINS.FEEDPARSER, ORIGINS.GOOGLE_READER):
             return u'rss'
 
-        if origin_type == ORIGINS.TWITTER:
+        if origin == ORIGINS.TWITTER:
             return u'twitter'
 
-        if origin_type == ORIGINS.EMAIL_FEED:
+        if origin == ORIGINS.EMAIL_FEED:
             return u'email'
 
         # implicit:
-        # if origin_type == (ORIGINS.NONE,
-        #                   ORIGINS.WEBIMPORT):
+        # if origin == (ORIGINS.NONE, ORIGINS.WEBIMPORT):
         return u'web'
 
     def content_type(content_type):
@@ -820,7 +818,7 @@ def basefeed_export_content_classmethod(cls, since, folder=None):
                 image_url=article.image_url,
                 excerpt=article.excerpt,
                 content=article.content,
-                media=origin_type(article.origin_type),
+                media=origin(article.origin),
                 content_type=content_type(article.content_type),
                 date_published=article.date_published,
 
