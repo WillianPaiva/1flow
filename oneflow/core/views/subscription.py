@@ -64,7 +64,8 @@ def edit_subscription(request, **kwargs):
                              extra_tags='safe')
 
         return HttpResponseRedirect(reverse('source_selector')
-                                    + u"#{0}".format(subscription.id))
+                                    + u"#subscription-{0}".format(
+                                        subscription.id))
 
     else:
         if not request.is_ajax():
