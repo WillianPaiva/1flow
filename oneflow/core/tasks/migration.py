@@ -1413,13 +1413,13 @@ def migrate_all_feeds(stop_on_exception=True, verbose=False):
     # ————————————————————————————————————————————————————————————————— end
 
     LOGGER.info(u'RSS/Atom feeds migrated: {0}/{1} external, '
-                u'skipped {2} internal, {3} dupes, {4} already there.',
-                counters.migrated_feeds_count,
-                external_feeds_count,
-                all_feeds_count - external_feeds_count,
-                duplicates_external_count,
-                counters.migrated_feeds_count
-                - counters.created_feeds_count)
+                u'skipped {2} internal, {3} dupes, {4} already there.'.format(
+                    counters.migrated_feeds_count,
+                    external_feeds_count,
+                    all_feeds_count - external_feeds_count,
+                    duplicates_external_count,
+                    counters.migrated_feeds_count
+                    - counters.created_feeds_count))
 
 
 def check_internal_users_feeds_and_subscriptions(stop_on_exception=True,
@@ -1474,10 +1474,10 @@ def check_internal_users_feeds_and_subscriptions(stop_on_exception=True,
         UserFeeds.objects.all().count() - internal_feeds_count
 
     LOGGER.info(u'{0} users checked, {1} created, and {2} internal '
-                u'feeds created.',
-                all_users_count,
-                created_users_count,
-                created_internal_feeds_count)
+                u'feeds created.'.format(
+                    all_users_count,
+                    created_users_count,
+                    created_internal_feeds_count))
 
 
 def migrate_all_folders(stop_on_exception=True, verbose=False):
@@ -1520,12 +1520,12 @@ def migrate_all_folders(stop_on_exception=True, verbose=False):
                 counters.migrated_folders_count))
 
     LOGGER.info(u'Folders migrated: {0}/{1} (total {2}), '
-                u'{3} already there.',
-                counters.migrated_folders_count,
-                mongo_folders_count,
-                all_folders_count,
-                counters.migrated_folders_count
-                - counters.created_folders_count)
+                u'{3} already there.'.format(
+                    counters.migrated_folders_count,
+                    mongo_folders_count,
+                    all_folders_count,
+                    counters.migrated_folders_count
+                    - counters.created_folders_count))
 
 
 def migrate_all_subscriptions(stop_on_exception=True, verbose=False):
@@ -1570,12 +1570,12 @@ def migrate_all_subscriptions(stop_on_exception=True, verbose=False):
                 counters.migrated_subscriptions_count))
 
     LOGGER.info(u'Subscriptions migrated: {0}/{1} (total {2}), '
-                u'{3} already there.',
-                counters.migrated_subscriptions_count,
-                mongo_subscriptions_count,
-                all_subscriptions_count,
-                counters.migrated_subscriptions_count
-                - counters.created_subscriptions_count)
+                u'{3} already there.'.format(
+                    counters.migrated_subscriptions_count,
+                    mongo_subscriptions_count,
+                    all_subscriptions_count,
+                    counters.migrated_subscriptions_count
+                    - counters.created_subscriptions_count))
 
 
 def migrate_all_articles(stop_on_exception=True, verbose=False):
