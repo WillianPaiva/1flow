@@ -773,11 +773,6 @@ def userimport_feeds_details(user, feeds_urls):
     unsubscribed_feeds = [f for f in imported_feeds
                           if f.id not in (s.feed_id for s in subscriptions)]
 
-    LOGGER.info(u'urls: %s', feeds_urls)
-    LOGGER.info(u'feeds: %s', imported_feeds)
-    LOGGER.info(u'subs: %s', subscriptions)
-    LOGGER.info(u'unsubs: %s', unsubscribed_feeds)
-
     return {
         'subscriptions': subscriptions,
         'feeds': unsubscribed_feeds,
