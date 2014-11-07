@@ -274,11 +274,7 @@ class Folder(Document, DocumentHelperMixin, DocumentTreeMixin):
 
         self.delete()
 
-#
-# HEADS UP: this task conflicts with the one from reldb. Both cannot
-#           be active at the same time.
-#
-# register_task_method(Folder, Folder.purge, globals(), queue=u'low')
+register_task_method(Folder, Folder.purge, globals(), queue=u'low')
 
 # ————————————————————————————————————————————————————————— external properties
 #                                            Defined here to avoid import loops
