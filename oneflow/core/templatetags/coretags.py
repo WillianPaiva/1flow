@@ -27,6 +27,7 @@ from constance import config
 from markdown_deux import markdown as mk2_markdown
 
 from django import template
+from django.db.models import Q
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _, pgettext_lazy
@@ -192,7 +193,7 @@ def search_label(context):
 @register.simple_tag
 # HEADS UP: we can't cache simpletags results, it will
 # cache only one value, whatever the tag arguments are…
-#@cached(CACHE_ONE_WEEK)
+# @cached(CACHE_ONE_WEEK)
 def read_status_css(read):
 
     css = []
@@ -761,64 +762,41 @@ def mailfeed_rules_count(mailaccount):
 @register.inclusion_tag('snippets/history/userimport-feeds.html')
 def userimport_feeds_details(user, feeds_urls):
 
-    feeds = []
+    websites_urls = [(url[:-1] if url.endswith('/') else url)
+                     for url in feeds_urls]
 
-    for url in feeds_urls:
-        try:
-            feeds.append(nonrel_models.Feed.objects.get(url=url))
+    imported_feeds = models.RssAtomFeed.objects.filter(
+        Q(url__in=feeds_urls) | Q(website__url__in=websites_urls))
 
-        except:
-            LOGGER.exception(u'Could not get feed with URL %s', url)
+    subscriptions = user.subscriptions.filter(feed__in=imported_feeds)
 
-    subscriptions = []
+    unsubscribed_feeds = [f for f in imported_feeds
+                          if f.id not in (s.feed_id for s in subscriptions)]
 
-    # HEADS UP: copy[:], else the remove() gives half the results
-    for feed in feeds[:]:
-        try:
-            subscriptions.append(user.subscriptions.get(feed=feed))
-
-        except:
-            LOGGER.exception(u'Could not get subscription with feed %s '
-                             u'for user %s', feed, user)
-
-        else:
-            feeds.remove(feed)
+    LOGGER.info(u'urls: %s', feeds_urls)
+    LOGGER.info(u'feeds: %s', imported_feeds)
+    LOGGER.info(u'subs: %s', subscriptions)
+    LOGGER.info(u'unsubs: %s', unsubscribed_feeds)
 
     return {
         'subscriptions': subscriptions,
-        'feeds': feeds,
+        'feeds': unsubscribed_feeds,
     }
 
 
 @register.inclusion_tag('snippets/history/userimport-articles.html')
 def userimport_articles_details(user, articles_urls):
 
-    articles = []
+    imported_articles = models.Article.objects.filter(url__in=articles_urls)
 
-    for url in articles_urls:
-        try:
-            articles.append(nonrel_models.Article.objects.get(url=url))
+    reads = user.reads.filter(item__in=imported_articles)
 
-        except:
-            LOGGER.exception(u'Could not get article with URL %s', url)
-
-    reads = []
-
-    # HEADS UP: copy[:], else the remove() gives half the results
-    for article in articles[:]:
-        try:
-            reads.append(user.reads.get(article=article))
-
-        except:
-            LOGGER.exception(u'Could not get read with article %s for user %s',
-                             article, user)
-
-        else:
-            articles.remove(article)
+    unread_articles = [a for a in imported_articles
+                       if a.id not in (r.item_id for r in reads)]
 
     return {
         'reads': reads,
-        'articles': articles,
+        'articles': unread_articles,
     }
 
 @register.filter

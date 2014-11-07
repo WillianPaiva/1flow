@@ -51,7 +51,7 @@
     	<div id="historyentry-{{ historyentry.id }}-collapse-articles"
     	class="collapse userimport-content">
     	<blockquote>
-		{% userimport_articles_details user.mongo historyentry.results.created.articles %}
+		{% userimport_articles_details user historyentry.results.created.articles %}
 		</blockquote>
 		</div>
 	</li>
@@ -72,7 +72,7 @@
     	class="collapse">
 	<blockquote>
 
-	{% userimport_feeds_details user.mongo historyentry.results.created.feeds %}
+	{% userimport_feeds_details user historyentry.results.created.feeds %}
 	</blockquote>
 
 	</div>
