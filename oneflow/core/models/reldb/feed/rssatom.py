@@ -54,7 +54,7 @@ from ..item import Article
 from ..tag import SimpleTag
 
 from common import throttle_fetch_interval, dateutilDateHandler
-from base import BaseFeed, basefeed_refresh_task, basefeed_pre_save
+from base import BaseFeed, basefeed_pre_save
 
 LOGGER = logging.getLogger(__name__)
 
