@@ -783,7 +783,7 @@ def basefeed_export_content_classmethod(cls, since, folder=None):
 
     else:
         # Avoid import cycle…
-        from subscription import Subscription
+        from ..subscription import Subscription
 
         subscriptions = Subscription.objects.filter(
             folders=folder.get_descendants(include_self=True))
@@ -804,7 +804,7 @@ def basefeed_export_content_classmethod(cls, since, folder=None):
         return
 
     for feed in active_feeds:
-        new_items = feed.good_items.filter(date_published__gte=since)
+        new_items = feed.good_items.filter(Article___date_published__gte=since)
         new_items_count = new_items.count()
 
         if not new_items_count:
@@ -815,7 +815,7 @@ def basefeed_export_content_classmethod(cls, since, folder=None):
         for article in new_items:
             exported_items.append(OrderedDict(
                 id=unicode(article.id),
-                title=article.title,
+                title=article.name,
                 pages_url=[article.url],
                 image_url=article.image_url,
                 excerpt=article.excerpt,
@@ -824,11 +824,12 @@ def basefeed_export_content_classmethod(cls, since, folder=None):
                 content_type=content_type(article.content_type),
                 date_published=article.date_published,
 
-                authors=[(a.name or a.origin_name) for a in article.authors],
+                authors=[(a.name or a.origin_name)
+                         for a in article.authors.all()],
                 date_updated=None,
                 language=article.language,
                 text_direction=article.text_direction,
-                tags=[t.name for t in article.tags],
+                tags=[t.name for t in article.tags.all()],
             ))
 
         exported_items_count = len(exported_items)
@@ -864,7 +865,7 @@ def basefeed_export_content_classmethod(cls, since, folder=None):
             url=feed.url,
             thumbnail_url=feed.thumbnail_url,
             short_description=feed.short_description,
-            tags=[t.name for t in feed.tags],
+            tags=[t.name for t in feed.tags.all()],
             articles=exported_items,
         )
 
