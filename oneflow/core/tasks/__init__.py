@@ -201,7 +201,7 @@ def refresh_all_mailaccounts(force=False):
 
 
 @task(queue='clean')
-def synchronize_statsd_gauges(full=False):
+def synchronize_statsd_gauges(full=False, force=False):
     """ Synchronize all counters to statsd. """
 
     from oneflow.core.stats import (
