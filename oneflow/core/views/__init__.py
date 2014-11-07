@@ -46,11 +46,12 @@ from ..forms import WebPagesImportForm
 from ..models.nonrel import (
     Article, Read,
     Feed, Subscription,
-    Folder, CONTENT_TYPES_FINAL
+    CONTENT_TYPES_FINAL
 )
 
 from ..models import (
     HelpContent,
+    Folder,
     BaseFeed,
     IMPORT_STATUS
 )
