@@ -567,9 +567,9 @@ class Read(Document, DocumentHelperMixin):
 
                 # HEADS UP: this task is declared by
                 # the register_task_method call below.
-                read_post_create_task.delay(read.id)  # NOQA
+                read_mongo_post_create_task.delay(read.id)  # NOQA
 
-    def post_create_task(self):
+    def mongo_post_create_task(self):
         """ Method meant to be run from a celery task. """
 
         self.rating = self.article.default_rating
@@ -957,7 +957,8 @@ class Read(Document, DocumentHelperMixin):
                                        update_only=['bookmarked'])
 
 
-register_task_method(Read, Read.post_create_task, globals(), queue=u'high')
+register_task_method(Read, Read.mongo_post_create_task,
+                     globals(), queue=u'high')
 
 # ————————————————————————————————————————————————————————— external properties
 #                                            Defined here to avoid import loops
