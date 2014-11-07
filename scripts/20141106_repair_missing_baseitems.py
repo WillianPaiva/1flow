@@ -38,9 +38,9 @@ def repair_missing_baseitems(fix_title=True, number=None):
     )
 
     done = 0
-    value = cursor.fetchone()
+    values = cursor.fetchall()
 
-    while value:
+    for value in values:
         bid = value[0]
 
         try:
@@ -61,16 +61,18 @@ def repair_missing_baseitems(fix_title=True, number=None):
             break
 
         if fix_title:
-            article = Article.objects.get(baseitem_ptr_id=bid)
+            article = Article.objects.filter(baseitem_ptr_id=bid).select_related('original_data')[0]
 
             try:
-                title = MongoArticle.objects.get(url=article.url).title
+                title = article.original_data.feedparser_hydrated['title']
+
             except:
                 try:
-                    title = article.original_data.feedparser_hydrated['title']
+                    title = article.original_data.google_reader_hydrated['title']  # NOQA
+
                 except:
                     try:
-                        title = article.original_data.google_reader_hydrated['title']  # NOQA
+                        title = MongoArticle.objects.get(url=article.url).title
 
                     except:
                         title = '@]-[@REPAIR@]-[@'
@@ -86,7 +88,6 @@ def repair_missing_baseitems(fix_title=True, number=None):
             LOGGER.info(u'Repaired (at %s) >>> %s', done, article)
 
         done += 1
-        value = cursor.fetchone()
 
     # for article in Article.objects.filter(name__startswith='@]-[@REPAIR@]-[@'):  # NOQA
     #     article.name = MongoArticle.objects.get(url=article.url)
