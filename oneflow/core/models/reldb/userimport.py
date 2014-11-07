@@ -43,7 +43,13 @@ from oneflow.base.utils.dateutils import now, timedelta, naturaldelta
 
 from history import HistoryEntry
 
-from ..nonrel import Article, Read, Feed, FeedIsHtmlPageException, Subscription
+from . import (
+    Article, Read,
+    create_article_from_url,
+    create_feeds_from_url,
+    subscribe_user_to_feed,
+    FeedIsHtmlPageException,
+)
 
 
 LOGGER = logging.getLogger(__name__)
@@ -199,7 +205,7 @@ class UserImport(HistoryEntry):
             url = readability_object['article__url']
 
             if self.validate_url(url):
-                article = self.import_one_article_from_url(url)
+                article = self.import_from_one_url(url)
 
                 if article is None:
                     # article was not created, we
@@ -214,7 +220,7 @@ class UserImport(HistoryEntry):
                 article_needs_save = False
 
                 if readability_object['article__title']:
-                    article.title      = readability_object['article__title']
+                    article.name      = readability_object['article__title']
                     article_needs_save = True
 
                 if readability_object['article__excerpt']:
@@ -225,7 +231,7 @@ class UserImport(HistoryEntry):
                     article.save()
 
                 read = article.reads.get(
-                    subscriptions=self.user.mongo.web_import_subscription)
+                    subscriptions=self.user.user_subscriptions.imported_items)
 
                 # About parsing dates:
                 # http://stackoverflow.com/q/127803/654755
@@ -277,10 +283,10 @@ class UserImport(HistoryEntry):
         feeds = None
 
         try:
-            feeds = Feed.create_feeds_from_url(url)
+            feeds = create_feeds_from_url(url)
 
         except FeedIsHtmlPageException:
-            # This is expected, if we are importing web pages URLs.
+            # This is expected if we are importing web pages URLs.
             pass
 
         except Exception as e:
@@ -303,8 +309,9 @@ class UserImport(HistoryEntry):
 
                 for feed, created in feeds:
 
-                    Subscription.subscribe_user_to_feed(self.user.mongo, feed,
-                                                        background=True)
+                    subscribe_user_to_feed(user=self.user,
+                                           feed=feed,
+                                           background=True)
 
                     if created:
                         message_user(self.user,
@@ -317,21 +324,21 @@ class UserImport(HistoryEntry):
                                        u'“{0}”.').format(feed.name),
                                      constants.INFO)
 
-                return
+                return None
 
         # ———————————————————————————————————————————— Try to create an article
 
         article = None
 
         try:
-            article, created = \
-                self.user.mongo.web_import_feed.create_article_from_url(url)
+            article, created = create_article_from_url(
+                url, feeds=[self.user.user_feeds.imported_items])
 
             # Keep the read accessible over time.
             LOGGER.warning(u'TODO: make sure import_one_article_from_url() has '
                            u'no race condition when marking new read archived.')
 
-            read = Read.objects.get(article=article, user=self.user.mongo)
+            read = Read.objects.get(item=article, user=self.user)
             read.mark_archived()
 
         except Exception as e:
@@ -343,15 +350,21 @@ class UserImport(HistoryEntry):
 
             message_user(self.user,
                          _(u'Successfully imported article '
-                           u'“{0}”.').format(article.title),
+                           u'“{0}”.').format(article.name),
                          constants.INFO)
 
-            return article
+        return article
 
     # ———————————————————————————————————————————————— All-in-one import runner
 
     def run(self):
         """ Run the import. """
+
+        #
+        # NOTE: we don't care if the import was already running,  finished,
+        #       whatever. This class is able to recover and re-run itself
+        #       over and over without doing bad thing in the database.
+        #
 
         self.status = IMPORT_STATUS.RUNNING
         self.date_started = now()
