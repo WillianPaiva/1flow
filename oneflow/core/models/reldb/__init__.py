@@ -32,10 +32,6 @@ from helpcontent import HelpContent  # NOQA
 
 from mailaccount import MailAccount  # NOQA
 
-from history import HistoryEntry  # NOQA
-
-from userimport import *  # NOQA
-
 from language import Language  # NOQA
 
 from website import WebSite  # NOQA
@@ -58,6 +54,10 @@ from read import *  # NOQA
 from user import *  # NOQA
 
 from preferences import Preferences  # NOQA
+
+from history import HistoryEntry  # NOQA
+
+from userimport import *  # NOQA
 
 # ————————————————————————————————————————————————————————————————— 1flow index
 
