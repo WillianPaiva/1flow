@@ -24,6 +24,7 @@ from constance import config
 
 from celery import task
 
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from oneflow.base.utils import RedisExpiringLock
@@ -55,7 +56,10 @@ def refresh_all_mongo_feeds(limit=None, force=False):
     # as of 20130812, refreshing all feeds takes only a moment:
     # [2013-08-12 09:07:02,028: INFO/MainProcess] Task
     #    oneflow.core.tasks.refresh_all_mongo_feeds succeeded in 1.99886608124s.
-    my_lock = RedisExpiringLock('refresh_all_mongo_feeds', expire_time=120)
+    my_lock = RedisExpiringLock(
+        'refresh_all_mongo_feeds',
+        expire_time=settings.FEED_GLOBAL_REFRESH_DELAY * 60
+    )
 
     if not my_lock.acquire():
         if force:
@@ -118,7 +122,9 @@ def refresh_all_mongo_feeds(limit=None, force=False):
                     count += 1
 
         finally:
-            my_lock.release()
+            # HEADS UP: see core.tasks.refresh_all_feeds() for note.
+            # my_lock.release()
+            pass
 
         LOGGER.info(u'Launched %s refreshes out of %s feed(s) checked.',
                     count, feeds.count())

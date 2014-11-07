@@ -304,17 +304,18 @@ def production():
         # },
 
         'autoscale': {
-            'worker_swarm': '32,2',
-            'worker_refresh': '16,1',
-            'worker_fetch': '8,1',
-            'worker_background': '2,0',
-            'worker_high': '3,1',
+            'worker_swarm': '40,5',
+            'worker_refresh': '24,3',
+            'worker_fetch': '16,2',
+
+            # 'worker_high': '8,1',
 
             # Maximum one worker to avoid hammering
             # the database with huge requests.
             'worker_clean': '1,0',
+            'worker_background': '2,0',
 
-            '__all__': '2,0',
+            '__all__': '12,1',
         },
 
         'max_tasks_per_child': {
