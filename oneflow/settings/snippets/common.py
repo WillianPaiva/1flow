@@ -383,7 +383,7 @@ MIDDLEWARE_CLASSES = (
     #'ConditionalGetMiddleware',
     ('raven.contrib.django.raven_compat.middleware.'
         'SentryResponseErrorIdMiddleware'),
-    'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',
+    # 'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',
     'django.middleware.cache.UpdateCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
@@ -781,7 +781,7 @@ LOGGING = {
         },
         # WARNINGs and critical errors are logged to sentry
         'sentry': {
-            'level': 'WARNING',
+            'level': 'ERROR',
             # 'filters': ['require_debug_false'],
             'class': 'raven.contrib.django.handlers.SentryHandler',
         },
