@@ -785,8 +785,10 @@ def basefeed_export_content_classmethod(cls, since, folder=None):
         # Avoid import cycle…
         from subscription import Subscription
 
-        subscriptions = Subscription.objects.filter(folders=folder)
-        active_feeds = [s.feed for s in subscriptions if not s.feed.closed]
+        subscriptions = Subscription.objects.filter(
+            folders=folder.get_descendants(include_self=True))
+
+        active_feeds = [s.feed for s in subscriptions if s.feed.is_active]
         active_feeds_count = len(active_feeds)
 
     exported_websites = {}
