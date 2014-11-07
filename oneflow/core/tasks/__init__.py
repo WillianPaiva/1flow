@@ -211,7 +211,30 @@ def synchronize_statsd_gauges(full=False):
         synchronize_statsd_authors_gauges,
     )
 
-    synchronize_statsd_articles_gauges(full=full)
-    synchronize_statsd_tags_gauges(full=full)
-    synchronize_statsd_websites_gauges(full=full)
-    synchronize_statsd_authors_gauges(full=full)
+    my_lock = RedisExpiringLock('synchronize_statsd_gauges',
+                                expire_time=3600)
+
+    if not my_lock.acquire():
+        if force:
+            my_lock.release()
+            my_lock.acquire()
+            LOGGER.warning(_(u'Forcing statsd gauges synchronization…'))
+
+        else:
+            # Avoid running this task over and over again in the queue
+            # if the previous instance did not yet terminate. Happens
+            # when scheduled task runs too quickly.
+            LOGGER.warning(u'synchronize_statsd_gauges() is already locked, '
+                           u'aborting.')
+            return
+
+    with benchmark('synchronize_statsd_gauges()'):
+
+        try:
+            synchronize_statsd_articles_gauges(full=full)
+            synchronize_statsd_tags_gauges(full=full)
+            synchronize_statsd_websites_gauges(full=full)
+            synchronize_statsd_authors_gauges(full=full)
+
+        finally:
+            my_lock.release()
