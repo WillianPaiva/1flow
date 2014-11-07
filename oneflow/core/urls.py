@@ -408,6 +408,11 @@ urlpatterns = patterns(
         never_cache(views.export_content),
         name='export_folder_content'),
 
+    url(_(ur'^export/folder/(?P<folder_slug>\w+)/'
+          ur'(?P<since>[^/]+)/(?P<token>\w{32,32})/?$'),
+        never_cache(views.export_content),
+        name='export_folder_content'),
+
     url(_(ur'^export/(?P<since>[^/]+)/(?P<token>\w{32,32})/?$'),
         never_cache(views.export_content),
         name='export_content'),

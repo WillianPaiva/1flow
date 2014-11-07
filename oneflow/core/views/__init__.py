@@ -31,7 +31,7 @@ from django.http import (
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.contrib import messages
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.template import add_to_builtins
 from django.utils.translation import ugettext_lazy as _
 
@@ -49,7 +49,11 @@ from ..models.nonrel import (
     Folder, CONTENT_TYPES_FINAL
 )
 
-from ..models.reldb import HelpContent, IMPORT_STATUS
+from ..models import (
+    HelpContent,
+    BaseFeed,
+    IMPORT_STATUS
+)
 
 from ..gr_import import GoogleReaderImport
 
@@ -401,15 +405,23 @@ def export_content(request, **kwargs):
     since = kwargs.get('since')
     format = request.GET.get('format', 'json')
     folder_id = kwargs.get('folder_id', None)
+    folder_slug = kwargs.get('folder_slug', None)
 
-    folder = None if folder_id is None else Folder.get_or_404(folder_id)
+    if folder_id:
+        folder = get_object_or_404(Folder, id=folder_id)
+
+    elif folder_slug:
+        folder = get_object_or_404(Folder, slug=folder_slug)
+
+    else:
+        folder = None
 
     if format == 'json':
 
         try:
             content = {
                 'result': 'OK',
-                'data': Feed.export_content(since, folder=folder),
+                'data': BaseFeed.export_content(since, folder=folder),
             }
 
         except Exception as e:
