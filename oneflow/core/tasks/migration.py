@@ -39,7 +39,7 @@ from django.db import connection
 from sparks.foundations.classes import SimpleObject
 
 from oneflow.base.utils import RedisExpiringLock
-from oneflow.base.utils.dateutils import benchmark
+from oneflow.base.utils.dateutils import benchmark, now
 
 from ..models.common import (
     USER_FEEDS_SITE_URL,
@@ -633,15 +633,16 @@ def migrate_article(mongo_article):
             needs_save = True
 
         except:
-            LOGGER.exception(u'Could not reassign source on article %s',
-                             article)
+            LOGGER.exception(u'Could not reassign source on article %s '
+                             u'(skipped)', article.id)
 
     feeds = []
 
     for mongo_feed in mongo_article.feeds:
         if isinstance(mongo_feed, DBRef):
             LOGGER.warning(u'Dangling DBRef %s to a non-existing feed '
-                           u'in article %s', mongo_feed, mongo_article)
+                           u'in article %s (skipped)',
+                           mongo_feed.id, mongo_article.id)
 
         else:
             feeds.append(get_feed_from_mongo_feed(mongo_feed))
@@ -839,7 +840,8 @@ def migrate_read(mongo_read):
 
         if isinstance(mongo_subscription, DBRef):
             LOGGER.warning(u'Dangling DBRef %s to a non-existing subscription '
-                           u'in read %s', mongo_subscription, mongo_read)
+                           u'in read %s (skipped)', mongo_subscription.id,
+                           mongo_read.id)
 
         else:
             subscriptions.append(
@@ -1183,8 +1185,7 @@ def migrate_tags(tags, stop_on_exception=True, verbose=False):
 def reassign_tags_on_feeds(stop_on_exception=True, verbose=False):
     """ Re-assign tags on feeds. """
 
-    LOGGER.info(u'Starting to reassign tags on feeds. '
-                u'This will take a while…')
+    LOGGER.info(u'Starting to reassign tags on feeds at %s…', now())
 
     for feed in no_tags_reassigned(all_feeds):
         try:
@@ -1194,8 +1195,7 @@ def reassign_tags_on_feeds(stop_on_exception=True, verbose=False):
 
         except:
             counters.failed_objects_count += 1
-            LOGGER.exception(u'Could not reassign tags on feed %s',
-                             feed)
+            LOGGER.exception(u'Could not reassign tags on feed %s', feed.id)
 
             if stop_on_exception:
                 raise StopMigration('reassign tags on feed')
@@ -1211,8 +1211,7 @@ def reassign_tags_on_feeds(stop_on_exception=True, verbose=False):
 def reassign_tags_on_subscriptions(stop_on_exception=True, verbose=False):
     """ Re-assign tags on subscriptions. """
 
-    LOGGER.info(u'Starting to reassign tags on subscriptions. '
-                u'This will take a while…')
+    LOGGER.info(u'Starting to reassign tags on subscriptions at %s…', now())
 
     for subscription in no_tags_reassigned(all_subscriptions):
         try:
@@ -1223,7 +1222,7 @@ def reassign_tags_on_subscriptions(stop_on_exception=True, verbose=False):
         except:
             counters.failed_objects_count += 1
             LOGGER.exception(u'Could not reassign tags on '
-                             u'subscription %s', subscription)
+                             u'subscription %s', subscription.id)
 
             if stop_on_exception:
                 raise StopMigration('reassign tags on subscription')
@@ -1239,8 +1238,7 @@ def reassign_tags_on_subscriptions(stop_on_exception=True, verbose=False):
 def reassign_tags_on_articles(stop_on_exception=True, verbose=False):
     """ Re-assign tags on articles. """
 
-    LOGGER.info(u'Starting to reassign tags on articles. '
-                u'This will take a while…')
+    LOGGER.info(u'Starting to reassign tags on articles at %s…', now())
 
     for article in no_tags_reassigned(all_articles):
         try:
@@ -1251,7 +1249,7 @@ def reassign_tags_on_articles(stop_on_exception=True, verbose=False):
         except:
             counters.failed_objects_count += 1
             LOGGER.exception(u'Could not reassign tags on article %s',
-                             article)
+                             article.id)
 
             if stop_on_exception:
                 raise StopMigration('reassign tags on article')
@@ -1267,8 +1265,7 @@ def reassign_tags_on_articles(stop_on_exception=True, verbose=False):
 def reassign_tags_on_reads(stop_on_exception=True, verbose=False):
     """ Re-assign tags on reads. """
 
-    LOGGER.info(u'Starting to reassign tags on reads. '
-                u'This will take a while…')
+    LOGGER.info(u'Starting to reassign tags on reads at %s…', now())
 
     for read in no_tags_reassigned(all_reads):
         try:
@@ -1278,8 +1275,7 @@ def reassign_tags_on_reads(stop_on_exception=True, verbose=False):
 
         except:
             counters.failed_objects_count += 1
-            LOGGER.exception(u'Could not reassign tags on read %s',
-                             read)
+            LOGGER.exception(u'Could not reassign tags on read %s', read.id)
 
             if stop_on_exception:
                 raise StopMigration('reassign tags on read')
@@ -1297,6 +1293,8 @@ def reassign_tags_on_reads(stop_on_exception=True, verbose=False):
 
 def migrate_all_users_and_preferences(stop_on_exception=True, verbose=False):
     """ Migrate things. """
+
+    LOGGER.info(u'Starting to migrate users and preferences at %s…', now())
 
     for mongo_user in not_yet_migrated(all_users):
 
@@ -1331,6 +1329,8 @@ def migrate_all_users_and_preferences(stop_on_exception=True, verbose=False):
 def migrate_all_websites(stop_on_exception=True, verbose=False):
     """ Migrate things. """
 
+    LOGGER.info(u'Starting to migrate web sites at %s…', now())
+
     masters_websites = master_documents(all_websites)
     # masters_websites_count = masters_websites.count()
 
@@ -1346,7 +1346,7 @@ def migrate_all_websites(stop_on_exception=True, verbose=False):
                      verbose=verbose)
 
     LOGGER.info(u'Web sites migrated: {0}/{1}, '
-                u' {2} dupes, {3} already there.'.format(
+                u'{2} dupes, {3} already there.'.format(
                     counters.migrated_websites_count,
                     all_websites_count,
                     duplicates_websites_count,
@@ -1357,6 +1357,8 @@ def migrate_all_websites(stop_on_exception=True, verbose=False):
 
 def migrate_all_authors(stop_on_exception=True, verbose=False):
     """ Migrate things. """
+
+    LOGGER.info(u'Starting to migrate authors at %s…', now())
 
     masters_authors = master_documents(all_authors)
     # masters_authors_count = masters_authors.count()
@@ -1385,6 +1387,8 @@ def migrate_all_authors(stop_on_exception=True, verbose=False):
 def migrate_all_feeds(stop_on_exception=True, verbose=False):
     """ Migrate things. """
 
+    LOGGER.info(u'Starting to migrate feeds at %s…', now())
+
     external_feeds = all_feeds.filter(MQ(is_internal__exists=False)
                                       | MQ(is_internal=False))
     external_feeds_count = external_feeds.count()
@@ -1408,11 +1412,11 @@ def migrate_all_feeds(stop_on_exception=True, verbose=False):
 
     # ————————————————————————————————————————————————————————————————— end
 
-    LOGGER.info(u'RSS/Atom feeds migrated: %s/%s (total %s), '
-                u' %s dupes, %s already there.',
+    LOGGER.info(u'RSS/Atom feeds migrated: {0}/{1} external, '
+                u'skipped {2} internal, {3} dupes, {4} already there.',
                 counters.migrated_feeds_count,
                 external_feeds_count,
-                all_feeds_count,
+                all_feeds_count - external_feeds_count,
                 duplicates_external_count,
                 counters.migrated_feeds_count
                 - counters.created_feeds_count)
@@ -1421,6 +1425,9 @@ def migrate_all_feeds(stop_on_exception=True, verbose=False):
 def check_internal_users_feeds_and_subscriptions(stop_on_exception=True,
                                                  verbose=False):
     """ Create internal feeds and subscriptions for all users. """
+
+    LOGGER.info(u'Starting to check internal feeds & subscriptions at %s…',
+                now())
 
     # These are django models.
     current_users_count = User.objects.all().count()
@@ -1459,7 +1466,7 @@ def check_internal_users_feeds_and_subscriptions(stop_on_exception=True,
     created_internal_feeds_count = \
         UserFeeds.objects.all().count() - internal_feeds_count
 
-    LOGGER.info(u'%s users checked, %s created, and %s internal '
+    LOGGER.info(u'{0} users checked, {1} created, and {2} internal '
                 u'feeds created.',
                 all_users_count,
                 created_users_count,
@@ -1468,6 +1475,8 @@ def check_internal_users_feeds_and_subscriptions(stop_on_exception=True,
 
 def migrate_all_folders(stop_on_exception=True, verbose=False):
     """ Migrate things. """
+
+    LOGGER.info(u'Starting to migrate folders at %s…', now())
 
     mongo_folders = not_yet_migrated(all_folders)
     mongo_folders_count = mongo_folders.count()
@@ -1503,8 +1512,8 @@ def migrate_all_folders(stop_on_exception=True, verbose=False):
             vacuum_analyze(u'(at {0} folders)'.format(
                 counters.migrated_folders_count))
 
-    LOGGER.info(u'Folders migrated: %s/%s (total %s), '
-                u'%s already there.',
+    LOGGER.info(u'Folders migrated: {0}/{1} (total {2}), '
+                u'{3} already there.',
                 counters.migrated_folders_count,
                 mongo_folders_count,
                 all_folders_count,
@@ -1514,6 +1523,8 @@ def migrate_all_folders(stop_on_exception=True, verbose=False):
 
 def migrate_all_subscriptions(stop_on_exception=True, verbose=False):
     """ Migrate things. """
+
+    LOGGER.info(u'Starting to migrate subscriptions at %s…', now())
 
     mongo_subscriptions = not_yet_migrated(all_subscriptions)
     mongo_subscriptions_count = mongo_subscriptions.count()
@@ -1551,8 +1562,8 @@ def migrate_all_subscriptions(stop_on_exception=True, verbose=False):
             vacuum_analyze(u'(at {0} subscriptions)'.format(
                 counters.migrated_subscriptions_count))
 
-    LOGGER.info(u'Subscriptions migrated: %s/%s (total %s), '
-                u'%s already there.',
+    LOGGER.info(u'Subscriptions migrated: {0}/{1} (total {2}), '
+                u'{3} already there.',
                 counters.migrated_subscriptions_count,
                 mongo_subscriptions_count,
                 all_subscriptions_count,
@@ -1562,6 +1573,8 @@ def migrate_all_subscriptions(stop_on_exception=True, verbose=False):
 
 def migrate_all_articles(stop_on_exception=True, verbose=False):
     """ Migrate articles. """
+
+    LOGGER.info(u'Starting to migrate articles at %s…', now())
 
     # ————————————————————————————————————————————————————————————— masters
 
@@ -1598,6 +1611,8 @@ def migrate_all_reads(stop_on_exception=True, verbose=False):
     Thus, it's just a check.
     """
 
+    LOGGER.info(u'Starting to migrate reads at %s…', now())
+
     mongo_reads = not_yet_migrated(all_reads)
     mongo_reads_count = mongo_reads.count()
 
@@ -1616,6 +1631,8 @@ def migrate_all_reads(stop_on_exception=True, verbose=False):
 
 def migrate_all_tags(stop_on_exception=True, verbose=False):
     """ Migrate things. """
+
+    LOGGER.info(u'Starting to migrate tags at %s…', now())
 
     # ————————————————————————————————————————————————————————————— masters
 
@@ -1648,6 +1665,8 @@ def migrate_all_tags(stop_on_exception=True, verbose=False):
 
 def reassign_all_tags(stop_on_exception=True, verbose=False):
     """ Re-assign all tags global task. """
+
+    LOGGER.info(u'Starting to re-assign all tags at %s…', now())
 
     with benchmark('Re-assign tags on feeds'):
         reassign_tags_on_feeds(stop_on_exception=stop_on_exception,
@@ -1705,6 +1724,8 @@ def migrate_all_mongo_data(force=False, stop_on_exception=True, verbose=False):
             LOGGER.warning(u'migrate_all_mongo_data() is already '
                            u'locked, aborting.')
             return
+
+    LOGGER.info(u'Starting to migrate everything at %s…', now())
 
     with benchmark('migrate_all_mongo_data()'):
         try:
