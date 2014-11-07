@@ -1,7 +1,7 @@
 
 {% if subscriptions %}
 	{% if feeds %}
-		<h4>{% trans "Still subscribed" %}</h4>
+		<h4>{% trans "Subscribed to" %}</h4>
 	{% endif %}
 
 	<ul>
@@ -18,7 +18,7 @@
 {% endif %}
 
 {% if feeds %}
-	<h4>{% trans "Not subscribed anymore" %}</h4>
+	<h4>{% trans "Not subscribed to" %}</h4>
 	<ul>
 	{% for feed in feeds %}
 		{% if feed.is_active %}
