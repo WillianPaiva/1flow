@@ -838,3 +838,7 @@ LOGGING = {
         },
     }
 }
+
+# —————————————————————————————————————————————————————————————— 1flow settings
+
+FEED_GLOBAL_REFRESH_DELAY = 1  # expressed in minute(s)
