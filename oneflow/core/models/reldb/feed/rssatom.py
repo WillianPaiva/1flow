@@ -54,7 +54,7 @@ from ..item import Article
 from ..tag import SimpleTag
 
 from common import throttle_fetch_interval, dateutilDateHandler
-from base import BaseFeed, basefeed_refresh_task, basefeed_pre_save
+from base import BaseFeed, basefeed_pre_save
 
 LOGGER = logging.getLogger(__name__)
 
@@ -551,11 +551,18 @@ class RssAtomFeed(BaseFeed):
             if is_naive(date_published):
                 date_published = make_aware(date_published, utc)
 
-        tags = list(SimpleTag.get_tags_set((
-                    t['term'] for t in article.get('tags', [])
-                    # Sometimes, t['term'] can be None.
-                    # http://dev.1flow.net/webapps/1flow/group/4082/
-                    if t['term'] is not None), origin=self) | set(feed_tags))
+        try:
+            tags = list(SimpleTag.get_tags_set((
+                        t['term'] for t in article.get('tags', [])
+                        # Sometimes, t['term'] can be None.
+                        # http://dev.1flow.net/webapps/1flow/group/4082/
+                        if t['term'] is not None), origin=self)
+                        | set(feed_tags))
+        except:
+            LOGGER.exception(u'Convert article tags failed on %s',
+                             u', '.join(t['term']
+                                        for t in article.get('tags', [])))
+            tags = set(feed_tags)
 
         try:
             new_article, created = Article.create_article(

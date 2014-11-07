@@ -52,9 +52,9 @@ class SimpleTag(MPTTModel,
 
     """ A simple tag model, with language and tag hierarchy if needed. """
 
-    name     = models.CharField(verbose_name=_(u'name'), max_length=128)
+    name     = models.CharField(verbose_name=_(u'name'), max_length=512)
     slug     = models.CharField(verbose_name=_(u'slug'),
-                                max_length=128,
+                                max_length=512,
                                 null=True, blank=True)
 
     parent   = TreeForeignKey('self', null=True, blank=True,

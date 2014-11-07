@@ -304,6 +304,8 @@ class UrlItem(models.Model):
                 # LOGGER.exception(u'IntegrityError occured while saving %s',
                 #                  final_url)
 
+                # The following will legitimely crash on articles  missing
+                # their BaseItem. We have a repair script dedicated to this.
                 original = BaseItem.objects.get(Article___url=final_url)
 
                 # Just to display the right "old" one in sentry errors and logs.
