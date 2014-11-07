@@ -305,6 +305,7 @@ def production():
 
         'autoscale': {
             'worker_swarm': '32,2',
+            'worker_refresh': '16,1',
             'worker_fetch': '8,1',
             'worker_background': '2,0',
             'worker_high': '3,1',
