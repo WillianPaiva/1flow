@@ -967,7 +967,7 @@ def migrate_websites(websites, stop_on_exception=True, verbose=False):
 
         except:
             LOGGER.exception(u'Could not migrate website %s',
-                             mongo_website)
+                             mongo_website.id)
 
             if stop_on_exception:
                 raise StopMigration('website')
@@ -1002,7 +1002,7 @@ def migrate_authors(authors, stop_on_exception=True, verbose=False):
 
         except:
             LOGGER.exception(u'Could not migrate author %s',
-                             mongo_author)
+                             mongo_author.id)
 
             if stop_on_exception:
                 raise StopMigration('author')
@@ -1036,7 +1036,7 @@ def migrate_feeds(feeds, stop_on_exception=True, verbose=False):
             feed, created = migrate_feed(mongo_feed)
 
         except:
-            LOGGER.exception(u'Could not migrate feed %s', mongo_feed)
+            LOGGER.exception(u'Could not migrate feed %s', mongo_feed.id)
 
             if stop_on_exception:
                 raise StopMigration('feed')
@@ -1077,7 +1077,7 @@ def migrate_articles(articles, stop_on_exception=True, verbose=False):
 
         except:
             LOGGER.exception(u'Could not migrate article %s',
-                             mongo_article)
+                             mongo_article.id)
 
             if stop_on_exception:
                 raise StopMigration('article')
@@ -1117,8 +1117,7 @@ def migrate_reads(mongo_reads, stop_on_exception=True, verbose=False):
             read, created = migrate_read(mongo_read)
 
         except:
-            LOGGER.exception(u'Could not migrate read %s',
-                             mongo_read)
+            LOGGER.exception(u'Could not migrate read %s', mongo_read.id)
 
             if stop_on_exception:
                 raise StopMigration('read')
@@ -1152,7 +1151,7 @@ def migrate_tags(tags, stop_on_exception=True, verbose=False):
             tag, created = migrate_tag(mongo_tag)
 
         except:
-            LOGGER.exception(u'Could not migrate tag %s', mongo_tag)
+            LOGGER.exception(u'Could not migrate tag %s', mongo_tag.id)
 
             if stop_on_exception:
                 raise StopMigration('tag')
@@ -1305,8 +1304,7 @@ def migrate_all_users_and_preferences(stop_on_exception=True, verbose=False):
             user, created = migrate_user_and_preferences(mongo_user)
 
         except:
-            LOGGER.exception(u'Could not migrate user %s',
-                             mongo_user)
+            LOGGER.exception(u'Could not migrate user %s', mongo_user.id)
 
             if stop_on_exception:
                 raise StopMigration('user')
@@ -1480,8 +1478,7 @@ def migrate_all_folders(stop_on_exception=True, verbose=False):
             folder, created = migrate_folder(mongo_folder)
 
         except:
-            LOGGER.exception(u'Could not migrate folder %s',
-                             mongo_folder)
+            LOGGER.exception(u'Could not migrate folder %s', mongo_folder.id)
 
             if stop_on_exception:
                 raise StopMigration('folder')
@@ -1528,7 +1525,7 @@ def migrate_all_subscriptions(stop_on_exception=True, verbose=False):
 
         except:
             LOGGER.exception(u'Could not migrate subscription %s',
-                             mongo_subscription)
+                             mongo_subscription.id)
 
             if stop_on_exception:
                 raise StopMigration('subscription')
