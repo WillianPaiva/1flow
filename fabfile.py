@@ -218,85 +218,57 @@ def production():
     # It's a continuous delivery platform :-D
     env.branch = 'develop'
 
-    set_roledefs_and_parallel({
-        'db': ['1flow.io'],
-        'web': ['1flow.io'],
-        'beat': [
-            'worker-01.1flow.io',
-        ],
-        'flower': [
-            'worker-02.1flow.io',
-        ],
-        'shell': [
-            'worker-03.1flow.io',
-        ],
-
-        'worker_sync': [
-            'worker-01.1flow.io',
-        ],
-        'worker_high': [
-            'worker-01.1flow.io',
-            'worker-02.1flow.io',
-            'worker-03.1flow.io',
-        ],
-
-        'worker_medium': [
-            'worker-02.1flow.io',
-            'worker-03.1flow.io',
-        ],
-
-        'worker_low': [
-            'worker-03.1flow.io',
-        ],
-
-        'worker_default': [
-            'worker-03.1flow.io',
-        ],
-
-        'worker_check': [
-            'worker-02.1flow.io',
-        ],
-
-        'worker_create': [
-            'worker-01.1flow.io',
-            'worker-02.1flow.io',
-        ],
-
-        'worker_refresh': [
-            'worker-03.1flow.io',
-            'worker-04.1flow.io',
-        ],
-
-        'worker_fetch': [
-            'worker-03.1flow.io',
-        ],
-
-        'worker_swarm': [
-            'worker-03.1flow.io',
-            'worker-04.1flow.io',
-        ],
-
-        'worker_clean': [
-            'worker-04.1flow.io',
-        ],
-
-        'worker_background': [
-            'worker-04.1flow.io',
-        ],
-    })
     env.sparks_options = {
+        'shell_arguments': {
+            'command_post_args': "--NotebookApp.ip='*'",
+        },
+
+        'worker_information': {
+            'worker_mongo': (
+                'MongoDB worker (transient)',
+                'high,medium,low'
+            ),
+            'worker_sync': (
+                'Inter-node synchronization worker',
+                'sync'
+            ),
+            'worker_net': (
+                'Network-related worker',
+                'swarm,refresh'
+            ),
+            'worker_default': (
+                'Default celery queue worker',
+                'default,create'
+            ),
+            'worker_articles': (
+                'Articles parsing worker',
+                'fetch,background'
+            ),
+            'worker_longtasks': (
+                'Long tasks worker',
+                'check,clean'
+            ),
+        },
+
         'nice_arguments': {
-            # 'worker_low': '-n 3',
-            # 'worker_fetch': '-n 5',
-            # 'worker_background': '-n 10',
-            # 'worker_swarm': '-n 2',
-            # 'worker_medium': '-n 1',
-            'worker_high': '-n -3',
-            'shell': '-n -1',
+
+            # Lower priority
+            'worker_mongo': '-n 3',
+            'worker_longtasks': '-n 1',
+
+            # Higher priority
+            'flower': '-n -1',
+            'shell': '-n -5',
+
+            # Others are default.
         },
 
         'ionice_arguments': {
             'shell': '-c 2 -n 1',
+        },
+
+        'worker_pool': {
+            '__all__': 'gevent',
         },
 
         # 'repository': {
@@ -304,52 +276,75 @@ def production():
         # },
 
         'autoscale': {
-            'worker_swarm': '40,5',
-            'worker_refresh': '24,3',
-            'worker_fetch': '16,2',
+            'worker_mongo':   '144,16',  # 'high,medium,low',
+            'worker_sync':    '16,2',    # 'sync',
+            'worker_net':     '160,20',  # 'swarm,refresh',
+            'worker_default': '32,4',    # 'default,create',
+            'worker_articles': '24,3',   # 'fetch,background',
+            'worker_longtasks': '2,1',   # 'check,clean',
 
-            # 'worker_high': '8,1',
-
-            # Maximum one worker to avoid hammering
-            # the database with huge requests.
-            'worker_clean': '1,0',
-            'worker_background': '2,0',
-
-            '__all__': '12,1',
+            '__all__': '8,1',
         },
 
         'max_tasks_per_child': {
-            # 2014-03-10: whereas many things have improved with celery 3.1,
-            # we still face the problem of slowly leaking workers. Surely it
-            # comes from our code, but I didn't find an easy way to find out
-            # exactly where. Thus, we relaunch workers every now and then.
-            #
-            # 'worker_swarm': '16',
+            # Cleaning tasks are long; worker
+            # consumes ~500Mb after first run.
+            'worker_longtasks': '1',
 
-            # Fetchers can literally eat memory. RECYCLE.
-            'worker_fetch': '8',
-
-            # Cleaning tasks are long; worker consumes ~500Mb after first run.
-            'worker_clean': '1',
-
-            '__all__': '32',
+            '__all__': '128',
         },
 
-        # Time-limit is useless because there is already the socket timeout.
-        # And anyway, it's leaking memory in celery 3.0.x.
         'worker_soft_time_limit': {
-            'worker_swarm': '120',
+            'worker_net': '120',
 
-            # I consider that 5 minutes is enough to convert an article to
-            # markdown. If it doesn't acheive the conversion in this time
-            # frame, there is probably a more serious problem. Note that it
-            # can take time because of high niceness of worker processes,
-            # eg. they run at low priority, and a bunch of them on only a
-            # few cpu cores. So we have to let them a fair amount of time.
-            'worker_fetch': '60',
+            # I consider that a few minutes is enough to fetch an article
+            # and convert it to markdown on a loaded system. Note that it
+            # can take time because of low priority of worker processes.
+            # So we have to let them a fair amount of time. If it doesn't
+            # acheive the conversion in this time frame, there is probably
+            # a more serious problem.
+            'worker_articles': '300',
+
+            # 7 days: 604800
+            # 4 days seems to be a good start.
+            # If tasks last more than that, they should
+            # probably be split into smaller parts.
+            'worker_longtasks': '345600',
+
+            # For general-purpose tasks, 10 minutes can seem very long.
+            # On a loaded system, this is reasonable for medium-duration
+            # tasks.
+            '__all__': '600',
         },
     }
 
+    set_roledefs_and_parallel({
+        'db': ['1flow.io', ],
+        'web': ['1flow.io', ],
+
+        'beat': ['worker-01.1flow.io', ],
+        'flower': ['worker-01.1flow.io', ],
+        'shell': ['worker-01.1flow.io', ],
+
+        'worker_sync': [
+            'worker-01.1flow.io',
+        ],
+        'worker_default': [
+            'worker-02.1flow.io',
+        ],
+        'worker_net': [
+            'worker-02.1flow.io',
+        ],
+        'worker_articles': [
+            'worker-03.1flow.io',
+        ],
+        'worker_longtasks': [
+            'worker-04.1flow.io',
+        ],
+        'worker_mongo': [
+            'worker-04.1flow.io',
+        ],
+    })
     env.env_was_set = True
 
 

@@ -34,7 +34,7 @@ from humanize.i18n import django_language
 
 from django.conf import settings
 from django.db import models, IntegrityError
-from django.db.models.signals import post_save  # , pre_save , pre_delete
+from django.db.models.signals import post_save, pre_save  # , pre_delete
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
 
@@ -44,8 +44,8 @@ from oneflow.base.utils.dateutils import datetime, now
 
 from ..common import (
     DjangoUser as User,
-
     ORIGINS,
+    CONTENT_TYPES_FINAL,
     ARTICLE_ORPHANED_BASE,
 )
 
@@ -266,13 +266,9 @@ class Article(BaseItem, UrlItem, ContentItem):
     def post_create_task(self):
         """ Method meant to be run from a celery task. """
 
-        if not self.slug:
-            self.slug = slugify(self.name)
-            self.save()
-
-            with statsd.pipeline() as spipe:
-                spipe.gauge('articles.counts.total', 1, delta=True)
-                spipe.gauge('articles.counts.empty', 1, delta=True)
+        with statsd.pipeline() as spipe:
+            spipe.gauge('articles.counts.total', 1, delta=True)
+            spipe.gauge('articles.counts.empty', 1, delta=True)
 
         post_absolutize_chain = tasks_chain(
             # HEADS UP: both subtasks are immutable, we just
@@ -342,6 +338,15 @@ register_task_method(Article, Article.post_create_task,
 # ————————————————————————————————————————————————————————————————————— Signals
 
 
+def article_pre_save(instance, **kwargs):
+    """ Make a slug if none. """
+
+    article = instance
+
+    if not article.slug:
+        article.slug = slugify(article.name)
+
+
 def article_post_save(instance, **kwargs):
 
     article = instance
@@ -353,15 +358,14 @@ def article_post_save(instance, **kwargs):
         # up the database name.
         if not (article.is_orphaned or article.duplicate_of):
 
-            #
-            # HEADS UP: MIGRATION. remove when finished.
-            if article.date_created < MIGRATION_DATETIME:
-                # SKIP everything, we already have the data from the migration.
-                return
+            # MIGRATION: remove this "if".
+            if not (article.url_absolute
+                    and article.content_type in CONTENT_TYPES_FINAL):
 
-            # HEADS UP: this task name will be registered later
-            # by the register_task_method() call.
-            article_post_create_task.delay(article.id)  # NOQA
+                # HEADS UP: this task name will be registered later
+                # by the register_task_method() call.
+                article_post_create_task.delay(article.id)  # NOQA
 
 
+pre_save.connect(article_pre_save, sender=Article)
 post_save.connect(article_post_save, sender=Article)

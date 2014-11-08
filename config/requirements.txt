@@ -1,4 +1,5 @@
 -e git+https://github.com/1flow/sparks.git@develop#egg=sparks
+-e git+https://github.com/Karmak23/django-shell-ipynb.git@master#egg=django-shell-ipynb
 -e git+https://github.com/Karmak23/django-sorting-bootstrap.git@master#egg=django_sorting_bootstrap-master
 -e git+https://github.com/gregmuellegger/django-reset.git@master#egg=django_reset
 -e git+https://github.com/jamiecurle/django-writingfield.git@master#egg=writingfield
@@ -54,7 +55,6 @@ django-redis==3.7.1
 django-redisboard==0.2.7
 django-secure==1.0
 Django-Select2==4.2.2
-django-shell-ipynb==0.3.0
 django-social-auth==0.7.28
 django-south-admin==0.0.3
 django-tastypie==0.12.0
