@@ -8,7 +8,7 @@ web: python manage.py runserver
 #web: python manage.py run_gunicorn -b 0.0.0.0:8000 -w 3
 #web: uwsgi --http :8000 -H ${WORKON_HOME}/1flow --chdir ${HOME}/sources/1flow --wsgi-file oneflow/wsgi.py --master --processes 3
 
-shell: python manage.py shell_ipynb
+shell: python manage.py shell_ipynb --NotebookApp.open_browser=False
 
 flower: python manage.py celery flower --logging=warning --broker=${BROKER_URL} --broker_api=http://${AMQP_USERNAME}:${AMQP_PASSWORD}@${MAIN_SERVER}:15672/api
 
