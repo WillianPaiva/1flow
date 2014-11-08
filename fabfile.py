@@ -261,6 +261,10 @@ def production():
             'worker-01.1flow.io',
             'worker-02.1flow.io',
         ],
+    env.sparks_options = {
+        'shell_arguments': {
+            'command_post_args': "--NotebookApp.ip='*'",
+        },
 
         'worker_refresh': [
             'worker-03.1flow.io',
