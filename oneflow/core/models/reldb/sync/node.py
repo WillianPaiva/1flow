@@ -35,6 +35,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from sparks.django.models import ModelDiffMixin
 
+from ..common import User
 # from oneflow.base.utils.dateutils import now, timedelta
 from common import (
     BROADCAST_CHOICES,
@@ -83,6 +84,11 @@ class SyncNode(ModelDiffMixin):
         max_length=32, blank=True, unique=True,
         default=generate_token,
         verbose_name=_(u'Node unique identifier'))
+
+    user = models.ForeignKey(
+        User, verbose_name=_(u'Creator'),
+        blank=True, null=True
+    )
 
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
