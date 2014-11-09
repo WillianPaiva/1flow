@@ -1,5 +1,5 @@
 
-<h1>{% trans "Queues" %} <small class="very-muted">({{ settings.CELERY_QUEUES|length }})</small></h1>
+<h1>{% trans "Queues" %} <small class="very-muted">({{ celery_status.active_queues|length }})</small></h1>
 <ul>
 {% for queue, workers in celery_status.active_queues.items %}
 	<li>{{ queue|title }}
@@ -12,7 +12,7 @@
 {% endfor %}
 </ul>
 
-<h1>{% trans "Registered tasks" %}</h1>
+<h1>{% trans "Registered tasks" %} <small class="very-muted">({{ celery_status.tasks_names|length }})</small></h1>
 
 <ul>
 {% for task_name in celery_status.tasks_names %}
