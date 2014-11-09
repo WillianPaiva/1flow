@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -105,7 +105,7 @@ def set_preference(request, base, sub, value):
                                 or request.user.is_superuser):
         return HttpResponseForbidden(u'Forbidden. BAD™.')
 
-    prefs = request.user.mongo.preferences
+    prefs = request.user.preferences
 
     try:
         base_pref = getattr(prefs, base)
@@ -121,7 +121,7 @@ def set_preference(request, base, sub, value):
 
         except:
             LOGGER.exception(u'Could not save preferences for user %s',
-                             request.user.mongo)
+                             request.user)
             return HttpResponseTemporaryServerError(
                 u'Could not save preference.')
 
@@ -136,7 +136,7 @@ def preference_toggle(request, base, sub):
     """ Handy for boolean preferences. """
 
     try:
-        base_pref = getattr(request.user.mongo.preferences, base)
+        base_pref = getattr(request.user.preferences, base)
         value     = not getattr(base_pref, sub)
 
     except:
