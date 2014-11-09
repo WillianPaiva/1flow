@@ -232,7 +232,7 @@ ORDER BY c.relname,f.attname;
     # datid, datname, pid, usesysid, usename, application_name, client_addr,
     # client_hostname, client_port, backend_start, xact_start, query_start,
     # state_change, waiting, state, query
-    cursor.execute('select * from pg_stat_activity;')
+    cursor.execute('SELECT * FROM pg_stat_activity;')
     activity = cursor.fetchall()
 
     # Cf. http://dba.stackexchange.com/a/14624/51426
@@ -246,10 +246,13 @@ ORDER BY c.relname,f.attname;
     # FROM pg_database;
     #
     #
-    cursor.execute("SELECT datname, pg_database_size(datname) "
-                   "FROM pg_database WHERE datname='%s';",
-                   [cursor.db.settings_dict['NAME']])
-    total_size = cursor.fetchall()
+    cursor.execute("""
+SELECT
+    datname, pg_database_size(datname)
+FROM
+    pg_database WHERE datname = %s;
+    """, [cursor.db.settings_dict['NAME']])
+    total_size = cursor.fetchone()[-1]
 
     # Shows pg_toast, not cool.
     # SELECT nspname || '.' || relname AS "relation",
@@ -273,11 +276,13 @@ ORDER BY c.relname,f.attname;
     # http://www.appdesign.com/blog/2009/05/07/list-of-postres-tables-with-their-sizes-and-indexes/
     # modified with c.relname → c.oid
     cursor.execute("""
-SELECT c.relname AS Name,
-       pg_relation_size(c.oid) AS Data,
-       pg_total_relation_size(c.oid)
-       - pg_relation_size(c.oid) AS Indices,
-       pg_total_relation_size(c.oid) AS Total
+SELECT
+    c.relname AS Name,
+    c.reltuples AS Tuples,
+    pg_relation_size(c.oid) AS Data,
+    pg_total_relation_size(c.oid)
+        - pg_relation_size(c.oid) AS Indices,
+    pg_total_relation_size(c.oid) AS Total
   FROM pg_class c
   LEFT JOIN pg_namespace n ON n.oid = c.relnamespace
  WHERE c.relkind IN ('r','')
@@ -286,33 +291,43 @@ SELECT c.relname AS Name,
  ORDER BY pg_total_relation_size(c.oid) DESC;
 """)
 
-    #              name             |    data    |  indices   |   total
-    # ------------------------------+------------+------------+------------
-    #  core_article                 | 1944854528 | 6385483776 | 8330338304
-    #  core_originaldata            | 2846384128 | 3116523520 | 5962907648
-    #  core_read                    |  184336384 |  298033152 |  482369536
-    #  core_basefeed_items          |  120528896 |  246759424 |  367288320
-    #  core_subscription_reads      |   81969152 |  166543360 |  248512512
-    #  core_author                  |   48881664 |  105857024 |  154738688
-    #  core_baseitem_authors        |   14360576 |   29728768 |   44089344
-    #  core_read_tags               |    9895936 |   20316160 |   30212096
-    #  core_baseitem_tags           |    7020544 |   14376960 |   21397504
-    #  core_baseitem                |    7462912 |   10690560 |   18153472
-    #  core_website                 |    6193152 |   11436032 |   17629184
-    #  celery_taskmeta              |    6586368 |    4562944 |   11149312
+    #             name              | tuples |  data   | indices  |  total
+    # -------------------------------+--------+---------+----------+----------
+    #  core_article                  |   5556 | 6070272 | 12271616 | 18341888
+    #  core_originaldata             |   5357 | 7176192 |   811008 |  7987200
+    #  core_simpletag                |    334 |  466944 |  4653056 |  5120000
+    #  core_baseitem                 |   5556 | 1245184 |  3178496 |  4423680
+    #  core_baseitem_tags            |   6574 |  319488 |   917504 |  1236992
+    #  core_read                     |   3337 |  327680 |   860160 |  1187840
+    #  core_website                  |    111 |  114688 |  1040384 |  1155072
+    #  core_basefeed_items           |   5854 |  303104 |   811008 |  1114112
+    #  core_read_tags                |   5127 |  253952 |   753664 |  1007616
     #
     tables_sizes = cursor.fetchall()
+
+    total_tuples = total_indices = total_data = total_total = 0
+
+    for name, tuples, data, indices, total in tables_sizes:
+
+        total_tuples += int(tuples)
+        total_data += int(data)
+        total_indices += int(indices)
+        total_total += int(total)
 
     db = cursor.db
 
     return {
         'database_alias': db.alias,
-        'psycopg_version': u'.'.join(db.psycopg2_version),
-        'pg_version': pg_version_to_string(db.version),
+        'psycopg_version': u'.'.join(unicode(x) for x in db.psycopg2_version),
+        'pg_version': pg_version_to_string(db.pg_version),
         'params': db.settings_dict,
         'indexes': indexes,
         'queries': activity,
         'total_size': total_size,
+        'total_tuples': total_tuples,
+        'total_data': total_data,
+        'total_indices': total_indices,
+        'total_total': total_total,
         'tables_sizes': tables_sizes,
     }
 
