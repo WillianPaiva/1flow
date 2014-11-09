@@ -8,13 +8,16 @@
 
     <ul class="nav nav-tabs" id="status-tabs">
         <li class="secondary-nav">
+        	<a data-toggle="tab" href="#mongodb">{% trans "MongoDB" %}</a>
+    	</li>
+        <li class="secondary-nav">
+        	<a data-toggle="tab" href="#celery">{% trans "Celery" %}</a>
+    	</li>
+        <li class="secondary-nav">
         	<a data-toggle="tab" href="#redis">{% trans "Redis" %}</a>
     	</li>
         <li class="secondary-nav">
         	<a data-toggle="tab" href="#postgresql">{% trans "PostgreSQL" %}</a>
-    	</li>
-        <li class="secondary-nav">
-        	<a data-toggle="tab" href="#mongodb">{% trans "MongoDB" %}</a>
     	</li>
         <li class="secondary-nav active">
         	<a data-toggle="tab" href="#system">{% trans "System" %}</a>
@@ -26,10 +29,6 @@
 			<div class="spacer25"></div>
 			{% include "status/system.html" %}
 		</div>
-		<div class="tab-pane fade" id="mongodb">
-			<div class="spacer25"></div>
-			{% include "status/mongodb.html" %}
-		</div>
 		<div class="tab-pane fade" id="postgresql">
 			<div class="spacer25"></div>
 			{% include "status/postgresql.html" %}
@@ -37,6 +36,13 @@
 		<div class="tab-pane fade" id="redis">
 			<div class="spacer25"></div>
 			{% include "status/redis.html" %}
+		</div>
+		<div class="tab-pane fade" id="celery">
+			<div class="spacer25"></div>
+		</div>
+		<div class="tab-pane fade" id="mongodb">
+			<div class="spacer25"></div>
+			{% include "status/mongodb.html" %}
 		</div>
 	</div>
 
