@@ -63,6 +63,9 @@ test:
 shell:
 	./manage.py shell
 
+shellplus:
+	./manage.py shell_plus
+
 #shellapp:
 #	SPARKS_DJANGO_SETTINGS=chani_app ./manage.py shell
 
