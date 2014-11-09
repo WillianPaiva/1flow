@@ -82,7 +82,6 @@ INSTALLED_APPS += [
     'django_jenkins',
     'django_nose',
     # 'devserver',
-    'django_extensions',
 ]
 # 'template_debug', )
 

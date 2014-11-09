@@ -381,7 +381,7 @@ else:
 # pre-production it's a dummy cache, allowing to keep them here.
 MIDDLEWARE_CLASSES = (
     # 'ConditionalGetMiddleware',
-   
+
     # Our middleware will automatically disable itself in non-DEBUG condition.
     'oneflow.base.utils.middleware.PrintExceptionMiddleware',
 
@@ -486,6 +486,8 @@ INSTALLED_APPS = [
     'grappelli',
     'mongoadmin',
     'json_field',
+
+    'django_extensions',
 
     'django.contrib.admin',
     # 'django.contrib.admindocs',
@@ -838,6 +840,17 @@ LOGGING = {
         },
     }
 }
+
+
+# For django-extensions ipython notebook
+IPYTHON_ARGUMENTS = [
+    # must stay here.
+    '--ext', 'django_extensions.management.notebook_extension',
+
+    "--NotebookApp.ip='*'",
+    '--NotebookApp.open_browser=False',
+    # '--debug',
+]
 
 # —————————————————————————————————————————————————————————————— 1flow settings
 
