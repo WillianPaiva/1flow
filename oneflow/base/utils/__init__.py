@@ -19,6 +19,7 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
+import os
 import six
 import time
 import redis
@@ -42,7 +43,7 @@ from django.db import models
 from django.template import Context
 
 from djangojs.context_serializer import ContextSerializer
-
+from oneflow import VERSION
 from .dateutils import ftstamp
 
 LOGGER = logging.getLogger(__name__)
@@ -58,6 +59,46 @@ boolcast = {
     # The real None is needed in case of a non-existing key.
     None: None
 }
+
+
+def full_version():
+    """ Return full version, with Git informations, if relevant.
+
+    .. note:: *relevant* means “not on master branch”.
+    """
+
+    try:
+        import pygit2
+
+    except ImportError:
+        LOGGER.error(u'PyGit2 not importable, version string '
+                     u'could be incomplete!')
+
+        return VERSION
+
+    current_working_directory = os.getcwd()
+    repository_path = pygit2.discover_repository(current_working_directory)
+    repository = pygit2.Repository(repository_path)
+
+    head = repository.head
+
+    commit = repository[head.target]
+
+    # http://stackoverflow.com/a/21015031/654755
+    commit_rev = commit.hex[:7]
+
+    if '/develop' in head.name:
+        return u'1flow v{0}+{1} (develop)'.format(VERSION, commit_rev)
+
+    if '/feature/' in head.name:
+        return u'1flow v{0}+{1} (feat. {2})'.format(VERSION, commit_rev,
+                                                    head.name.rsplit('/', 1)[1])
+
+    if 'master' in head.name:
+        return u'1flow v{0} (master)'.format(VERSION)
+
+    else:
+        return u'1flow v{0}+{1} (unknown)'.format(VERSION, commit_rev)
 
 
 # —————————————————————————————————————————————————————————————————— Decorators
