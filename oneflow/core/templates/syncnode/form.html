@@ -1,0 +1,38 @@
+
+<form id="syncnodeform"
+	action="{% url 'syncnode_list_create' %}"
+	method="post" role="form"
+	>
+	{% csrf_token %}
+	<tr class="{% if not form.errors %}collapse{% endif %} collapsible">
+        <td colspan="{{ form.fields|length|add:4 }}"><h3>{% if create_first %}{% trans "Please create your first one:" context "male" %}{% else %}{% trans "Please fill parameters for a new mail account" %}{% endif %}</h3></td>
+    </tr>
+    <tr class="{% if not form.errors %}collapse{% endif %} collapsible">
+
+        {% for field in form %}
+
+        	<td {% if field.name == 'uri' %}colspan="2"{% endif %}>
+
+            {% include "widgets/forms/field-generic-label-as-placeholder.html" with field=field field_input_css_class=' ' field_error_css_class=' ' field_help_css_class=' ' %}
+
+            {% if forloop.last %}
+
+            	</td>
+            	<td {% if not create_first %}colspan="3"{% endif %}>
+
+                <div class="spacer10"></div>
+
+    		    	<input class="btn btn-primary" type="submit"
+    		    		value="{% trans "Save" %}" />
+
+            {% endif %}
+
+        	</td>
+
+        {% endfor %}
+	</tr>
+    <tr class="{% if not form.errors %}collapse{% endif %} collapsible">
+        <td colspan="{{ form.fields|length|add:4 }}">&nbsp;</td>
+    </tr>
+
+</form>
