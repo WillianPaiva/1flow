@@ -81,8 +81,7 @@ class SyncNode(ModelDiffMixin):
         verbose_name=_(u'Node current URI'))
 
     uuid = models.CharField(
-        max_length=32, blank=True, unique=True,
-        default=generate_token,
+        max_length=32, null=True, blank=True, db_index=True,
         verbose_name=_(u'Node unique identifier'))
 
     user = models.ForeignKey(
@@ -208,19 +207,20 @@ def syncnode_pre_save(instance, **kwargs):
 
     sync_node = instance
 
-    if sync_node.pk is None:
+    if sync_node.pk is None and not sync_node.is_local_instance:
         return
 
-    if sync_node.is_local_instance:
+    if sync_node.uuid is None:
+        sync_node.uuid = generate_token()
 
-        if sync_node.permission == NODE_PERMISSIONS.GLOBAL:
-            sync_node.permission = NODE_PERMISSIONS.BASE
+    if sync_node.permission == NODE_PERMISSIONS.GLOBAL:
+        sync_node.permission = NODE_PERMISSIONS.BASE
 
-        if sync_node.strategy == SYNC_STRATEGIES.GLOBAL:
-            sync_node.strategy = SYNC_STRATEGIES.PULL
+    if sync_node.strategy == SYNC_STRATEGIES.GLOBAL:
+        sync_node.strategy = SYNC_STRATEGIES.PULL
 
-        if sync_node.broadcast == BROADCAST_CHOICES.GLOBAL:
-            sync_node.broadcast = BROADCAST_CHOICES.TRUSTED
+    if sync_node.broadcast == BROADCAST_CHOICES.GLOBAL:
+        sync_node.broadcast = BROADCAST_CHOICES.TRUSTED
 
 
 pre_save.connect(syncnode_pre_save, sender=SyncNode)
