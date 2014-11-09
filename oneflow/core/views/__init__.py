@@ -261,8 +261,6 @@ def toggle(request, klass, oid, key):
 def import_web_url(request, url):
     """ Import an URL from the web (can be anything). """
 
-    raise NotImplementedError('PORT TO RELDB.')
-
     form = WebPagesImportForm({'urls': url, 'status': IMPORT_STATUS.MANUAL})
 
     article = None
