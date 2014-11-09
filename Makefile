@@ -61,9 +61,9 @@ test:
 	./manage.py test oneflow --noinput --stop
 
 shell:
-	./manage.py shell
+	./manage.py shell_plus
 
-shellplus:
+shell_classic:
 	./manage.py shell_plus
 
 #shellapp:
