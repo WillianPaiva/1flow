@@ -53,7 +53,7 @@ from read import *  # NOQA
 
 from user import *  # NOQA
 
-from preferences import Preferences  # NOQA
+from preferences import *  # NOQA
 
 from history import HistoryEntry  # NOQA
 

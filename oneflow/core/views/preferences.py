@@ -28,6 +28,8 @@ from django.http import (HttpResponseRedirect,
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
+from django.contrib import messages
+from django.utils.translation import ugettext_lazy as _
 
 from sparks.django.utils import HttpResponseTemporaryServerError
 
@@ -46,45 +48,57 @@ def preferences(request):
     """ Return preferences view. """
 
     if request.POST:
+
+        user = request.user
+        preferences = user.preferences
+
         home_form = HomePreferencesForm(
-            request.POST, instance=request.user.mongo.preferences.home)
+            request.POST, instance=preferences.home)
 
         reading_form = ReadPreferencesForm(
-            request.POST, instance=request.user.mongo.preferences.read)
+            request.POST, instance=preferences.read)
 
         sources_form = SelectorPreferencesForm(
-            request.POST, instance=request.user.mongo.preferences.selector)
+            request.POST, instance=preferences.selector)
 
-        if request.user.is_superuser:
+        if user.is_superuser:
             staff_form = StaffPreferencesForm(
-                request.POST, instance=request.user.mongo.preferences.staff)
+                request.POST, instance=preferences.staff)
 
         if home_form.is_valid() and reading_form.is_valid() \
                 and sources_form.is_valid() and (
-                    request.user.is_superuser and staff_form.is_valid()) or 1:
+                    user.is_superuser and staff_form.is_valid()) or 1:
+
             # form.save() does nothing on an embedded document,
             # which needs to be saved from the container.
-            request.user.mongo.preferences.home = home_form.save()
-            request.user.mongo.preferences.read = reading_form.save()
-            request.user.mongo.preferences.selector = sources_form.save()
+            preferences.home = home_form.save()
+            preferences.read = reading_form.save()
+            preferences.selector = sources_form.save()
 
-            if request.user.is_superuser:
-                request.user.mongo.preferences.staff = staff_form.save()
+            if user.is_superuser:
+                preferences.staff = staff_form.save()
 
-            request.user.mongo.preferences.save()
+            if preferences.home.has_changed \
+                or preferences.read.has_changed \
+                or preferences.selector.has_changed or (
+                    user.is_superuser and preferences.staff.has_changed):
+
+                messages.info(request, _(u'Preferences updated.'),)
+
+            preferences.save()
 
             return redirect('preferences')
     else:
         home_form = HomePreferencesForm(
-            instance=request.user.mongo.preferences.home)
+            instance=request.user.preferences.home)
         reading_form = ReadPreferencesForm(
-            instance=request.user.mongo.preferences.read)
+            instance=request.user.preferences.read)
         sources_form = SelectorPreferencesForm(
-            instance=request.user.mongo.preferences.selector)
+            instance=request.user.preferences.selector)
 
         if request.user.is_superuser:
             staff_form = StaffPreferencesForm(
-                instance=request.user.mongo.preferences.staff)
+                instance=request.user.preferences.staff)
         else:
             staff_form = None
 
