@@ -43,17 +43,15 @@ from oneflow.base.utils.decorators import token_protected
 
 from ..forms import WebPagesImportForm
 
-from ..models.nonrel import (
-    Article, Read,
-    Feed, Subscription,
-    CONTENT_TYPES_FINAL
-)
+from ..models.common import READ_STATUS_DATA
 
 from ..models import (
+    Article, Read,
+    BaseFeed, Subscription,
     HelpContent,
     Folder,
-    BaseFeed,
-    IMPORT_STATUS
+    IMPORT_STATUS,
+    CONTENT_TYPES_FINAL,
 )
 
 from ..gr_import import GoogleReaderImport
@@ -128,7 +126,7 @@ def make_read_wrapper(attrkey, typekey, view_name):
 # This builds "read_later_feed_with_endless_pagination",
 # 'read_later_folder_with_endless_pagination' and so on.
 
-for attrkey, attrval in Read.status_data.items():
+for attrkey, attrval in READ_STATUS_DATA.items():
     if 'list_url' in attrval:
         # HEADS UP: sync the second argument with urls.py
         make_read_wrapper(attrkey, 'feed', attrval.get('view_name'))
@@ -212,13 +210,13 @@ def toggle(request, klass, oid, key):
     #
 
     try:
-        obj = globals()[klass].get_or_404(oid)
+        obj = get_object_or_404(globals()[klass], id=oid)
 
     except:
         LOGGER.exception(u'Oops in toggle! Model “%s” not imported?', klass)
         return HttpResponseTemporaryServerError()
 
-    if not obj.check_owner(request.user.mongo):
+    if obj.user != request.user:
         return HttpResponseForbidden(u'Not owner')
 
     try:
@@ -276,8 +274,8 @@ def import_web_url(request, url):
                 article = Article.objects.get(url=article_url)
 
                 if article.content_type in CONTENT_TYPES_FINAL:
-                    read = Read.get_or_404(user=request.user.mongo,
-                                           article=article)
+                    read = get_object_or_404(Read, user=request.user,
+                                             item=article)
 
                     return HttpResponsePermanentRedirect(
                         reverse('read_one', args=(read.id,)))
@@ -286,8 +284,9 @@ def import_web_url(request, url):
                 feed_url = user_import.results['created']['feeds'][0]
 
                 subscription = Subscription.objects.get(
-                    feed=Feed.objects.get(feed_url),
-                    user=request.user)
+                    feed=BaseFeed.objects.get(feed_url),
+                    user=request.user
+                )
 
                 return HttpResponsePermanentRedirect(
                     reverse('source_selector') + u"#" + subscription.id)
@@ -304,14 +303,14 @@ def import_web_url(request, url):
     return render(request, 'import-web-url.html',
                   {'article': article, 'url': url,
                    'poll_url': reverse('article_conversion_status',
-                                       args=(article.id,))})
+                                       args=(article.id, ))})
 
 
 def article_conversion_status(request, article_id):
     """ Return a 202 if article is converting, else redirect to article. """
 
     try:
-        article = Article.get_or_404(article_id)
+        article = get_object_or_404(Article, id=article_id)
 
     except:
         return HttpResponseTemporaryServerError(
@@ -319,7 +318,7 @@ def article_conversion_status(request, article_id):
 
     if article.content_type in CONTENT_TYPES_FINAL:
 
-        read = Read.get_or_404(user=request.user.mongo, article=article)
+        read = get_object_or_404(Read, user=request.user, item=article)
 
         return HttpResponse(u'http://' + settings.SITE_DOMAIN +
                             reverse('read_one', args=(read.id,)))

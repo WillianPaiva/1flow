@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -33,7 +33,7 @@ from django.http import (
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.contrib import messages
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.translation import ugettext_lazy as _, ungettext
 
 from endless_pagination.utils import get_page_number_from_request
@@ -41,10 +41,14 @@ from endless_pagination.utils import get_page_number_from_request
 from sparks.django.utils import HttpResponseTemporaryServerError
 
 from ..forms import ReadShareForm
-from ..models.nonrel import (Subscription,
-                            Article, Read,
-                            Folder, Tag,
-                            CONTENT_TYPES_FINAL)
+from ..models.common import READ_STATUS_DATA
+from ..models import (
+    Subscription,
+    Article, Read,
+    Folder,
+    SimpleTag as Tag,
+    CONTENT_TYPES_FINAL
+)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -55,7 +59,7 @@ def _rwep_generate_query_kwargs(request, **kwargs):
     query_kwargs = {}
     primary_mode = None
     combinations = set()
-    attributes   = Read.status_data.keys()
+    attributes   = READ_STATUS_DATA.keys()
 
     # First, get the view mode we were called from.
     if kwargs.get('all', False):
@@ -71,19 +75,9 @@ def _rwep_generate_query_kwargs(request, **kwargs):
             if mykwarg is not None:
                 primary_mode = (attrname, mykwarg)
 
-                if mykwarg:
-                    query_kwargs[attrname] = mykwarg
+                query_kwargs[attrname] = mykwarg
 
-                else:
-                    # For 2 reasons we need to negate:
-                    # - old reads don't have default attribute because some
-                    #   didn't exist at the time, thus the value is None in
-                    #   the database.
-                    # - all Reads (old and new) can have `.is_starred` == None
-                    #   because False and True mean "I don't like" and "I like",
-                    #   None meaning "like status not set".
-                    query_kwargs[attrname + u'__ne'] = True
-
+                # TODO: KEEP ?
                 if request.user.is_superuser or request.user.is_staff:
                     combinations.union(set(
                         attr2, request.GET.get(attr2, None), bool)
@@ -104,12 +98,7 @@ def _rwep_generate_query_kwargs(request, **kwargs):
                              u'failed; skipped.', checker, value, parameter)
             continue
 
-        if checker == bool and not checked_value:
-            # See before, in the for loop.
-            query_kwargs[parameter + u'__ne'] = True
-
-        else:
-            query_kwargs[parameter] = checked_value
+        query_kwargs[parameter] = checked_value
 
     return query_kwargs, primary_mode
 
@@ -124,7 +113,7 @@ def _rwep_generate_order_by(request, **kwargs):
 
     default_order_by = (u'-id', )
 
-    if request.user.mongo.is_staff_or_superuser_and_enabled:
+    if request.user.is_staff_or_superuser_and_enabled:
         order_by = request.GET.get('order_by', None)
 
         if order_by:
@@ -156,16 +145,16 @@ def _rwep_ajax_update_counters(kwargs, query_kwargs,
     attr_name = None
 
     if kwargs.get('all', False):
-        attr_name = u'all_articles_count'
+        attr_name = u'all_items_count'
 
     elif query_kwargs.get('is_starred', False):
-        attr_name = u'starred_articles_count'
+        attr_name = u'starred_items_count'
 
     elif query_kwargs.get('is_bookmarked', False):
-        attr_name = u'bookmarked_articles_count'
+        attr_name = u'bookmarked_items_count'
 
     elif query_kwargs.get('is_read__ne', None) is True:
-        attr_name = u'unread_articles_count'
+        attr_name = u'unread_items_count'
 
     if attr_name:
         if subscription:
@@ -206,15 +195,15 @@ def _rwep_ajax_update_counters(kwargs, query_kwargs,
 
 def _rwep_special_update_counters(subscription, user):
 
-    if subscription == user.web_import_subscription:
+    if subscription == user.user_subscriptions.imported_items:
         for attr_name, count in (
-            ('unread_articles_count',
-             subscription.reads(is_read__ne=True).count()),
+            ('unread_items_count',
+             subscription.reads.filter(is_read=False).count()),
         ):
             current_count = getattr(subscription, attr_name)
 
             if current_count != count:
-                LOGGER.info(u'Setting Import Subscription#%s.%s=%s '
+                LOGGER.info(u'Setting Imported items Subscription #%s %s=%s '
                             u'(old was: %s).', subscription.id, attr_name,
                             count, current_count, )
 
@@ -228,11 +217,11 @@ def _rwep_ajax_mark_all_read(subscription, folder, user, latest_displayed_read):
         subscription.mark_all_read(latest_displayed_read)
 
     elif folder:
-        for subscription in folder.subscriptions:
+        for subscription in folder.subscriptions.all():
             subscription.mark_all_read(latest_displayed_read)
 
     else:
-        for subscription in user.subscriptions:
+        for subscription in user.subscriptions.all():
             subscription.mark_all_read(latest_displayed_read)
 
 
@@ -243,11 +232,11 @@ def _rwep_build_page_header_text(subscription, folder, user, primary_mode):
     if mode == 'is_read' and not negated:
         mode = 'is_unread'
 
-    attr_name = (u'all_articles_count'
+    attr_name = (u'all_items_count'
                  if mode == u'all'
-                 else mode[3:] + u'_articles_count')
+                 else mode[3:] + u'_items_count')
 
-    singular_text, plural_text = Read.status_data[mode]['list_headers']
+    singular_text, plural_text = READ_STATUS_DATA[mode]['list_headers']
 
     if subscription:
         count = getattr(subscription, attr_name)
@@ -256,7 +245,7 @@ def _rwep_build_page_header_text(subscription, folder, user, primary_mode):
 
     elif folder:
         count     = getattr(folder, attr_name)
-        sub_count = folder.subscriptions.count()
+        sub_count = folder.subscriptions.all().count()
 
         header_text_left = folder.name + ungettext(
             u' (%(count)s subscription)',
@@ -264,7 +253,7 @@ def _rwep_build_page_header_text(subscription, folder, user, primary_mode):
 
     else:
         count     = getattr(user, attr_name)
-        sub_count = user.subscriptions.count()
+        sub_count = user.subscriptions.all().count()
 
         header_text_left = ungettext(
             u'In your <span class="hide">%(count)s</span> subscription',
@@ -283,8 +272,7 @@ def read_with_endless_pagination(request, **kwargs):
     (query_kwargs,
      primary_mode) = _rwep_generate_query_kwargs(request, **kwargs)
     order_by       = _rwep_generate_order_by(request, **kwargs)
-    djuser         = request.user
-    user           = djuser.mongo
+    user           = request.user
 
     # —————————————————————————————————————————————————————— Search preparation
 
@@ -315,7 +303,7 @@ def read_with_endless_pagination(request, **kwargs):
     subscription = kwargs.get('feed', None)
 
     if subscription:
-        subscription = Subscription.get_or_404(subscription)
+        subscription = Subscription.objects.get(id=subscription)
 
         if subscription.user != user:
             if user.has_staff_access:
@@ -333,14 +321,14 @@ def read_with_endless_pagination(request, **kwargs):
             else:
                 return HttpResponseForbidden('Not Owner')
 
-        query_kwargs[u'subscriptions__contains'] = subscription
+        query_kwargs[u'subscriptions'] = subscription
 
     # —————————————————————————————————————————————————————————————————— Folder
 
     folder = kwargs.get('folder', None)
 
     if folder:
-        folder = Folder.get_or_404(folder)
+        folder = Folder.objects.get(id=folder)
 
         if folder.owner != user:
             if user.has_staff_access:
@@ -359,12 +347,15 @@ def read_with_endless_pagination(request, **kwargs):
 
         # LOGGER.info(u'Refining reads by folder %s', folder)
 
-        query_kwargs[u'subscriptions__in'] = \
-            Subscription.objects(folders=folder).no_cache()
+        query_kwargs[u'subscriptions__in'] = Subscription.objects.get(
+            folder__in=folder.get_descendants(include_self=True))
 
     # —————————————————————————————————————————————————————————————————— Search
 
     if search:
+
+        raise NotImplementedError('rewrite search for reldb')
+
         isearch = search.lower()
 
         # Implement these loops for multi-words search.
@@ -433,7 +424,7 @@ def read_with_endless_pagination(request, **kwargs):
                 *order_by).no_cache()
 
     else:
-        reads = user.reads(**query_kwargs).order_by(*order_by).no_cache()
+        reads = user.reads.filter(**query_kwargs).order_by(*order_by)
 
     header_text_left, header_text_right = _rwep_build_page_header_text(
         subscription, folder, user, primary_mode)
@@ -486,7 +477,7 @@ def read_with_endless_pagination(request, **kwargs):
             if mode == 'is_read' and not negated:
                 mode = 'is_unread'
 
-            singular_text, plural_text = Read.status_data[mode]['list_headers']
+            singular_text, plural_text = READ_STATUS_DATA[mode]['list_headers']
 
             if count == 0:
                 rendered_text = _(u'no item')
@@ -535,7 +526,7 @@ def read_meta(request, read_id):
     """ Return the meta-data of a Read. """
 
     try:
-        read = Read.get_or_404(read_id)
+        read = get_object_or_404(Read, id=read_id)
 
     except:
         return HttpResponseTemporaryServerError()
@@ -545,7 +536,7 @@ def read_meta(request, read_id):
 
     return render(request,
                   'snippets/read/read-meta-async.html',
-                  {'read': read, 'article': read.article})
+                  {'read': read, 'article': read.item})
 
 
 def read_one(request, read_id):
@@ -554,35 +545,35 @@ def read_one(request, read_id):
     .. todo:: this view and its template needs refactoring / refreshing.
     """
     try:
-        read = Read.get_or_404(read_id)
+        read = get_object_or_404(Read, id=read_id)
 
     except:
         return HttpResponseTemporaryServerError()
 
-    user = request.user.mongo
+    user = request.user
 
     if read.user != user:
         # Most probably, a user has shared
         # his read_one() url with another user.
 
-        cloned_read, created = user.received_items_subscription.create_read(
-            article=read.article)
+        imported_items = user.user_subscriptions.imported_items
 
-        cloned_read.update(add_to_set__senders=read.user)
+        cloned_read, created = imported_items.create_read(item=read.item)
+
+        cloned_read.senders.add(read.user)
 
         if created:
             message = _(u'{1} shared <em>{0}</em> with you.').format(
-                read.article.title, read.user.get_full_name())
+                read.item.name, read.user.get_full_name())
         else:
             message = _(u'Recorded <em>{0}</em> as shared by {1} '
                         u'in your inbox.').format(
-                read.article.title, read.user.get_full_name())
+                read.item.name, read.user.get_full_name())
 
         messages.info(request, message, extra_tags='safe')
 
         return HttpResponsePermanentRedirect(
-            u'http://' + settings.SITE_DOMAIN
-            + reverse('read_one', args=(cloned_read.id,)))
+            reverse('read_one', args=(cloned_read.id, )))
 
     if request.is_ajax():
         template = u'snippets/read/read-one.html'
@@ -601,7 +592,7 @@ def share_one(request, article_id):
 
     try:
         article = Article.get_or_404(article_id)
-        read    = Read.get_or_404(article=article, user=request.user.mongo)
+        read    = Read.get_or_404(article=article, user=request.user)
 
     except:
         LOGGER.exception(u'Could not load things to share article #%s',
@@ -609,7 +600,7 @@ def share_one(request, article_id):
         return HttpResponseTemporaryServerError('BOOM')
 
     if request.POST:
-        form = ReadShareForm(request.POST, user=request.user.mongo)
+        form = ReadShareForm(request.POST, user=request.user)
 
         if form.is_valid():
             sent, failed = form.save()
@@ -625,13 +616,13 @@ def share_one(request, article_id):
                 messages.info(request,
                               _(u'Successfully shared <em>{0}</em> '
                                 u'with {1} persons').format(
-                                  read.article.title, len(sent)),
+                                  read.item.name, len(sent)),
                               extra_tags='safe')
 
             return HttpResponse(u'DONE')
 
     else:
-        form = ReadShareForm(user=request.user.mongo)
+        form = ReadShareForm(user=request.user)
 
     return render(request, u'snippets/share/share-one.html',
                   {'read': read, 'form': form})
