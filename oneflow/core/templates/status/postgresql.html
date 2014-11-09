@@ -1,1 +1,73 @@
-TO BE IMPLEMENTED
+{% load mathfilters %}
+
+<h2>{% blocktrans with dbname=pg_stats.params.NAME alias=pg_stats.database_alias %}Database <strong>{{ dbname }}</strong> <small>(alias <code>{{ alias }}</code>)</small>{% endblocktrans %}</h2>
+
+
+<div class="row">
+	<div class="col-xs-6 right muted">
+		{% trans "hostname:" %}<br />
+		{% trans "port:" %}<br />
+		{% trans "username:" %}
+	</div>
+	<div class="col-xs-6 strong">
+		{{ pg_stats.params.HOST }}<br />
+		{% firstof pg_stats.params.PORT '5432' %}<br />
+		{{ pg_stats.params.USER }}
+	</div>
+</div>
+
+<div class="row">
+	<div class="jumbotron">
+		<div class="row">
+			<div class="col-xs-6">
+				{% trans "occupied space" %}<br />
+				{% trans "data size (including indices)<br /><span class='muted'>(% of occupied space)</span>" %}<br />
+				{% trans "relations" %}<br />
+				{% trans "total tuples" %}<br />
+				{% trans "index size<br /><span class='muted'>(% of data size)</span>" %}<br />
+			</div>
+			<div class="col-xs-6">
+				{{ pg_stats.total_size|naturalsize }}<br />
+				{{ pg_stats.total_total|naturalsize }} <span class="muted">({{ pg_stats.total_total|mul:100.0|div:pg_stats.total_size|floatformat:-1 }}%)</span><br /><br />
+				{{ pg_stats.tables_sizes|length }}<br />
+				{{ pg_stats.total_tuples }}<br />
+				{{ pg_stats.total_indices|naturalsize }} <span class="muted">({{ pg_stats.total_indices|mul:100.0|div:pg_stats.total_total|floatformat:-1 }}%)<br />
+			</div>
+		</div>
+	</div>
+</div>
+
+{%     for name, tuples, data, indices, total in pg_stats.tables_sizes %}
+<div class="row">
+	<div class="col-xs-5 right">
+		<h3>{{ name|title }}</h3>
+	</div>
+	<div class="col-xs-7">
+		<div class="spacer20"></div>
+	{{ tuples|floatformat:0 }} tuple(s)<br />
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-5 right">
+		<p>
+			{% trans "data size (% of all data)" %}<br />
+			{% trans "index size (% of all indices)" %}<br />
+			{% trans "total size (% of database)" %}
+		</p>
+	</div>
+	<div class="col-xs-7">
+		<p>
+			<strong>{{ data|naturalsize }}</strong>
+			<span class="very-muted">({{ data|mul:100.0|div:pg_stats.total_data|floatformat:-1 }}%)</span><br />
+
+			<strong>{{ indices|naturalsize }}</strong>
+			<span class="very-muted">({{ indices|mul:100.0|div:pg_stats.total_indices|floatformat:-1 }}%)</span><br />
+
+			<strong>{{ total|naturalsize }}</strong>
+			<span class="very-muted">({{ total|mul:100.0|div:pg_stats.total_total|floatformat:-1 }}%)</span>
+		</p>
+	</div>
+</div>
+
+{% endfor %}
