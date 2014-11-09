@@ -4,12 +4,12 @@
 #
 #   make runable && make run
 
-web: python manage.py runserver 0.0.0.0:8000
-#web: python manage.py run_gunicorn -b 0.0.0.0:8000 -w 3
+web: ./manage.py runserver 0.0.0.0:8000
+#web: ./manage.py run_gunicorn -b 0.0.0.0:8000 -w 3
 #web: uwsgi --http :8000 -H ${WORKON_HOME}/1flow --chdir ${HOME}/sources/1flow --wsgi-file oneflow/wsgi.py --master --processes 3
 
-shell: python manage.py shell_ipynb --NotebookApp.open_browser=False
+shell: ./manage.py shell_plus --notebook
 
-flower: python manage.py celery flower --logging=warning --broker=${BROKER_URL} --broker_api=http://${AMQP_USERNAME}:${AMQP_PASSWORD}@${MAIN_SERVER}:15672/api
+flower: ./manage.py celery flower --logging=warning --broker=${BROKER_URL} --broker_api=http://${AMQP_USERNAME}:${AMQP_PASSWORD}@${DBCACHE_SERVER}:15672/api
 
-worker: python manage.py celery worker -E --beat --loglevel=info --queues default,high,medium,low,create,refresh,fetch,swarm,background,clean --hostname worker.${HOSTNAME} --autoscale 4,1 --maxtasksperchild 12
+worker: ./manage.py celery worker -E --beat --loglevel=info --hostname worker.${HOSTNAME} --autoscale 4,1 --maxtasksperchild 32
