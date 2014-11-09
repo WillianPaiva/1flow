@@ -1,0 +1,21 @@
+
+<h1>{% trans "Queues" %} <small class="very-muted">({{ celery_status.active_queues|length }})</small></h1>
+<ul>
+{% for queue, workers in celery_status.active_queues.items %}
+	<li>{{ queue|title }}
+		<ul>
+			{% for worker_name in workers  %}
+				<li>{{ worker_name }}</li>
+			{% endfor %}
+		</ul>
+	</li>
+{% endfor %}
+</ul>
+
+<h1>{% trans "Registered tasks" %} <small class="very-muted">({{ celery_status.tasks_names|length }})</small></h1>
+
+<ul>
+{% for task_name in celery_status.tasks_names %}
+	<li>{{ task_name }}</li>
+{% endfor %}
+</ul>

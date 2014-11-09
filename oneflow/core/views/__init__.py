@@ -384,6 +384,7 @@ def admin_status(request):
         'mongo_statvfs': stats.mongo_statvfs(),
         'host_infos': stats.host_infos(),
         'pg_stats': stats.postgresql_status(),
+        'celery_status': stats.celery_status(),
         'memory': stats.memory(),
         'partitions': {
             part: stats.disk_usage(part.mountpoint)
