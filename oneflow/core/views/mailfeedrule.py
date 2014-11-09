@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -42,7 +42,7 @@ class MailFeedRuleCommonViewsMixin(object):
         """ Return to our mail feed rules list. """
 
         return reverse('mailfeedrule_list_create',
-                       args=(self.kwargs['mailfeed_pk'], ))
+                       args=(self.kwargs['mailfeed_id'], ))
 
 
 class MailFeedRuleListCreateView(MailFeedRuleCommonViewsMixin,
@@ -56,7 +56,11 @@ class MailFeedRuleListCreateView(MailFeedRuleCommonViewsMixin,
     default_filter_param = 'all'
     form_class = forms.MailFeedRuleForm
     template_name = 'mailfeedrule/list-create.html'
-    list_queryset_filter = {'mailfeed': ('mailfeed_pk', models.MailFeed, None)}
+
+    def list_queryset_filter(self, qs):
+        """ Filter the mailfeed rules list of the current mailfeed only. """
+
+        return qs.filter(mailfeed_id=self.kwargs.get('mailfeed_id'))
 
     def get_form_kwargs(self):
         """ Get the current user for the MailFeedRuleForm to get mailboxes. """
@@ -71,7 +75,7 @@ class MailFeedRuleListCreateView(MailFeedRuleCommonViewsMixin,
         """ Add our mailfeed to the context. """
 
         kwargs['mailfeed'] = get_object_or_404(models.MailFeed,
-                                               pk=self.kwargs['mailfeed_pk'])
+                                               id=self.kwargs['mailfeed_id'])
 
         return super(MailFeedRuleListCreateView,
                      self).get_context_data(**kwargs)
@@ -80,7 +84,7 @@ class MailFeedRuleListCreateView(MailFeedRuleCommonViewsMixin,
         """ Give the MailFeedRule to its owner on the fly. """
 
         form.instance.mailfeed = get_object_or_404(
-            models.MailFeed, pk=self.kwargs.get('mailfeed_pk'))
+            models.MailFeed, id=self.kwargs.get('mailfeed_id'))
 
         return super(MailFeedRuleListCreateView, self).form_valid(form)
 

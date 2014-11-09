@@ -381,6 +381,10 @@ else:
 # pre-production it's a dummy cache, allowing to keep them here.
 MIDDLEWARE_CLASSES = (
     # 'ConditionalGetMiddleware',
+
+    # Our middleware will automatically disable itself in non-DEBUG condition.
+    'oneflow.base.utils.middleware.PrintExceptionMiddleware',
+
     ('raven.contrib.django.raven_compat.middleware.'
         'SentryResponseErrorIdMiddleware'),
     # 'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',
@@ -388,8 +392,10 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
+
     # TODO: test and activate this.
     # 'django.middleware.transaction.TransactionMiddleware',
+
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -480,6 +486,9 @@ INSTALLED_APPS = [
     'grappelli',
     'mongoadmin',
     'json_field',
+
+    'django_extensions',
+
     'django.contrib.admin',
     # 'django.contrib.admindocs',
     'django_reset',
@@ -491,6 +500,9 @@ INSTALLED_APPS = [
     'transmeta',
     'mptt',
     'sorting_bootstrap',
+
+    'django_file_form',
+    'django_file_form.ajaxuploader',
 
     # Seems not working with grappelli.
     # 'django_object_actions',
@@ -828,6 +840,17 @@ LOGGING = {
         },
     }
 }
+
+
+# For django-extensions ipython notebook
+IPYTHON_ARGUMENTS = [
+    # must stay here.
+    '--ext', 'django_extensions.management.notebook_extension',
+
+    "--NotebookApp.ip='*'",
+    '--NotebookApp.open_browser=False',
+    # '--debug',
+]
 
 # —————————————————————————————————————————————————————————————— 1flow settings
 

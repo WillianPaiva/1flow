@@ -81,8 +81,7 @@ ALLOWED_HOSTS += [
 INSTALLED_APPS += [
     'django_jenkins',
     'django_nose',
-    'devserver',
-    'django_extensions',
+    # 'devserver',
 ]
 # 'template_debug', )
 
@@ -90,15 +89,15 @@ DEVSERVER_DEFAULT_ADDR = '0.0.0.0'
 DEVSERVER_DEFAULT_PORT = 8000
 
 DEVSERVER_MODULES = (
-    'devserver.modules.sql.SQLRealTimeModule',
-    'devserver.modules.sql.SQLSummaryModule',
-    'devserver.modules.profile.ProfileSummaryModule',
+    # 'devserver.modules.sql.SQLRealTimeModule',
+    # 'devserver.modules.sql.SQLSummaryModule',
+    # 'devserver.modules.profile.ProfileSummaryModule',
 
     # Modules not enabled by default
     # 'devserver.modules.ajax.AjaxDumpModule',
     'devserver.modules.profile.MemoryUseModule',
     'devserver.modules.cache.CacheSummaryModule',
-    'devserver.modules.profile.LineProfilerModule',
+    # 'devserver.modules.profile.LineProfilerModule',
 )
 
 # DEVSERVER_FILTER_SQL = (
