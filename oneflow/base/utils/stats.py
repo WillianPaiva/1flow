@@ -169,14 +169,17 @@ def memory():
 
 # —————————————————————————————————————————————————————————————————— PostgreSQL
 
+
 def pg_version_to_string(version):
     """ Cf. http://www.postgresql.org/docs/current/static/libpq-status.html#LIBPQ-PQSERVERVERSION . """  # NOQA
 
-    minor = int(version[:-2])
-    medium = int(version[-2:-4])
-    major = int(version[-4:-len(version)])
+    version = str(version)
 
-    return u'.'.join(x for x in (major, medium, minor))
+    minor = int(version[-2:])
+    medium = int(version[-4:-2])
+    major = int(version[:-4])
+
+    return u'.'.join(unicode(x) for x in (major, medium, minor))
 
 
 def postgresql_status():
