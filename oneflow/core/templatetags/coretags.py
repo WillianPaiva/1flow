@@ -37,7 +37,7 @@ from ...base.utils.dateutils import (now, today,
                                      naturaldelta as onef_naturaldelta)
 
 from oneflow.core import models   # , CACHE_ONE_WEEK
-from oneflow.core.models import nonrel as nonrel_models
+from oneflow.core.models.common import READ_STATUS_DATA
 from ..context_processors import models_constants
 
 LOGGER = logging.getLogger(__name__)
@@ -604,7 +604,7 @@ def read_action(article, action_name, with_text=True, popover_direction=None):
             'with_text': with_text,
             'popover_direction': popover_direction or 'top',
             'action_name': action_name,
-            'action_data': models.Read.status_data.get(action_name),
+            'action_data': READ_STATUS_DATA.get(action_name),
             'popover_class': '' if with_text else 'popover-tooltip',
             'js_func': "toggle_status(event, '{0}', '{1}')".format(
                        article.id, action_name)
@@ -637,7 +637,7 @@ def read_action_status(action_name, with_text=False):
     return {
         'with_text': with_text,
         'action_name': action_name,
-        'action_data': models.Read.status_data.get(action_name),
+        'action_data': READ_STATUS_DATA.get(action_name),
     }
 
 
@@ -659,8 +659,8 @@ def read_status_css_styles():
                      u'.not_{0} .action-mark-not_{0}{{display:none}} '
                      u'.not_{0} .action-mark-{0}{{display:inline-block}}'
                      ).format(status)
-                     for status in models.Read.status_data.keys()
-                     if 'list_url' in models.Read.status_data[status])
+                     for status in READ_STATUS_DATA.keys()
+                     if 'list_url' in READ_STATUS_DATA[status])
 
 
 # —————————————————————————————————————————————————————————— Mail accounts tags
