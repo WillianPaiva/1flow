@@ -183,10 +183,10 @@ def _rwep_ajax_update_counters(kwargs, query_kwargs,
                 # TODO: recount()/update all subscriptions counters…
 
         else:
-            current_count = getattr(user, attr_name)
+            current_count = getattr(user.user_counters, attr_name)
 
             if current_count != count:
-                setattr(user, attr_name, count)
+                setattr(user.user_counters, attr_name, count)
 
                 LOGGER.info(u'Updated User#%s.%s=%s for Read.%s '
                             u'(old was: %s).', user.id, attr_name,
@@ -252,7 +252,7 @@ def _rwep_build_page_header_text(subscription, folder, user, primary_mode):
             u' (%(count)s subscriptions)', sub_count) % {'count': sub_count}
 
     else:
-        count     = getattr(user, attr_name)
+        count     = getattr(user.user_counters, attr_name)
         sub_count = user.subscriptions.all().count()
 
         header_text_left = ungettext(
