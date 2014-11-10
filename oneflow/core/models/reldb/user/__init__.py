@@ -18,7 +18,7 @@ You should have received a copy of the GNU Affero General Public
 License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
-
+from constance import config
 from ..common import User
 from ..feed import BaseFeed
 
@@ -49,6 +49,27 @@ def User_unsubscribed_feeds_property_get(self):
             'feed_id', flat=True))
 
 
+def User_has_staff_access_property_get(self):
+    """ Return ``True`` if user has staff access.
+
+    Eg. if :meth:`is_staff_or_superuser_and_enabled` **and** if
+    `config.STAFF_HAS_FULL_ACCESS` is ``True`` (it's not the default).
+
+    Use this property on something when a staff member is accessing
+    something he/she is not owner of, and this will raise a privacy
+    issue.
+
+    By opposition, the :meth:`is_staff_or_superuser_and_enabled`
+    property is used only to add staff features to any page when
+    the current user is staff and he accesses his own data. Eg. to
+    include staff buttons or staff links to the admin.
+    """
+
+    return self.is_staff_or_superuser_and_enabled \
+        and config.STAFF_HAS_FULL_ACCESS
+
+
+User.has_staff_access = property(User_has_staff_access_property_get)
 User.is_staff_or_superuser_and_enabled = property(
     User_is_staff_or_superuser_and_enabled_property_get)
 User.unsubscribed_feeds = property(User_unsubscribed_feeds_property_get)
