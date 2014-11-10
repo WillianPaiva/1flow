@@ -18,7 +18,7 @@
             <div class="centered">
               {% if read.subscriptions %}
                   {% trans "Subscriptions: " %}
-                    {% for subscription in read.subscriptions %}
+                    {% for subscription in read.subscriptions.all %}
                       <a href="{{ NONREL_ADMIN }}subscription/{{subscription.id}}/"
                         target="_blank">{{ subscription.name }}</a>{% if not forloop.last %}, {% endif %}
                     {% endfor %}
@@ -28,7 +28,7 @@
 
                 {% if article.feeds %}
                     {% trans "Feeds: " %}
-                      {% for feed in article.feeds %}
+                      {% for feed in article.feeds.all %}
                         <a href="{{ NONREL_ADMIN }}feed/{{ feed.id }}/"
                           target="_blank">{{ feed.name }}</a>{% if not forloop.last %}, {% endif %}
                       {% endfor %}

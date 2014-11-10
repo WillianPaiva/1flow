@@ -1,21 +1,21 @@
 # -*- coding: utf-8 -*-
-"""
-    Copyright 2013-2014 Olivier Cortès <oc@1flow.io>
+u"""
+Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
-    This file is part of the 1flow project.
+This file is part of the 1flow project.
 
-    1flow is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation, either version 3 of
-    the License, or (at your option) any later version.
+1flow is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
 
-    1flow is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
+1flow is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU Affero General Public
-    License along with 1flow.  If not, see http://www.gnu.org/licenses/
+You should have received a copy of the GNU Affero General Public
+License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
@@ -28,81 +28,55 @@ LOGGER = logging.getLogger(__name__)
 
 
 class OnlyNameChoiceField(forms.ModelChoiceField):
-    """ In forms, we need something much simpler
-        than the `__unicode__()` output. """
+
+    """ In forms we need something much simpler than `__unicode__()`. """
 
     def label_from_instance(self, obj):
+        """ Get an indented label from the folder depth level. """
 
-        root = obj.owner.root_folder
+        level = obj.level - 1
 
-        # OMG. Please don't do this anywhere else. How ugly it is.
-        if obj.parent == root:
-            prefix = u''
-        elif obj.parent.parent == root:
-            prefix = u' ' * 8
-        elif obj.parent.parent.parent == root:
-            prefix = u' ' * 16
-        elif obj.parent.parent.parent.parent == root:
-            prefix = u' ' * 24
-        elif obj.parent.parent.parent.parent.parent == root:
-            prefix = u' ' * 32
-        elif obj.parent.parent.parent.parent.parent.parent == root:
-            prefix = u' ' * 40
-        elif obj.parent.parent.parent.parent.parent.parent.parent == root:
-            prefix = u' ' * 48
-        else:
-            prefix = u' ' * 56
+        if level < 0:
+            level = 0
 
-        return prefix + obj.name
+        return (u' ' * 8 * level) + obj.name
 
 
 class OnlyNameMultipleChoiceField(forms.ModelMultipleChoiceField):
-    """ In forms, we need something much simpler
-        than the `__unicode__()` output. """
+
+    """ In forms we need something much simpler than `__unicode__()`. """
 
     def label_from_instance(self, obj):
+        """ Get an indented label from depth level; only name if no depth. """
 
         try:
-            root = obj.owner.root_folder
+            level = obj.level - 1
 
         except AttributeError:
             return obj.name
 
-        # OMG. Please don't do this anywhere else. How ugly it is.
-        if obj.parent == root:
-            prefix = u''
-        elif obj.parent.parent == root:
-            prefix = u' ' * 8
-        elif obj.parent.parent.parent == root:
-            prefix = u' ' * 16
-        elif obj.parent.parent.parent.parent == root:
-            prefix = u' ' * 24
-        elif obj.parent.parent.parent.parent.parent == root:
-            prefix = u' ' * 32
-        elif obj.parent.parent.parent.parent.parent.parent == root:
-            prefix = u' ' * 40
-        elif obj.parent.parent.parent.parent.parent.parent.parent == root:
-            prefix = u' ' * 48
-        else:
-            prefix = u' ' * 56
+        if level < 0:
+            level = 0
 
-        return prefix + obj.name
+        return (u' ' * 8 * obj.level - 1) + obj.name
 
 
 class UsersMultipleAndTagField(HeavySelect2TagField):
-    """ In forms, we need something much simpler
-        than the `__unicode__()` output. """
+
+    """ In forms we need something much simpler than `__unicode__()`. """
 
     def __init__(self, *args, **kwargs):
+        """ COME AND INIT ME!. """
 
-        self.owner = kwargs.pop('owner')
+        self.user = kwargs.pop('user')
 
         super(UsersMultipleAndTagField, self).__init__(*args, **kwargs)
 
     def create_new_value(self, value):
+        """ Create a new entry from address book. """
 
         LOGGER.info(u'CREATING new value from %s in %s address_book',
-                    value, self.owner.username)
+                    value, self.user.username)
 
         value = value.strip()
 
@@ -113,8 +87,8 @@ class UsersMultipleAndTagField(HeavySelect2TagField):
             raise RuntimeError(u'BAD %s' % value)
 
         if value not in (None, u''):
-            self.owner.update(add_to_set__address_book=value)
+            self.user.update(add_to_set__address_book=value)
 
             LOGGER.info(u'ADDED %s to %s address_book',
-                        value, self.owner.username)
-            #self.owner.safe_reload()
+                        value, self.user.username)
+            # self.user.safe_reload()

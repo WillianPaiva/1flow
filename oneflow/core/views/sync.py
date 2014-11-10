@@ -38,7 +38,7 @@ class SyncNodeListCreateView(mixins.ExtraContext,
     """ Mix create and list views for sync nodes. """
 
     model = models.SyncNode
-    queryset = models.SyncNode.objects.exclude(is_local_instance=True)
+    list_queryset_filter_user = False
     default_sort_param = 'name'
     default_filter_param = 'all'
     form_class = forms.SyncNodeForm
@@ -47,6 +47,11 @@ class SyncNodeListCreateView(mixins.ExtraContext,
     extra_context = {
         'local_node': models.SyncNode.get_local_node()
     }
+
+    def list_queryset_filter(self, qs):
+        """ Exclude the local instance from the nodes list. """
+
+        return qs.exclude(is_local_instance=True)
 
     def form_valid(self, form):
         """ Give the SyncNode to its owner on the fly. """

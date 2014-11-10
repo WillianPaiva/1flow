@@ -267,6 +267,11 @@ header {
 
 /* --------------------------------------------------------------------- Help */
 
+.help-block {
+    text-align: right;
+    color: $grayLight;
+}
+
 #arrow-show-help {
     position: fixed;
     right: 340px;

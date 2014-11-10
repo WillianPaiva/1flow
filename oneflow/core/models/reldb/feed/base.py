@@ -42,6 +42,7 @@ from sparks.django.models import DiffMixin
 
 from oneflow.base.fields import IntRedisDescriptor, DatetimeRedisDescriptor
 from oneflow.base.utils.dateutils import now, timedelta, today
+from oneflow.base.utils import ro_classproperty
 
 from oneflow.base.utils import (
     register_task_method,
@@ -189,6 +190,19 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
     # objects = models.Manager()
     # objects = PolymorphicManager()
     # good_feeds = GoodFeedsManager()
+
+    @ro_classproperty
+    def good_feeds(cls):
+
+        return cls.objects.filter(
+            # not internal, still open and validated by a human.
+            is_internal=False,
+            is_active=True,
+            is_good=True,
+
+            # And not being duplicate of any other feed.
+            duplicate_of_id=None,
+        )
 
     # —————————————————————————————————————————————————————————————— Attributes
 
@@ -730,21 +744,19 @@ def basefeed_export_content_classmethod(cls, since, folder=None):
         dict is suitable to be converted to JSON.
     """
 
-    def origin_type(origin_type):
+    def origin(origin):
 
-        if origin_type in (ORIGINS.FEEDPARSER,
-                           ORIGINS.GOOGLE_READER):
+        if origin in (ORIGINS.FEEDPARSER, ORIGINS.GOOGLE_READER):
             return u'rss'
 
-        if origin_type == ORIGINS.TWITTER:
+        if origin == ORIGINS.TWITTER:
             return u'twitter'
 
-        if origin_type == ORIGINS.EMAIL_FEED:
+        if origin == ORIGINS.EMAIL_FEED:
             return u'email'
 
         # implicit:
-        # if origin_type == (ORIGINS.NONE,
-        #                   ORIGINS.WEBIMPORT):
+        # if origin == (ORIGINS.NONE, ORIGINS.WEBIMPORT):
         return u'web'
 
     def content_type(content_type):
@@ -769,28 +781,48 @@ def basefeed_export_content_classmethod(cls, since, folder=None):
                                                is_internal=False)
         active_feeds_count = active_feeds.count()
 
+        folders = None
     else:
-        # Avoid import cycle…
-        from subscription import Subscription
+        folders = folder.get_descendants(include_self=True)
 
-        subscriptions = Subscription.objects.filter(folders=folder)
-        active_feeds = [s.feed for s in subscriptions if not s.feed.closed]
-        active_feeds_count = len(active_feeds)
+        active_feeds = BaseFeed.objects.filter(
+            id__in=folder.user.all_subscriptions.filter(
+                folders=folders).filter(
+                    feed__is_active=True).values_list(
+                        'feed_id', flat=True)
+        ).select_related('items', 'tags')
+
+    active_feeds_count = active_feeds.count()
 
     exported_websites = {}
     exported_feeds = []
     total_exported_items_count = 0
 
     if active_feeds_count:
-        LOGGER.info(u'Starting feeds/articles export procedure with %s '
-                    u'active feeds…', active_feeds_count)
+        if folders:
+            LOGGER.info(u'Starting feeds/articles export procedure '
+                        u'of %s folder(s) with %s active feeds…',
+                        folders.count(), active_feeds_count)
+        else:
+            LOGGER.info(u'Starting feeds/articles export procedure with %s '
+                        u'active feeds…', active_feeds_count)
     else:
         LOGGER.warning(u'Not running export procedure, we have '
                        u'no active feed. Is this possible?')
         return
 
     for feed in active_feeds:
-        new_items = feed.good_items.filter(date_published__gte=since)
+
+        if since:
+            new_items = feed.good_items.filter(
+                Article___date_published__gte=since)
+        else:
+            new_items = feed.good_items
+
+        new_items.select_related(
+            'language', 'author', 'tags'
+        )
+
         new_items_count = new_items.count()
 
         if not new_items_count:
@@ -801,30 +833,31 @@ def basefeed_export_content_classmethod(cls, since, folder=None):
         for article in new_items:
             exported_items.append(OrderedDict(
                 id=unicode(article.id),
-                title=article.title,
+                title=article.name,
                 pages_url=[article.url],
                 image_url=article.image_url,
                 excerpt=article.excerpt,
                 content=article.content,
-                media=origin_type(article.origin_type),
+                media=origin(article.origin),
                 content_type=content_type(article.content_type),
                 date_published=article.date_published,
 
-                authors=[(a.name or a.origin_name) for a in article.authors],
+                authors=[(a.name or a.origin_name)
+                         for a in article.authors.all()],
                 date_updated=None,
-                language=article.language,
+                language=article.language.dj_code
+                if article.language else None,
                 text_direction=article.text_direction,
-                tags=[t.name for t in article.tags],
+                tags=[t.name for t in article.tags.all()],
             ))
 
         exported_items_count = len(exported_items)
         total_exported_items_count += exported_items_count
 
         try:
-            website = feed.website.duplicate_of \
-                if feed.website.duplicate_of is not None else feed.website
+            website = feed.website
 
-        except AttributeError:
+        except:
             # Not a website-aware feed.
             exported_website = None
 
@@ -844,15 +877,33 @@ def basefeed_export_content_classmethod(cls, since, folder=None):
 
                 exported_websites[website.url] = exported_website
 
-        exported_feed = OrderedDict(
-            id=unicode(feed.id),
-            name=feed.name,
-            url=feed.url,
-            thumbnail_url=feed.thumbnail_url,
-            short_description=feed.short_description,
-            tags=[t.name for t in feed.tags],
-            articles=exported_items,
-        )
+        if folder:
+            subscription = feed.subscriptions.get(user=folder.user)
+
+            exported_feed = OrderedDict(
+                id=unicode(feed.id),
+                name=subscription.name,
+                url=feed.url,
+                thumbnail_url=subscription.thumbnail.url
+                if subscription.thumbnail else subscription.thumbnail_url
+                if subscription.thumbnail_url else feed.thumbnail.url
+                if feed.thumbnail else feed.thumbnail_url,
+                short_description=feed.short_description,
+                tags=[t.name for t in subscription.tags.all()],
+                articles=exported_items,
+            )
+
+        else:
+            exported_feed = OrderedDict(
+                id=unicode(feed.id),
+                name=feed.name,
+                url=feed.url,
+                thumbnail_url=feed.thumbnail.url
+                if feed.thumbnail else feed.thumbnail_url,
+                short_description=feed.short_description,
+                tags=[t.name for t in feed.tags.all()],
+                articles=exported_items,
+            )
 
         if exported_website:
             exported_feed['website'] = exported_website

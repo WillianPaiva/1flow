@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -22,8 +22,9 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 from .preferences import (HomePreferencesForm, ReadPreferencesForm,  # NOQA
                           SelectorPreferencesForm, StaffPreferencesForm)
 
-from .selector import (ManageFolderForm, ManageSubscriptionForm,  # NOQA
-                       AddSubscriptionForm, )
+from folder import ManageFolderForm  # NOQA
+
+from subscription import AddSubscriptionForm, ManageSubscriptionForm  # NOQA
 
 from .importers import WebPagesImportForm  # NOQA
 

@@ -54,7 +54,8 @@ for url_trans, url_untrans in (
 
     suffix = u'_' + url_untrans
 
-    type_url = ur'%s/(?P<%s>(?:[0-9a-f]{24,24})+)$' % (url_trans, url_untrans)
+    # MongoDB: type_url = ur'%s/(?P<%s>(?:[0-9a-f]{24,24})+)$' % (url_trans, url_untrans)
+    type_url = ur'%s/(?P<%s>\d+)$' % (url_trans, url_untrans)
 
     read_patterns += tuple((
         url(
@@ -118,7 +119,12 @@ urlpatterns = patterns(
     url(_(ur'^read/all/$'), never_cache(views.read_with_endless_pagination),
         name='read_all', kwargs={'all': True}),
 
-    url(_(ur'^read/meta/([0-9a-f]{24,24})/$'),
+    # MongoDB
+    # url(_(ur'^read/meta/([0-9a-f]{24,24})/$'),
+    #     login_required(never_cache(views.read_meta)),
+    #     name='read_meta'),
+
+    url(_(ur'^read/meta/(\d+)/$'),
         login_required(never_cache(views.read_meta)),
         name='read_meta'),
 
@@ -126,12 +132,20 @@ urlpatterns = patterns(
         views.read_with_endless_pagination)), name='read',
         kwargs={'is_read': False}),  # , 'is_bookmarked': False}),
 
-    url(_(ur'^article/([0-9a-f]{24,24})/$'),
+    # MongoDB
+    # url(_(ur'^article/([0-9a-f]{24,24})/$'),
+    #     login_required(never_cache(views.article_content)),
+    #     name='article_content'),
+    # url(_(ur'^article/image/([0-9a-f]{24,24})/$'),
+    #     login_required(views.article_image),
+    #     name='article_image'),
+
+    url(_(ur'^article/(\d+)/$'),
         login_required(never_cache(views.article_content)),
         name='article_content'),
 
     # TODO: remove this when all article images are statically set.
-    url(_(ur'^article/image/([0-9a-f]{24,24})/$'),
+    url(_(ur'^article/image/(\d+)/$'),
         login_required(views.article_image),
         name='article_image'),
 
@@ -141,11 +155,20 @@ urlpatterns = patterns(
     # core.models.nonrel.feed.Feed.create_article_from_url(),
     # These methods use hard-coded "[-26:]" array matching.
     #
-    url(_(ur'^read/([0-9a-f]{24,24})/$'),
+
+    # MongoDB
+    # url(_(ur'^read/([0-9a-f]{24,24})/$'),
+    #     login_required(never_cache(views.read_one)),
+    #     name='read_one'),
+    # url(_(ur'^share/([0-9a-f]{24,24})/$'),
+    #     login_required(never_cache(views.share_one)),
+    #     name='share_one'),
+
+    url(_(ur'^read/(\d+)/$'),
         login_required(never_cache(views.read_one)),
         name='read_one'),
 
-    url(_(ur'^share/([0-9a-f]{24,24})/$'),
+    url(_(ur'^share/(\d+)/$'),
         login_required(never_cache(views.share_one)),
         name='share_one'),
 
@@ -160,7 +183,12 @@ urlpatterns = patterns(
         login_required(never_cache(views.source_selector)),
         name='source_selector'),
 
-    url(_(ur'^folder/new/(?P<parent>[0-9a-f]{24,24})/$'),
+    # MongoDB
+    # url(_(ur'^folder/new/(?P<parent>[0-9a-f]{24,24})/$'),
+    #     login_required(never_cache(views.manage_folder)),
+    #     name='add_folder_with_parent'),
+
+    url(_(ur'^folder/new/(?P<parent>\d+)/$'),
         login_required(never_cache(views.manage_folder)),
         name='add_folder_with_parent'),
 
@@ -168,15 +196,28 @@ urlpatterns = patterns(
         login_required(never_cache(views.manage_folder)),
         name='add_folder'),
 
-    url(_(ur'^folder/(?P<folder>(?:[0-9a-f]{24,24})+)/delete$'),
+    # MongoDB
+    # url(_(ur'^folder/(?P<folder>(?:[0-9a-f]{24,24})+)/delete$'),
+    #     login_required(never_cache(views.delete_folder)),
+    #     name='delete_folder'),
+    #
+    # url(_(ur'^folder/(?P<folder>(?:[0-9a-f]{24,24})+)/purge$'),
+    #     login_required(never_cache(views.delete_folder)),
+    #     name='purge_folder', kwargs={'purge': True}),
+    #
+    # url(_(ur'^folder/(?P<folder>(?:[0-9a-f]{24,24})+)$'),
+    #     login_required(never_cache(views.manage_folder)),
+    #     name='edit_folder'),
+
+    url(_(ur'^folder/(?P<folder_id>\d+)/delete$'),
         login_required(never_cache(views.delete_folder)),
         name='delete_folder'),
 
-    url(_(ur'^folder/(?P<folder>(?:[0-9a-f]{24,24})+)/purge$'),
+    url(_(ur'^folder/(?P<folder_id>\d+)/purge$'),
         login_required(never_cache(views.delete_folder)),
         name='purge_folder', kwargs={'purge': True}),
 
-    url(_(ur'^folder/(?P<folder>(?:[0-9a-f]{24,24})+)$'),
+    url(_(ur'^folder/(?P<folder_id>\d+)$'),
         login_required(never_cache(views.manage_folder)),
         name='edit_folder'),
 
@@ -204,15 +245,28 @@ urlpatterns = patterns(
                        views.FeedsCompleterView.as_view())),
         name='feeds_completer'),
 
-    url(_(ur'^subscription/(?P<subscription>(?:[0-9a-f]{24,24})+)/cancel$'),
+    # MongoDB
+    # url(_(ur'^subscription/(?P<subscription>(?:[0-9a-f]{24,24})+)/cancel$'),
+    #     login_required(never_cache(views.cancel_subscription)),
+    #     name='cancel_subscription_display'),
+    #
+    # url(_(ur'^subscription/(?P<subscription>(?:[0-9a-f]{24,24})+)/cancel/do$'),
+    #     login_required(never_cache(views.cancel_subscription)),
+    #     name='cancel_subscription', kwargs={'confirm': True}),
+    #
+    # url(_(ur'^subscription/(?P<subscription>(?:[0-9a-f]{24,24})+)$'),
+    #     login_required(never_cache(views.edit_subscription)),
+    #     name='edit_subscription'),
+
+    url(_(ur'^subscription/(?P<subscription_id>\d+)/cancel$'),
         login_required(never_cache(views.cancel_subscription)),
         name='cancel_subscription_display'),
 
-    url(_(ur'^subscription/(?P<subscription>(?:[0-9a-f]{24,24})+)/cancel/do$'),
+    url(_(ur'^subscription/(?P<subscription_id>\d+)/cancel/do$'),
         login_required(never_cache(views.cancel_subscription)),
         name='cancel_subscription', kwargs={'confirm': True}),
 
-    url(_(ur'^subscription/(?P<subscription>(?:[0-9a-f]{24,24})+)$'),
+    url(_(ur'^subscription/(?P<subscription_id>\d+)$'),
         login_required(never_cache(views.edit_subscription)),
         name='edit_subscription'),
 
@@ -230,7 +284,12 @@ urlpatterns = patterns(
         login_required(never_cache(views.import_web_url)),
         name='import_web_url'),
 
-    url(_(ur'^status/article/([0-9a-f]{24,24})/$'),
+    # MongoDB
+    # url(_(ur'^status/article/([0-9a-f]{24,24})/$'),
+    #     login_required(never_cache(views.article_conversion_status)),
+    #     name='article_conversion_status'),
+
+    url(_(ur'^status/article/(\d+)/$'),
         login_required(never_cache(views.article_conversion_status)),
         name='article_conversion_status'),
 
@@ -338,7 +397,18 @@ urlpatterns = patterns(
 
     # ———————————————————————————————————————————————————————————— JSON exports
 
-    url(_(ur'^export/folder/(?P<folder_id>\w{24,24})/'
+    # MongoDB
+    # url(_(ur'^export/folder/(?P<folder_id>\w{24,24})/'
+    #       ur'(?P<since>[^/]+)/(?P<token>\w{32,32})/?$'),
+    #     never_cache(views.export_content),
+    #     name='export_folder_content'),
+
+    url(_(ur'^export/folder/(?P<folder_id>\d+)/'
+          ur'(?P<since>[^/]+)/(?P<token>\w{32,32})/?$'),
+        never_cache(views.export_content),
+        name='export_folder_content'),
+
+    url(_(ur'^export/folder/(?P<folder_slug>\w+)/'
           ur'(?P<since>[^/]+)/(?P<token>\w{32,32})/?$'),
         never_cache(views.export_content),
         name='export_folder_content'),

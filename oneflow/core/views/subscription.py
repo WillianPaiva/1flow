@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -26,12 +26,12 @@ from django.http import (HttpResponseRedirect,
                          HttpResponseBadRequest)
 from django.core.urlresolvers import reverse
 from django.contrib import messages
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.translation import (ugettext_lazy as _,
                                       ugettext as __)
 
 from ..forms import ManageSubscriptionForm, AddSubscriptionForm
-from ..models.nonrel import Subscription
+from ..models import Subscription
 
 LOGGER = logging.getLogger(__name__)
 
@@ -39,8 +39,8 @@ LOGGER = logging.getLogger(__name__)
 def edit_subscription(request, **kwargs):
     """ Change parameters of a subscription for current user. """
 
-    subscription_id = kwargs.pop('subscription', None)
-    subscription    = Subscription.get_or_404(subscription_id)
+    subscription_id = kwargs.pop('subscription_id', None)
+    subscription    = get_object_or_404(Subscription, id=subscription_id)
 
     if request.POST:
         form = ManageSubscriptionForm(request.POST, instance=subscription)
@@ -53,14 +53,19 @@ def edit_subscription(request, **kwargs):
                           extra_tags='safe')
 
         else:
+            LOGGER.error(u'%s: %s, %s',
+                         unicode(str(form.errors), errors='replace'),
+                         u', '.join(u'%s: %s' % (f.name, f.errors)
+                                    for f in form.visible_fields()),
+                         unicode(str(form.cleaned_data), errors='replace'))
+
             messages.warning(request, _(u'Could not save '
                              u'subscription: {0}.').format(form.errors),
                              extra_tags='safe')
 
-            LOGGER.error(form.errors)
-
         return HttpResponseRedirect(reverse('source_selector')
-                                    + u"#{0}".format(subscription.id))
+                                    + u"#subscription-{0}".format(
+                                        subscription.id))
 
     else:
         if not request.is_ajax():
@@ -76,7 +81,7 @@ def add_subscription(request, **kwargs):
     """ Subscribe current user to a feed. """
 
     if request.POST:
-        form = AddSubscriptionForm(request.POST, owner=request.user.mongo)
+        form = AddSubscriptionForm(request.POST, owner=request.user)
 
         if form.is_valid():
             added = form.save()
@@ -90,7 +95,7 @@ def add_subscription(request, **kwargs):
                                         + u'#' + __(u'unclassified-streams'))
 
     else:
-        form = AddSubscriptionForm(owner=request.user.mongo)
+        form = AddSubscriptionForm(owner=request.user)
 
     context = {'form': form}
 
@@ -114,10 +119,10 @@ def add_subscription(request, **kwargs):
 def cancel_subscription(request, **kwargs):
     """ Cancel a subscription for current user. """
 
-    subscription_id = kwargs.pop('subscription', None)
-    subscription    = Subscription.get_or_404(subscription_id)
+    subscription_id = kwargs.pop('subscription_id', None)
+    subscription    = get_object_or_404(Subscription, id=subscription_id)
 
-    if not request.user.is_superuser or subscription.user != request.user.mongo:
+    if not request.user.is_superuser or subscription.user != request.user:
         return HttpResponseForbidden(u'Not owner.')
 
     if kwargs.pop('confirm', False):

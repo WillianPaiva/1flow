@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -25,11 +25,11 @@ from random import choice as random_choice
 
 from django.http import HttpResponseBadRequest, HttpResponse
 
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from sparks.django.utils import HttpResponseTemporaryServerError
 
-from ..models.nonrel import Article, Read
+from ..models import Article
 
 LOGGER = logging.getLogger(__name__)
 
@@ -38,13 +38,13 @@ def article_content(request, article_id):
     """ Get the article content for displaying to the user. """
 
     try:
-        article = Article.get_or_404(article_id)
+        article = get_object_or_404(Article, id=article_id)
 
     except:
         return HttpResponseTemporaryServerError()
 
     try:
-        read = Read.get_or_404(article=article, user=request.user.mongo)
+        read = request.user.reads.get(item=article)
 
     except:
         return HttpResponseTemporaryServerError()
@@ -61,7 +61,7 @@ def article_image(request, article_id):
     """ Get the article image for displaying to the user. """
 
     try:
-        article = Article.get_or_404(article_id)
+        article = get_object_or_404(Article, id=article_id)
 
     except:
         return HttpResponseTemporaryServerError()
@@ -80,8 +80,8 @@ def article_image(request, article_id):
                   'nightlife', 'fashion', 'people', 'nature', 'sports',
                   'technics', 'transport')
 
-    tags = set([t.name.lower() for t in article.tags]
-               + [t.name.lower() for t in article.feed.tags])
+    tags = set([t.name.lower() for t in article.tags.all()]
+               + [t.name.lower() for t in article.feeds.all()[0].tags.all()])
 
     #
     # HEADS UP: if you change LoremPixel dimensions,

@@ -36,7 +36,7 @@ from django.conf import settings
 from django.http import Http404
 from django.utils.translation import ugettext_lazy as _
 
-from ....base.utils.dateutils import benchmark
+from oneflow.base.utils.dateutils import benchmark
 
 # Get the very-common (reldb & nonrel) common parts.
 from oneflow.core.models.common import *  # NOQA

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -27,7 +27,10 @@ from django.contrib.auth import get_user_model
 
 from oneflow.base.utils.dateutils import datetime
 
-DjangoUser = get_user_model()
+User = get_user_model()
+
+# Compatibility with old code.
+DjangoUser = User
 
 REDIS = redis.StrictRedis(host=settings.REDIS_HOST,
                           port=settings.REDIS_PORT,

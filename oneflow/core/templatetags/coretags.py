@@ -27,6 +27,7 @@ from constance import config
 from markdown_deux import markdown as mk2_markdown
 
 from django import template
+from django.db.models import Q
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _, pgettext_lazy
@@ -36,7 +37,7 @@ from ...base.utils.dateutils import (now, today,
                                      naturaldelta as onef_naturaldelta)
 
 from oneflow.core import models   # , CACHE_ONE_WEEK
-from oneflow.core.models import nonrel as nonrel_models
+from oneflow.core.models.common import READ_STATUS_DATA
 from ..context_processors import models_constants
 
 LOGGER = logging.getLogger(__name__)
@@ -45,62 +46,66 @@ register = template.Library()
 
 reading_lists = {
 
-    'web_import': (_(u'Imported elements'),
-                   # tooltip_both,
-                   _(u'You have {0} newly imported items.'),
-                   # tooltip_unread
-                   _(u'You have {0} newly imported items, out of {1} so far'),
-                   # tooltip_all,
-                   _(u'You imported {0} web items so far'),
-                   # tooltip_none
-                   _(u'You did not import anything until now'),
-                   ),
+    'imported_items': (
+        _(u'Imported elements'),
+        # tooltip_both,
+        _(u'You have {0} newly imported items.'),
+        # tooltip_unread
+        _(u'You have {0} newly imported items, out of {1} so far'),
+        # tooltip_all,
+        _(u'You imported {0} web items so far'),
+        # tooltip_none
+        _(u'You did not import anything until now'),
+    ),
 
     'read_all':         (_(u'All articles'),
                          _(u'You have {0} articles in 1flow'),
-                         'all_articles_count'),
+                         'all_items_count'),
     'read':             (_(u"All unread"),
                          _(u'You have {0} unread articles'),
-                         'unread_articles_count'),
+                         'unread_items_count'),
     'read_later':       (_(u"Read later"),
                          _(u'You have {0} articles to read later'),
-                         'bookmarked_articles_count'),
+                         'bookmarked_items_count'),
     'read_starred':     (_(u'Starred'),
                          _(u'You have {0} starred articles'),
-                         'starred_articles_count'),
+                         'starred_items_count'),
     'read_archived':    (_(u"Archived"),
                          _(u'You have {0} archived articles'),
-                         'archived_articles_count'),
+                         'archived_items_count'),
 
     'read_fun':         (_(u'Funbox'),
                          _(u'You have {0} fun articles'),
-                         'fun_articles_count'),
+                         'fun_items_count'),
 
     'read_facts':       (_(u'Facts'),
                          _(u'You have {0} articles marked as fact(s)'),
-                         'fact_articles_count'),
+                         'fact_items_count'),
     'read_numbers':     (_(u'Numbers'),
                          _(u'You have {0} articles marked as number(s)'),
-                         'number_articles_count'),
+                         'number_items_count'),
     'read_analysis':    (_(u'Analysis'),
                          _(u'You have {0} articles marked as analysis'),
-                         'analysis_articles_count'),
+                         'analysis_items_count'),
     'read_prospective': (_(u'Prospective'),
                          _(u'You have {0} articles marked as prospective'),
-                         'prospective_articles_count'),
+                         'prospective_items_count'),
     'read_know_how':    (_(u'Best-practices'),
                          _(u'You have {0} articles marked as best-practices'),
-                         'knowhow_articles_count'),
+                         'knowhow_items_count'),
     'read_rules':       (_(u'Regulations'),
                          _(u'You have {0} articles marked as regulation/legal'),
-                         'rules_articles_count'),
+                         'rules_items_count'),
     'read_quotes':      (_(u'Quotes'),
                          _(u'You have {0} articles marked as quote(s)'),
-                         'quote_articles_count'),
+                         'quote_items_count'),
     'read_knowledge':   (_(u'Knowledge'),
                          _(u'You have {0} articles marked as knowledge'),
-                         'knowledge_articles_count'),
+                         'knowledge_items_count'),
 }
+
+# MongoDB backward compatibility:
+reading_lists['web_import'] = reading_lists['imported_items']
 
 
 # colors =["%06x" % random.randint(0,0xFFFFFF) for i in range(255)]
@@ -143,6 +148,7 @@ random_colors = [
     'e629dc', 'be882d', 'b63bd3', '563aec', '716490', 'e27bc0', 'a17405'
     '80d8d8', '928525', 'f07344',
 ]
+
 
 @register.filter
 def naturaldelta(the_datetime):
@@ -187,7 +193,7 @@ def search_label(context):
 @register.simple_tag
 # HEADS UP: we can't cache simpletags results, it will
 # cache only one value, whatever the tag arguments are…
-#@cached(CACHE_ONE_WEEK)
+# @cached(CACHE_ONE_WEEK)
 def read_status_css(read):
 
     css = []
@@ -209,7 +215,7 @@ def reading_list_with_count(user, view_name, show_unreads=False,
     else:
         count_span = u''
 
-    count = getattr(user, count_attr_name)
+    count = getattr(user.user_counters, count_attr_name)
 
     if show_unreads and count:
         has_unread_start = u'<span class="has-unread">'
@@ -239,7 +245,7 @@ def subscription_css(subscription, folder, level):
     if subscription.has_unread:
         css_classes += u' has-unread'
 
-    if subscription.is_closed:
+    if not subscription.feed.is_active:
         css_classes += u' is_closed'
 
     # On small devices, any level takes the whole width.
@@ -299,9 +305,9 @@ def special_subscription_list_with_count(user, special_name, css_classes=None):
     list_name, tooltip_both, tooltip_unread, tooltip_all, tooltip_none = \
         reading_lists[special_name]
 
-    subscription = getattr(user, special_name + u'_subscription')
-    all_count    = subscription.all_articles_count
-    unread_count = subscription.unread_articles_count
+    subscription = getattr(user.user_subscriptions, special_name)
+    all_count    = subscription.all_items_count
+    unread_count = subscription.unread_items_count
 
     count_span = u''
     make_span  = False
@@ -352,7 +358,7 @@ def container_reading_list_with_count(view_name, container_type, container,
     # u'<a href="{0}" class="{1} {2} async-get" data-async-get="count">{3}'
     # u'<span class="count"></span></a>'
 
-    count      = getattr(container, attrname + '_articles_count')
+    count      = getattr(container, attrname + '_items_count')
     view_name += u'_' + container_type
 
     if always_show or count > 0:
@@ -463,7 +469,7 @@ def article_full_content_display(article):
             # START temporary measure.
             # TODO: please get rid of this…
 
-            title_len = len(article.title)
+            title_len = len(article.name)
 
             transient_content = article.content
 
@@ -472,7 +478,7 @@ def article_full_content_display(article):
 
                 diff = difflib.SequenceMatcher(None,
                                                article.content[:search_len],
-                                               article.title)
+                                               article.name)
 
                 if diff.ratio() > 0.51:
                     for blk in reversed(diff.matching_blocks):
@@ -561,8 +567,8 @@ def article_excerpt_content_display(article):
 def article_read_content(context, read):
 
     if read.is_restricted:
-        #content = article_excerpt_content_display(article)
-        #excerpt = True
+        # content = article_excerpt_content_display(article)
+        # excerpt = True
 
         # Having None triggers the iframe display, which is more elegant
         # and directly useful to the user than displaying just an excerpt.
@@ -570,12 +576,12 @@ def article_read_content(context, read):
         excerpt = None
 
     else:
-        content = article_full_content_display(read.article)
+        content = article_full_content_display(read.item)
         excerpt = False
 
     context.update({
         'read': read,
-        'article': read.article,
+        'article': read.item,
 
         # We don't mark_safe() here, else mark_safe(None) outputs "None"
         # in the templates, and "if content" tests fail because content
@@ -598,7 +604,7 @@ def read_action(article, action_name, with_text=True, popover_direction=None):
             'with_text': with_text,
             'popover_direction': popover_direction or 'top',
             'action_name': action_name,
-            'action_data': models.Read.status_data.get(action_name),
+            'action_data': READ_STATUS_DATA.get(action_name),
             'popover_class': '' if with_text else 'popover-tooltip',
             'js_func': "toggle_status(event, '{0}', '{1}')".format(
                        article.id, action_name)
@@ -631,7 +637,7 @@ def read_action_status(action_name, with_text=False):
     return {
         'with_text': with_text,
         'action_name': action_name,
-        'action_data': models.Read.status_data.get(action_name),
+        'action_data': READ_STATUS_DATA.get(action_name),
     }
 
 
@@ -653,8 +659,8 @@ def read_status_css_styles():
                      u'.not_{0} .action-mark-not_{0}{{display:none}} '
                      u'.not_{0} .action-mark-{0}{{display:inline-block}}'
                      ).format(status)
-                     for status in models.Read.status_data.keys()
-                     if 'list_url' in models.Read.status_data[status])
+                     for status in READ_STATUS_DATA.keys()
+                     if 'list_url' in READ_STATUS_DATA[status])
 
 
 # —————————————————————————————————————————————————————————— Mail accounts tags
@@ -756,64 +762,36 @@ def mailfeed_rules_count(mailaccount):
 @register.inclusion_tag('snippets/history/userimport-feeds.html')
 def userimport_feeds_details(user, feeds_urls):
 
-    feeds = []
+    websites_urls = [(url[:-1] if url.endswith('/') else url)
+                     for url in feeds_urls]
 
-    for url in feeds_urls:
-        try:
-            feeds.append(nonrel_models.Feed.objects.get(url=url))
+    imported_feeds = models.RssAtomFeed.objects.filter(
+        Q(url__in=feeds_urls) | Q(website__url__in=websites_urls))
 
-        except:
-            LOGGER.exception(u'Could not get feed with URL %s', url)
+    subscriptions = user.subscriptions.filter(feed__in=imported_feeds)
 
-    subscriptions = []
-
-    # HEADS UP: copy[:], else the remove() gives half the results
-    for feed in feeds[:]:
-        try:
-            subscriptions.append(user.subscriptions.get(feed=feed))
-
-        except:
-            LOGGER.exception(u'Could not get subscription with feed %s '
-                             u'for user %s', feed, user)
-
-        else:
-            feeds.remove(feed)
+    unsubscribed_feeds = [f for f in imported_feeds
+                          if f.id not in (s.feed_id for s in subscriptions)]
 
     return {
         'subscriptions': subscriptions,
-        'feeds': feeds,
+        'feeds': unsubscribed_feeds,
     }
 
 
 @register.inclusion_tag('snippets/history/userimport-articles.html')
 def userimport_articles_details(user, articles_urls):
 
-    articles = []
+    imported_articles = models.Article.objects.filter(url__in=articles_urls)
 
-    for url in articles_urls:
-        try:
-            articles.append(nonrel_models.Article.objects.get(url=url))
+    reads = user.reads.filter(item__in=imported_articles)
 
-        except:
-            LOGGER.exception(u'Could not get article with URL %s', url)
-
-    reads = []
-
-    # HEADS UP: copy[:], else the remove() gives half the results
-    for article in articles[:]:
-        try:
-            reads.append(user.reads.get(article=article))
-
-        except:
-            LOGGER.exception(u'Could not get read with article %s for user %s',
-                             article, user)
-
-        else:
-            articles.remove(article)
+    unread_articles = [a for a in imported_articles
+                       if a.id not in (r.item_id for r in reads)]
 
     return {
         'reads': reads,
-        'articles': articles,
+        'articles': unread_articles,
     }
 
 @register.filter

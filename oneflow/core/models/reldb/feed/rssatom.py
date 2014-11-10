@@ -235,7 +235,7 @@ def create_feeds_from_url(feed_url, creator=None, recurse=True):
         raise Exception(u'Unparsable feed {0}: {1}'.format(feed_url, e))
 
     else:
-        # Wow. FeedParser creates a <anything>.feed
+        # Wow. FeedParser creates a <anything>.feed . Impressive.
         fp_feed = parsed_feed.feed
         website = WebSite.get_from_url(clean_url(
                                        fp_feed.get('link', feed_url)))
@@ -247,7 +247,7 @@ def create_feeds_from_url(feed_url, creator=None, recurse=True):
                 'description',
                 fp_feed.get('subtitle', u'')),
             url=feed_url,
-            created_by=creator,
+            user=creator,
             website=website)
         new_feed.save()
 
@@ -473,56 +473,6 @@ class RssAtomFeed(BaseFeed):
         self.last_etag     = getattr(parsed_feed, 'etag', None)
 
         return new_articles, duplicates, mutualized
-
-    def create_article_from_url(self, url):
-        """ PLEASE REVIEW. """
-
-        # TODO: find article publication date while fetching content…
-        # TODO: set Title during fetch…
-
-        if settings.SITE_DOMAIN in url:
-            # The following code should not fail, because the URL has
-            # already been idiot-proof-checked in core.forms.selector
-            #   .WebPagesImportForm.validate_url()
-            read_id = url[-26:].split('/', 1)[1].replace('/', '')
-
-            # Avoid an import cycle.
-            from .read import Read
-
-            # HEADS UP: we just patch the URL to benefit from all the
-            # Article.create_article() mechanisms (eg. mutualization, etc).
-            url = Read.objects.get(id=read_id).article.url
-
-        try:
-            new_article, created = Article.create_article(
-                url=url.replace(' ', '%20'),
-                title=_(u'Imported item from {0}').format(clean_url(url)),
-                feeds=[self], origin_type=ORIGINS.WEBIMPORT)
-
-        except:
-            # NOTE: duplication handling is already
-            # taken care of in Article.create_article().
-            LOGGER.exception(u'Article creation from URL %s failed in '
-                             u'feed %s.', url, self)
-            return None, False
-
-        mutualized = created is None
-
-        if created or mutualized:
-            self.recent_items_count += 1
-            self.all_items_count += 1
-
-        self.latest_item_date_published = now()
-
-        # Even if the article wasn't created, we need to create reads.
-        # In the case of a mutualized article, it will be fetched only
-        # once, but all subscribers of all feeds must be connected to
-        # it to be able to read it.
-        for subscription in self.subscriptions:
-            subscription.create_read(new_article, verbose=created)
-
-        # Don't forget the parenthesis else we return ``False`` everytime.
-        return new_article, created or (None if mutualized else False)
 
     def create_article_from_feedparser(self, article, feed_tags):
         """ Take a feedparser item and a list of Feed subscribers and

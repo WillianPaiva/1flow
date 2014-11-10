@@ -33,5 +33,6 @@ class SyncNodeForm(forms.ModelForm):
 
     class Meta:
         model = SyncNode
-        fields = ('name', 'is_active', 'permission',
-                  'local_token', 'remote_token', 'broadcast', )
+        fields = ('name', 'uri', 'permission',
+                  # strategy will be modifiable later, only if node is trusted.
+                  'remote_token', 'broadcast', )

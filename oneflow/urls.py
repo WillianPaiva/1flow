@@ -1,23 +1,23 @@
 # -*- coding: utf-8 -*-
+u"""
+Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
+
+This file is part of the 1flow project.
+
+1flow is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+
+1flow is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public
+License along with 1flow.  If not, see http://www.gnu.org/licenses/
 """
-    Copyright 2013-2014 Olivier Cortès <oc@1flow.io>
 
-    This file is part of the 1flow project.
-
-    1flow is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation, either version 3 of
-    the License, or (at your option) any later version.
-
-    1flow is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public
-    License along with 1flow.  If not, see http://www.gnu.org/licenses/
-
-"""
 import re
 
 from django.conf import settings
@@ -61,7 +61,7 @@ urlpatterns = patterns(
     url(r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^djangojs/', include('djangojs.urls')),
     url(r'^inplaceeditform/', include('inplaceeditform.urls')),
-
+    url(r'^upload/', include('django_file_form.urls')),
     #
     # HEADS UP: this URL belongs to `core` and is not translated.
     #           This is an hard-coded exception.
@@ -83,6 +83,8 @@ else:
     # Just redirect it to the app home. This will handle the
     # login phase implicitely, if the user is anonymous.
     def root_redirects_to_home(request):
+        """ Root redirects to home. """
+
         return HttpResponsePermanentRedirect(reverse_lazy('home'))
 
     urlpatterns += i18n_patterns(
@@ -168,9 +170,9 @@ urlpatterns += patterns(
     '',
     # Not automatically enabled.
     # cf. http://django-select2.readthedocs.org/en/latest/get_started.html#installation # NOQA
-    #url(r'^select2/', include('django_select2.urls')),
+    # url(r'^select2/', include('django_select2.urls')),
     url(r'^grappelli/', include('grappelli.urls')),
-    #url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin_site.urls)),
 )
 
@@ -200,6 +202,7 @@ urlpatterns += staticfiles_urlpatterns()
 #  Cf. https://github.com/django-debug-toolbar/django-debug-toolbar/issues/585#issuecomment-41461381 # NOQA
 if settings.DEBUG:
     import debug_toolbar
-    urlpatterns += patterns('',
+    urlpatterns += patterns(
+        '',
         url(r'^__debug__/', include(debug_toolbar.urls)),
     )

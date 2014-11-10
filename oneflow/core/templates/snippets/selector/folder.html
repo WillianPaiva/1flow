@@ -17,12 +17,12 @@
     <div class="folder-border-top" style="background-color: {{ folder_color_border }}"></div>
     <div class="folder">
 
-        <a id="{{ folder.id }}"></a>
+        <a id="folder-{{ folder.id }}"></a>
 
         <div class="name-wrapper level-{{ level }}">
             {% if level|divisibleby:'2' %}
                 <span class="name" style="border-top-color: {{ folder_color_border }}">{{ folder.name }}</span>&nbsp;<span class="css-hover-muted">
-                    <button href="{% url 'edit_folder' folder=folder.id %}" data-toggle="modal" data-target="#" class="btn btn-xs btn-default"><i class="icon-cog"></i> {% trans "Folder settings" %}</button>
+                    <button href="{% url 'edit_folder' folder_id=folder.id %}" data-toggle="modal" data-target="#" class="btn btn-xs btn-default"><i class="icon-cog"></i> {% trans "Folder settings" %}</button>
                 {% if level|add:1 < folder.max_depth %}
                     &nbsp;<button
                     href="{% url 'add_folder_with_parent' parent=folder.id %}"
@@ -41,7 +41,7 @@
                     data-toggle="modal" data-target="#"><i
                     class="icon-fixed-width icon-folder-close"></i>&nbsp;{% trans "Add a sub-folder" %}</button>&nbsp;
                 {% endif %}
-                    <button href="{% url 'edit_folder' folder=folder.id %}"
+                    <button href="{% url 'edit_folder' folder_id=folder.id %}"
                     data-toggle="modal" data-target="#" class="btn btn-xs btn-default"><i class="icon-cog"></i> {% trans "Folder settings" %}</button>
                 </span>&nbsp;<span class="name" style="border-top-color: {{ folder_color_border }}">{{ folder.name }}</span>
 
@@ -58,10 +58,10 @@
         </div>
 
         {# Operators priorities https://docs.djangoproject.com/en/dev/ref/templates/builtins/#boolean-operators #}
-        {% if folder.open_subscriptions or show_closed_streams and folder.subscriptions %}
+        {% if folder.open_subscriptions.all or show_closed_streams and folder.subscriptions.all %}
             <div class="subscriptions clearfix level-{{ level }}">
-                {% for subscription in folder.subscriptions %}
-                    {% if show_closed_streams or not subscription.feed.closed %}
+                {% for subscription in folder.subscriptions.all %}
+                    {% if show_closed_streams or subscription.feed.is_active %}
                         {% include "snippets/selector/subscription.html" %}
                     {% endif %}
                 {% endfor %}

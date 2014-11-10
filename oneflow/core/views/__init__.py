@@ -31,7 +31,7 @@ from django.http import (
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.contrib import messages
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.template import add_to_builtins
 from django.utils.translation import ugettext_lazy as _
 
@@ -43,13 +43,16 @@ from oneflow.base.utils.decorators import token_protected
 
 from ..forms import WebPagesImportForm
 
-from ..models.nonrel import (
-    Article, Read,
-    Feed, Subscription,
-    Folder, CONTENT_TYPES_FINAL
-)
+from ..models.common import READ_STATUS_DATA
 
-from ..models.reldb import HelpContent, IMPORT_STATUS
+from ..models import (
+    Article, Read,
+    BaseFeed, Subscription,
+    HelpContent,
+    Folder,
+    IMPORT_STATUS,
+    CONTENT_TYPES_FINAL,
+)
 
 from ..gr_import import GoogleReaderImport
 
@@ -123,7 +126,7 @@ def make_read_wrapper(attrkey, typekey, view_name):
 # This builds "read_later_feed_with_endless_pagination",
 # 'read_later_folder_with_endless_pagination' and so on.
 
-for attrkey, attrval in Read.status_data.items():
+for attrkey, attrval in READ_STATUS_DATA.items():
     if 'list_url' in attrval:
         # HEADS UP: sync the second argument with urls.py
         make_read_wrapper(attrkey, 'feed', attrval.get('view_name'))
@@ -183,13 +186,13 @@ def source_selector(request, **kwargs):
     else:
         template = u'selector.html'
 
-    mongo_user     = request.user.mongo
-    selector_prefs = mongo_user.preferences.selector
+    user     = request.user
+    selector_prefs = user.preferences.selector
 
     return render(request, template, {
-        'subscriptions':               mongo_user.subscriptions,
-        'nofolder_open_subscriptions': mongo_user.nofolder_open_subscriptions,
-        'closed_subscriptions':        mongo_user.nofolder_closed_subscriptions,
+        'subscriptions':               user.subscriptions,
+        'nofolder_open_subscriptions': user.nofolder_open_subscriptions,
+        'closed_subscriptions':        user.nofolder_closed_subscriptions,
         'show_closed_streams':         selector_prefs.show_closed_streams,
         'titles_show_unread_count':    selector_prefs.titles_show_unread_count,
         'folders_show_unread_count':   selector_prefs.folders_show_unread_count,
@@ -207,13 +210,13 @@ def toggle(request, klass, oid, key):
     #
 
     try:
-        obj = globals()[klass].get_or_404(oid)
+        obj = get_object_or_404(globals()[klass], id=oid)
 
     except:
         LOGGER.exception(u'Oops in toggle! Model “%s” not imported?', klass)
         return HttpResponseTemporaryServerError()
 
-    if not obj.check_owner(request.user.mongo):
+    if obj.user != request.user:
         return HttpResponseForbidden(u'Not owner')
 
     try:
@@ -271,8 +274,8 @@ def import_web_url(request, url):
                 article = Article.objects.get(url=article_url)
 
                 if article.content_type in CONTENT_TYPES_FINAL:
-                    read = Read.get_or_404(user=request.user.mongo,
-                                           article=article)
+                    read = get_object_or_404(Read, user=request.user,
+                                             item=article)
 
                     return HttpResponsePermanentRedirect(
                         reverse('read_one', args=(read.id,)))
@@ -281,8 +284,9 @@ def import_web_url(request, url):
                 feed_url = user_import.results['created']['feeds'][0]
 
                 subscription = Subscription.objects.get(
-                    feed=Feed.objects.get(feed_url),
-                    user=request.user)
+                    feed=BaseFeed.objects.get(feed_url),
+                    user=request.user
+                )
 
                 return HttpResponsePermanentRedirect(
                     reverse('source_selector') + u"#" + subscription.id)
@@ -299,14 +303,14 @@ def import_web_url(request, url):
     return render(request, 'import-web-url.html',
                   {'article': article, 'url': url,
                    'poll_url': reverse('article_conversion_status',
-                                       args=(article.id,))})
+                                       args=(article.id, ))})
 
 
 def article_conversion_status(request, article_id):
     """ Return a 202 if article is converting, else redirect to article. """
 
     try:
-        article = Article.get_or_404(article_id)
+        article = get_object_or_404(Article, id=article_id)
 
     except:
         return HttpResponseTemporaryServerError(
@@ -314,7 +318,7 @@ def article_conversion_status(request, article_id):
 
     if article.content_type in CONTENT_TYPES_FINAL:
 
-        read = Read.get_or_404(user=request.user.mongo, article=article)
+        read = get_object_or_404(Read, user=request.user, item=article)
 
         return HttpResponse(u'http://' + settings.SITE_DOMAIN +
                             reverse('read_one', args=(read.id,)))
@@ -400,15 +404,23 @@ def export_content(request, **kwargs):
     since = kwargs.get('since')
     format = request.GET.get('format', 'json')
     folder_id = kwargs.get('folder_id', None)
+    folder_slug = kwargs.get('folder_slug', None)
 
-    folder = None if folder_id is None else Folder.get_or_404(folder_id)
+    if folder_id:
+        folder = get_object_or_404(Folder, id=folder_id)
+
+    elif folder_slug:
+        folder = get_object_or_404(Folder, slug=folder_slug)
+
+    else:
+        folder = None
 
     if format == 'json':
 
         try:
             content = {
                 'result': 'OK',
-                'data': Feed.export_content(since, folder=folder),
+                'data': BaseFeed.export_content(since, folder=folder),
             }
 
         except Exception as e:

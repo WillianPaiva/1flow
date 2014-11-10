@@ -27,7 +27,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from django_select2.widgets import HeavySelect2TagWidget
 
-#from ..models import User
+# from ..models import User
 from .fields import UsersMultipleAndTagField
 
 
@@ -60,7 +60,9 @@ class ReadShareForm(forms.Form):
         super(ReadShareForm, self).__init__(*args, **kwargs)
 
         self.fields['recipients'] = UsersMultipleAndTagField(
-            owner=self.sharer, label=_(u'Share with'),
+            # owner=self.sharer,
+            user=self.sharer,
+            label=_(u'Share with'),
             widget=HeavySelect2TagWidget(
                 data_url=reverse_lazy('user_address_book')),
             required=True, help_text=_(u'Type to auto-complete, or separate '

@@ -100,7 +100,7 @@
                 <a href="{% url 'read_later' %}"
 
             {% elif preferences.home.read_shows == 4 %}
-                <a href="{% url 'read_all_feed' feed=mongodb_user.web_import_subscription.id %}"
+                <a href="{% url 'read_all_feed' feed=user.user_subscriptions.imported_items.id %}"
 
             {% elif preferences.home.read_shows == 5 %}
                 <a href="{% url 'read_starred' %}"

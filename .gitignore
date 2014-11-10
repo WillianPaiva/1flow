@@ -10,6 +10,7 @@
 /reports
 
 /config/Gemfile.lock
+/shell_ipynb
 
 /MAINTENANCE_MODE
 /celerybeat-schedule
