@@ -31,9 +31,9 @@ import platform
 
 from collections import OrderedDict, namedtuple
 
-from celery import Celery
-from celery.events.state import State
-from celery.task.control import inspect, revoke
+# from celery import Celery
+# from celery.events.state import State
+from celery.task.control import inspect  # , revoke
 
 from django.conf import settings
 from django.db import connection
@@ -184,17 +184,22 @@ def celery_tasks_names(inspect):
 
     tasks_names = set()
 
-    for k, v in inspect.registered_tasks().iteritems():
-        for tn in v:
-            if not (tn.startswith('celery') or tn.startswith('raven')):
-                tasks_names.add(tn)
+    try:
+        for k, v in inspect.registered_tasks().iteritems():
+            for tn in v:
+                if not (tn.startswith('celery') or tn.startswith('raven')):
+                    tasks_names.add(tn)
+
+    except:
+        LOGGER.exception('Could not gather celery tasks names')
 
     return tasks_names
 
 
 def celery_workers_status():
 
-    print ',\n'.join('%s: %s scheduled task(s)' % (k, len(v)) for (k,v) in sorted(i.scheduled().iteritems()))
+    print ',\n'.join('%s: %s scheduled task(s)' % (k, len(v))
+                     for (k, v) in sorted(i.scheduled().iteritems()))
 
 
 # from flower.app import Flower
