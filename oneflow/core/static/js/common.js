@@ -909,8 +909,11 @@ function setup_post_processors(parent) {
 function setup_ajax_uploader(parent) {
 
     try {
-        initUploadFields(find_start(parent, 'file-upload-form'));
+        form = find_start(parent, 'file-upload-form');
 
+        if (form){
+            initUploadFields(form);
+        }
     } catch (err) {
         console.warning(
             'Exception while initializing file uploader field: '
