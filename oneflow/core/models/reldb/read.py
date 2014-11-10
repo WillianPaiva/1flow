@@ -315,14 +315,14 @@ class Read(AbstractTaggedModel):
         if self.user.has_staff_access:
             return False
 
-        if (self.user.is_staff_or_superuser_and_enabled
-                and self.user.preferences.staff.allow_all_articles):
+        if self.user.is_staff_or_superuser_and_enabled:
             return False
 
         if self.is_archived:
             return False
 
-        return any(map(lambda sub: sub.feed.restricted, self.subscriptions))
+        return any(map(lambda sub: sub.feed.is_restricted,
+                   self.subscriptions.all()))
 
         # TODO: refresh/implement this to avoid fetching content from the
         #       database if the remote article is not available anymore.
@@ -343,7 +343,7 @@ class Read(AbstractTaggedModel):
     def title(self):
 
         article = self.item
-        feed    = article.feed
+        feed    = article.a_feed
 
         if feed:
             source = _(u' ({feed})').format(feed=feed.name)
@@ -357,8 +357,8 @@ class Read(AbstractTaggedModel):
     @property
     def get_source(self):
 
-        if self.item.source:
-            return self.item.source
+        if self.item.sources.count():
+            return self.item.sources.all()
 
         if self.subscriptions:
             return self.subscriptions.all()
@@ -373,7 +373,7 @@ class Read(AbstractTaggedModel):
         if source.__class__ in (unicode, str):
             return source
 
-        sources_count = len(source)
+        sources_count = source.count()
 
         if sources_count > 2:
             return _(u'Multiple sources ({0} feeds)').format(sources_count)
@@ -525,40 +525,44 @@ class Read(AbstractTaggedModel):
             to_change = [only + '_items_count' for only in update_only]
 
             for attr_name in to_change:
+
+                updated_folders = []
+
                 try:
-
-                    updated_folders = []
-
                     for subscription in self.subscriptions.all():
                         setattr(subscription, attr_name,
                                 op(getattr(subscription, attr_name), 1))
 
-                        for folder in subscription.folders.all():
-                            if folder in updated_folders:
-                                continue
+                except AttributeError, e:
+                    LOGGER.warning(u'Skipped subscriptions cache descriptor '
+                                   u'update for %s from %s: %s',
+                                   attr_name, self, e)
 
-                            setattr(folder, attr_name,
-                                    op(getattr(folder, attr_name), 1))
+                try:
+                    for folder in subscription.folders.all():
+                        if folder in updated_folders:
+                            continue
 
-                            updated_folders.append(folder)
+                        setattr(folder, attr_name,
+                                op(getattr(folder, attr_name), 1))
 
-                    setattr(self.user, attr_name,
-                            op(getattr(self.user, attr_name), 1))
+                        updated_folders.append(folder)
 
                 except AttributeError, e:
-                    LOGGER.warning(u'Skipped cache descriptor update for %s '
-                                   u'from %s: %s', attr_name, self, e)
+                    LOGGER.warning(u'Skipped folder cache descriptor '
+                                   u'update for %s from %s: %s',
+                                   attr_name, self, e)
 
-    def is_read_changed(self):
+                try:
+                    setattr(self.user.user_counters, attr_name,
+                            op(getattr(self.user.user_counters, attr_name), 1))
 
-        self.update_cached_descriptors(operation='-' if self.is_read else '+',
-                                       update_only=['unread'])
+                except AttributeError, e:
+                    LOGGER.warning(u'Skipped user cache descriptor '
+                                   u'update for %s from %s: %s',
+                                   attr_name, self, e)
 
-    def is_starred_changed(self):
-
-        self.update_cached_descriptors(operation='+'
-                                       if self.is_starred else '-',
-                                       update_only=['starred'])
+    # ——————————————————————————————————————————————— Boolean attributes change
 
     def mark_archived(self):
         if self.is_archived_can_change() and not self.is_archived:
@@ -596,6 +600,35 @@ class Read(AbstractTaggedModel):
         self.update_cached_descriptors(operation='+'
                                        if self.is_bookmarked else '-',
                                        update_only=['bookmarked'])
+
+    def is_read_changed(self):
+
+        # HEADS UP: the operation is inverted, we count UNread items.
+        self.update_cached_descriptors(operation='-' if self.is_read else '+',
+                                       update_only=['unread'])
+
+    def is_starred_changed(self):
+
+        self.update_cached_descriptors(operation='+'
+                                       if self.is_starred else '-',
+                                       update_only=['starred'])
+
+# ————————————————————————————————————————————————————— Watch attributes change
+
+
+def gen_attr_is_changed_method(attr_name):
+
+    def attr_is_changed_method(self):
+
+        self.update_cached_descriptors(operation='-'
+                                       if getattr(self, attr_name) else '+',
+                                       update_only=[attr_name[3:]])
+
+    return attr_is_changed_method
+
+for attr_name in WATCH_ATTRIBUTES_FIELDS_NAMES:
+    setattr(Read, attr_name + '_changed',
+            gen_attr_is_changed_method(attr_name))
 
 
 register_task_method(Read, Read.post_create_task,
