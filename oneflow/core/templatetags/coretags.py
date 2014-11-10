@@ -469,7 +469,7 @@ def article_full_content_display(article):
             # START temporary measure.
             # TODO: please get rid of this…
 
-            title_len = len(article.title)
+            title_len = len(article.name)
 
             transient_content = article.content
 
@@ -478,7 +478,7 @@ def article_full_content_display(article):
 
                 diff = difflib.SequenceMatcher(None,
                                                article.content[:search_len],
-                                               article.title)
+                                               article.name)
 
                 if diff.ratio() > 0.51:
                     for blk in reversed(diff.matching_blocks):
@@ -576,12 +576,12 @@ def article_read_content(context, read):
         excerpt = None
 
     else:
-        content = article_full_content_display(read.article)
+        content = article_full_content_display(read.item)
         excerpt = False
 
     context.update({
         'read': read,
-        'article': read.article,
+        'article': read.item,
 
         # We don't mark_safe() here, else mark_safe(None) outputs "None"
         # in the templates, and "if content" tests fail because content
