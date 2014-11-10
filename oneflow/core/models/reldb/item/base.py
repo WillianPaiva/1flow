@@ -160,6 +160,19 @@ class BaseItem(PolymorphicModel,
     # —————————————————————————————————————————————————————————————— Properties
 
     @property
+    def a_feed(self):
+        """ Get any of the item's feeds. None if it hasn't any.
+
+        (but that's highly unprobable).
+        """
+
+        try:
+            return self.feeds.all()[0]
+
+        except IndexError:
+            return None
+
+    @property
     def get_source(self):
 
         return self.sources.all() or self.feeds.all() or _(u'Unknown source')

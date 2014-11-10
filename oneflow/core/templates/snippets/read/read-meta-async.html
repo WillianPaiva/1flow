@@ -8,7 +8,7 @@
 <div class="wrapper-div-for-easy-jquery-sub-selection">
   <div class="article-meta-information-data">
 
-    {% with read.subscriptions|first as subscription %}
+    {% with read.subscriptions.all|first as subscription %}
 
       {% cache 86400 subscription_feed_icon subscription.feed %}
         <div class="subscription-meta" style="text-align:right">
@@ -18,7 +18,7 @@
             the current page: if it's a reading list, the user's experience will
             be interupted / restarted by the final redirection of the form.n
 
-          <a href="{% url 'edit_subscription' subscription=subscription.id %}"
+          <a href="{% url 'edit_subscription' subscription_id=subscription.id %}"
             data-toggle="modal" data-target="#" class="manage"><i
             class="icon-cog popover-top" title="{% trans "Manage the properties of this stream" %}"
             data-toggle="tooltip"></i></a>
@@ -72,7 +72,7 @@
       <a href="{{ article.url }}" class="popover-tooltip popover-bottom"
             title="{% trans "Open original article in a new window/tab" %}"
             target="_blank">
-        {{ article.title }}
+        {{ article.name }}
       </a>
     </h4>
 
@@ -90,7 +90,7 @@
     {% if article.authors %}
       <h5 class="author">
           <span class="muted">{% trans "by" %}</span>
-          {% for author in article.authors %}
+          {% for author in article.authors.all %}
               {% firstof author.name author.origin_name %}{% if not forloop.last %}, {% endif %}
           {% endfor %}
       </h5>
@@ -100,14 +100,14 @@
 
       <span class="in-tags muted">{% trans "in" %}</span>
       <ul class="tags">
-        {% for tag in read.tags %}<li class="tag"><a href="#">{{ tag.name }}</a></li>{% endfor %}
+        {% for tag in read.tags.all %}<li class="tag"><a href="#">{{ tag.name }}</a></li>{% endfor %}
       </ul>
 
     {% elif article.tags %}
 
       <span class="in-tags muted">{% trans "in" %}</span>
       <ul class="tags">
-        {% for tag in article.tags %}<li class="tag"><a href="#">{{ tag.name }}</a></li>{% endfor %}
+        {% for tag in article.tags.all %}<li class="tag"><a href="#">{{ tag.name }}</a></li>{% endfor %}
       </ul>
 
     {% endif %}

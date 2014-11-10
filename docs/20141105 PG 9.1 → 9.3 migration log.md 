@@ -1,0 +1,36 @@
+postgres@dbcache:~$ /usr/lib/postgresql/9.3/bin/psql -p 5433 oneflow < oneflow.20141105.dump
+
+
+ERROR:  value too long for type character varying(256)
+CONTEXT:  COPY core_baseitem, line 201646, column name: "on frugal technology, simple living, guerrilla plumbing Hey, world — this is my website  No databa..."
+
+ERROR:  value too long for type character varying(128)
+CONTEXT:  COPY core_simpletag, line 13572, column name: "sports, epicly later’d, chocolate, chocolate skateboarding, skate, skaters, spike jonze, patrick o..."
+
+ERROR:  value too long for type character varying(200)
+CONTEXT:  COPY django_admin_log, line 275, column object_repr: "A Paris, des arrondissements qui font tourner les têtes (de liste) (#522f640ba2463915d9b06178) de h..."
+
+ERROR:  insert or update on table "core_baseitem_tags" violates foreign key constraint "baseitem_id_refs_id_07853d6b"
+DETAIL:  Key (baseitem_id)=(957830) is not present in table "core_baseitem".
+
+ERROR:  insert or update on table "core_basefeed_items" violates foreign key constraint "baseitem_id_refs_id_e154f265"
+DETAIL:  Key (baseitem_id)=(9) is not present in table "core_baseitem".
+
+ERROR:  insert or update on table "core_baseitem_authors" violates foreign key constraint "baseitem_id_refs_id_f82c7341"
+DETAIL:  Key (baseitem_id)=(10741) is not present in table "core_baseitem".
+
+ERROR:  insert or update on table "core_article" violates foreign key constraint "baseitem_ptr_id_refs_id_c58f2c56"
+DETAIL:  Key (baseitem_ptr_id)=(1) is not present in table "core_baseitem".
+
+ERROR:  insert or update on table "core_originaldata" violates foreign key constraint "item_id_refs_id_4dac6329"
+DETAIL:  Key (item_id)=(9) is not present in table "core_baseitem".
+
+ERROR:  insert or update on table "core_read" violates foreign key constraint "item_id_refs_id_503ce277"
+DETAIL:  Key (item_id)=(719981) is not present in table "core_baseitem".
+
+ERROR:  insert or update on table "core_read_tags" violates foreign key constraint "simpletag_id_refs_id_476fd398"
+DETAIL:  Key (simpletag_id)=(1) is not present in table "core_simpletag".
+
+ERROR:  insert or update on table "core_baseitem_tags" violates foreign key constraint "simpletag_id_refs_id_f5fcea6a"
+DETAIL:  Key (simpletag_id)=(1) is not present in table "core_simpletag".
+

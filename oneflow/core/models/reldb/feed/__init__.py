@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -19,12 +19,12 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
-from base import BaseFeed, basefeed_refresh_task  # NOQA
+from base import *  # NOQA
 
-from rssatom import RssAtomFeed  # NOQA
+from rssatom import *  # NOQA
 
-from mail import MailFeed  # NOQA
-from mailrule import MailFeedRule  # NOQA
+from mail import *  # NOQA
+from mailrule import *  # NOQA
 
-from combined import CombinedFeed  # NOQA
-from combinedrule import CombinedFeedRule  # NOQA
+from combined import *  # NOQA
+from combinedrule import *  # NOQA

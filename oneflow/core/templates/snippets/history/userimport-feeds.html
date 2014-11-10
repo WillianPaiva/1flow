@@ -1,16 +1,16 @@
 
 {% if subscriptions %}
 	{% if feeds %}
-		<h4>{% trans "Still subscribed" %}</h4>
+		<h4>{% trans "Subscribed to" %}</h4>
 	{% endif %}
 
 	<ul>
 	{% for subscription in subscriptions %}
-		{% if subscription.feed.closed %}
-			<li class='strike'>{{ subscription.name }}</li>
+		{% if subscription.feed.is_active %}
+			<li><a href='{% url 'source_selector' %}#subscription-{{ subscription.id }}'>{{ subscription.name }}</a></li>
 
 		{% else %}
-			<li><a href='{% url 'source_selector' %}#{{ subscription.id }}'>{{ subscription.name }}</a></li>
+			<li class='strike'>{{ subscription.name }}</li>
 
 		{% endif %}
 	{% endfor %}
@@ -18,14 +18,14 @@
 {% endif %}
 
 {% if feeds %}
-	<h4>{% trans "Not subscribed anymore" %}</h4>
+	<h4>{% trans "Not subscribed to" %}</h4>
 	<ul>
 	{% for feed in feeds %}
-		{% if feed.closed %}
-			<li class='strike'>{{ feed.name }}</li>
+		{% if feed.is_active %}
+			<li>{{ feed.name }}</li>
 
 		{% else %}
-			<li>{{ feed.name }}</li>
+			<li class='strike'>{{ feed.name }}</li>
 
 		{% endif %}
 	{% endfor %}

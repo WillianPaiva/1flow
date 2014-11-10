@@ -412,8 +412,11 @@ class ContentItem(models.Model):
                     return self.image_url
 
             if not self.image_url:
-                if self.feed and self.feed.thumbnail_url:
-                    self.image_url = self.feed.thumbnail_url
+
+                a_feed = self.a_feed
+
+                if a_feed and a_feed.thumbnail_url:
+                    self.image_url = a_feed.thumbnail_url
 
                     if commit:
                         self.save()
@@ -447,7 +450,7 @@ class ContentItem(models.Model):
             return self.feed.has_option(CONTENT_FETCH_LIKELY_MULTIPAGE)
 
         except:
-            LOGGER.exception(u'Not Implemented…')
+            LOGGER.warning(u'likely_multipage_content() not Implemented…')
             return False
 
     def get_next_page_link(self, from_content):

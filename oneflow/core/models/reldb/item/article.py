@@ -32,7 +32,7 @@ from celery import chain as tasks_chain
 from humanize.time import naturaldelta
 from humanize.i18n import django_language
 
-# from django.conf import settings
+from django.conf import settings
 from django.db import models, IntegrityError
 from django.db.models.signals import post_save, pre_save  # , pre_delete
 from django.utils.translation import ugettext_lazy as _
@@ -40,10 +40,11 @@ from django.utils.text import slugify
 
 from oneflow.base.utils import register_task_method
 from oneflow.base.utils.http import clean_url
-from oneflow.base.utils.dateutils import datetime
+from oneflow.base.utils.dateutils import datetime, now
 
 from ..common import (
     DjangoUser as User,
+    ORIGINS,
     CONTENT_TYPES_FINAL,
     ARTICLE_ORPHANED_BASE,
 )
@@ -66,12 +67,75 @@ MIGRATION_DATETIME = datetime(2014, 11, 1)
 
 __all__ = [
     'Article',
+    'create_article_from_url',
 
     # Tasks will be added below.
 ]
 
 
-# BIG FAT WARNING: order matters, BaseItem must come first,
+def create_article_from_url(url, feeds=None):
+    """ PLEASE REVIEW. """
+
+    if feeds is None:
+        feeds = []
+
+    elif not hasattr(feeds, '__iter__'):
+        feeds = [feeds]
+
+    # TODO: find article publication date while fetching content…
+    # TODO: set Title during fetch…
+
+    if settings.SITE_DOMAIN in url:
+        # The following code should not fail, because the URL has
+        # already been idiot-proof-checked in core.forms.selector
+        #   .WebPagesImportForm.validate_url()
+        read_id = url[-26:].split('/', 1)[1].replace('/', '')
+
+        # Avoid an import cycle.
+        from .read import Read
+
+        # HEADS UP: we just patch the URL to benefit from all the
+        # Article.create_article() mechanisms (eg. mutualization, etc).
+        url = Read.objects.get(id=read_id).article.url
+
+    try:
+        new_article, created = Article.create_article(
+            url=url.replace(' ', '%20'),
+            title=_(u'Imported item from {0}').format(clean_url(url)),
+            feeds=feeds, origin=ORIGINS.WEBIMPORT)
+
+    except:
+        # NOTE: duplication handling is already
+        # taken care of in Article.create_article().
+        LOGGER.exception(u'Article creation from URL %s failed.', url)
+        return None, False
+
+    mutualized = created is None
+
+    if created or mutualized:
+        for feed in feeds:
+            feed.recent_items_count += 1
+            feed.all_items_count += 1
+
+    ze_now = now()
+
+    for feed in feeds:
+        feed.latest_item_date_published = ze_now
+
+        # Even if the article wasn't created, we need to create reads.
+        # In the case of a mutualized article, it will be fetched only
+        # once, but all subscribers of all feeds must be connected to
+        # it to be able to read it.
+        for subscription in feed.subscriptions.all():
+            subscription.create_read(new_article, verbose=created)
+
+    # Don't forget the parenthesis else we return ``False`` everytime.
+    return new_article, created or (None if mutualized else False)
+
+
+# ——————————————————————————————————————————————————————————————— Article class
+
+# BIG FAT WARNING: inheritance order matters. BaseItem must come first,
 # else `create_post_task()` is not found by register_task_method().
 class Article(BaseItem, UrlItem, ContentItem):
 

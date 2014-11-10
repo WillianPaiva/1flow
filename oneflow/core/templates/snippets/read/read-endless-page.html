@@ -30,14 +30,14 @@
         {% lazy_paginate items_per_fetch reads %}
 
             {% for read in reads %}
-                {% if read.article.is_good %}
+                {% if read.item.is_good %}
 
                     {% include preferences.home.get_read_list_item_template %}
 
                 {% elif mongodb_user.is_staff_or_superuser_and_enabled and preferences.staff.reading_lists_show_bad_articles %}
 
                     <li class="read-list-item">
-                        {% with read.article as article %}
+                        {% with read.item as article %}
 
                             {% include "snippets/read/read-admin-informations.html" with nohide=1 %}
 

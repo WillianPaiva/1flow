@@ -3,6 +3,18 @@
 {% block title %}{% trans "Sources" %}{% endblock title %}
 {% block body_id %}selector{% endblock body_id %}
 
+
+{% block extrajs_header %}
+    {{ block.super }}
+
+	{% inplace_static %}
+
+	<script src="{{ STATIC_URL }}ajaxuploader/js/fileuploader.js"></script>
+	<script src="{{ STATIC_URL }}file_form/file_form.js"></script>
+	<link rel="stylesheet" href="{{ STATIC_URL }}ajaxuploader/css/fileuploader.css">
+
+{% endblock extrajs_header %}
+
 {% block web_item_importer %}
     {# Intentionally empty. See import-web-items-trigger.html for details. #}
 {% endblock web_item_importer %}
@@ -14,4 +26,5 @@
 {% block extrajs_footer %}
     {{ block.super }}
     {% compressed_js 'feed-selector' %}
+
 {% endblock extrajs_footer %}

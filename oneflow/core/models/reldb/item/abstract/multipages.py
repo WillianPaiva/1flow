@@ -79,7 +79,7 @@ class MultiPagesUrlItem(models.Model):
 
     def likely_multipage_content(self):
 
-        for feed in self.feeds:
+        for feed in self.feeds.all():
             try:
                 website = feed.website
 

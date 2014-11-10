@@ -61,7 +61,10 @@ test:
 	./manage.py test oneflow --noinput --stop
 
 shell:
-	./manage.py shell
+	./manage.py shell_plus
+
+shell_classic:
+	./manage.py shell_plus
 
 #shellapp:
 #	SPARKS_DJANGO_SETTINGS=chani_app ./manage.py shell

@@ -37,6 +37,14 @@ LOGGER = logging.getLogger(__name__)
 
 __all__ = [
     'Preferences',
+    'SnapPreferences',
+    'NotificationPreferences',
+    'ReadPreferences',
+    'SelectorPreferences',
+    'StaffPreferences',
+    'SharePreferences',
+    'HomePreferences',
+    'HelpWizards',
 ]
 
 
@@ -77,6 +85,19 @@ class Preferences(ModelDiffMixin):
                 pref.save()
 
 # ———————————————————————————————————————————————————————————— User preferences
+
+
+class PreferencesIdWrapperMixin(ModelDiffMixin):
+
+    class Meta:
+        app_label = 'core'
+        abstract = True
+
+    @property
+    def id(self):
+        """ Make `.id` usable, for inplace_edit not to crash. """
+
+        return self.preferences_id
 
 
 class SnapPreferences(ModelDiffMixin):
@@ -328,13 +349,6 @@ class StaffPreferences(ModelDiffMixin):
                     u'automatically redirected to the web application.'),
         default=False, blank=True)
 
-    allow_all_articles = models.BooleanField(
-        verbose_name=_(u'Allow display of all articles'),
-        help_text=_(u'As a staff member, you can have access to all fulltext '
-                    u'content for testing / checking purposes. PLEASE DO NOT '
-                    u'ENABLE IN NORMAL CONDITIONS.'),
-        default=False, blank=True)
-
 
 class SharePreferences(ModelDiffMixin):
 
@@ -368,20 +382,20 @@ READ_SHOWS_CHOICES = (
 )
 
 
-class HomePreferences(ModelDiffMixin):
+class HomePreferences(PreferencesIdWrapperMixin):
 
     """ Various HOME settings. """
+
+    style_templates = {
+        u'RL': 'snippets/read/read-list-item.html',
+        u'TL': 'snippets/read/read-tiles-tile.html',
+    }
 
     class Meta:
         app_label = 'core'
 
     preferences = models.OneToOneField(Preferences, primary_key=True,
                                        related_name='home')
-
-    style_templates = {
-        u'RL': 'snippets/read/read-list-item.html',
-        u'TL': 'snippets/read/read-tiles-tile.html',
-    }
 
     style = models.CharField(
         verbose_name=_(u'How the user wants his 1flow home to appear'),
@@ -416,6 +430,7 @@ class HomePreferences(ModelDiffMixin):
         default=False, blank=True)
 
     def get_read_list_item_template(self):
+
         return HomePreferences.style_templates.get(self.style)
 
 
