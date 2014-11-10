@@ -16,6 +16,11 @@
     // Just for memories, with a div.clearfix every two folders, we use
     // &:nth-child(3n+1) to get the next just after the div.clearfix.
 
+    @include thumbnail($subscription-image-size,
+                       1,
+                       $subscription-padding,
+                       2, 0);
+
     .name-wrapper {
         font-size: 225%;
         font-family: Georgia, Serif;

@@ -154,6 +154,11 @@ class ManageFolderForm(FileFormMixin, forms.ModelForm):
     def save(self, commit=True):
         """ Save folder and synchronize_subscriptions_folders(). """
 
+        if self.cleaned_data['image']:
+            self.instance.image = self.cleaned_data['image']
+        else:
+            self.instance.image = None
+
         parent_folder  = self.cleaned_data.get('parent')
         parent_changed = False
 
@@ -194,9 +199,9 @@ class ManageFolderForm(FileFormMixin, forms.ModelForm):
             # a superfluous write in case of an unchanged parent
             parent_folder.children.add(folder)
 
-        self.delete_temporary_files()
-
         self.synchronize_subscriptions_folders(folder)
+
+        self.delete_temporary_files()
 
         return folder
 

@@ -91,6 +91,11 @@ class ManageSubscriptionForm(FileFormMixin, forms.ModelForm):
         subscription = super(ManageSubscriptionForm, self).save(commit=False)
         preferences  = subscription.user.preferences.selector
 
+        if self.cleaned_data['thumbnail']:
+            subscription.thumbnail = self.cleaned_data['thumbnail']
+        else:
+            subscription.thumbnail = None
+
         # Handle `folders` manually, because it's not in form.fields.
         if preferences.subscriptions_in_multiple_folders:
             if self.cleaned_data['folders']:
@@ -113,6 +118,8 @@ class ManageSubscriptionForm(FileFormMixin, forms.ModelForm):
 
         if commit:
             subscription.save()
+
+        self.delete_temporary_files()
 
         return subscription
 

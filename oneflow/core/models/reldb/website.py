@@ -165,13 +165,13 @@ class WebSite(six.with_metaclass(WebSiteMeta, MPTTModel,
 
     image = models.ImageField(
         verbose_name=_(u'Image'), null=True, blank=True,
-        upload_to=get_website_image_upload_path,
+        upload_to=get_website_image_upload_path, max_length=256,
         help_text=_(u'Use either image when 1flow instance hosts the '
                     u'image, or image_url when hosted elsewhere. If '
                     u'both are filled, image takes precedence.'))
 
     image_url = models.URLField(
-        null=True, blank=True,
+        null=True, blank=True, max_length=384,
         verbose_name=_(u'Image URL'),
         help_text=_(u'Full URL of the image displayed in the feed '
                     u'selector. Can be hosted outside of 1flow.'))

@@ -141,23 +141,33 @@ a.brand {
     }
 }
 
-@mixin thumbnail($size: 40px, $opacity: 1, $padding: 0, $absolute: 1, $bwbase: 1) {
+@mixin thumbnail($size: 40px, $opacity: 1, $padding: 0, $positioning: 1, $bwbase: 1) {
 
     .thumbnail {
 
-        @if $absolute == 1 {
+        @if $positioning == 1 {
             position: absolute;
             top: $padding;
             left: $padding;
+            margin: 0;
+
+        } @else if $positioning == 2 {
+            float: left;
+            margin: 0 10px 0 -10px;
+            padding-top: $padding;
+            padding-left: $padding;
 
         } @else {
             padding-top: $padding;
             padding-left: $padding;
+            margin: 0;
         }
 
         border: 0;
         padding: 0;
-        margin: 0;
+
+        min-width: $size;
+        min-height: $size;
         max-width: $size;
         max-height: $size;
 

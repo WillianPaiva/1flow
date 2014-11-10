@@ -132,12 +132,12 @@ class Folder(MPTTModel, DiffMixin):
     # Allow the user to also customize the visual of his/her subscription.
     image = models.ImageField(
         verbose_name=_(u'Image'), null=True, blank=True,
-        upload_to=get_folder_image_upload_path,
+        upload_to=get_folder_image_upload_path, max_length=256,
         help_text=_(u'A custom image for the folder. Takes precedence over '
                     u'image_url if both are filled.'))
 
     image_url = models.URLField(
-        verbose_name=_(u'Image URL'), null=True, blank=True,
+        verbose_name=_(u'Image URL'), null=True, blank=True, max_length=384,
         help_text=_(u'A full URL of an online image, if you prefer hosting '
                     u'it outside of 1flow.'))
 

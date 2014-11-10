@@ -172,13 +172,13 @@ class Subscription(ModelDiffMixin, AbstractTaggedModel):
     # Allow the user to also customize the visual of his/her subscription.
     thumbnail = models.ImageField(
         verbose_name=_(u'Thumbnail'), null=True, blank=True,
-        upload_to=get_subscription_thumbnail_upload_path,
+        upload_to=get_subscription_thumbnail_upload_path, max_length=256,
         help_text=_(u'Use either thumbnail when 1flow instance hosts the '
                     u'image, or thumbnail_url when hosted elsewhere. If '
                     u'both are filled, thumbnail takes precedence.'))
 
     thumbnail_url = models.URLField(
-        verbose_name=_(u'Thumbnail URL'), null=True, blank=True,
+        verbose_name=_(u'Thumbnail URL'), null=True, blank=True, max_length=384,
         help_text=_(u'Full URL of the thumbnail displayed in the feed '
                     u'selector. Can be hosted outside of 1flow.'))
 

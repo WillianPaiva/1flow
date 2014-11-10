@@ -77,7 +77,7 @@
 
         //@include single-transition(opacity, 0.01s, ease-out, 0.25s);
 
-        @include thumbnail($size: 64px, $absolute: 0, $bwbase: 0);
+        @include thumbnail($size: 64px, $positioning: 0, $bwbase: 0);
 
         .watch-status {
             min-height: 20px;
