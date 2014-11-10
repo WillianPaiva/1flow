@@ -20,7 +20,25 @@
         <a id="folder-{{ folder.id }}"></a>
 
         <div class="name-wrapper level-{{ level }}">
+
             {% if level|divisibleby:'2' %}
+
+        <span class="thumbnail">
+
+            {% if folder.image %}
+                <img src="{{ folder.image.url }}" />
+
+            {% elif folder.image_url %}
+                <img src="{{ folder.image_url }}" />
+
+            {% else %}
+                <div class="generic-img"
+                    style="background-color: {% html_background_color_for_name folder.name %}; color: {% html_foreground_color_for_name folder.name %};">{% html_first_letters folder.name 2 %}</div>
+            {% endif %}
+
+        </span>
+
+
                 <span class="name" style="border-top-color: {{ folder_color_border }}">{{ folder.name }}</span>&nbsp;<span class="css-hover-muted">
                     <button href="{% url 'edit_folder' folder_id=folder.id %}" data-toggle="modal" data-target="#" class="btn btn-xs btn-default"><i class="icon-cog"></i> {% trans "Folder settings" %}</button>
                 {% if level|add:1 < folder.max_depth %}
@@ -33,6 +51,7 @@
                 </span>
 
             {% else %}
+
                 <span class="css-hover-muted">
                 {% if level|add:1 < folder.max_depth %}
                     <button
@@ -45,9 +64,26 @@
                     data-toggle="modal" data-target="#" class="btn btn-xs btn-default"><i class="icon-cog"></i> {% trans "Folder settings" %}</button>
                 </span>&nbsp;<span class="name" style="border-top-color: {{ folder_color_border }}">{{ folder.name }}</span>
 
+
+        <span class="thumbnail" style="float:right; margin: 0 -10px 0 10px">
+
+            {% if folder.image %}
+                <img src="{{ folder.image.url }}" />
+
+            {% elif folder.image_url %}
+                <img src="{{ folder.image_url }}" />
+
+            {% else %}
+                <div class="generic-img"
+                    style="background-color: {% html_background_color_for_name folder.name %}; color: {% html_foreground_color_for_name folder.name %};">{% html_first_letters folder.name 2 %}</div>
             {% endif %}
 
-            {# {% if debug %}<span class="muted">#{{forloop.counter}}</span>{% endif %} #}
+        </span>
+
+
+            {% endif %}
+
+
 {% endcache %}
             <div class="links css-hover-muted">
                 {% container_reading_list_with_count 'read' 'folder' folder 'unread' _('unread') %}
