@@ -74,6 +74,10 @@ def archive_article_one_internal(article, counts):
 def archive_articles(limit=None):
     """ Archive articles that pollute the production database. """
 
+    raise NotImplementedError('REVIEW for RELDB.')
+
+    # cf. https://docs.djangoproject.com/en/dev/topics/db/multi-db/#selecting-a-database-to-delete-from  # NOQA
+
     counts = {
         'duplicates': 0,
         'orphaned': 0,

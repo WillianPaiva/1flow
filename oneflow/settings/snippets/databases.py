@@ -31,6 +31,12 @@ DATABASES['default']['OPTIONS'] = {
     'autocommit': True,
 }
 
+# DABASE_NAME = DATABASES['default']['NAME']
+# DATABASES['archive'] = dj_database_url.parse(
+#     os.environ.get(
+#         'DATABASE_URL_ARCHIVE', os.environ.get('DATABASE_URL').replace(
+#             DABASE_NAME, DABASE_NAME + '_archive')))
+
 MONGODB_NAME = os.environ.get('MONGODB_NAME')
 MONGODB_HOST = os.environ.get('MONGODB_HOST')
 MONGODB_PORT = int(os.environ.get('MONGODB_PORT', 27017))
