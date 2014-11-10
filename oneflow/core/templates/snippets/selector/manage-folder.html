@@ -28,9 +28,35 @@
 
           {% csrf_token %}
 
+          {# Manually include django_file_form fields, else upload doesn't work. #}
+          {{ form.form_id }}
+          {{ form.upload_url }}
+          {{ form.delete_url }}
+
 <div class="panel-group" id="accordion"
   role="tablist" aria-multiselectable="true">
   <div>
+
+
+    <div class="form-group">
+      <div class="controls col-sm-col-8 col-sm-offset-4">
+        <div class="thumbnail">
+
+          {% if folder.image %}
+            <img src="{{ folder.image.url }}" />
+
+          {% elif folder.image_url %}
+            <img src="{{ folder.image_url }}" />
+
+          {% else %}
+            <div class="generic-img"
+                style="background-color: {% html_background_color_for_name folder.name %}; color: {% html_foreground_color_for_name folder.name %};">{% html_first_letters folder.name 2 %}</div>
+
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
 
     {% include "widgets/forms/field-input-text.html" with field=form.name %}
     {% include "widgets/forms/field-generic-unstyled.html" with field=form.parent %}
