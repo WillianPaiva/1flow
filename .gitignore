@@ -1,5 +1,6 @@
 # Django's collectstatic
 /static
+/media
 .pipcache
 
 # fabfiles for external projects/customers.
