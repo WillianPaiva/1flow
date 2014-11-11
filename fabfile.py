@@ -278,7 +278,7 @@ def production():
         'autoscale': {
             'worker_mongo':   '144,16',  # 'high,medium,low',
             'worker_sync':    '16,2',    # 'sync',
-            'worker_net':     '160,20',  # 'swarm,refresh',
+            'worker_net':     '64,8',  # 'swarm,refresh',
             'worker_default': '32,4',    # 'default,create',
             'worker_articles': '24,3',   # 'fetch,background',
             'worker_longtasks': '2,1',   # 'check,clean',
