@@ -502,7 +502,7 @@ class Read(Document, DocumentHelperMixin):
             self.save()
 
             # TODO: only for the new subscriptions.
-            #self.update_cached_descriptors( … )
+            # self.update_cached_descriptors( … )
 
         return self.subscriptions
 
