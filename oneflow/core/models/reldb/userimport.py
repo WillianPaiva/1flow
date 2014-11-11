@@ -294,8 +294,6 @@ class UserImport(HistoryEntry):
                              u'feed(s) from %s', url)
 
         if feeds:
-            self._import_created_['feeds'].append(url)
-
             imported_item_was_a_feed_url = False
 
             for feed, created in feeds:
@@ -304,6 +302,8 @@ class UserImport(HistoryEntry):
                     break
 
             if imported_item_was_a_feed_url:
+                self._import_created_['feeds'].append(url)
+
                 # Subscribe the user to the feed, and don't
                 # try to import an article from the URL.
 
@@ -325,6 +325,11 @@ class UserImport(HistoryEntry):
                                      constants.INFO)
 
                 return None
+
+            else:
+                self._import_created_['discovered'] = [
+                    feed.url for feed, created in feeds if created
+                ]
 
         # ———————————————————————————————————————————— Try to create an article
 

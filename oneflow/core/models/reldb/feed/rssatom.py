@@ -36,8 +36,7 @@ from django.core.validators import URLValidator
 
 from oneflow.base.utils import HttpResponseLogProcessor
 from oneflow.base.utils.http import clean_url
-from oneflow.base.utils.dateutils import (now, datetime, is_naive,
-                                          make_aware, utc)
+from oneflow.base.utils.dateutils import datetime, is_naive, make_aware, utc
 
 from ..common import (
     FeedIsHtmlPageException,
@@ -112,6 +111,11 @@ def check_feedparser_error(parsed_feed, feed=None):
         and ('html' in parsed_feed.feed
              or 'summary' not in parsed_feed.feed
              or len(parsed_feed.feed.summary) > 2048):
+
+        raise FeedIsHtmlPageException(u'URL leads to an HTML page, '
+                                      u'not a real feed.')
+
+    if isinstance(error, feedparser.NonXMLContentType):
 
         raise FeedIsHtmlPageException(u'URL leads to an HTML page, '
                                       u'not a real feed.')
@@ -201,12 +205,18 @@ def create_feeds_from_url(feed_url, creator=None, recurse=True):
             new_feeds = []
             urls_to_try = set(parse_feeds_urls(parsed_feed))
 
+            # LOGGER.info(u'Search through the website via newspaper…')
+
             try:
-                urls_to_try.union(set(newspaper.build(feed_url).feed_urls()))
+                site = newspaper.build(feed_url)
+
+                urls_to_try.union(set(site.feed_urls()))
 
             except:
                 LOGGER.exception(u'Newspaper did not help finding feeds '
                                  u'from “%s”', feed_url)
+
+            # LOGGER.info(u'Trying to create feeds recursively…')
 
             for sub_url in urls_to_try:
                 try:
@@ -224,6 +234,7 @@ def create_feeds_from_url(feed_url, creator=None, recurse=True):
                                          sub_url, feed_url))
 
             if new_feeds:
+                # LOGGER.info(u'Returning %s created feeds.', len(new_feeds))
                 return new_feeds
 
             raise
@@ -268,7 +279,6 @@ def parse_feeds_urls(parsed_feed, skip_comments=True):
                     parsed_feed.href))
 
     else:
-
         for link in links:
             if link.get('rel', None) == 'alternate' \
                 and link.get('type', None) in (u'application/rss+xml',

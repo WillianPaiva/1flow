@@ -558,7 +558,10 @@ def subscribe_user_to_feed(user, feed, name=None,
         # by the register_task_method() call.
         #
         # 'True' is for the `force` argument.
-        subscription_check_reads_task.delay(subscription.id, True)
+        subscription_check_reads_task.apply_async(
+            args=(subscription.id,),
+            kwargs={'force': True}
+        )
 
     else:
         subscription.check_reads(force=True)

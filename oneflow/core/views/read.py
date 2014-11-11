@@ -106,12 +106,13 @@ def _rwep_generate_query_kwargs(request, **kwargs):
 def _rwep_generate_order_by(request, **kwargs):
 
     def check_order_by(value):
-        if value in (u'date_published', u'date_added', u'id', u'title', ):
+        if value in (u'date_created', u'date_added',
+                     u'name', 'id', ):
             return
 
         raise NotImplementedError('order_by needs love!')
 
-    default_order_by = (u'-id', )
+    default_order_by = (u'-date_created', )
 
     if request.user.is_staff_or_superuser_and_enabled:
         order_by = request.GET.get('order_by', None)
@@ -122,12 +123,13 @@ def _rwep_generate_order_by(request, **kwargs):
         else:
             order_by = default_order_by
     else:
-        order_by = order_by = default_order_by
+        order_by = default_order_by
 
     try:
         for order in order_by:
             if order.startswith(u'-'):
                 check_order_by(order[1:])
+
             else:
                 check_order_by(order)
     except:
@@ -417,11 +419,11 @@ def read_with_endless_pagination(request, **kwargs):
         if tags:
             reads = user.reads(**query_kwargs).filter(
                 Q(tags=tag) | Q(article__in=matched_articles)).order_by(
-                *order_by).no_cache()
+                *order_by)
         else:
             reads = user.reads(
                 article__in=matched_articles, **query_kwargs).order_by(
-                *order_by).no_cache()
+                *order_by)
 
     else:
         reads = user.reads.filter(**query_kwargs).order_by(*order_by)
