@@ -330,7 +330,7 @@ def read_with_endless_pagination(request, **kwargs):
     if folder:
         folder = Folder.objects.get(id=folder)
 
-        if folder.owner != user:
+        if folder.user != user:
             if user.has_staff_access:
                 messages.warning(request,
                                  _(u'As administrator, you are '
@@ -347,8 +347,8 @@ def read_with_endless_pagination(request, **kwargs):
 
         # LOGGER.info(u'Refining reads by folder %s', folder)
 
-        query_kwargs[u'subscriptions__in'] = Subscription.objects.get(
-            folder__in=folder.get_descendants(include_self=True))
+        query_kwargs[u'subscriptions__in'] = Subscription.objects.filter(
+            folders__in=folder.get_descendants(include_self=True))
 
     # —————————————————————————————————————————————————————————————————— Search
 

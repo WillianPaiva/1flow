@@ -29,7 +29,6 @@ from django.db.models.signals import pre_delete, post_save  # , pre_save
 # from django.conf import settings
 from django.utils.translation import ugettext_lazy as _, pgettext_lazy
 
-from oneflow.base.utils import register_task_method
 from oneflow.base.utils.dateutils import timedelta, naturaldelta, datetime
 
 from sparks.django.utils import NamedTupleChoices
@@ -279,17 +278,6 @@ class Read(AbstractTaggedModel):
 
     # ———————————————————————————————————— Class methods & Mongo/Django related
 
-    def post_create_task(self):
-        """ Method meant to be run from a celery task. """
-
-        self.rating = self.item.default_rating
-
-        self.set_subscriptions(commit=False)
-
-        self.save()
-
-        self.update_cached_descriptors()
-
     def __unicode__(self):
         return _(u'{0}∞{1} (#{2}∞#{3}→#{4}) {5} @{6}').format(
             self.user.username,
@@ -447,19 +435,7 @@ class Read(AbstractTaggedModel):
 
         self.is_good = True
         self.save()
-
-        update_only = ['all']
-
-        if self.is_starred:
-            update_only.append('starred')
-
-        if self.is_bookmarked:
-            update_only.append('bookmarked')
-
-        if not self.is_read:
-            update_only.append('unread')
-
-        self.update_cached_descriptors(update_only=update_only)
+        self.update_cached_descriptors()
 
     def remove_tags(self, tags=None):
         """ Remove some tags from a read. `tags` is a list of strings.
@@ -569,6 +545,9 @@ class Read(AbstractTaggedModel):
             self.is_archived = True
             self.save()
 
+            # no archived_items_count descriptors yet.
+            # self.update_cached_descriptors(update_only='archived')
+
     def is_archived_can_change(self):
 
         if self.is_archived:
@@ -631,10 +610,6 @@ for attr_name in WATCH_ATTRIBUTES_FIELDS_NAMES:
             gen_attr_is_changed_method(attr_name))
 
 
-register_task_method(Read, Read.post_create_task,
-                     globals(), queue=u'create')
-
-
 # ————————————————————————————————————————————————————————————————————— Signals
 
 
@@ -653,7 +628,12 @@ def read_post_save(instance, **kwargs):
 
         read.set_subscriptions(commit=False)
 
-    read.update_cached_descriptors()
+    # HEADS UP: this should be done manually in methods like activate().
+    #           This will avoid double counting, and users seeing reads
+    #           while these reads are not yet "good", and thus not really
+    #           available to the user in the interface.
+    # read.update_cached_descriptors()
+    pass
 
 
 def read_pre_delete(instance, **kwargs):
