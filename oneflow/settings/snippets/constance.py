@@ -415,6 +415,12 @@ CONSTANCE_CONFIG.update({
                                   u'no read left in the system. Default: '
                                   u'let it run (=enabled).')),
 
+    'CHECK_ORPHANED_DISABLED': (False, ugettext(u'Disable or not the '
+                                  u'night orphaned check that will '
+                                  u'ensure all orphaned articles are '
+                                  u'as unique as possible across the '
+                                  u'system. Default: let it run (=enabled).')),
+
     'CHECK_READS_DISABLED': (False, ugettext(u'Disable or not the night '
                              u'reads check that will switch on-and-off their '
                              u'`is_good` attribute. Default: let it run '

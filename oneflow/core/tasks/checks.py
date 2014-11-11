@@ -26,21 +26,25 @@ from constance import config
 from celery import task, chain as tasks_chain
 
 from django.conf import settings
+from django.db import IntegrityError
 from django.db.models import Q
 from django.core.urlresolvers import reverse
 from django.core.mail import mail_managers
 from django.utils.translation import ugettext_lazy as _
 
-from ..models import (
-    Article, Read,
-    BaseFeed,
-    UserFeeds, UserSubscriptions,
-)
-from ..models.reldb.common import User
-
 from oneflow.base.utils import RedisExpiringLock
 from oneflow.base.utils.dateutils import (now, timedelta,
                                           naturaldelta, benchmark)
+
+from ..models import (
+    User,
+    Article, Read,
+    ARTICLE_ORPHANED_BASE,
+    generate_orphaned_hash,
+    DUPLICATE_STATUS,
+    BaseFeed,
+    UserFeeds, UserSubscriptions,
+)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -534,3 +538,107 @@ def global_users_checker(limit=None, force=False, verbose=False,
                 changed_users * 100.0 / processed_users,
                 skipped_count,
                 skipped_count * 100.0 / processed_users)
+
+
+@task(name="oneflow.core.tasks.global_orphaned_checker", queue='check')
+def global_orphaned_checker(limit=None, force=False, verbose=False,
+                            break_on_exception=False, extended_check=False):
+    """ Check all Users and their dependants. """
+
+    if config.CHECK_ORPHANED_DISABLED:
+        LOGGER.warning(u'Orphaned check disabled in configuration.')
+        return
+
+    # This task runs twice a day. Acquire the lock for just a
+    # little more time (13h, because Redis doesn't like floats)
+    # to avoid over-parallelized runs.
+    my_lock = RedisExpiringLock('check_all_orphaned', expire_time=3600 * 13)
+
+    if not my_lock.acquire():
+        if force:
+            my_lock.release()
+            my_lock.acquire()
+            LOGGER.warning(u'Forcing orphaned check…')
+
+        else:
+            # Avoid running this task over and over again in the queue
+            # if the previous instance did not yet terminate. Happens
+            # when scheduled task runs too quickly.
+            LOGGER.warning(u'global_orphaned_checker() is already '
+                           u'locked, aborting.')
+            return
+
+    if limit is None:
+        limit = 0
+
+    orphaned_items    = Article.objects.filter(
+        is_orphaned=True).prefetch_related('feeds')
+    orphaned_items_count = orphaned_items.count()
+    processed_orphans    = 0
+    changed_orphans      = 0
+    deleted_orphans      = 0
+    skipped_orphans      = 0
+
+    with benchmark(u"Check {0}/{1} orphans".format(limit or u'all',
+                   orphaned_items_count)):
+        try:
+            for orphan in orphaned_items:
+                processed_orphans += 1
+
+                if limit and changed_orphans >= limit:
+                    break
+
+                old_url = orphan.url
+
+                new_url = ARTICLE_ORPHANED_BASE + generate_orphaned_hash(
+                    orphan.name, orphan.feeds.all())
+
+                if new_url != old_url:
+                    orphan.url = new_url
+
+                else:
+                    continue
+
+                try:
+                    orphan.save()
+
+                except IntegrityError:
+                    master = Article.objects.get(url=orphan.url)
+
+                    # We have to put back the original URL, else the
+                    # duplicate registration process will fail.
+                    orphan.url = old_url
+
+                    # Register the duplicate right here and now, to be able to
+                    master.register_duplicate(orphan, force=force,
+                                              background=False)
+
+                    if orphan.duplicate_status == DUPLICATE_STATUS.FINISHED:
+                        orphan.delete()
+                        deleted_orphans += 1
+
+                        if verbose:
+                            LOGGER.info(u'Deleted duplicate orphan %s', orphan)
+
+                except:
+                    skipped_orphans += 1
+                    LOGGER.exception(u'Unhandled exception while checking %s',
+                                     orphan)
+
+                else:
+                    changed_orphans += 1
+
+        finally:
+            my_lock.release()
+
+    LOGGER.info(u'global_orphans_checker(): %s/%s orphans processed '
+                u'(%.2f%%), %s corrected (%.2f%%), %s deleted (%.2f%%), '
+                u'%s skipped (%.2f%%).',
+                processed_orphans, orphaned_items_count,
+                processed_orphans * 100.0 / orphaned_items_count,
+                changed_orphans,
+                changed_orphans * 100.0 / processed_orphans,
+                deleted_orphans,
+                deleted_orphans * 100.0 / processed_orphans,
+                skipped_orphans,
+                skipped_orphans * 100.0 / processed_orphans)
