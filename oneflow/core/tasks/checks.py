@@ -295,7 +295,7 @@ def global_duplicates_checker(limit=None, force=False):
     processed_dupes   = 0
     done_dupes_count  = 0
 
-    with benchmark(u"Check {0}/{1} duplicates".format(limit,
+    with benchmark(u"Check {0}/{1} duplicates".format(limit or u'all',
                    total_dupes_count)):
 
         try:
@@ -373,7 +373,8 @@ def global_reads_checker(limit=None, force=False, verbose=False,
     changed_reads_count = 0
     skipped_count       = 0
 
-    with benchmark(u"Check {0}/{1} reads".format(limit, total_reads_count)):
+    with benchmark(u"Check {0}/{1} reads".format(limit or u'all',
+                   total_reads_count)):
         try:
             for read in bad_reads:
 
@@ -496,7 +497,7 @@ def global_users_checker(limit=None, force=False, verbose=False,
             # Avoid running this task over and over again in the queue
             # if the previous instance did not yet terminate. Happens
             # when scheduled task runs too quickly.
-            LOGGER.warning(u'global_users_checker() is alusery '
+            LOGGER.warning(u'global_users_checker() is already '
                            u'locked, aborting.')
             return
 
@@ -509,7 +510,8 @@ def global_users_checker(limit=None, force=False, verbose=False,
     changed_users     = 0
     skipped_count     = 0
 
-    with benchmark(u"Check {0}/{1} users".format(limit, total_users_count)):
+    with benchmark(u"Check {0}/{1} users".format(limit or u'all',
+                   total_users_count)):
         try:
             for user in active_users:
 
