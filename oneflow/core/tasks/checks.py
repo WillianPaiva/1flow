@@ -62,9 +62,11 @@ def global_checker_task(*args, **kwargs):
         # HEADS UP: all subtasks are immutable, we just want them to run
         # chained to avoid dead times, without any link between them.
 
-        # Begin by checking duplicates and archiving as much as we can,
-        # for next tasks to work on the smallest-possible objects set.
+        # Begin by checking duplicates and orphans, archiving or deleting
+        # them as much as we can. Next tasks will eventually benefit from
+        # that by workin on smaller objects sets.
         global_duplicates_checker.si(),
+        global_orphaned_checker.si(),
         archive_documents.si(),
 
         global_users_checker.si(),
