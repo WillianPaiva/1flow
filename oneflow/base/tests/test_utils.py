@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=E1103,C0103
-"""
+u"""
 Copyright 2012-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -165,11 +165,14 @@ class TestHttpUtilsCleanGoogleUrl(TestCase):
     """ Test the google URL cleaner. """
 
     def test_google_cleaner_very_bad_to_good(self):
-        """ Test bad to good conversions, with variations in “bad”. """
+        u""" Test bad to good conversions, with variations in “bad”. """
 
         for bad_url, good_url in (
 
             # The same good URL, but various bad ones, just in case.
+
+            (u'http://news.google.com/news/url?sa=t&fd=R&ct2=fr&usg=AFQjCNEqN4U7gKCcV5s93MYb5CVp_ijPiw&clid=c3a7d30bb8a4878e06b80cf16b898331&cid=52779121374391&ei=lDliVPjaKMj6iQab8oDADA&url=http://www.liberation.fr/sports/2014/11/11/la-coupe-d-afrique-des-nations-n-a-plus-de-pays-hote_1140939',  # NOQA
+             u'http://www.liberation.fr/sports/2014/11/11/la-coupe-d-afrique-des-nations-n-a-plus-de-pays-hote_1140939'),  # NOQA
 
             (u'https://www.google.com/url?rct=j&url=http://www.begeek.fr/microsoft-equipe-android-wear-dune-solution-ecrire-les-montres-connectees-148727&ct=ga&cd=CAIyGTA1MzgxZDdjMmUwODAwMzg6ZnI6ZnI6RlI&usg=AFQjCNEdfJhdBh1PdKxHgzCTVV9ULCYoFg',  # NOQA
              u'http://www.begeek.fr/microsoft-equipe-android-wear-dune-solution-ecrire-les-montres-connectees-148727', ),  # NOQA
@@ -240,7 +243,7 @@ class TestHttpUtilsCleanGoogleUrl(TestCase):
             self.assertEquals(clean_google_url(bad_url), good_url)
 
     def test_google_cleaner_already_good(self):
-        """ Test already good conversions → they should not change. """
+        u""" Test already good conversions → they should not change. """
 
         for bad_url, good_url in (
 

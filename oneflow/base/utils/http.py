@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2012-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -25,8 +25,8 @@ XTOR_RE   = re.compile(ur'[&#]?xtor(=[^&]*)?', re.I)
 EQL_RE    = re.compile(ur'[#&?]=[^&]+', re.I)
 LAST_RE   = re.compile(ur'[?&#=]*$', re.I)
 TUMBLR_RE = re.compile(ur'#_=_$', re.I)
-GGL_RE    = re.compile(ur'^[htps]+://[\w.]*google.com/'
-                       ur'url\?[\w=&]+url=([^&]+)[\w=&]+', re.I)
+GGL_RE    = re.compile(ur'^[htps]+://[\w.]*google.com/(?:news/)?'
+                       ur'url\?[\w=&]+url=([^&]+)[\w=&]*', re.I)
 
 __all__ = ('clean_url', 'clean_google_url', 'clean_marketing_url', )
 
