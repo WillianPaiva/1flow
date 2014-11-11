@@ -19,9 +19,8 @@
 
 """
 
+import hashlib
 import logging
-
-import uuid
 
 from statsd import statsd
 # from constance import config
@@ -67,9 +66,22 @@ MIGRATION_DATETIME = datetime(2014, 11, 1)
 __all__ = [
     'Article',
     'create_article_from_url',
-
+    'generate_orphaned_hash',
     # Tasks will be added below.
 ]
+
+
+def generate_orphaned_hash(title, feeds):
+    """ Return a unique hash for an article title in some feeds.
+
+    .. warning:: should be used only for orphaned articles. At least,
+        I created this function to distinguish duplicates in orphaned
+        articles.
+    """
+
+    return hashlib.sha1(u'{0}:{1}'.format(
+        u','.join(sorted(unicode(f.id)
+                  for f in feeds)), title).encode('utf-8')).hexdigest()
 
 
 def create_article_from_url(url, feeds=None):
@@ -189,12 +201,15 @@ class Article(BaseItem, UrlItem, ContentItem):
             or ``False`` (mutualized state is not checked). """
 
         if url is None:
-            reset_url = True
-            # Even for a temporary action, we need something unique…
-            url = ARTICLE_ORPHANED_BASE + uuid.uuid4().hex
-
+            # We have to build a reliable orphaned URL, because orphaned
+            # articles are often duplicates. RSS feeds serve us many times
+            # the same article, without any URL, and we keep recording it
+            # as new (but orphaned) content… Seen 20141111 on Chuck Norris
+            # facts, where the content is in the title, and there is no URL.
+            # We have 860k+ items, out of 1k real facts… Doomed.
+            url = ARTICLE_ORPHANED_BASE + generate_orphaned_hash(title, feeds)
+            article_is_orphaned = True
         else:
-            reset_url = False
             url = clean_url(url)
 
         new_article = cls(name=title, url=url)
@@ -233,12 +248,9 @@ class Article(BaseItem, UrlItem, ContentItem):
             for key, value in kwargs.items():
                 setattr(new_article, key, value)
 
-        if reset_url:
+        if article_is_orphaned:
             need_save = True
-            new_article.url = \
-                ARTICLE_ORPHANED_BASE + unicode(new_article.id)
             new_article.is_orphaned = True
-
             statsd.gauge('articles.counts.orphaned', 1, delta=True)
 
         if need_save:
@@ -246,7 +258,7 @@ class Article(BaseItem, UrlItem, ContentItem):
             new_article.save()
 
         LOGGER.info(u'Created %sarticle %s in feed(s) %s.', u'orphaned '
-                    if reset_url else u'', new_article,
+                    if article_is_orphaned else u'', new_article,
                     u', '.join(unicode(f) for f in feeds))
 
         # Tags & feeds are ManyToMany, they
