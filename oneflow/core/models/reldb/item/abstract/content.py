@@ -225,7 +225,9 @@ class ContentItem(models.Model):
         except StopProcessingException as e:
             LOGGER.info(u'Stopping processing of article %s on behalf of '
                         u'an internal caller: %s.', self, unicode(e))
-            return
+
+            # HEADS UP: DO NOT return if we want to activate reads.
+            # return
 
         except SoftTimeLimitExceeded as e:
             statsd.gauge('articles.counts.content_errors', 1, delta=True)
