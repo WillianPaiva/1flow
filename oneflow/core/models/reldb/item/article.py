@@ -40,12 +40,11 @@ from django.utils.text import slugify
 
 from oneflow.base.utils import register_task_method
 from oneflow.base.utils.http import clean_url
-from oneflow.base.utils.dateutils import datetime, now
+from oneflow.base.utils.dateutils import now, datetime
 
 from ..common import (
     DjangoUser as User,
     ORIGINS,
-    CONTENT_TYPES_FINAL,
     ARTICLE_ORPHANED_BASE,
 )
 
@@ -359,8 +358,7 @@ def article_post_save(instance, **kwargs):
         if not (article.is_orphaned or article.duplicate_of):
 
             # MIGRATION: remove this "if".
-            if not (article.url_absolute
-                    and article.content_type in CONTENT_TYPES_FINAL):
+            if article.date_created >= MIGRATION_DATETIME:
 
                 # HEADS UP: this task name will be registered later
                 # by the register_task_method() call.
