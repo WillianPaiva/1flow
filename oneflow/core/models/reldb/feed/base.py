@@ -437,7 +437,10 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
             return self.__refresh_lock
 
         except AttributeError:
-            self.__refresh_lock = RedisExpiringLock(self, lock_name='fetch')
+            self.__refresh_lock = RedisExpiringLock(
+                self, lock_name='fetch',
+                expire_time=self.fetch_interval
+            )
             return self.__refresh_lock
 
     # —————————————————————————————————————————————————————————— Internal utils
@@ -576,17 +579,35 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
             self.refresh_lock.release()
             return
 
+        preventive_slow_down = False
+
         try:
             data = self.refresh_feed_internal(force=force)
 
         except:
-            LOGGER.exception(u'Could not refresh feed %s', self)
-            self.refresh_lock.release()
-            return
+            LOGGER.exception(u'Could not refresh feed %s, operating '
+                             u'preventive slowdown.', self)
+            preventive_slow_down = True
 
-        if data is None:
-            # An error occured and the feed has already been closed.
-            self.refresh_lock.release()
+        else:
+            if data is None:
+                # An error occured and has already been stored. The feed
+                # has eventually already been closed if too many errors.
+                # In case it's still open, slow down things.
+                preventive_slow_down = True
+
+        if preventive_slow_down:
+            # do not the queue be overflowed by refresh_all_feeds()
+            # checking this feed over and over again. Let the lock
+            # expire slowly until fetch_interval.
+            #
+            # self.refresh_lock.release()
+
+            # Artificially slow down things to let the remote site
+            # eventually recover while not bothering us too much.
+            self.throttle_fetch_interval(0, 0, 1)
+            self.update_last_fetch()
+            self.save()
             return
 
         new_items, duplicates, mutualized = data

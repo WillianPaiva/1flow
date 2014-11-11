@@ -18,12 +18,10 @@
     License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
-
 import logging
 
 import requests
 
-from bs4 import BeautifulSoup
 from statsd import statsd
 from constance import config
 
@@ -40,7 +38,6 @@ from oneflow.base.utils.http import clean_url
 # from oneflow.base.utils.dateutils import now
 
 from ...common import REQUEST_BASE_HEADERS
-from ...website import split_url
 
 from ..base import BaseItem
 
@@ -55,6 +52,7 @@ __all__ = [
 
 
 # ————————————————————————————————————————————————————————————————————— Classes
+
 
 class DuplicateUrl(models.Model):
 
@@ -176,36 +174,6 @@ class UrlItem(models.Model):
 
         return False
 
-    def absolutize_url_post_process(self, requests_response):
-
-        url = requests_response.url
-
-        try:
-            proto, host_and_port, remaining = split_url(url)
-
-        except ValueError:
-            return url
-
-        if 'da.feedsportal.com' in host_and_port:
-            # Sometimes the redirect chain breaks and gives us
-            # a F*G page with links in many languages "click here
-            # to continue".
-            bsoup = BeautifulSoup(requests_response.content)
-
-            for anchor in bsoup.findAll('a'):
-                if u'here to continue' in anchor.text:
-                    return clean_url(anchor['href'])
-
-            # If we come here, feed portal template has probably changed.
-            # Developers should be noticed about it.
-            LOGGER.critical(u'Feedsportal post-processing failed '
-                            u'for article %s (no redirect tag found '
-                            u'at address %s)!', self, url)
-
-        # if nothing matched before, just clean the
-        # last URL we got. Better than nothing.
-        return clean_url(requests_response.url)
-
     def absolutize_url(self, requests_response=None, force=False, commit=True):
         """ Make the current article URL absolute.
 
@@ -279,7 +247,7 @@ class UrlItem(models.Model):
         #       the same final place.
         #
 
-        final_url = self.absolutize_url_post_process(requests_response)
+        final_url = clean_url(requests_response.url)
 
         if final_url != self.url:
 

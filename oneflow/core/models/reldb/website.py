@@ -22,7 +22,6 @@ import uuid
 import logging
 
 from statsd import statsd
-from collections import namedtuple
 from constance import config
 from transmeta import TransMeta
 from json_field import JSONField
@@ -36,67 +35,17 @@ from mptt.models import MPTTModelBase, MPTTModel, TreeForeignKey
 from sparks.django.models import DiffMixin
 
 from duplicate import AbstractDuplicateAwareModel
+from oneflow.base.utils.http import split_url
+
 
 LOGGER = logging.getLogger(__name__)
 
 
-__all__ = ['WebSite', 'split_url', 'SplitUrlException', ]
-
-
-url_tuple = namedtuple('url', ['scheme', 'host_and_port', 'remaining', ])
-url_port_tuple = namedtuple('url_port',
-                            ['scheme', 'hostname', 'port', 'remaining', ])
-
-
-class SplitUrlException(Exception):
-
-    """ Raised when an URL is reaaaaally bad. """
-
-    pass
-
-
-def split_url(url, split_port=False):
-    u""" Split an URL into a named tuple for easy manipulations.
-
-    Eg. “http://test.com/toto becomes:
-    ('scheme'='http', 'host_and_port'='test.com', 'remaining'='toto').
-
-    if :param:`split_port` is ``True``, the returned namedtuple is of the form:
-
-    ('scheme'='http', 'hostname'='test.com', 'port'=80, 'remaining'='toto').
-
-    In this case, ``port`` will be an integer. All other attributes are strings.
-
-    In case of an error, it will raise a :class:`SplitUrlException` exception.
-    """
-
-    try:
-        proto, remaining = url.split('://', 1)
-
-    except:
-        raise SplitUrlException(u'Unparsable url “{0}”'.format(url))
-
-    try:
-        host_and_port, remaining = remaining.split('/', 1)
-
-    except ValueError:
-        host_and_port = remaining
-        remaining     = u''
-
-    if split_port:
-        try:
-            hostname, port = host_and_port.split(':')
-
-        except ValueError:
-            hostname = host_and_port
-            port = '80' if proto == 'http' else '443'
-
-        return url_port_tuple(proto, hostname, int(port), remaining)
-
-    return url_tuple(proto, host_and_port, remaining)
+__all__ = ['WebSite', ]
 
 
 # ————————————————————————————————————————————————————————————— Class & related
+
 
 def get_website_image_upload_path(instance, filename):
 
@@ -245,8 +194,14 @@ def website_pre_save(instance, **kwargs):
 
     if not website.slug:
         if website.name is None:
-            proto, host_and_port, remaining = split_url(website.url)
-            website.name = host_and_port.replace(u'_', u' ').title()
+            try:
+                proto, host_and_port, remaining = split_url(website.url)
+
+            except:
+                website.name = u'<UNKNOWN>'
+
+            else:
+                website.name = host_and_port.replace(u'_', u' ').title()
 
         website.slug = slugify(website.name)
 
