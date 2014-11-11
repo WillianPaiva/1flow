@@ -515,8 +515,6 @@ INSTALLED_APPS = [
 
     'logentry_admin',
     'constance',
-    'tastypie',
-    'tastypie_mongoengine',
     'overextends',
     # 'django_markdown',
     'writingfield',
@@ -542,6 +540,8 @@ INSTALLED_APPS = [
     # it must come after 'oneflow.base' wich contains it.
     # Without this, tests fail to create database!
     'social_auth',
+    'tastypie',
+    'tastypie_mongoengine',
 ]
 
 # ———————————————————————————————————————————————————————— django-user-accounts
