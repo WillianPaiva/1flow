@@ -281,6 +281,24 @@ class Folder(MPTTModel, DiffMixin):
 
     # ————————————————————————————————————————————————————————————————— Methods
 
+    def compute_cached_descriptors(self, **kwargs):
+        """ Do you guess? I guess yes. """
+
+        self.all_items_count = \
+            folder_all_items_count_default(self)
+
+        self.unread_items_count = \
+            folder_unread_items_count_default(self)
+
+        self.starred_items_count = \
+            folder_starred_items_count_default(self)
+
+        self.archived_items_count = \
+            folder_archived_items_count_default(self)
+
+        self.bookmarked_items_count = \
+            folder_bookmarked_items_count_default(self)
+
     def get_subfolders(self, current_level):
 
         raise NotImplementedError('Use MPTT for get_subfolders()')
@@ -319,7 +337,6 @@ class Folder(MPTTModel, DiffMixin):
 
 
 register_task_method(Folder, Folder.purge, globals(), queue=u'background')
-
 
 
 # ————————————————————————————————————————————————————————————————————— Signals

@@ -225,6 +225,24 @@ class Subscription(ModelDiffMixin, AbstractTaggedModel):
 
     # ————————————————————————————————————————————————————————————————— Methods
 
+    def compute_cached_descriptors(self, **kwargs):
+        """ Do you guess? I guess yes. """
+
+        self.all_items_count = \
+            subscription_all_items_count_default(self)
+
+        self.unread_items_count = \
+            subscription_unread_items_count_default(self)
+
+        self.starred_items_count = \
+            subscription_starred_items_count_default(self)
+
+        self.archived_items_count = \
+            subscription_archived_items_count_default(self)
+
+        self.bookmarked_items_count = \
+            subscription_bookmarked_items_count_default(self)
+
     def mark_all_read(self, latest_displayed_read=None):
 
         if self.unread_items_count == 0:
