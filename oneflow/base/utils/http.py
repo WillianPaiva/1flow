@@ -153,6 +153,8 @@ def clean_feedsportal_url(url):
                  else u'=') + s[1:] for s in url[1:]
             ])
 
+    return url
+
 
 def clean_url(url):
     """ Chain all URL cleaning functions. Expensive, but worth the result. """
