@@ -23,19 +23,20 @@ import time as pytime
 
 from constance import config
 
-from mongoengine.fields import DBRef
-from mongoengine.queryset import Q
-
 from celery import task, chain as tasks_chain
 
 from django.conf import settings
+from django.db.models import Q
 from django.core.urlresolvers import reverse
 from django.core.mail import mail_managers
 from django.utils.translation import ugettext_lazy as _
 
-from ..models import Article, BaseFeed, Read
-from ..models.nonrel import User as MongoUser
-from ..models.reldb.common import DjangoUser  # , REDIS
+from ..models import (
+    Article, Read,
+    BaseFeed,
+    UserFeeds, UserSubscriptions,
+)
+from ..models.reldb.common import User
 
 from oneflow.base.utils import RedisExpiringLock
 from oneflow.base.utils.dateutils import (now, timedelta,
@@ -75,8 +76,6 @@ def global_checker_task(*args, **kwargs):
 def global_feeds_checker():
     """ Check all RSS feeds and their dependants. Close them if needed. """
 
-    raise NotImplementedError('Review for relational DB port.')
-
     def pretty_print_feed(feed):
 
         return (u'- %s,\n'
@@ -90,11 +89,12 @@ def global_feeds_checker():
                     settings.SITE_DOMAIN,
 
                     reverse('admin:%s_%s_change' % (
-                        feed._meta.get('app_label', 'nonrel'),
-                        feed._meta.get('module_name', 'feed')),
+                        feed._meta.app_label,
+                        feed._meta.module_name),
                         args=[feed.id]),
 
-                    feed.url,
+                    # Only RSS/Atom feeds have an URL…
+                    feed.url if hasattr(feed, 'url') else '(NO URL)',
 
                     (u'closed on %s' % feed.date_closed)
                     if feed.date_closed
@@ -111,16 +111,10 @@ def global_feeds_checker():
     limit_days   = config.FEED_CLOSED_WARN_LIMIT
     closed_limit = dtnow - timedelta(days=limit_days)
 
-    feeds = BaseFeed.objects(Q(closed=True)
-                             & (Q(date_closed__exists=False)
-                                | Q(date_closed__gte=closed_limit)))
+    recently_closed_feeds = BaseFeed.objects.filter(is_active=False).filter(
+        Q(date_closed=None) | Q(date_closed__gte=closed_limit))
 
-    count = feeds.count()
-
-    if count > 10000:
-        # prevent CPU and memory hogging.
-        LOGGER.info(u'Switching query to no_cache(), this will take longer.')
-        feeds.no_cache()
+    count = recently_closed_feeds.count()
 
     if not count:
         LOGGER.info('No feed was closed in the last %s days.', limit_days)
@@ -131,15 +125,16 @@ def global_feeds_checker():
                   _(u"\n\nHere is the list, dates (if any), and reasons "
                     u"(if any) of closing:\n\n{feed_list}\n\nYou can manually "
                     u"reopen any of them from the admin interface.\n\n").format(
-                        feed_list='\n\n'.join(pretty_print_feed(feed)
-                                              for feed in feeds)))
+                        feed_list='\n\n'.join(
+                            pretty_print_feed(feed)
+                            for feed in recently_closed_feeds)))
 
     start_time = pytime.time()
 
     # Close the feeds, but after sending the mail,
     # So that initial reason is displayed at least
     # once to a real human.
-    for feed in feeds:
+    for feed in recently_closed_feeds:
         if feed.date_closed is None:
             feed.close('Automatic close by periodic checker task')
 
@@ -151,8 +146,6 @@ def global_feeds_checker():
 def global_subscriptions_checker(force=False, limit=None, from_feeds=True,
                                  from_users=False, extended_check=False):
     """ A conditionned version of :meth:`Feed.check_subscriptions`. """
-
-    raise NotImplementedError('Review for relational DB port.')
 
     if config.CHECK_SUBSCRIPTIONS_DISABLED:
         LOGGER.warning(u'Subscriptions checks disabled in configuration.')
@@ -186,7 +179,9 @@ def global_subscriptions_checker(force=False, limit=None, from_feeds=True,
         if from_feeds:
             with benchmark("Check all subscriptions from feeds"):
 
-                feeds           = BaseFeed.good_feeds.no_cache()
+                # We check ALL feeds (including inactive ones) to be
+                # sure all subscriptions / reads are up-to-date.
+                feeds           = BaseFeed.objects.all()
                 feeds_count     = feeds.count()
                 processed_count = 0
                 checked_count   = 0
@@ -197,20 +192,19 @@ def global_subscriptions_checker(force=False, limit=None, from_feeds=True,
                         break
 
                     if extended_check:
-                        feed.compute_cached_descriptors(all=True,
-                                                        good=True,
-                                                        bad=True)
+                        feed.compute_cached_descriptors()
+                        # all=True, good=True, bad=True
 
                     # Do not extended_check=True, this would double-do
                     # the subscription.check_reads() already called below.
                     feed.check_subscriptions()
 
-                    for subscription in feed.subscriptions:
+                    for subscription in feed.subscriptions.all():
 
                         processed_count += 1
 
-                        if subscription.all_articles_count \
-                                != feed.good_articles_count:
+                        if subscription.all_items_count \
+                                != feed.good_items_count:
 
                             checked_count += 1
 
@@ -218,8 +212,8 @@ def global_subscriptions_checker(force=False, limit=None, from_feeds=True,
                                         u'whereas its feed has %s good '
                                         u'articles; checking…',
                                         subscription.name, subscription.id,
-                                        subscription.all_articles_count,
-                                        feed.good_articles_count)
+                                        subscription.all_items_count,
+                                        feed.good_items_count)
 
                             subscription.check_reads(
                                 force=True, extended_check=extended_check)
@@ -233,7 +227,7 @@ def global_subscriptions_checker(force=False, limit=None, from_feeds=True,
         if from_users:
             with benchmark("Check all subscriptions from users"):
 
-                users           = MongoUser.objects.all().no_cache()
+                users           = User.objects.filter(is_active=True)
                 users_count     = users.count()
                 processed_count = 0
 
@@ -244,12 +238,10 @@ def global_subscriptions_checker(force=False, limit=None, from_feeds=True,
                     user.check_subscriptions()
 
                     if extended_check:
-                        user.compute_cached_descriptors(all=True,
-                                                        unread=True,
-                                                        starred=True,
-                                                        bookmarked=True)
+                        user.user_counters.compute_cached_descriptors()
+                        # all=True, unread=True, starred=True, bookmarked=True
 
-                        for subscription in user.subscriptions:
+                        for subscription in user.subscriptions.all():
                                 processed_count += 1
 
                                 subscription.check_reads(force=True,
@@ -296,7 +288,7 @@ def global_duplicates_checker(limit=None, force=False):
     if limit is None:
         limit = 0
 
-    duplicates = Article.objects(duplicate_of__ne=None).no_cache()
+    duplicates = Article.objects.exclude(duplicate_of_id=None)
 
     total_dupes_count = duplicates.count()
     total_reads_count = 0
@@ -308,7 +300,7 @@ def global_duplicates_checker(limit=None, force=False):
 
         try:
             for duplicate in duplicates:
-                reads = Read.objects(article=duplicate)
+                reads = duplicate.reads.all()
 
                 processed_dupes += 1
 
@@ -320,8 +312,7 @@ def global_duplicates_checker(limit=None, force=False):
                     LOGGER.info(u'Duplicate article %s still has %s '
                                 u'reads, fixing…', duplicate, reads_count)
 
-                    duplicate.duplicate_of.replace_duplicate_everywhere(
-                        duplicate.id)
+                    duplicate.duplicate_of.replace_duplicate(duplicate)
 
                     if limit and done_dupes_count >= limit:
                         break
@@ -374,8 +365,7 @@ def global_reads_checker(limit=None, force=False, verbose=False,
     if limit is None:
         limit = 0
 
-    bad_reads = Read.objects(Q(is_good__exists=False)
-                             | Q(is_good__ne=True)).no_cache()
+    bad_reads = Read.objects.filter(is_good=False)
 
     total_reads_count   = bad_reads.count()
     processed_reads     = 0
@@ -394,24 +384,15 @@ def global_reads_checker(limit=None, force=False, verbose=False,
 
                 if read.is_good:
                     # This read has been activated via another
-                    # one, attached to the same article.
+                    # checked one, attached to the same article.
                     changed_reads_count += 1
                     continue
 
-                article = read.article
-
-                if isinstance(article, DBRef) or article is None:
-                    # The article doesn't exist anymore. Wipe the read.
-                    wiped_reads_count += 1
-                    LOGGER.error(u'Read #%s has dangling reference to '
-                                 u'non-existing article #%s, removing.',
-                                 read.id, article.id if article else u'`None`')
-                    read.delete()
-                    continue
+                article = read.item
 
                 if extended_check:
                     try:
-                        if read.subscriptions:
+                        if read.subscriptions.all():
 
                             # TODO: remove this
                             #       check_set_subscriptions_131004_done
@@ -421,7 +402,6 @@ def global_reads_checker(limit=None, force=False, verbose=False,
 
                             else:
                                 read.check_set_subscriptions_131004()
-                                read.safe_reload()
 
                         else:
                             read.set_subscriptions()
@@ -467,6 +447,31 @@ def global_reads_checker(limit=None, force=False, verbose=False,
                 skipped_count * 100.0 / processed_reads)
 
 
+def check_one_user(user, force=False, verbose=False, extended_check=False):
+    u""" Completely check a user account and its “things”. """
+
+    try:
+        user_feeds = user.user_feeds
+
+    except:
+        user_feeds = UserFeeds(user=user)
+        user_feeds.save()
+
+    user_feeds.check()
+
+    try:
+        user_subscriptions = user.user_subscriptions
+
+    except:
+        user_subscriptions = UserSubscriptions(user=user)
+        user_subscriptions.save()
+
+    user_subscriptions.check()
+
+    if extended_check:
+        pass
+
+
 @task(name="oneflow.core.tasks.global_users_checker", queue='check')
 def global_users_checker(limit=None, force=False, verbose=False,
                          break_on_exception=False, extended_check=False):
@@ -498,7 +503,7 @@ def global_users_checker(limit=None, force=False, verbose=False,
     if limit is None:
         limit = 0
 
-    active_users      = DjangoUser.objects.filter(is_active=True)
+    active_users      = User.objects.filter(is_active=True)
     total_users_count = active_users.count()
     processed_users   = 0
     changed_users     = 0
@@ -513,11 +518,8 @@ def global_users_checker(limit=None, force=False, verbose=False,
                 if limit and changed_users >= limit:
                     break
 
-                userfeeds = user.feeds
-                userfeeds.check()
-
-                if extended_check:
-                    pass
+                check_one_user(user, force=force, verbose=verbose,
+                               extended_check=extended_check)
 
         finally:
             my_lock.release()
