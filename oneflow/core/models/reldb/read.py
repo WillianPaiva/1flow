@@ -217,38 +217,22 @@ class Read(AbstractTaggedModel):
     def check_set_subscriptions_131004(self):
         """ Fix a bug where reads had too much subscriptions. """
 
-        raise NotImplementedError('review for reldb.')
+        subscriptions_to_keep = []
 
-        # if isinstance(self.user, DBRef) or self.user is None:
-        #     self.delete()
-        #     sys.stderr.write(u'u')
-        #     return
+        for subscription in self.subscriptions.all():
+            try:
+                if subscription.user == self.user:
+                    subscriptions_to_keep.append(subscription)
+            except:
+                sys.stderr.write(u'-')
 
-        if self.subscriptions.count() == 1:
-            # Don't bother doing CPU-intensive tasks,
-            # this one seems good. At least we hope.
-            self.update(set__check_set_subscriptions_131004_done=True)
+        self.subscriptions.clear()
 
-        else:
-            subscriptions_to_keep = []
+        if subscriptions_to_keep:
+            self.subscriptions.add(*subscriptions_to_keep)
 
-            for subscription in self.subscriptions:
-                try:
-                    if subscription.user == self.user:
-                        subscriptions_to_keep.append(subscription)
-                except:
-                    sys.stderr.write(u'-')
-
-            # We have to update() because changing the boolean to True
-            # doesn't make MongoEngine write it to the database, because
-            # the new value is not different from the default one…
-            #
-            # Then we update subscriptions via the same mechanism to
-            # avoid two disctinct write operations on the database.
-            #
-            # No need to reload, this is a one-shot repair.
-            self.update(set__check_set_subscriptions_131004_done=True,
-                        set__subscriptions=subscriptions_to_keep)
+        self.check_set_subscriptions_131004_done = True
+        self.save()
 
     #
     #
