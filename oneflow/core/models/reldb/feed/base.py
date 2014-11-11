@@ -419,7 +419,7 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
 
         return self.items.filter(Q(Article___is_orphaned=True)
                                  | Q(Article___url_absolute=False)
-                                 | Q(duplicate_of__ne=None))
+                                 | ~Q(duplicate_of_id=None))
 
     # NOTE for myself: these property & method are provided by Django
     #       bye-bye MongoDB glue code everywhere to mimic relational DB.
