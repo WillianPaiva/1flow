@@ -230,6 +230,50 @@ class UserCounters(models.Model):
         return _(u'Counters for user {0})').format(
             self.user.username)
 
+    def compute_cached_descriptors(self, **kwargs):
+
+        self.all_items_count = \
+            usercounters_all_items_count_default(self)
+
+        self.unread_items_count = \
+            usercounters_unread_items_count_default(self)
+
+        self.starred_items_count = \
+            usercounters_starred_items_count_default(self)
+
+        self.archived_items_count = \
+            usercounters_archived_items_count_default(self)
+
+        self.bookmarked_items_count = \
+            usercounters_bookmarked_items_count_default(self)
+
+        self.fact_items_count = \
+            usercounters_fact_items_count_default(self)
+
+        self.number_items_count = \
+            usercounters_number_items_count_default(self)
+
+        self.analysis_items_count = \
+            usercounters_analysis_items_count_default(self)
+
+        self.quote_items_count = \
+            usercounters_quote_items_count_default(self)
+
+        self.prospective_items_count = \
+            usercounters_prospective_items_count_default(self)
+
+        self.rules_items_count = \
+            usercounters_rules_items_count_default(self)
+
+        self.knowhow_items_count = \
+            usercounters_knowhow_items_count_default(self)
+
+        self.knowledge_items_count = \
+            usercounters_knowledge_items_count_default(self)
+
+        self.fun_items_count = \
+            usercounters_fun_items_count_default(self)
+
 
 # ————————————————————————————————————————————————————————————————————— Signals
 

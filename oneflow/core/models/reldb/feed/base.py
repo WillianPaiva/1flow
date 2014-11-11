@@ -326,16 +326,8 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
         attr_name='bf.s_c', default=basefeed_subscriptions_count_default,
         set_default=True, min_value=0)
 
-    def update_all_items_count(self):
-
-        self.all_items_count = basefeed_all_items_count_default(self)
-
-    def update_subscriptions_count(self):
-
-        self.subscriptions_count = basefeed_subscriptions_count_default(self)
-
     def update_latest_item_date_published(self):
-        """ This seems simple, but this operations costs a lot in MongoDB. """
+        """ This seems simple, but this operations costs a lot. """
 
         try:
             # This query should still cost less than the pure and bare
@@ -347,6 +339,22 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
             # Don't worry, the default value of
             # the descriptor should fill the gaps.
             pass
+
+    def update_all_items_count(self):
+
+        self.all_items_count = basefeed_all_items_count_default(self)
+
+    def update_good_items_count(self):
+
+        self.good_items_count = basefeed_good_items_count_default(self)
+
+    def update_bad_items_count(self):
+
+        self.bad_items_count = basefeed_bad_items_count_default(self)
+
+    def update_subscriptions_count(self):
+
+        self.subscriptions_count = basefeed_subscriptions_count_default(self)
 
     def update_recent_items_count(self, force=False):
         """ This task is protected to run only once per day,
@@ -364,6 +372,17 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
         # Don't bother release the lock, this will
         # ensure we are not called until tomorrow.
         #
+
+    def compute_cached_descriptors(self):
+
+        self.update_all_items_count()
+        self.update_good_items_count()
+        self.update_bad_items_count()
+        self.update_subscriptions_count()
+        self.update_recent_items_count()
+
+        # This one costs a lot.
+        # self.update_latest_item_date_published()
 
     # ————————————————————————————————————————————————————— Articles properties
 
@@ -400,7 +419,7 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
 
         return self.items.filter(Q(Article___is_orphaned=True)
                                  | Q(Article___url_absolute=False)
-                                 | Q(duplicate_of__ne=None))
+                                 | ~Q(duplicate_of_id=None))
 
     # NOTE for myself: these property & method are provided by Django
     #       bye-bye MongoDB glue code everywhere to mimic relational DB.
