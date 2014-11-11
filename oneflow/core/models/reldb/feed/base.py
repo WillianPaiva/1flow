@@ -373,7 +373,7 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
         # ensure we are not called until tomorrow.
         #
 
-    def update_cached_descriptors(self):
+    def compute_cached_descriptors(self):
 
         self.update_all_items_count()
         self.update_good_items_count()
