@@ -22,7 +22,6 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 import uuid
 import logging
 
-from collections import namedtuple
 from constance import config
 
 # from django.conf import settings
@@ -31,6 +30,7 @@ from django.db.models import Q
 from django.db.models.signals import pre_save, post_save  # , pre_delete
 from django.utils.translation import ugettext_lazy as _
 
+from sparks.foundations.classes import SimpleObject
 from sparks.django.models import ModelDiffMixin
 
 from oneflow.base.fields import IntRedisDescriptor
@@ -66,17 +66,17 @@ __all__ = [
 ]
 
 
-CheckReadsCounter = namedtuple(
-    'CheckReadsCounter',
-    (
-        'reads',
-        'unreads',
-        'failed',
-        'missing',
-        'rechecked'
-    )
-)
+def CheckReadsCounter():
 
+    counters = SimpleObject()
+
+    counters.reads = 0
+    counters.unreads = 0
+    counters.failed = 0
+    counters.missing = 0
+    counters.rechecked = 0
+
+    return counters
 
 # ————————————————————————————————————————————————————————————— Redis / Helpers
 
@@ -314,7 +314,7 @@ class Subscription(ModelDiffMixin, AbstractTaggedModel):
 
         self.unread_items_count -= impacted_count
 
-        for folder in self.folders:
+        for folder in self.folders.all():
             folder.unread_items_count -= impacted_count
 
         self.user.unread_items_count -= impacted_count
@@ -379,11 +379,9 @@ class Subscription(ModelDiffMixin, AbstractTaggedModel):
 
         my_now = now()
 
-        counters = CheckReadsCounter(0, 0, 0, 0, 0)
+        counters = CheckReadsCounter()
 
         def create_read_for_item(item, params):
-
-            global counters
 
             _, created = self.create_read(item, verbose=False, **params)
 
@@ -476,7 +474,7 @@ class Subscription(ModelDiffMixin, AbstractTaggedModel):
             #
             self.compute_cached_descriptors(all=True, unread=True)
 
-            for folder in self.folders:
+            for folder in self.folders.all():
                 folder.compute_cached_descriptors(all=True, unread=True)
 
         LOGGER.info(u'Checked subscription #%s. '
@@ -631,7 +629,7 @@ def generic_check_subscriptions_method(self, commit=True, extended_check=False):
     # Article.activate_reads(extended_check=True).
     if extended_check and my_class_name != 'Read':
 
-        counters = CheckReadsCounter(0, 0, 0, 0, 0)
+        counters = CheckReadsCounter()
 
         if my_class_name == 'Feed':
             articles = self.good_items.order_by('-id')
