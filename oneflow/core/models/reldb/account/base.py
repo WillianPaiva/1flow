@@ -85,6 +85,9 @@ class BaseAccountQuerySet(PolymorphicQuerySet):
     .. note:: this query set will be patched by subclasses.
     """
 
+    def inactive(self):
+        return self.filter(is_active=False)
+
     def active(self):
         return self.filter(is_active=True)
 
