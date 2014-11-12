@@ -406,8 +406,7 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
         #       and invert them in @BaseFeed.bad_items
         #
 
-        return self.items.filter(Article___is_orphaned=False,
-                                 Article___url_absolute=True,
+        return self.items.filter(Article___url_absolute=True,
                                  duplicate_of=None)
 
     @property
@@ -417,8 +416,7 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
         # NOTE: invert these conditions in @Feed.good_items
         #
 
-        return self.items.filter(Q(Article___is_orphaned=True)
-                                 | Q(Article___url_absolute=False)
+        return self.items.filter(Q(Article___url_absolute=False)
                                  | ~Q(duplicate_of_id=None))
 
     # NOTE for myself: these property & method are provided by Django
