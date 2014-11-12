@@ -211,6 +211,7 @@ class Article(BaseItem, UrlItem, ContentItem):
             article_is_orphaned = True
         else:
             url = clean_url(url)
+            article_is_orphaned = False
 
         new_article = cls(name=title, url=url)
 
