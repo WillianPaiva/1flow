@@ -30,8 +30,6 @@ from common import DjangoUser as User  # NOQA
 
 from helpcontent import HelpContent  # NOQA
 
-from mailaccount import MailAccount  # NOQA
-
 from language import Language  # NOQA
 
 from website import WebSite  # NOQA
@@ -44,6 +42,8 @@ from tag import *  # NOQA
 
 # —————————————————————————————————————————————————————————— Polymorphic models
 #                                                               and derivatives
+
+from account import *  # NOQA
 
 from item import *  # NOQA
 from feed import *  # NOQA

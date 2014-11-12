@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -37,7 +37,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from sparks.django.models import ModelDiffMixin
 
-from ..mail_common import OTHER_VALID_HEADERS_lower, BASE_HEADERS
+from ..account.common import OTHER_VALID_HEADERS_lower, BASE_HEADERS
 from mail import MailFeed
 
 LOGGER = logging.getLogger(__name__)

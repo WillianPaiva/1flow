@@ -30,8 +30,8 @@ from django.db.models.signals import pre_save  # , post_save  # , pre_delete
 from django.utils.translation import ugettext_lazy as _
 # from django.utils.text import slugify
 
-from ..common import ORIGINS  # , REDIS
-from ..mailaccount import MailAccount
+from ..common import ORIGINS
+from ..account import MailAccount
 
 from base import BaseFeed, basefeed_pre_save
 
