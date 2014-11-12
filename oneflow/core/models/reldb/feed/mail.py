@@ -32,9 +32,28 @@ from django.utils.translation import ugettext_lazy as _
 
 from ..account import MailAccount
 
-from base import BaseFeed, basefeed_pre_save
+from base import (
+    BaseFeedQuerySet,
+    BaseFeedManager,
+    BaseFeed,
+    basefeed_pre_save,
+)
 
 LOGGER = logging.getLogger(__name__)
+
+
+# —————————————————————————————————————————————————————————— Manager / QuerySet
+
+
+def BaseFeedQuerySet_mail_method(self):
+    """ Patch BaseFeedQuerySet to know how to return Twitter accounts. """
+
+    return self.instance_of(MailFeed)
+
+BaseFeedQuerySet.mail = BaseFeedQuerySet_mail_method
+
+
+# ——————————————————————————————————————————————————————————————————————— Model
 
 
 class MailFeed(BaseFeed):
@@ -63,6 +82,8 @@ class MailFeed(BaseFeed):
     ))
 
     RULES_OPERATION_DEFAULT = RULES_OPERATION_ANY
+
+    objects = BaseFeedManager()
 
     #
     # HEADS UP: `.user` is inherited from BaseFeed.
