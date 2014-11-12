@@ -137,8 +137,13 @@ class UrlItem(models.Model):
         #       and core.views.read_with_endless_pagination::search
         #
 
-        if self.is_orphaned:
-            return False
+        # HEADS UP: 20141111, we consider orphaned items to be good.
+        #           although they don't have an URL, their title should
+        #           be good, and even if we don't know yet how to display
+        #           them correctly, they are not duplicates, and should
+        #           be pushed to the user in the interface.
+        # if self.is_orphaned:
+        #    return False
 
         if not self.url_absolute:
             return False

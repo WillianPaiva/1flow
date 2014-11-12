@@ -155,7 +155,7 @@ def _rwep_ajax_update_counters(kwargs, query_kwargs,
     elif query_kwargs.get('is_bookmarked', False):
         attr_name = u'bookmarked_items_count'
 
-    elif query_kwargs.get('is_read__ne', None) is True:
+    elif query_kwargs.get('is_read', None) is False:
         attr_name = u'unread_items_count'
 
     if attr_name:

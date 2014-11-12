@@ -652,11 +652,11 @@ def generic_check_subscriptions_method(self, commit=True, extended_check=False):
                                  subscription.id)
 
             else:
-                counters.reads     += scounters.sreads
-                counters.failed    += scounters.sfailed
-                counters.missing   += scounters.smissing
-                counters.unreads   += scounters.sunreads
-                counters.rechecked += scounters.srecheck
+                counters.reads     += scounters.reads
+                counters.failed    += scounters.failed
+                counters.missing   += scounters.missing
+                counters.unreads   += scounters.unreads
+                counters.rechecked += scounters.rechecked
 
         LOGGER.info(u'Checked %s #%s with %s subscriptions%s. '
                     u'Totals: %s/%s non-existing/re-checked reads, '

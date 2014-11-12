@@ -15,10 +15,10 @@
           href="{% url 'source_selector' %}{% spaceless %}
 
           {% if folder %}
-              #{{ folder.id }}
+              #folder-{{ folder.id }}
 
           {% elif subscription %}
-              #{{ subscription.id }}
+              #subscription-{{ subscription.id }}
 
           {% endif %}
 
