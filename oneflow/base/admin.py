@@ -53,9 +53,9 @@ ConstanceAdmin.fieldsets = (
             'FEED_FETCH_DISABLED',
             'FEED_FETCH_RSSATOM_DISABLED',
             'FEED_FETCH_EMAIL_DISABLED',
+            'FEED_FETCH_TWITTER_DISABLED',
 
             # TODO: activate these when we need them.
-            # 'FEED_FETCH_TWITTER_DISABLED',
             # 'FEED_FETCH_FACEBOOK_DISABLED',
             # 'FEED_FETCH_GOOGLE_DISABLED',
         ),
@@ -117,7 +117,16 @@ ConstanceAdmin.fieldsets = (
         ),
     }),
 
-    (_(u'IMAP & e-Mail'), {
+
+    (_(u'Accounts (global/common)'), {
+        'classes': ('grp-collapse grp-open', ),
+        'fields': (
+            'ACCOUNT_REFRESH_DISABLED',
+            'ACCOUNT_REFRESH_PERIOD_DEFAULT',
+        ),
+    }),
+
+    (_(u'e-Mail accounts & IMAP'), {
         'classes': ('grp-collapse grp-open', ),
         'fields': (
             'MAIL_ACCOUNT_REFRESH_DISABLED',
