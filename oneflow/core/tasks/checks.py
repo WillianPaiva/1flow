@@ -597,8 +597,14 @@ def global_orphaned_checker(limit=None, force=False, verbose=False,
 
                 if new_url != old_url:
                     orphan.url = new_url
+                    orphan.url_absolute = True
 
                 else:
+                    if not orphan.url_absolute:
+                        changed_orphans += 1
+                        orphan.url_absolute = True
+                        orphan.save()
+
                     continue
 
                 try:
