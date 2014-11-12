@@ -317,7 +317,7 @@ class Subscription(ModelDiffMixin, AbstractTaggedModel):
         for folder in self.folders.all():
             folder.unread_items_count -= impacted_count
 
-        self.user.unread_items_count -= impacted_count
+        self.user.user_counters.unread_items_count -= impacted_count
 
     def create_read(self, item, verbose=True, **kwargs):
         """ Return a tuple (read, created) with the new (or existing) read.
