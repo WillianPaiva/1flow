@@ -621,6 +621,9 @@ def global_orphaned_checker(limit=None, force=False, verbose=False,
                     master.register_duplicate(orphan, force=force,
                                               background=False)
 
+                    # Reload the orphan to get the refreshed duplicate status.
+                    orphan = Article.objects.get(id=orphan.id)
+
                     if orphan.duplicate_status == DUPLICATE_STATUS.FINISHED:
                         orphan.delete()
                         deleted_orphans += 1
