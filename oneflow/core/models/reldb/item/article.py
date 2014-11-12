@@ -209,6 +209,7 @@ class Article(BaseItem, UrlItem, ContentItem):
             # We have 860k+ items, out of 1k real facts… Doomed.
             url = ARTICLE_ORPHANED_BASE + generate_orphaned_hash(title, feeds)
             article_is_orphaned = True
+
         else:
             url = clean_url(url)
             article_is_orphaned = False
@@ -252,6 +253,12 @@ class Article(BaseItem, UrlItem, ContentItem):
         if article_is_orphaned:
             need_save = True
             new_article.is_orphaned = True
+
+            # Don't count the article as "bad" because it has a non-absolute
+            # URL. In fact, its 1flow URL is completely good (even if it's not
+            # yet accessible from outside).
+            new_article.url_absolute = True
+
             statsd.gauge('articles.counts.orphaned', 1, delta=True)
 
         if need_save:
