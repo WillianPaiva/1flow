@@ -57,7 +57,8 @@ def mailaccount_mailboxes_default(mailaccount):
     """ Build a MailAccount mailboxes default value. """
 
     try:
-        return mailaccount.imap_list_mailboxes(as_text=True)
+        with mailaccount:
+            return mailaccount.imap_list_mailboxes(as_text=True)
 
     except:
         return u''
