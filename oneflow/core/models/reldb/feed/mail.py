@@ -30,7 +30,6 @@ from django.db.models.signals import pre_save  # , post_save  # , pre_delete
 from django.utils.translation import ugettext_lazy as _
 # from django.utils.text import slugify
 
-from ..common import ORIGINS
 from ..account import MailAccount
 
 from base import BaseFeed, basefeed_pre_save
@@ -177,7 +176,7 @@ class MailFeed(BaseFeed):
 
         LOGGER.info(u'Refreshing mail feed %s…', self)
 
-        feed_kwargs = self.build_refresh_kwargs(for_type=ORIGINS.EMAIL_FEED)
+        feed_kwargs = self.build_refresh_kwargs()
 
         new_emails = 0
         duplicates = 0
@@ -244,7 +243,7 @@ class MailFeed(BaseFeed):
                                                                  'position')
         )
 
-        usable_accounts = self.user.mail_accounts.filter(is_usable=True)
+        usable_accounts = self.user.accounts.mail().usable()
 
         rules_operation_any = self.rules_operation == self.RULES_OPERATION_ANY
 
