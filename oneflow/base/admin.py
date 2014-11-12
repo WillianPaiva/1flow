@@ -117,7 +117,6 @@ ConstanceAdmin.fieldsets = (
         ),
     }),
 
-
     (_(u'Accounts (global/common)'), {
         'classes': ('grp-collapse grp-open', ),
         'fields': (
@@ -126,6 +125,13 @@ ConstanceAdmin.fieldsets = (
         ),
     }),
 
+    (_(u'Twitter accounts'), {
+        'classes': ('grp-collapse grp-open', ),
+        'fields': (
+            'TWITTER_ACCOUNT_REFRESH_DISABLED',
+            'TWITTER_ACCOUNT_REFRESH_PERIOD',
+        ),
+    }),
     (_(u'e-Mail accounts & IMAP'), {
         'classes': ('grp-collapse grp-open', ),
         'fields': (
