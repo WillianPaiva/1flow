@@ -244,7 +244,7 @@ class MailFeed(BaseFeed):
                                                                  'position')
         )
 
-        usable_accounts = self.user.mailaccount_set.filter(is_usable=True)
+        usable_accounts = self.user.mail_accounts.filter(is_usable=True)
 
         rules_operation_any = self.rules_operation == self.RULES_OPERATION_ANY
 

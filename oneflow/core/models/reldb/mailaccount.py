@@ -59,6 +59,16 @@ def mailaccount_mailboxes_default(mailaccount):
         return u''
 
 
+class MailAccountManager(models.Manager):
+
+    """ A manager that adds some things. """
+
+    use_for_related_fields = True
+
+    def usable(self):
+        return self.get_query_set().filter(is_usable=True)
+
+
 class MailAccount(ModelDiffMixin):
 
     """ 1flow users can configure many mail accounts.
@@ -66,9 +76,16 @@ class MailAccount(ModelDiffMixin):
     1flow create feeds from them.
     """
 
+    class Meta:
+        app_label       = 'core'
+        unique_together = ('user', 'hostname', 'username', )
+
+    objects = MailAccountManager()
+
     # NOTE: MAILBOXES_BLACKLIST is in MailAccount.
 
-    user = models.ForeignKey(User, verbose_name=_(u'Creator'))
+    user = models.ForeignKey(User, verbose_name=_(u'Creator'),
+                             related_name='mail_accounts')
     name = models.CharField(verbose_name=_(u'Account name'),
                             max_length=128, blank=True)
 
@@ -92,10 +109,6 @@ class MailAccount(ModelDiffMixin):
     _mailboxes_ = TextRedisDescriptor(
         attr_name='ma.mb', default=mailaccount_mailboxes_default,
         set_default=True)
-
-    class Meta:
-        app_label       = 'core'
-        unique_together = ('user', 'hostname', 'username', )
 
     # —————————————————————————————————————————————————————————————— Properties
 
