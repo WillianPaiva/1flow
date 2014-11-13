@@ -87,6 +87,7 @@
       {% endif %}
 
       <ul class="nav navbar-nav">
+
         {% if user.is_authenticated and wizards.welcome_beta_shown %}
 
           <li class="nowrap">
@@ -109,6 +110,7 @@
                 {# Just in case there is a problem. #}
                 <a href="{% url 'source_selector' %}"
             {% endif %}
+
                 class="{% view_name_active "read_with_endless_pagination" %}">
               {% trans 'Read' %}
             </a>
@@ -156,6 +158,11 @@
           {#  NOT hide, even if not super_powers_enabled, we need to know about maintenance mode. #}
           {% if user.is_staff or user.is_superuser %}
 
+            {% if debug %}
+              <li style="opacity: 0.25"><a href="#" onclick="javascript:$('.navbar').first().addClass('hide');"><i class="icon icon-eye-close"></i></a></li>
+
+            {% endif %}
+
             {% if MAINTENANCE_MODE %}
               <li>
                 <a href="#" disabled="disabled">
@@ -168,45 +175,25 @@
 
             {% if preferences.staff.super_powers_enabled %}
 
-              <li><a href="javascript: $('.navbar').first().addClass('hidden'); return false"><span class="badge muted"><i class="icon-eye-close"></i></span></a></li>
-
               <li id="system-informations" class="hidden-inline-block-xs"><a href="#"
                 data-toggle="popover" data-placement="bottom"
-                data-title="System Informations" data-html="true"
+                data-title="{{ FULL_VERSION }}" data-html="true"
                 data-content="
-                  <div class='row'>
-                    <div class='col-xs-4'>PostgreSQL</div>
-                    <div class='col-xs-6'>{{settings.DATABASES.default.HOST}}
-                      <strong>{{settings.DATABASES.default.NAME}}</strong></div>
-                  </div>
-                  <div class='spacer15'></div>
-
-                  <div class='row'>
-                    <div class='col-xs-4'>MongoDB</div>
-                    <div class='col-xs-6'>{{settings.MONGODB_HOST}}
-                      <strong>{{settings.MONGODB_NAME}}</strong></div>
-                  </div>
-                  <div class='spacer15'></div>
-
-                  <div class='row'>
-                    <div class='col-xs-4'>Mongo Archive</div>
-                    <div class='col-xs-6'>{{settings.MONGODB_HOST_ARCHIVE}}
-                      <strong>{{settings.MONGODB_NAME_ARCHIVE}}</strong></div>
-                  </div>
-                  <div class='spacer15'></div>
+                  <div class='spacer10'></div>
                   <div class='row'>
                     <div class='col-xs-12'>
                     <a class='btn btn-info btn-block centered' href='{% url 'admin_status' %}'>{% core_icon 'SystemStatistics' %}&nbsp;{% trans "System statistics" %}</a>
                     </div>
                   </div>
-                  <div class='spacer5'></div>
+                  <div class='spacer20'></div>
                   <div class='row'>
                     <div class='col-xs-12'>
                     <a class='btn btn-info btn-block centered' href='{% url 'syncnode_list_create' %}'>{% core_icon 'SyncNode' %}&nbsp;{% trans "Sync network" %}</a>
                     </div>
                   </div>
+                  <div class='spacer10'></div>
               "
-                >{{ FULL_VERSION }}</a></li>
+                ><i class="icon icon-info"></i></a></li>
 
                 <script type="text/javascript">
                 $(document).ready(function(){
@@ -221,18 +208,17 @@
 
               <li>
                 <a href="{% url 'preference_toggle' base='staff' sub='super_powers_enabled' %}">
-                  <span class="badge badge-info">
+
 
             {% else %}
 
               <li style="opacity: 0.1">
                 <a href="{% url 'preference_toggle' base='staff' sub='super_powers_enabled' %}">
-                  <span class="badge muted">
+
 
             {% endif %}{# superpowers #}
 
-                    <i class="icon-bolt"></i>
-                  </span>
+                  <i class="icon-bolt"></i>
                 </a>
               </li>
 
