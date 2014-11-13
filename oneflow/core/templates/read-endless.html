@@ -118,7 +118,7 @@
 
                 hide_initial_loading();
 
-                {% if mongodb_user.is_staff_or_superuser_and_enabled %}
+                {% if user.is_staff_or_superuser_and_enabled %}
                     setup_snappers();
                 {% endif %}
             }

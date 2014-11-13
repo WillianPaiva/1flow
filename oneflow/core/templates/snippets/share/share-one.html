@@ -22,7 +22,7 @@
             <div id="share-read-fields-help" class="modal sub-modal hide">
                 <div class="modal-body">
 
-                {% filter markdown %}{% blocktrans with my_username=mongodb_user.username %}
+                {% filter markdown %}{% blocktrans with my_username=user.username %}
  The message you type will be integrated in the mail sent to your friends or colleagues, with a small exerpt of the article, and an image if the article has one.
 
 In your message, you can use the following fields:
@@ -54,7 +54,7 @@ In your message, you can use the following fields:
             {% include "widgets/forms/field-textarea.html" with field=form.recipients %}
         {% endwith %}
 
-        {% if not mongodb_user.has_contacts %}
+        {% if not user.has_contacts %}
 
             <div class="control-group centered"><a href="{% url 'import_contacts' %}?service=google" target="_blank">{% trans "Import your contacts" %}</a></div>
 
