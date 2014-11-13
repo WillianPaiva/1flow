@@ -263,7 +263,7 @@ class Subscription(ModelDiffMixin, AbstractTaggedModel):
         #
         # HEADS UP: this task name will be registered later
         # by the register_task_method() call.
-        subscription_mark_all_read_in_database_task.delay(
+        globals()['subscription_mark_all_read_in_database_task'].delay(
             self.id, now() if latest_displayed_read is None
             #
             # TRICK: we use self.user.reads for 2 reasons:
@@ -574,7 +574,7 @@ def subscribe_user_to_feed(user, feed, name=None,
         # by the register_task_method() call.
         #
         # 'True' is for the `force` argument.
-        subscription_check_reads_task.apply_async(
+        globals()['subscription_check_reads_task'].apply_async(
             args=(subscription.id,),
             kwargs={'force': True}
         )
