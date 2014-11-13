@@ -30,6 +30,8 @@ from .importers import WebPagesImportForm  # NOQA
 
 from .read import ReadShareForm  # NOQA
 
+# —————————————————————————————————————————————————————————————————————— E-mail
+
 from mailaccount import MailAccountForm  # NOQA
 
 from mailfeed import MailFeedForm  # NOQA
@@ -39,5 +41,7 @@ from mailfeedrule import (  # NOQA
     MailFeedRulePositionForm,
     MailFeedRuleGroupForm,
 )
+
+# ———————————————————————————————————————————————————————————————————————— Sync
 
 from sync import SyncNodeForm  # NOQA
