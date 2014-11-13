@@ -26,6 +26,7 @@ import operator
 
 from django.db import models
 from django.db.models.signals import pre_delete, post_save  # , pre_save
+from django.db.models.query import QuerySet
 # from django.conf import settings
 from django.utils.translation import ugettext_lazy as _, pgettext_lazy
 
@@ -54,6 +55,8 @@ MIGRATION_DATETIME = datetime(2014, 11, 1)
 
 __all__ = [
     'Read',
+    'ReadManager',
+    'ReadQuerySet',
     'BOOKMARK_TYPES',
 ]
 
@@ -71,6 +74,59 @@ BOOKMARK_TYPES = NamedTupleChoices(
 BOOKMARK_TYPE_DEFAULT = u'U'
 
 
+# ———————————————————————————————————————————————————————————————————— Managers
+
+
+class ReadQuerySet(QuerySet):
+
+    """ QuerySet that helps reads filtering. """
+
+    def good(self):
+        return self.filter(is_good=True)
+
+    def bad(self):
+        return self.filter(is_good=False)
+
+    def read(self):
+        return self.filter(is_read=True)
+
+    def unread(self):
+        return self.filter(is_read=False)
+
+    def auto_read(self):
+        return self.filter(is_auto_read=True)
+
+    def archived(self):
+        return self.filter(is_archived=True)
+
+    def bookmarked(self):
+        return self.filter(is_bookmarked=True)
+
+    def starred(self):
+        return self.filter(is_starred=True)
+
+
+class ReadManager(models.Manager):
+
+    """ A manager to wrap our query set.
+
+    .. note:: this one should eventually vanish in Django 1.7.
+    """
+
+    use_for_related_fields = True
+
+    def get_queryset(self):
+        return ReadQuerySet(self.model, using=self._db)
+
+    # VANISH in Django 1.7 → use `ReadQS.as_manager()`
+
+    def good(self):
+        return self.get_queryset().filter(is_good=True)
+
+    def bad(self):
+        return self.get_queryset().filter(is_good=False)
+
+
 class Read(AbstractTaggedModel):
 
     """ Link a user to any item. """
@@ -80,6 +136,8 @@ class Read(AbstractTaggedModel):
         verbose_name = _(u'Read')
         verbose_name_plural = _(u'Reads')
         unique_together = ('user', 'item', )
+
+    objects = ReadManager()
 
     item = models.ForeignKey(BaseItem, related_name='reads')
     user = models.ForeignKey(User, related_name='all_reads')
