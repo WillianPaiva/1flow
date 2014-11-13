@@ -216,6 +216,12 @@ header {
         }
     }
 
+    .inplaceedit img {
+        @include border-radius(5px);
+        max-width: 32px;
+        max-height: 32px;
+    }
+
     #danger-zone h1,
     #external-accounts h1 {
         margin: 10px 0;

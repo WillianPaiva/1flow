@@ -5,9 +5,15 @@
             <td>{% trans "PostgreSQL" %}</td>
             <td><code class="muted">DjangoUser.objects.get(id={{ user.id }})</code></td>
           </tr>
+
+          {% comment %}
+
           <tr>
             <td>{% trans "MongoDB" %}</td>
             <td><code class="muted">User.objects.get(id='{{ mongodb_user.id }}')</code></td>
           </tr>
+
+          {% endcomment %}
+
         </table>
       {% endif %}
