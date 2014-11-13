@@ -6,23 +6,23 @@
 # Here we define the settings for the test platform.
 # Production will override only the needed directives.
 #
-"""
-    Copyright 2013-2014 Olivier Cortès <oc@1flow.io>
+u"""
+Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
-    This file is part of the 1flow project.
+This file is part of the 1flow project.
 
-    1flow is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation, either version 3 of
-    the License, or (at your option) any later version.
+1flow is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
 
-    1flow is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
+1flow is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU Affero General Public
-    License along with 1flow.  If not, see http://www.gnu.org/licenses/
+You should have received a copy of the GNU Affero General Public
+License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
@@ -80,7 +80,7 @@ LANGUAGE_CODE = 'en'
 LANGUAGES = (
     ('en', ugettext(u'English')),
     # We're not ready to handle a british translation (no resource…)
-    #('en-gb', ugettext(u'English (UK)')),
+    # ('en-gb', ugettext(u'English (UK)')),
     ('fr', ugettext(u'Français')),
 
     # Activate these later when we need them.
@@ -104,7 +104,7 @@ USE_L10N = True
 USE_TZ   = True
 
 # Activate if bandwidth is limited, at some CPU cost.
-#USE_ETAGS = True
+# USE_ETAGS = True
 
 MEDIA_ROOT = os.path.join(BASE_ROOT, 'media')
 MEDIA_URL  = '/media/'
@@ -128,7 +128,7 @@ STATICFILES_FINDERS = (
 
 STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 
-#PIPELINE_ENABLED = False
+# PIPELINE_ENABLED = False
 
 # Until our own modules are ready to be wrapped, don't use this.
 PIPELINE_DISABLE_WRAPPER = True
@@ -641,7 +641,7 @@ MARKDOWN_DEUX_STYLES = {
     'default': {
         'extras': {
             # html2text uses _ by default for EM…
-            #'code-friendly': None,
+            # 'code-friendly': None,
             'cuddled-lists': None,
 
         },
@@ -658,7 +658,7 @@ MARKDOWN_DEUX_STYLES = {
     'raw': {
         'extras': {
             # html2text uses _ by default for EM…
-            #'code-friendly': None,
+            # 'code-friendly': None,
             'cuddled-lists': None,
 
         },
@@ -684,26 +684,26 @@ API_LIMIT_PER_PAGE = 10
 AUTHENTICATION_BACKENDS = (
     # WARNING: when activating Twitter, we MUST implement the email pipeline,
     # else the social-only registration will fail because user has no mail.
-    # 'social_auth.backends.twitter.TwitterBackend',
-    # 'social_auth.backends.facebook.FacebookBackend',
     # 'social_auth.backends.google.GoogleOAuthBackend',
     'social_auth.backends.google.GoogleOAuth2Backend',
+    'social_auth.backends.twitter.TwitterBackend',
+    'social_auth.backends.contrib.github.GithubBackend',
+    # 'social_auth.backends.facebook.FacebookBackend',
     # 'social_auth.backends.google.GoogleBackend',
-    # 'social_auth.backends.yahoo.YahooBackend',
+    # 'social_auth.backends.OpenIDBackend',
     # 'social_auth.backends.browserid.BrowserIDBackend',
+    # 'social_auth.backends.yahoo.YahooBackend',
+    # 'social_auth.backends.contrib.yahoo.YahooOAuthBackend',
     # 'social_auth.backends.contrib.linkedin.LinkedinBackend',
     # 'social_auth.backends.contrib.disqus.DisqusBackend',
     # 'social_auth.backends.contrib.livejournal.LiveJournalBackend',
     # 'social_auth.backends.contrib.orkut.OrkutBackend',
     # 'social_auth.backends.contrib.foursquare.FoursquareBackend',
-    # 'social_auth.backends.contrib.github.GithubBackend',
     # 'social_auth.backends.contrib.vk.VKOAuth2Backend',
     # 'social_auth.backends.contrib.live.LiveBackend',
     # 'social_auth.backends.contrib.skyrock.SkyrockBackend',
-    # 'social_auth.backends.contrib.yahoo.YahooOAuthBackend',
     # 'social_auth.backends.contrib.readability.ReadabilityBackend',
     # 'social_auth.backends.contrib.fedora.FedoraBackend',
-    # 'social_auth.backends.OpenIDBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -714,7 +714,8 @@ AUTHENTICATION_BACKENDS = (
 from libgreader.auth import OAuth2Method
 
 # Get the google reader scope.
-GOOGLE_OAUTH_EXTRA_SCOPE           = OAuth2Method.SCOPE
+GOOGLE_OAUTH_EXTRA_SCOPE = OAuth2Method.SCOPE
+
 # We need this to be able to refresh tokens
 # See http://stackoverflow.com/a/10857806/654755 for notes.
 GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {'access_type': 'offline'}
@@ -728,11 +729,11 @@ LOGIN_URL          = reverse_lazy('signin')
 LOGOUT_URL         = reverse_lazy('signout')
 LOGIN_REDIRECT_URL = reverse_lazy('home')
 LOGIN_ERROR_URL    = reverse_lazy('signin_error')
-#SOCIAL_AUTH_BACKEND_ERROR_URL = reverse_lazy('signin_error')
+# SOCIAL_AUTH_BACKEND_ERROR_URL = reverse_lazy('signin_error')
 
 # See SOCIAL_AUTH_USER_MODEL earlier in this file.
-#SOCIAL_AUTH_SANITIZE_REDIRECTS = False
-#SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email',]
+# SOCIAL_AUTH_SANITIZE_REDIRECTS = False
+# SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email',]
 SOCIAL_AUTH_EXTRA_DATA = True
 SOCIAL_AUTH_SESSION_EXPIRATION = False
 # SOCIAL_AUTH_RAISE_EXCEPTIONS = True
@@ -751,7 +752,7 @@ SOCIAL_AUTH_PIPELINE = (
     'social_auth.backends.pipeline.social.load_extra_data',
     'social_auth.backends.pipeline.user.update_user_details',
 
-    #'oneflow.core.social_pipeline.check_1flow_requirements',
+    # 'oneflow.core.social_pipeline.check_1flow_requirements',
     'sparks.django.social_pipeline.get_social_avatar',
 
     # Given the current configuration, we do allow any user to register,
@@ -760,10 +761,21 @@ SOCIAL_AUTH_PIPELINE = (
     'sparks.django.social_pipeline.throttle_new_user_accounts',
 )
 
+# GITHUB_EXTRA_DATA = [
+#     ('avatar_url', 'avatar'),
+#     ('login', 'login'),
+# ]
+
+SOCIAL_AUTH_FACEBOOK_SCOPE = [
+    'email',
+    'user_friends',
+    'user_birthday',
+    'friends_location',
+]
 # —————————————————————————————————————————————————————————————— 1flow settings
 
 
-DEFAULT_USER_AGENT = u'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:21.0) Gecko/20100101 Firefox/21.0' # NOQA
+DEFAULT_USER_AGENT = u'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:21.0) Gecko/20100101 Firefox/21.0'  # NOQA
 
 
 # ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••• Logging
@@ -808,7 +820,7 @@ LOGGING = {
         # ERROR messages are sent to admin emails
         'mail_admins': {
             # We don't want any mail for every warning on earth.
-            #'level': 'WARNING',
+            # 'level': 'WARNING',
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler',
