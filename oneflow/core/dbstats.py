@@ -69,17 +69,20 @@ def synchronize_statsd_articles_gauges(full=False):
         content_errors     = Article.objects.exclude(content_error=None)
         url_errors         = Article.objects.exclude(url_error=None)
 
-        statsd.gauge('articles.counts.total', Article.objects.all().count())
-        statsd.gauge('articles.counts.markdown', markdown.count())
-        statsd.gauge('articles.counts.html', html.count())
-        statsd.gauge('articles.counts.empty', empty.count())
-        statsd.gauge('articles.counts.content_errors', content_errors.count())
-        statsd.gauge('articles.counts.url_errors', url_errors.count())
+        with statsd.pipeline() as spipe:
+            spipe.gauge('articles.counts.total',
+                        Article.objects.all().count())
+            spipe.gauge('articles.counts.markdown', markdown.count())
+            spipe.gauge('articles.counts.html', html.count())
+            spipe.gauge('articles.counts.empty', empty.count())
+            spipe.gauge('articles.counts.content_errors',
+                        content_errors.count())
+            spipe.gauge('articles.counts.url_errors', url_errors.count())
 
-        if full:
-            statsd.gauge('articles.counts.orphaned', orphaned.count())
-            statsd.gauge('articles.counts.absolutes', absolutes.count())
-            statsd.gauge('articles.counts.duplicates', duplicates.count())
+            if full:
+                spipe.gauge('articles.counts.orphaned', orphaned.count())
+                spipe.gauge('articles.counts.absolutes', absolutes.count())
+                spipe.gauge('articles.counts.duplicates', duplicates.count())
 
 
 def synchronize_statsd_tags_gauges(full=False):
@@ -152,9 +155,10 @@ def synchronize_statsd_reads_gauges(full=False):
         good = Read.objects.good().count()
         bad = Read.objects.bad().count()
 
-        statsd.gauge('reads.counts.total', count)
-        statsd.gauge('reads.counts.good', good)
-        statsd.gauge('reads.counts.bad', bad)
+        with statsd.pipeline() as spipe:
+            spipe.gauge('reads.counts.total', count)
+            spipe.gauge('reads.counts.good', good)
+            spipe.gauge('reads.counts.bad', bad)
 
         # Am I paranoïd?!? No, I come from two years of MongoDB.
         # Sorry PostgreSQL, I'm underway healing.
