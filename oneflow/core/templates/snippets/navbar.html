@@ -35,14 +35,15 @@
             <a class="dropdown-toggle {% reverse_active 'profile' %} {% reverse_active 'preferences' %} {% reverse_active 'historyentry_list' %} "
                 data-toggle="dropdown" href="#">
 
-              {% if mongodb_user.avatar_url %}
                 <span class="avatar-frame">
-                  <img src="{{ mongodb_user.avatar_url }}" style="max-height: 100px; max-width: 100px;" />
+                  {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" />
+                  {% elif user.avatar_url %}
+                    <img src="{{ user.avatar_url }}" />
+                  {% else %}
+                    <i class="icon-user"></i>
+                  {% endif %}
                 </span>
-              {% else %}
-
-                <i class="icon-user"></i>
-              {% endif %}
 
               <span>
                 {{ user.username }}
