@@ -72,7 +72,9 @@ LOGGER = logging.getLogger(__name__)
 
 __all__ = [
     'BaseFeed',
-
+    'BaseFeedMeta',
+    'BaseFeedManager',
+    'BaseFeedQuerySet',
     'basefeed_pre_save',
 
     'basefeed_all_items_count_default',
