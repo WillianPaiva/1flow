@@ -24,10 +24,12 @@ import logging
 
 from constance import config
 
+from statsd import statsd
+
 # from django.conf import settings
 from django.db import models
 from django.db.models import Q
-from django.db.models.signals import pre_save, post_save  # , pre_delete
+from django.db.models.signals import pre_save, post_save, pre_delete
 from django.utils.translation import ugettext_lazy as _
 
 from sparks.foundations.classes import SimpleObject
@@ -521,12 +523,28 @@ def subscription_pre_save(instance, **kwargs):
             BaseFeed.objects.filter(
                 id=subscription.feed_id).update(name=subscription.name)
 
+
+def subscription_post_save(instance, **kwargs):
+    """ Subscribe the mailfeed's owner if feed is beiing created. """
+
+    if kwargs.get('created', False):
+        statsd.incr('subscriptions.counts.total')
+
+
+def subscription_pre_delete(instance, **kwargs):
+    """ Subscribe the mailfeed's owner if feed is beiing created. """
+
+    statsd.decr('subscriptions.counts.total')
+
 pre_save.connect(subscription_pre_save, sender=Subscription)
+post_save.connect(subscription_post_save, sender=Subscription)
+pre_delete.connect(subscription_pre_delete, sender=Subscription)
 
 
 # ———————————————————————————————————————————————————————— Other models signals
 # defined here either to avoid import loops, or
 # because they depend on subscription features.
+
 
 def mailfeed_post_save(instance, **kwargs):
     """ Subscribe the mailfeed's owner if feed is beiing created.
