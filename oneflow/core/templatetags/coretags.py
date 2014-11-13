@@ -37,7 +37,7 @@ from ...base.utils.dateutils import (now, today,
                                      naturaldelta as onef_naturaldelta)
 
 from oneflow.core import models   # , CACHE_ONE_WEEK
-from oneflow.core.models.common import READ_STATUS_DATA
+from oneflow.core.models.common import READ_STATUS_DATA, CORE_CLASSES_ICONS
 from ..context_processors import models_constants
 
 LOGGER = logging.getLogger(__name__)
@@ -670,15 +670,8 @@ def read_status_css_styles():
 def core_icon(klass_name):
     """ Centralize all model icons and render them. """
 
-    return u"<i class='icon icon-{0} icon-fixed-width'></i>".format({
-        'MailAccount': 'inbox',
-        'MailFeed': 'envelope',
-        'MailFeedRule': 'random',
-        'Profile': 'user',
-        'SyncNode': 'sitemap',
-        'HistoryEntry': 'book',
-        'SystemStatistics': 'tasks',
-    }[klass_name])
+    return u"<i class='icon icon-{0} icon-fixed-width'></i>".format(
+        CORE_CLASSES_ICONS[klass_name])
 
 
 @register.filter
