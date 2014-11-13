@@ -83,7 +83,7 @@ def preferences(request):
                 or preferences.selector.has_changed or (
                     user.is_superuser and preferences.staff.has_changed):
 
-                messages.info(request, _(u'Preferences updated.'),)
+                messages.info(request, _(u'Preferences updated.'))
 
             preferences.save()
 
@@ -131,11 +131,11 @@ def set_preference(request, base, sub, value):
     else:
 
         try:
-            prefs.save()
+            base_pref.save()
 
         except:
-            LOGGER.exception(u'Could not save preferences for user %s',
-                             request.user)
+            LOGGER.exception(u'Could not save preference %s for user %s',
+                             base_pref, request.user)
             return HttpResponseTemporaryServerError(
                 u'Could not save preference.')
 
