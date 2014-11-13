@@ -493,7 +493,7 @@ class ContentItem(models.Model):
                            u'#%s (use `force=True`).', self.id)
             return
 
-        if self.title and not self.title.endswith(self.url):
+        if self.name and not self.name.endswith(self.url):
             # In normal conditions (RSS/Atom feeds), the title has already
             # been set by the fetcher task, from the feed. No need to do the
             # work twice.
@@ -519,20 +519,20 @@ class ContentItem(models.Model):
                     LOGGER.exception(u'Could not extract title of article %s',
                                      self)
 
-        old_title = self.title
+        old_title = self.name
 
         try:
-            self.title = BeautifulSoup(content).find('title'
-                                                     ).contents[0].strip()
+            self.name = BeautifulSoup(content).find(
+                'title').contents[0].strip()
 
         except:
             LOGGER.exception(u'Could not extract title of article %s', self)
 
         else:
             LOGGER.info(u'Changed title of article #%s from “%s” to “%s”.',
-                        self.id, old_title, self.title)
+                        self.id, old_title, self.name)
 
-            self.slug = slugify(self.title)
+            self.slug = slugify(self.name)
 
         if commit:
             self.save()
