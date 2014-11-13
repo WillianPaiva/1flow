@@ -144,7 +144,36 @@ from exceptions import (  # NOQA
     NotTextHtmlException,
 )
 
-# ————— Read related
+
+# —————————————————————————————————————————————————————————————————— Core icons
+
+
+CORE_CLASSES_ICONS = {
+
+    'MailAccount': 'inbox',
+    'MailFeed': 'envelope',
+    'MailFeedRule': 'random',
+
+    'TwitterAccount': 'twitter-sign',
+    'TwitterFeed': 'twitter',
+    'TwitterFeedRule': 'random',
+
+    'FacebookAccount': 'facebook-sign',
+    'FacebookFeed': 'facebook',
+    'FacebookFeedRule': 'random',
+
+    'GooglePlusAccount': 'google-plus-sign',
+    'GooglePlusFeed': 'google-plus',
+    'GooglePlusFeedRule': 'random',
+
+    'Profile': 'user',
+    'SyncNode': 'sitemap',
+    'HistoryEntry': 'book',
+    'SystemStatistics': 'tasks',
+}
+
+
+# ———————————————————————————————————————————————————————————————— Read related
 
 
 WATCH_ATTRIBUTES_FIELDS_NAMES = (

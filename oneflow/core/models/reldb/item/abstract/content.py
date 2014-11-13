@@ -65,7 +65,7 @@ from ...common import (
 )
 from ...website import WebSite
 
-from ..base import BaseItem
+from ..base import BaseItem, BaseItemQuerySet
 
 LOGGER = logging.getLogger(__name__)
 
@@ -96,7 +96,26 @@ else:
 global_ghost_lock = RedisExpiringLock('__ghost.py__')
 
 
-# ——————————————————————————————————————————————————————————————————— end ghost
+# ——————————————————————————————————————————————————————————— QuerySet patching
+
+
+def BaseItemQuerySet_empty_method(self):
+    """ Patch BaseItemQuerySet to know how to return empty content. """
+
+    return self.filter(content_type__in=[None, CONTENT_TYPES.NONE])
+
+
+def BaseItemQuerySet_parsed_method(self):
+    """ Patch BaseItemQuerySet to know how to return parsed content. """
+
+    return self.filter(content_type__in=CONTENT_TYPES_FINAL)
+
+
+BaseItemQuerySet.empty = BaseItemQuerySet_empty_method
+BaseItemQuerySet.parsed = BaseItemQuerySet_parsed_method
+
+
+# ——————————————————————————————————————————————————————————————————————— Model
 
 
 class ContentItem(models.Model):
@@ -474,7 +493,7 @@ class ContentItem(models.Model):
                            u'#%s (use `force=True`).', self.id)
             return
 
-        if self.title and not self.title.endswith(self.url):
+        if self.name and not self.name.endswith(self.url):
             # In normal conditions (RSS/Atom feeds), the title has already
             # been set by the fetcher task, from the feed. No need to do the
             # work twice.
@@ -500,20 +519,20 @@ class ContentItem(models.Model):
                     LOGGER.exception(u'Could not extract title of article %s',
                                      self)
 
-        old_title = self.title
+        old_title = self.name
 
         try:
-            self.title = BeautifulSoup(content).find('title'
-                                                     ).contents[0].strip()
+            self.name = BeautifulSoup(content).find(
+                'title').contents[0].strip()
 
         except:
             LOGGER.exception(u'Could not extract title of article %s', self)
 
         else:
             LOGGER.info(u'Changed title of article #%s from “%s” to “%s”.',
-                        self.id, old_title, self.title)
+                        self.id, old_title, self.name)
 
-            self.slug = slugify(self.title)
+            self.slug = slugify(self.name)
 
         if commit:
             self.save()

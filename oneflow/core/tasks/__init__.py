@@ -163,7 +163,7 @@ def refresh_all_mailaccounts(force=False):
         LOGGER.warning(u'E-mail accounts check disabled in configuration.')
         return
 
-    accounts = MailAccount.objects.filter(is_usable=False)
+    accounts = MailAccount.objects.usable()
 
     my_lock = RedisExpiringLock('check_email_accounts',
                                 expire_time=30 * (accounts.count() + 2))
@@ -204,11 +204,14 @@ def refresh_all_mailaccounts(force=False):
 def synchronize_statsd_gauges(full=False, force=False):
     """ Synchronize all counters to statsd. """
 
-    from oneflow.core.stats import (
+    from oneflow.core.dbstats import (
         synchronize_statsd_articles_gauges,
         synchronize_statsd_tags_gauges,
         synchronize_statsd_websites_gauges,
         synchronize_statsd_authors_gauges,
+        synchronize_statsd_feeds_gauges,
+        synchronize_statsd_subscriptions_gauges,
+        synchronize_statsd_reads_gauges,
     )
 
     my_lock = RedisExpiringLock('synchronize_statsd_gauges',
@@ -235,6 +238,9 @@ def synchronize_statsd_gauges(full=False, force=False):
             synchronize_statsd_tags_gauges(full=full)
             synchronize_statsd_websites_gauges(full=full)
             synchronize_statsd_authors_gauges(full=full)
+            synchronize_statsd_feeds_gauges(full=full)
+            synchronize_statsd_subscriptions_gauges(full=full)
+            synchronize_statsd_reads_gauges(full=full)
 
         finally:
             my_lock.release()

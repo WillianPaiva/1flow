@@ -30,12 +30,30 @@ from django.db.models.signals import pre_save  # , post_save  # , pre_delete
 from django.utils.translation import ugettext_lazy as _
 # from django.utils.text import slugify
 
-from ..common import ORIGINS  # , REDIS
-from ..mailaccount import MailAccount
+from ..account import MailAccount
 
-from base import BaseFeed, basefeed_pre_save
+from base import (
+    BaseFeedQuerySet,
+    BaseFeedManager,
+    BaseFeed,
+    basefeed_pre_save,
+)
 
 LOGGER = logging.getLogger(__name__)
+
+
+# —————————————————————————————————————————————————————————— Manager / QuerySet
+
+
+def BaseFeedQuerySet_mail_method(self):
+    """ Patch BaseFeedQuerySet to know how to return Twitter accounts. """
+
+    return self.instance_of(MailFeed)
+
+BaseFeedQuerySet.mail = BaseFeedQuerySet_mail_method
+
+
+# ——————————————————————————————————————————————————————————————————————— Model
 
 
 class MailFeed(BaseFeed):
@@ -64,6 +82,8 @@ class MailFeed(BaseFeed):
     ))
 
     RULES_OPERATION_DEFAULT = RULES_OPERATION_ANY
+
+    objects = BaseFeedManager()
 
     #
     # HEADS UP: `.user` is inherited from BaseFeed.
@@ -177,7 +197,7 @@ class MailFeed(BaseFeed):
 
         LOGGER.info(u'Refreshing mail feed %s…', self)
 
-        feed_kwargs = self.build_refresh_kwargs(for_type=ORIGINS.EMAIL_FEED)
+        feed_kwargs = self.build_refresh_kwargs()
 
         new_emails = 0
         duplicates = 0
@@ -244,7 +264,7 @@ class MailFeed(BaseFeed):
                                                                  'position')
         )
 
-        usable_accounts = self.user.mailaccount_set.filter(is_usable=True)
+        usable_accounts = self.user.accounts.mail().usable()
 
         rules_operation_any = self.rules_operation == self.RULES_OPERATION_ANY
 

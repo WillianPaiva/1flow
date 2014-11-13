@@ -12,6 +12,8 @@ shell: ./manage.py shell_plus --notebook
 
 flower: ./manage.py celery flower --logging=warning --broker=${BROKER_URL} --broker_api=http://${AMQP_USERNAME}:${AMQP_PASSWORD}@${DBCACHE_SERVER}:15672/api
 
-worker: ./manage.py celery worker -E --beat --loglevel=info --hostname worker.${HOSTNAME} --autoscale 1,1 --exclude-queues=mongo --maxtasksperchild 32
+beat: ./manage.py celery beat --loglevel=warning
 
-mongo: ./manage.py celery worker -E --loglevel=warning --hostname mongo.${HOSTNAME} --autoscale 1,0 --queues=mongo --maxtasksperchild 32
+worker: ./manage.py celery worker -E --loglevel=info -P gevent --hostname worker.${HOSTNAME} --autoscale 12,12 --exclude-queues=mongo --maxtasksperchild 32
+
+mongo: ./manage.py celery worker -E --loglevel=warning -P gevent --hostname mongo.${HOSTNAME} --autoscale 8,8 --queues=mongo --maxtasksperchild 32

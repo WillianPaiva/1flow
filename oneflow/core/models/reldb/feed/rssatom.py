@@ -53,7 +53,13 @@ from ..item import Article
 from ..tag import SimpleTag
 
 from common import throttle_fetch_interval, dateutilDateHandler
-from base import BaseFeed, basefeed_pre_save
+
+from base import (
+    BaseFeedQuerySet,
+    BaseFeedManager,
+    BaseFeed,
+    basefeed_pre_save,
+)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -312,7 +318,18 @@ def parse_feeds_urls(parsed_feed, skip_comments=True):
                 yield link.get('href')
 
 
-# ————————————————————————————————————————————————————————————————————— Classes
+# —————————————————————————————————————————————————————————— Manager / QuerySet
+
+
+def BaseFeedQuerySet_rssatom_method(self):
+    """ Patch BaseFeedQuerySet to know how to return Twitter accounts. """
+
+    return self.instance_of(RssAtomFeed)
+
+BaseFeedQuerySet.rssatom = BaseFeedQuerySet_rssatom_method
+
+
+# ——————————————————————————————————————————————————————————————————————— Model
 
 
 class RssAtomFeed(BaseFeed):
@@ -323,6 +340,8 @@ class RssAtomFeed(BaseFeed):
         app_label = 'core'
         verbose_name = _(u'RSS/Atom feed')
         verbose_name_plural = _(u'RSS/Atom feeds')
+
+    objects = BaseFeedManager()
 
     url = models.URLField(unique=True, max_length=512,
                           verbose_name=_(u'url'))

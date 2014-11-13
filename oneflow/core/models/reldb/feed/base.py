@@ -36,13 +36,16 @@ from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.signals import post_save, pre_save  # , pre_delete
 
-from polymorphic import PolymorphicModel, PolymorphicManager
 from polymorphic.base import PolymorphicModelBase
+from polymorphic import (
+    PolymorphicQuerySet,
+    PolymorphicManager,
+    PolymorphicModel,
+)
 from sparks.django.models import DiffMixin
 
 from oneflow.base.fields import IntRedisDescriptor, DatetimeRedisDescriptor
 from oneflow.base.utils.dateutils import now, timedelta, today
-from oneflow.base.utils import ro_classproperty
 
 from oneflow.base.utils import (
     register_task_method,
@@ -69,7 +72,9 @@ LOGGER = logging.getLogger(__name__)
 
 __all__ = [
     'BaseFeed',
-
+    'BaseFeedMeta',
+    'BaseFeedManager',
+    'BaseFeedQuerySet',
     'basefeed_pre_save',
 
     'basefeed_all_items_count_default',
@@ -125,20 +130,39 @@ def basefeed_subscriptions_count_default(feed, *args, **kwargs):
 
 # ———————————————————————————————————————————————————————————————————— Managers
 
-class GoodFeedsManager(PolymorphicManager):
 
-    """ Get only the good feeds. """
+class BaseFeedQuerySet(PolymorphicQuerySet):
 
-    def get_queryset(self):
-        return super(GoodFeedsManager, self).get_queryset().filter(
-            # not internal, still open and validated by a human.
-            is_internal=False,
-            is_active=True,
-            is_good=True,
+    """ Feed based queryset.
 
-            # And not being duplicate of any other feed.
-            duplicate_of_id=None,
-        )
+    .. note:: this query set will be patched by subclasses.
+    """
+
+    def inactive(self):
+        return self.filter(is_active=False)
+
+    def active(self):
+        return self.filter(is_active=True)
+
+    def internal(self):
+        return self.filter(is_internal=True)
+
+    def external(self):
+        return self.filter(is_internal=False)
+
+    def master(self):
+        return self.filter(duplicate_of_id=None)
+
+    def good(self):
+        return self.master().active().external().filter(is_good=True)
+
+
+class BaseFeedManager(PolymorphicManager):
+
+    """ A manager that adds some things. """
+
+    use_for_related_fields = True
+    queryset_class = BaseFeedQuerySet
 
 
 # ——————————————————————————————————————————————————————————————————————— Model
@@ -178,31 +202,20 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
 
     # ———————————————————————————————————————————————————————————————— Managers
 
+    objects = BaseFeedManager()
+
     #
     # BIG HEADS UP: for an unknown reason, if I define both managers, Django
     #               picks the `good` as the default one, which is not what we
-    #               want at all, and goes instead the documetation which says
+    #               want at all, and goes against the documentation which says
     #               the first defined will be the default one. Thus for now,
-    #               both are deactivated.
+    #               both are deactivated and we use only one, that offers
+    #               multiple filters at the QuerySet level.
     #
-
     # add the default polymorphic manager first
     # objects = models.Manager()
     # objects = PolymorphicManager()
     # good_feeds = GoodFeedsManager()
-
-    @ro_classproperty
-    def good_feeds(cls):
-
-        return cls.objects.filter(
-            # not internal, still open and validated by a human.
-            is_internal=False,
-            is_active=True,
-            is_good=True,
-
-            # And not being duplicate of any other feed.
-            duplicate_of_id=None,
-        )
 
     # —————————————————————————————————————————————————————————————— Attributes
 
@@ -216,7 +229,8 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
     # to its verbose_name to exactly know what it is really.
     user = models.ForeignKey(User,
                              null=True, blank=True,
-                             verbose_name=_(u'Creator'))
+                             verbose_name=_(u'Creator'),
+                             related_name='feeds')
 
     name = models.CharField(verbose_name=_(u'name'),
                             null=True, blank=True,

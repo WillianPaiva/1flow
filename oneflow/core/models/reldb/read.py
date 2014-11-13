@@ -24,8 +24,11 @@ import sys
 import logging
 import operator
 
+from statsd import statsd
+
 from django.db import models
 from django.db.models.signals import pre_delete, post_save  # , pre_save
+from django.db.models.query import QuerySet
 # from django.conf import settings
 from django.utils.translation import ugettext_lazy as _, pgettext_lazy
 
@@ -54,6 +57,8 @@ MIGRATION_DATETIME = datetime(2014, 11, 1)
 
 __all__ = [
     'Read',
+    'ReadManager',
+    'ReadQuerySet',
     'BOOKMARK_TYPES',
 ]
 
@@ -71,6 +76,59 @@ BOOKMARK_TYPES = NamedTupleChoices(
 BOOKMARK_TYPE_DEFAULT = u'U'
 
 
+# ———————————————————————————————————————————————————————————————————— Managers
+
+
+class ReadQuerySet(QuerySet):
+
+    """ QuerySet that helps reads filtering. """
+
+    def good(self):
+        return self.filter(is_good=True)
+
+    def bad(self):
+        return self.filter(is_good=False)
+
+    def read(self):
+        return self.filter(is_read=True)
+
+    def unread(self):
+        return self.filter(is_read=False)
+
+    def auto_read(self):
+        return self.filter(is_auto_read=True)
+
+    def archived(self):
+        return self.filter(is_archived=True)
+
+    def bookmarked(self):
+        return self.filter(is_bookmarked=True)
+
+    def starred(self):
+        return self.filter(is_starred=True)
+
+
+class ReadManager(models.Manager):
+
+    """ A manager to wrap our query set.
+
+    .. note:: this one should eventually vanish in Django 1.7.
+    """
+
+    use_for_related_fields = True
+
+    def get_queryset(self):
+        return ReadQuerySet(self.model, using=self._db)
+
+    # VANISH in Django 1.7 → use `ReadQS.as_manager()`
+
+    def good(self):
+        return self.get_queryset().filter(is_good=True)
+
+    def bad(self):
+        return self.get_queryset().filter(is_good=False)
+
+
 class Read(AbstractTaggedModel):
 
     """ Link a user to any item. """
@@ -80,6 +138,8 @@ class Read(AbstractTaggedModel):
         verbose_name = _(u'Read')
         verbose_name_plural = _(u'Reads')
         unique_together = ('user', 'item', )
+
+    objects = ReadManager()
 
     item = models.ForeignKey(BaseItem, related_name='reads')
     user = models.ForeignKey(User, related_name='all_reads')
@@ -419,6 +479,11 @@ class Read(AbstractTaggedModel):
 
         self.is_good = True
         self.save()
+
+        with statsd.pipeline() as spipe:
+            spipe.incr('reads.counts.good')
+            spipe.decr('reads.counts.bad')
+
         self.update_cached_descriptors()
 
     def remove_tags(self, tags=None):
@@ -604,6 +669,15 @@ def read_post_save(instance, **kwargs):
 
     if kwargs.get('created', False):
 
+        with statsd.pipeline() as spipe:
+            spipe.incr('reads.counts.total')
+
+            if read.is_good:
+                spipe.incr('reads.counts.good')
+
+            else:
+                spipe.incr('reads.counts.bad')
+
         if read.date_created < MIGRATION_DATETIME:
             # HEADS UP: REMOVE THIS WHEN migration is finished
             return
@@ -624,6 +698,15 @@ def read_pre_delete(instance, **kwargs):
     """ before deleting a read, update the subscriptions cached descriptors. """
 
     read = instance
+
+    with statsd.pipeline() as spipe:
+        spipe.decr('reads.counts.total')
+
+        if read.is_good:
+            spipe.decr('reads.counts.good')
+
+        else:
+            spipe.decr('reads.counts.bad')
 
     if not read.is_good:
         # counters already don't take this read into account.

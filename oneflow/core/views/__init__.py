@@ -447,6 +447,10 @@ from history import HistoryEntryListView, HistoryEntryDeleteView  # NOQA
 
 from mailaccount import MailAccountListCreateView, MailAccountDeleteView  # NOQA
 
+
+# ———————————————————————————————————————————————————————————— Accounts & Feeds
+
+
 from mailfeed import MailFeedListCreateView, MailFeedDeleteView  # NOQA
 
 from mailfeedrule import (  # NOQA
@@ -463,7 +467,9 @@ from mongo_feed import add_feed  # NOQA
 from feed import feed_closed_toggle  # NOQA
 
 from subscription import (  # NOQA
-    edit_subscription, add_subscription, cancel_subscription
+    edit_subscription,
+    add_subscription,
+    cancel_subscription
 )
 
 from completers import FeedsCompleterView, UserAddressBookView  # NOQA

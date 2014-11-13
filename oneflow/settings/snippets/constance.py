@@ -345,6 +345,38 @@ CONSTANCE_CONFIG.update({
                                      u'considered informational.')),
 })
 
+# ——————————————————————————————————————————————————————————— Accounts (global)
+
+CONSTANCE_CONFIG.update({
+
+    'ACCOUNT_REFRESH_DISABLED': (False, ugettext(u'Disable or not the '
+                                      u'periodic check of all unusable '
+                                      u'accounts (any type).')),
+
+
+    'ACCOUNT_REFRESH_PERIOD_DEFAULT': (3600*1, ugettext(u'Default period '
+                                       u'after which accounts will be '
+                                       u'tested again for connection and '
+                                       u'listing.')),
+
+})
+
+# ———————————————————————————————————————————————————————————— Twitter accounts
+
+CONSTANCE_CONFIG.update({
+
+    'TWITTER_ACCOUNT_REFRESH_DISABLED': (False, ugettext(u'Disable or not the '
+                                      u'periodic check of unusable Twitter '
+                                      u'accounts.')),
+
+
+    'TWITTER_ACCOUNT_REFRESH_PERIOD': (3600*1, ugettext(u'Default period '
+                                       u'after which Twitter accounts will be '
+                                       u'tested again for connection and '
+                                       u'listing.')),
+
+})
+
 # ——————————————————————————————————————————————————————————————— Mail accounts
 
 CONSTANCE_CONFIG.update({

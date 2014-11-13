@@ -44,6 +44,14 @@ from .fields import OnlyNameChoiceField, OnlyNameMultipleChoiceField
 
 LOGGER = logging.getLogger(__name__)
 
+#
+#
+# HEADS UP: 20141112: THIS IS AN OLD MONGODB FILE.
+#           UNUSED IN THE RELATIONAL IMPLEMENTATION.
+#           KEPT FOR MEMORIES, UNTIL UPCOMING DELETION.
+#
+#
+
 
 class ManageFolderForm(DocumentForm):
     parent = OnlyNameChoiceField(queryset=Folder.objects.all(),

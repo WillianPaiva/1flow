@@ -34,7 +34,7 @@
 
                     {% include preferences.home.get_read_list_item_template %}
 
-                {% elif mongodb_user.is_staff_or_superuser_and_enabled and preferences.staff.reading_lists_show_bad_articles %}
+                {% elif user.is_staff_or_superuser_and_enabled and preferences.staff.reading_lists_show_bad_articles %}
 
                     <li class="read-list-item">
                         {% with read.item as article %}

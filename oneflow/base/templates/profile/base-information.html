@@ -1,10 +1,14 @@
 {% load i18n markdown_deux_tags inplace_edit %}
 
-{% if mongodb_user.avatar_url %}
-  <div class="pull-right avatar-frame">
-    <img src="{{ mongodb_user.avatar_url }}" />
-  </div>
-{% endif %}
+<div class="pull-right avatar-frame">
+  {% if user.avatar %}
+    <img src="{{ user.avatar.url }}" />
+  {% elif user.avatar_url %}
+    <img src="{{ user.avatar_url }}" />
+  {% else %}
+    <span style="padding:20px;"><i class="icon-user icon-4x"></i></span>
+  {% endif %}
+</div>
 
 <h1 class="user-profile">&nbsp;<br />{% trans "Your profile" %}</h1>
 
@@ -17,7 +21,7 @@
       <td><strong>{% if not '@' in user.username %}@{% endif %}{{ user.username }}</strong></td>
     </tr>
     <tr>
-      {% if mongodb_user.is_local %}
+      {% if user.is_local %}
 
         <td>{% trans "First name" %}</td>
         <td>{% inplace_edit "user.first_name" %}</td>
@@ -30,6 +34,14 @@
         <td></td>
         <td><a class="btn btn-xs btn-default" href="{% url "account_password" %}">{% trans "Change password" %}</a></td>
 
+      <tr>
+        <td>{% trans "Local avatar" %}</td>
+        <td>{% inplace_edit "user.avatar" %}</td>
+      </tr>
+      <tr>
+        <td>{% trans "Avatar URL" %}</td>
+        <td>{% inplace_edit "user.avatar_url" %}</td>
+      </tr>
         {% comment %}
          TODO: merge the django-user-account-settings into here.
 
@@ -70,7 +82,7 @@
 
   </table>
 
-  {% if not mongodb_user.is_local %}
+  {% if not user.is_local %}
     <p class="muted">{% trans "These data are not stored durably in 1flow. They are offered courtesy of your social account provider (eg. Google, Twitter…). Change any parameter directly there, it will be reflected here next time you sign in." %}</p>
 
   {% endif %}

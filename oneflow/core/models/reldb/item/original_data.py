@@ -31,7 +31,7 @@ from django.utils.translation import ugettext_lazy as _
 from oneflow.base.utils import register_task_method
 
 from ..common import ORIGINS, CONTENT_TYPES
-from ..mail_common import email_prettify_raw_message
+from ..account.common import email_prettify_raw_message
 from ..tag import SimpleTag as Tag
 from ..language import Language
 from ..author import Author

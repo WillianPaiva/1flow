@@ -44,12 +44,13 @@ def mongodb_user(request):
         # Most probably “'WSGIRequest' object has no attribute 'user'”
         return {}
 
-    mongodb_user = request.user.mongo
+    user = request.user
+    mongodb_user = user.mongo
 
     return {
         u'mongodb_user': mongodb_user,
-        u'preferences': mongodb_user.preferences,
-        u'wizards': mongodb_user.preferences.wizards,
+        u'preferences': user.preferences,
+        u'wizards': user.preferences.wizards,
 
         u'NONREL_ADMIN': settings.NONREL_ADMIN,
     }

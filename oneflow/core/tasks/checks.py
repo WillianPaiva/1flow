@@ -597,8 +597,14 @@ def global_orphaned_checker(limit=None, force=False, verbose=False,
 
                 if new_url != old_url:
                     orphan.url = new_url
+                    orphan.url_absolute = True
 
                 else:
+                    if not orphan.url_absolute:
+                        changed_orphans += 1
+                        orphan.url_absolute = True
+                        orphan.save()
+
                     continue
 
                 try:
@@ -614,6 +620,9 @@ def global_orphaned_checker(limit=None, force=False, verbose=False,
                     # Register the duplicate right here and now, to be able to
                     master.register_duplicate(orphan, force=force,
                                               background=False)
+
+                    # Reload the orphan to get the refreshed duplicate status.
+                    orphan = Article.objects.get(id=orphan.id)
 
                     if orphan.duplicate_status == DUPLICATE_STATUS.FINISHED:
                         orphan.delete()

@@ -10,7 +10,7 @@
 	<div class="jumbotron col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3">
 
 {% url 'article_conversion_status' article.id as poll_url %}
-{% url 'read_all_feed' mongodb_user.web_import_subscription.id as import_url %}
+{% url 'read_all_feed' user.web_import_subscription.id as import_url %}
 
 {% if article %}
 
@@ -47,7 +47,7 @@
 
 	</div>
 
-{% if mongodb_user.is_staff_or_superuser_and_enabled and article %}
+{% if user.is_staff_or_superuser_and_enabled and article %}
 </div>
 <div class="row">
 	<div class="jumbotron col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3 centered">

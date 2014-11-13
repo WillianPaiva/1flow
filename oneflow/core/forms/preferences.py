@@ -22,6 +22,7 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 import logging
 
 from django import forms
+
 from ..models import (
     HomePreferences, ReadPreferences,
     SelectorPreferences, StaffPreferences
@@ -31,6 +32,8 @@ LOGGER = logging.getLogger(__name__)
 
 
 class HomePreferencesForm(forms.ModelForm):
+
+    """ Home preferences form. """
 
     class Meta:
         model = HomePreferences
@@ -42,6 +45,8 @@ class HomePreferencesForm(forms.ModelForm):
 
 
 class ReadPreferencesForm(forms.ModelForm):
+
+    """ Read preferences form. """
 
     class Meta:
         model = ReadPreferences
@@ -61,6 +66,8 @@ class ReadPreferencesForm(forms.ModelForm):
 
 class SelectorPreferencesForm(forms.ModelForm):
 
+    """ Selector preferences form. """
+
     class Meta:
         model = SelectorPreferences
         fields = (
@@ -74,6 +81,8 @@ class SelectorPreferencesForm(forms.ModelForm):
 
 
 class StaffPreferencesForm(forms.ModelForm):
+
+    """ Staff preferences form. """
 
     class Meta:
         model = StaffPreferences

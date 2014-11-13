@@ -483,7 +483,10 @@ def article_content_error_types_display(results=None):
     return results, output
 
 
-def synchronize_statsd_articles_gauges(full=False):
+# ——————————————————————————————————————————————————————— MongoDB StatsD gauges
+
+
+def synchronize_mongodb_statsd_articles_gauges(full=False):
     """ synchronize all articles-related gauges on our statsd server. """
 
     with benchmark('synchronize statsd gauges for Article.*'):
@@ -517,7 +520,7 @@ def synchronize_statsd_articles_gauges(full=False):
             statsd.gauge('articles.counts.duplicates', duplicates.count())
 
 
-def synchronize_statsd_tags_gauges(full=False):
+def synchronize_mongodb_statsd_tags_gauges(full=False):
     """ synchronize all tag-related gauges on our statsd server. """
 
     with benchmark('synchronize statsd gauges for Tag.*'):
@@ -529,7 +532,7 @@ def synchronize_statsd_tags_gauges(full=False):
             statsd.gauge('tags.counts.duplicates', duplicates.count())
 
 
-def synchronize_statsd_websites_gauges(full=False):
+def synchronize_mongodb_statsd_websites_gauges(full=False):
     """ synchronize all website-related gauges on our statsd server. """
 
     with benchmark('synchronize statsd gauges for WebSite.*'):
@@ -541,7 +544,7 @@ def synchronize_statsd_websites_gauges(full=False):
             statsd.gauge('websites.counts.duplicates', duplicates.count())
 
 
-def synchronize_statsd_authors_gauges(full=False):
+def synchronize_mongodb_statsd_authors_gauges(full=False):
     """ synchronize all author-related gauges on our statsd server. """
 
     with benchmark('synchronize statsd gauges for Author.*'):

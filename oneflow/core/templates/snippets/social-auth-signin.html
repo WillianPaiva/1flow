@@ -2,13 +2,14 @@
   {% for backend_name in social_auth.backends %}
     <div class="row">
       <div class="col-xs-8 col-xs-offset-2">
-        <a class="btn btn-block btn-huge btn-primary" href="{% url "socialauth_begin" backend_name %}{{next_url}}">
+        <a class="btn btn-block btn-huge btn-primary" href="{% url "socialauth_begin" backend_name %}{{ next_url }}">
           {% if backend_name == 'google-oauth2' %}
             <i class="icon-google-plus"></i> Google
           {% else %}
-            <i class="icon-{{ backend_name }}"></i> {{backend_name|title}}
+            <i class="icon-{{ backend_name }}"></i> {{ backend_name|title }}
           {% endif %}
         </a>
       </div>
     </div>
+    <div class="spacer10"></div>
   {% endfor %}

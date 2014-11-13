@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -29,7 +29,10 @@ from mongoengine.context_managers import no_dereference
 from celery import task
 
 from ..models import Article
-from ..stats import synchronize_statsd_articles_gauges
+from ..stats import (
+    synchronize_mongodb_statsd_articles_gauges
+    as synchronize_statsd_articles_gauges
+)
 
 from oneflow.base.utils import RedisExpiringLock
 from oneflow.base.utils.dateutils import (now, timedelta, benchmark)

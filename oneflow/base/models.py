@@ -32,10 +32,11 @@ You should have received a copy of the GNU Affero General Public
 License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
-
+import uuid
 import logging
 
 from transmeta import TransMeta
+from json_field import JSONField
 
 from django.db import models
 from django.utils.http import urlquote
@@ -109,11 +110,35 @@ class UserManager(BaseUserManager):
         return u
 
 
+def get_user_avatar_upload_path(instance, filename):
+
+    if not filename.strip():
+        filename = uuid.uuid4()
+
+    # The filename will be used in a shell command later. In case the
+    # user/admin forgets the '"' in the configuration, avoid problems.
+    filename = filename.replace(u' ', u'_')
+
+    if instance:
+        return 'user/{0}/avatars/{1}'.format(instance.id, filename)
+
+    return u'avatars/%Y/%m/%d/{0}'.format(filename)
+
+
 class User(AbstractBaseUser, PermissionsMixin, AbstractUserProfile):
     """ Username, password and email are required.
         Other fields are optional. """
 
-    #NOTE: AbstractBaseUser brings `password` and `last_login` fields.
+    # NOTE: AbstractBaseUser brings `password` and `last_login` fields.
+
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ('email', )
+
+    class Meta:
+        verbose_name = _('user')
+        verbose_name_plural = _('users')
+
+    objects = UserManager()
 
     username = models.CharField(_('User name'), max_length=254,
                                 unique=True, db_index=True,
@@ -135,14 +160,33 @@ class User(AbstractBaseUser, PermissionsMixin, AbstractUserProfile):
                                                 'of deleting accounts.'))
     date_joined = models.DateTimeField(_('date joined'), default=now)
 
-    objects = UserManager()
+    avatar = models.ImageField(
+        verbose_name=_(u'Avatar'), null=True, blank=True,
+        upload_to=get_user_avatar_upload_path, max_length=256,
+        help_text=_(u'Use either avatar when 1flow instance hosts the '
+                    u'image, or avatar_url when hosted elsewhere. If '
+                    u'both are filled, avatar takes precedence.'))
 
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ('email', )
+    avatar_url = models.URLField(
+        verbose_name=_(u'Avatar URL'), null=True, blank=True, max_length=384,
+        help_text=_(u'Full URL of the avatar displayed in the feed '
+                    u'selector. Can be hosted outside of 1flow.'))
 
-    class Meta:
-        verbose_name = _('user')
-        verbose_name_plural = _('users')
+    address_book = JSONField(verbose_name=_(u'Address book'),
+                             default=list, blank=True)
+
+    # —————————————————————————————————————————————————————————————— Properties
+
+    @property
+    def is_local(self):
+        return self.password != u'!'
+
+    @property
+    def has_contacts(self):
+
+        return len(self.address_book) > 0
+
+    # ————————————————————————————————————————————————————————————————— Methods
 
     def get_absolute_url(self):
         return _("/users/{username}/").format(urlquote(self.username))

@@ -32,7 +32,11 @@ from django.db import models, IntegrityError
 from django.utils.translation import ugettext_lazy as _
 # from django.utils.text import slugify
 
-from polymorphic import PolymorphicModel
+from polymorphic import (
+    PolymorphicQuerySet,
+    PolymorphicManager,
+    PolymorphicModel,
+)
 
 # from oneflow.base.utils.dateutils import now
 # from oneflow.base.utils import register_task_method
@@ -59,8 +63,42 @@ __all__ = [
 ]
 
 
-# ——————————————————————————————————————————————————————————————————— end ghost
-#
+# ———————————————————————————————————————————————————————————————————— Managers
+
+
+class BaseItemQuerySet(PolymorphicQuerySet):
+
+    """ Item based queryset.
+
+    .. note:: this query set will be patched by subclasses.
+    """
+
+    def restricted(self):
+        return self.filter(is_restricted=True)
+
+    def unrestricted(self):
+        return self.filter(is_restricted=False)
+
+    def original(self):
+        return self.filter(origin=None)
+
+    def master(self):
+        return self.filter(duplicate_of_id=None)
+
+    def duplicate(self):
+        return self.exclude(duplicate_of_id=None)
+
+
+class BaseItemManager(PolymorphicManager):
+
+    """ A manager that adds some things. """
+
+    use_for_related_fields = True
+    queryset_class = BaseItemQuerySet
+
+
+# ——————————————————————————————————————————————————————————————————————— Model
+
 
 class BaseItem(PolymorphicModel,
                AbstractDuplicateAwareModel,
@@ -82,6 +120,8 @@ class BaseItem(PolymorphicModel,
         app_label = 'core'
         verbose_name = _(u'Base item')
         verbose_name_plural = _(u'Base items')
+
+    objects = BaseItemManager()
 
     name = models.CharField(max_length=1024, verbose_name=_(u'Name'))
     slug = models.CharField(max_length=1024, null=True, blank=True)

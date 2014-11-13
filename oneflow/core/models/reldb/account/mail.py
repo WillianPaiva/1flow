@@ -33,19 +33,23 @@ from django.utils.translation import ugettext_lazy as _
 from oneflow.base.fields import TextRedisDescriptor
 from oneflow.base.utils import register_task_method, list_chunks
 
-from sparks.django.models import ModelDiffMixin
-
-from oneflow.base.utils.dateutils import now, timedelta
-
-from mail_common import email_prettify_raw_message
-from common import REDIS, long_in_the_past, DjangoUser as User
-import mail_common as common
+from ..common import REDIS
+from common import (
+    email_prettify_raw_message,
+    MAILBOXES_STRING_SEPARATOR,
+    MAILBOXES_BLACKLIST,
+)
+from base import (
+    BaseAccountQuerySet,
+    BaseAccountManager,
+    BaseAccount,
+)
 
 LOGGER = logging.getLogger(__name__)
 
 __all__ = [
-    'mailaccount_mailboxes_default',
     'MailAccount',
+    'mailaccount_mailboxes_default',
 ]
 
 
@@ -53,24 +57,43 @@ def mailaccount_mailboxes_default(mailaccount):
     """ Build a MailAccount mailboxes default value. """
 
     try:
-        return mailaccount.imap_list_mailboxes(as_text=True)
+        with mailaccount:
+            return mailaccount.imap_list_mailboxes(as_text=True)
 
     except:
         return u''
 
 
-class MailAccount(ModelDiffMixin):
+# —————————————————————————————————————————————————————————— Manager / QuerySet
+
+
+def BaseAccountQuerySet_mail_method(self):
+    """ Patch BaseAccountQuerySet to know how to return Twitter accounts. """
+
+    return self.instance_of(MailAccount)
+
+BaseAccountQuerySet.mail = BaseAccountQuerySet_mail_method
+
+
+# ——————————————————————————————————————————————————————————————————————— Model
+
+
+class MailAccount(BaseAccount):
 
     """ 1flow users can configure many mail accounts.
 
     1flow create feeds from them.
     """
 
-    # NOTE: MAILBOXES_BLACKLIST is in MailAccount.
+    class Meta:
+        app_label           = 'core'
+        verbose_name        = _(u'Mail account')
+        verbose_name_plural = _(u'Mail accounts')
 
-    user = models.ForeignKey(User, verbose_name=_(u'Creator'))
-    name = models.CharField(verbose_name=_(u'Account name'),
-                            max_length=128, blank=True)
+        # Cannot be anymore, now that user is in base_account.
+        # unique_together     = ('user', 'hostname', 'username', )
+
+    objects = BaseAccountManager()
 
     # cf. http://en.wikipedia.org/wiki/Hostname
     hostname = models.CharField(verbose_name=_(u'Server hostname'),
@@ -84,18 +107,10 @@ class MailAccount(ModelDiffMixin):
                                 max_length=255, blank=True)
     password = models.CharField(verbose_name=_(u'Password'),
                                 max_length=255, default=u'', blank=True)
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_last_conn = models.DateTimeField(default=long_in_the_past)
-    conn_error = models.CharField(max_length=255, default=u'', blank=True)
-    is_usable = models.BooleanField(default=True, blank=True)
 
     _mailboxes_ = TextRedisDescriptor(
         attr_name='ma.mb', default=mailaccount_mailboxes_default,
         set_default=True)
-
-    class Meta:
-        app_label       = 'core'
-        unique_together = ('user', 'hostname', 'username', )
 
     # —————————————————————————————————————————————————————————————— Properties
 
@@ -111,22 +126,12 @@ class MailAccount(ModelDiffMixin):
         #              self, _mailboxes_)
 
         if not self.recently_usable or not _mailboxes_:
-            # HEADS UP: this task name will be registered later
-            # by the register_task_method() call.
-            mailaccount_update_mailboxes_task.delay(self.pk)
+            globals()['mailaccount_update_mailboxes_task'].delay(self.pk)
 
         if not _mailboxes_:
             return []
 
-        return _mailboxes_.split(common.MAILBOXES_STRING_SEPARATOR)
-
-    @property
-    def recently_usable(self):
-        """ Return True if the account has been tested/connected recently. """
-
-        return self.is_usable and (
-            now() - self.date_last_conn
-            < timedelta(seconds=config.MAIL_ACCOUNT_REFRESH_PERIOD))
+        return _mailboxes_.split(MAILBOXES_STRING_SEPARATOR)
 
     # —————————————————————————————————————————————————————————————————— Django
 
@@ -205,66 +210,6 @@ class MailAccount(ModelDiffMixin):
                 return 993
             return 143
         return self.port
-
-    def reset_unusable(self, commit=True):
-        """ Mark the current instance needing to test usability.
-
-        This is called typically when a connection parameter has changed,
-        and the current account connectivity needs to be tested again to
-        validate them all.
-        """
-
-        self.date_last_conn = long_in_the_past()
-        self.is_usable = False
-
-        if commit:
-            self.save()
-
-        # HEADS UP: this task name will be registered later
-        # by the register_task_method() call.
-        mailaccount_test_connection_task.apply_async(args=(self.pk, ),
-                                                     countdown=3)
-
-    def mark_unusable(self, message, args=(), exc=None, commit=True):
-        """ Mark account unsable with date & message, log exception if any. """
-
-        if exc is not None:
-            if args:
-                message = message % args
-
-            message = u'{0} ({1})'.format(message, unicode(exc))
-            LOGGER.exception(u'%s unusable: %s', self, message)
-
-        self.date_last_conn = now()
-        self.conn_error = message
-        self.is_usable = False
-
-        if commit:
-            self.save()
-
-    def mark_usable(self, commit=True, verbose=True):
-        """ Mark the account usable and clear error. """
-
-        if verbose:
-            LOGGER.info(u'%s is now considered usable.', self)
-
-        if self.is_usable:
-            start_task = False
-
-        else:
-            start_task = True
-
-        self.date_last_conn = now()
-        self.conn_error = u''
-        self.is_usable = True
-
-        if commit:
-            self.save()
-
-        if start_task:
-            # HEADS UP: this task name will be registered later
-            # by the register_task_method() call.
-            mailaccount_update_mailboxes_task.delay(self.pk)
 
     def test_connection(self, force=False):
         """ Test connection and report any error.
@@ -425,11 +370,11 @@ class MailAccount(ModelDiffMixin):
             for line in data:
                 mailbox = line.split(' "." ')[1].replace('"', '')
 
-                if mailbox not in common.MAILBOXES_BLACKLIST:
+                if mailbox not in MAILBOXES_BLACKLIST:
 
                     subfolder = False
 
-                    for blacklisted in common.MAILBOXES_BLACKLIST:
+                    for blacklisted in MAILBOXES_BLACKLIST:
                         if mailbox.startswith(blacklisted + u'.'):
                             subfolder = True
                             break
@@ -441,7 +386,7 @@ class MailAccount(ModelDiffMixin):
             self.mark_usable(verbose=False)
 
             if as_text:
-                return common.MAILBOXES_STRING_SEPARATOR.join(sorted(mailboxes))
+                return MAILBOXES_STRING_SEPARATOR.join(sorted(mailboxes))
 
             return sorted(mailboxes)
 
@@ -577,3 +522,7 @@ register_task_method(MailAccount, MailAccount.test_connection,
                      globals(), queue=u'swarm')
 register_task_method(MailAccount, MailAccount.update_mailboxes,
                      globals(), queue=u'low')
+
+# They are registered just above.
+MailAccount.usable_start_task   = staticmethod(mailaccount_update_mailboxes_task)  # NOQA
+MailAccount.reset_unusable_task = staticmethod(mailaccount_test_connection_task)  # NOQA

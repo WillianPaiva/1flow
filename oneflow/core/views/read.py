@@ -495,7 +495,7 @@ def read_with_endless_pagination(request, **kwargs):
         elif request.GET.get('mark_all_read', False):
 
             latest_displayed_read = user.reads.get(
-                article=Article.objects.get(
+                item=Article.objects.get(
                     id=request.GET.get('mark_all_read')))
 
             _rwep_ajax_mark_all_read(subscription, folder, user,

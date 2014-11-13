@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -20,7 +20,7 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 """
 import operator
 
-# from constance import config
+from constance import config
 
 from datetime import datetime
 from email import message_from_string
@@ -31,6 +31,13 @@ from django.utils.translation import ugettext_lazy as _
 
 from oneflow.base.utils.dateutils import email_date_to_datetime_tz
 
+
+# —————————————————————————————————————————————————————————————————————— Common
+
+COMMON_STRING_SEPARATOR = u'~|~'
+
+
+# —————————————————————————————————————————————————————————————————————— E-mail
 
 # No fear. See http://bit.ly/smtp-headers
 # Note: there are probably too much of them.
@@ -208,7 +215,7 @@ BASE_HEADERS[u'common'] = (
     + BASE_HEADERS[u'from']
 )
 
-MAILBOXES_STRING_SEPARATOR = u'~|~'
+MAILBOXES_STRING_SEPARATOR = COMMON_STRING_SEPARATOR
 
 MAILBOXES_BLACKLIST = (
     'Drafts',
@@ -305,7 +312,7 @@ def email_prettify_raw_message(raw_message):
     """
 
     guess_encodings = ('utf-8', ) + tuple(
-        x.strip() for x in dconfig.MAIL_IMAP_DECODE_FALLBACK.split(u',')
+        x.strip() for x in config.MAIL_IMAP_DECODE_FALLBACK.split(u',')
     )
 
     def decode_with_fallback(something):
@@ -375,3 +382,7 @@ def email_prettify_raw_message(raw_message):
             email_message.replace_header('date', msg_datetime)
 
     return email_message
+
+# ————————————————————————————————————————————————————————————————————— Twitter
+
+TWITTER_LISTS_STRING_SEPARATOR = COMMON_STRING_SEPARATOR

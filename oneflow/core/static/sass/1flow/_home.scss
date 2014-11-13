@@ -138,8 +138,8 @@ section {}
 }
 
 .nav #system-informations .popover {
-    width: 300px;
-    height: 300px;
+    width: 250px;
+    //height: 350px;
 
     a {
         color: white;
@@ -216,6 +216,12 @@ header {
         }
     }
 
+    .inplaceedit img {
+        @include border-radius(5px);
+        max-width: 32px;
+        max-height: 32px;
+    }
+
     #danger-zone h1,
     #external-accounts h1 {
         margin: 10px 0;
@@ -245,10 +251,6 @@ header {
 
     fieldset {
         margin-top: 2em;
-
-        legend {
-            margin-bottom: 0;
-        }
     }
 
     .form-end-notice {
