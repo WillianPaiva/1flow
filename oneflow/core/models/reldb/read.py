@@ -24,6 +24,8 @@ import sys
 import logging
 import operator
 
+from statsd import statsd
+
 from django.db import models
 from django.db.models.signals import pre_delete, post_save  # , pre_save
 from django.db.models.query import QuerySet
@@ -477,6 +479,11 @@ class Read(AbstractTaggedModel):
 
         self.is_good = True
         self.save()
+
+        with statsd.pipeline() as spipe:
+            spipe.incr('reads.counts.good')
+            spipe.decr('reads.counts.bad')
+
         self.update_cached_descriptors()
 
     def remove_tags(self, tags=None):
@@ -662,6 +669,15 @@ def read_post_save(instance, **kwargs):
 
     if kwargs.get('created', False):
 
+        with statsd.pipeline() as spipe:
+            spipe.incr('reads.counts.total')
+
+            if read.is_good:
+                spipe.incr('reads.counts.good')
+
+            else:
+                spipe.incr('reads.counts.bad')
+
         if read.date_created < MIGRATION_DATETIME:
             # HEADS UP: REMOVE THIS WHEN migration is finished
             return
@@ -682,6 +698,15 @@ def read_pre_delete(instance, **kwargs):
     """ before deleting a read, update the subscriptions cached descriptors. """
 
     read = instance
+
+    with statsd.pipeline() as spipe:
+        spipe.decr('reads.counts.total')
+
+        if read.is_good:
+            spipe.decr('reads.counts.good')
+
+        else:
+            spipe.decr('reads.counts.bad')
 
     if not read.is_good:
         # counters already don't take this read into account.
