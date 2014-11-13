@@ -30,9 +30,9 @@
           <li class="secondary-nav {{ preferences.home.show_advanced_preferences|yesno:',active' }}"><a
               data-toggle="tab" href="#sources">{% trans "Sources" %}</a></li>
 
-          {% if preferences.home.show_advanced_preferences %}
-            <li class="secondary-nav active"><a data-toggle="tab" href="#home">{% trans "General" context "male singular" %}</a></li>
-          {% endif %}
+
+            <li class="secondary-nav active {{ preferences.home.show_advanced_preferences|yesno:',hide' }}"><a data-toggle="tab" href="#home">{% trans "General" context "male singular" %}</a></li>
+
         </ul>
 
         {# The form is global, so that we save everything modified at once. #}
@@ -41,11 +41,11 @@
           {% csrf_token %}
 
           <div class="tab-content">
-            {% if preferences.home.show_advanced_preferences %}
-              <div class="tab-pane fade active in" id="home">
+
+              <div class="tab-pane fade {{ preferences.home.show_advanced_preferences|yesno:'active in,hide' }}" id="home">
                 {% include "snippets/preferences/home.html" %}
               </div>
-            {% endif %}
+
 
             <div class="tab-pane fade {{ preferences.home.show_advanced_preferences|yesno:',active in' }}"
                 id="sources">
