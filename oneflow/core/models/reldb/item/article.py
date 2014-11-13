@@ -47,7 +47,11 @@ from ..common import (
     ARTICLE_ORPHANED_BASE,
 )
 
-from base import BaseItem  # , baseitem_pre_save
+from base import (
+    BaseItemQuerySet,
+    BaseItemManager,
+    BaseItem,
+)
 
 from abstract import (
     UrlItem,
@@ -144,7 +148,19 @@ def create_article_from_url(url, feeds=None):
     return new_article, created or (None if mutualized else False)
 
 
-# ——————————————————————————————————————————————————————————————— Article class
+# —————————————————————————————————————————————————————————— Manager / QuerySet
+
+
+def BaseItemQuerySet_article_method(self):
+    """ Patch BaseItemQuerySet to know how to return articles. """
+
+    return self.instance_of(Article)
+
+
+BaseItemQuerySet.article = BaseItemQuerySet_article_method
+
+
+# ——————————————————————————————————————————————————————————————————————— Model
 
 # BIG FAT WARNING: inheritance order matters. BaseItem must come first,
 # else `create_post_task()` is not found by register_task_method().
@@ -156,6 +172,8 @@ class Article(BaseItem, UrlItem, ContentItem):
         app_label = 'core'
         verbose_name = _(u'Article')
         verbose_name_plural = _(u'Articles')
+
+    objects = BaseItemManager()
 
     publishers = models.ManyToManyField(
         User, null=True, blank=True, related_name='publications')

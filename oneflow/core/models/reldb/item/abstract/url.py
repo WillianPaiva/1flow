@@ -39,7 +39,7 @@ from oneflow.base.utils.http import clean_url
 
 from ...common import REQUEST_BASE_HEADERS
 
-from ..base import BaseItem
+from ..base import BaseItem, BaseItemQuerySet
 
 LOGGER = logging.getLogger(__name__)
 
@@ -89,6 +89,42 @@ class DuplicateUrl(models.Model):
 
         url = cls(url=dupe, real_url=real)
         url.save()
+
+
+# ——————————————————————————————————————————————————————————— QuerySet patching
+
+
+def BaseItemQuerySet_absolute_method(self):
+    """ Patch BaseItemQuerySet to know how to return absolute items. """
+
+    return self.filter(url_absolute=True)
+
+
+def BaseItemQuerySet_non_absolute_method(self):
+    """ Patch BaseItemQuerySet to know how to return non_absolute content. """
+
+    return self.filter(url_absolute=True)
+
+
+def BaseItemQuerySet_orphaned_method(self):
+    """ Patch BaseItemQuerySet to know how to return non_absolute content. """
+
+    return self.filter(is_orphaned=True)
+
+
+def BaseItemQuerySet_non_orphaned_method(self):
+    """ Patch BaseItemQuerySet to know how to return non_absolute content. """
+
+    return self.filter(is_orphaned=False)
+
+
+BaseItemQuerySet.absolute     = BaseItemQuerySet_absolute_method
+BaseItemQuerySet.non_absolute = BaseItemQuerySet_non_absolute_method
+BaseItemQuerySet.orphaned     = BaseItemQuerySet_orphaned_method
+BaseItemQuerySet.non_orphaned = BaseItemQuerySet_non_orphaned_method
+
+
+# ——————————————————————————————————————————————————————————————————————— Model
 
 
 class UrlItem(models.Model):
