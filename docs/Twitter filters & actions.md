@@ -1,15 +1,18 @@
 
 # Libs
 
-- https://github.com/tweepy/tweepy/
+https://github.com/tweepy/tweepy/
     + 
-- https://github.com/sixohsix/twitter
+
+https://github.com/sixohsix/twitter
     - seems to handle everything, including posting with images, DMs…
     - quite reactive developer  
-- https://github.com/geduldig/TwitterAPI
+
+https://github.com/geduldig/TwitterAPI
     + lightweight & easy to use, easy to customize because it yields the JSON items.
     + a small handfull of issues and developper is listening / answering.
-- https://github.com/bear/python-twitter
+
+https://github.com/bear/python-twitter
     + feature complete, but not that customizable, probably too big.
     + a lot of open issues and no answer
 

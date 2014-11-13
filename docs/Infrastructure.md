@@ -1,8 +1,12 @@
 
+
+WARNING: this document is outdated. No time to refresh it.
+
+
 # Hosts
 
 
-## On Lafayette.licorn.org
+## On Cassin.deep-ocean.net
 
 On the `10.0.3.0` network:
 
