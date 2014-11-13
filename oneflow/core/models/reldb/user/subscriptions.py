@@ -207,5 +207,12 @@ def User_standard_subscriptions_property_get(self):
     #                                          self.received_items_feed])
 
 
+def User_has_content_property_get(self):
+
+    return self.all_articles_count > 0 \
+        or self.open_subscriptions.filter(feed__is_internal=False).count > 0
+
+
+User.has_content            = property(User_has_content_property_get)
 User.blogs_subscriptions    = property(User_blogs_subscriptions_property_get)
 User.standard_subscriptions = property(User_standard_subscriptions_property_get)
