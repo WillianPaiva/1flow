@@ -118,10 +118,17 @@ def BaseItemQuerySet_non_orphaned_method(self):
     return self.filter(is_orphaned=False)
 
 
+def BaseItemQuerySet_url_error_method(self):
+    """ Patch BaseItemQuerySet to know how to return non_absolute content. """
+
+    return self.exclude(url_error=None)
+
+
 BaseItemQuerySet.absolute     = BaseItemQuerySet_absolute_method
 BaseItemQuerySet.non_absolute = BaseItemQuerySet_non_absolute_method
 BaseItemQuerySet.orphaned     = BaseItemQuerySet_orphaned_method
 BaseItemQuerySet.non_orphaned = BaseItemQuerySet_non_orphaned_method
+BaseItemQuerySet.url_error    = BaseItemQuerySet_url_error_method
 
 
 # ——————————————————————————————————————————————————————————————————————— Model
