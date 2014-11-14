@@ -83,9 +83,13 @@ def generate_orphaned_hash(title, feeds):
         articles.
     """
 
-    return hashlib.sha1(u'{0}:{1}'.format(
+    to_hash = u'{0}:{1}'.format(
         u','.join(sorted(unicode(f.id)
-                  for f in feeds)), title).encode('utf-8')).hexdigest()
+                  for f in feeds)), title).encode('utf-8')
+
+    # LOGGER.warning(to_hash)
+
+    return hashlib.sha1(to_hash).hexdigest()
 
 
 def create_article_from_url(url, feeds=None):
