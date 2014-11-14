@@ -222,7 +222,7 @@ def global_subscriptions_checker(force=False, limit=None, from_feeds=True,
                                         feed.good_items_count)
 
                             subscription.check_reads(
-                                force=True, extended_check=extended_check)
+                                extended_check=extended_check, force=True)
 
                 LOGGER.info(u'%s/%s (limit:%s) feeds processed, %s '
                             u'checked (%.2f%%).',
@@ -250,8 +250,8 @@ def global_subscriptions_checker(force=False, limit=None, from_feeds=True,
                         for subscription in user.subscriptions.all():
                                 processed_count += 1
 
-                                subscription.check_reads(force=True,
-                                                         extended_check=True)
+                                subscription.check_reads(extended_check=True,
+                                                         force=True)
 
                 LOGGER.info(u'%s users %sprocessed. '
                             u'All were checked.', users_count,

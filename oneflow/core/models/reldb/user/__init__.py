@@ -22,10 +22,9 @@ from constance import config
 from ..common import User
 from ..feed import BaseFeed
 
+# NOTE: check methods order is guaranteed by the import order here.
 from feeds import UserFeeds  # NOQA
-
 from subscriptions import UserSubscriptions  # NOQA
-
 from counters import UserCounters  # NOQA
 
 

@@ -373,7 +373,8 @@ class Subscription(ModelDiffMixin, AbstractTaggedModel):
 
         return read, False
 
-    def check_reads(self, items=None, force=False, extended_check=False):
+    def check_reads(self, items=None, extended_check=False,
+                    force=False, commit=True):
         """ Also available as a task for background execution. """
 
         in_the_past = combine(today() - timedelta(
@@ -609,7 +610,8 @@ def subscribe_user_to_feed(user, feed, name=None,
 #                                            Defined here to avoid import loops
 
 
-def generic_check_subscriptions_method(self, commit=True, extended_check=False):
+def generic_check_subscriptions_method(self, extended_check=False,
+                                       force=False, commit=True):
     """ For each subscription of current instance, check all reads.
 
     Eg see if subscribers have all the corresponding reads they should
@@ -647,6 +649,8 @@ def generic_check_subscriptions_method(self, commit=True, extended_check=False):
     # Article.activate_reads(extended_check=True).
     if extended_check and my_class_name != 'Read':
 
+        LOGGER.info(u'Checking subscriptions for %s…', self)
+
         counters = CheckReadsCounter()
 
         if my_class_name == 'Feed':
@@ -661,8 +665,9 @@ def generic_check_subscriptions_method(self, commit=True, extended_check=False):
 
         for subscription in subscriptions:
             try:
-                scounters = subscription.check_reads(articles, force=True,
-                                                     extended_check=True)
+                scounters = subscription.check_reads(items=articles,
+                                                     extended_check=True,
+                                                     force=True)
             except:
                 # In case the subscription was unsubscribed during the
                 # check operation, this is probably harmless.
@@ -804,5 +809,7 @@ BaseFeed.check_subscriptions = generic_check_subscriptions_method
 User.check_subscriptions     = generic_check_subscriptions_method
 Read.check_subscriptions     = generic_check_subscriptions_method
 Read.set_subscriptions       = Read_set_subscriptions_method
+
+User.extended_check_methods += ['check_subscriptions', ]
 
 Folder.open_subscriptions = property(Folder_open_subscriptions_property_get)

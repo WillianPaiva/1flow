@@ -25,7 +25,7 @@ import logging
 # from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.db.models.signals import post_save  # , pre_save, pre_delete
+# from django.db.models.signals import post_save  # , pre_save, pre_delete
 
 # from oneflow.base.utils import register_task_method
 from oneflow.base.fields import IntRedisDescriptor
@@ -278,14 +278,22 @@ class UserCounters(models.Model):
 # ————————————————————————————————————————————————————————————————————— Signals
 
 
-def user_post_save(instance, **kwargs):
-    """ Create the UserFeeds set. """
+def User_check_user_counters_method(self, extended_check=False,
+                                    force=False, commit=True):
 
-    user = instance
+    try:
+        user_counters = self.user_counters
 
-    if kwargs.get('created', False):
-
-        user_counters = UserCounters(user=user)
+    except UserCounters.DoesNotExist:
+        user_counters = UserCounters(user=self)
         user_counters.save()
 
-post_save.connect(user_post_save, sender=User)
+        LOGGER.info(u'Created user counters for %s.', self)
+
+    # No checks yet for user counters.
+    # user_counters.check(extended_check=extended_check, force=force)
+    return True
+
+# NOTE: check methods order is guaranteed by the import order in __init__.py
+User.check_user_counters = User_check_user_counters_method
+User.check_methods += ['check_user_counters', ]

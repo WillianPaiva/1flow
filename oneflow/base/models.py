@@ -40,6 +40,8 @@ from json_field import JSONField
 
 from django.db import models
 from django.utils.http import urlquote
+from django.db.models.signals import post_save  # , pre_save, pre_delete
+
 from django.contrib.auth.models import (BaseUserManager,
                                         AbstractBaseUser,
                                         PermissionsMixin)
@@ -134,6 +136,11 @@ class User(AbstractBaseUser, PermissionsMixin, AbstractUserProfile):
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ('email', )
 
+    # This attribute will be filled by OneToOne relations,
+    # to create them and check objects when needed.
+    check_methods = []
+    extended_check_methods = []
+
     class Meta:
         verbose_name = _('user')
         verbose_name_plural = _('users')
@@ -188,6 +195,69 @@ class User(AbstractBaseUser, PermissionsMixin, AbstractUserProfile):
 
     # ————————————————————————————————————————————————————————————————— Methods
 
+    def _run_check_methods(self, methods_list, extended_check=False,
+                           force=False, commit=True):
+        """ Internal method to run checks.
+        """
+        all_went_ok = True
+        failed_checks = []
+
+        for check_method_name in methods_list:
+            try:
+                result = getattr(self, check_method_name)(
+                    extended_check=extended_check, force=force, commit=commit)
+
+            except:
+                failed_checks.append(check_method_name)
+                LOGGER.exception(u'Check method “%s” failed for user %s',
+                                 check_method_name, self)
+            else:
+                if not result:
+                    all_went_ok = False
+
+        return all_went_ok, failed_checks
+
+    def check(self, extended_check=False, propagate_extended=False,
+              force=False, commit=True):
+
+        LOGGER.info(u'Checking user %s…', self)
+        LOGGER.info(u'Running check %s…', u', '.join(self.check_methods))
+
+        all_went_ok = True
+        failed_checks = []
+
+        awo, fcs = self._run_check_methods(self.check_methods,
+                                           extended_check=extended_check,
+                                           force=force, commit=commit)
+
+        if not awo:
+            all_went_ok = False
+
+        failed_checks.extend(fcs)
+
+        if extended_check:
+            LOGGER.info(u'Running extended checks %s for user %s…',
+                        u', '.join(self.extended_check_methods), self)
+
+            awo, fcs = self._run_check_methods(
+                self.extended_check_methods,
+                extended_check=propagate_extended,
+                force=force, commit=commit
+            )
+
+            if not awo:
+                all_went_ok = False
+
+            failed_checks.extend(fcs)
+
+        if failed_checks:
+            LOGGER.info(u'Done checking user %s; %s check(s) failed.',
+                        self, u', '.join(failed_checks))
+        else:
+            LOGGER.info(u'Done checking user %s.', self)
+
+        return all_went_ok
+
     def get_absolute_url(self):
         return _("/users/{username}/").format(urlquote(self.username))
 
@@ -202,6 +272,24 @@ class User(AbstractBaseUser, PermissionsMixin, AbstractUserProfile):
         return self.username
 
     # NOTE: self.email_user() comes from the AbstractUserProfile class
+
+
+# ———————————————————————————————————————————————————————————————— User signals
+
+
+def user_post_save(instance, **kwargs):
+    """ Check the user. This will create all he/she needs. """
+
+    user = instance
+
+    if kwargs.get('created', False):
+        user.check(force=True)
+
+
+post_save.connect(user_post_save, sender=User)
+
+
+# ————————————————————————————————————————————————————————— Configuration model
 
 
 class Configuration(MPTTModel):
