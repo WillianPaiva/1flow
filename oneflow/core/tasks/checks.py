@@ -51,7 +51,7 @@ LOGGER = logging.getLogger(__name__)
 from archive import archive_documents
 
 
-@task(name="oneflow.core.tasks.global_checker_task", queue='check')
+@task(name='oneflow.core.tasks.global_checker_task', queue='check')
 def global_checker_task(*args, **kwargs):
     """ Just run all tasks in a celery chain.
 

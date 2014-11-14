@@ -201,7 +201,7 @@ class ContentItem(models.Model):
         if self.content_error:
             if force:
                 statsd.gauge('articles.counts.content_errors', -1, delta=True)
-                self.content_error = u''
+                self.content_error = None
 
                 if commit:
                     self.save()
@@ -245,7 +245,9 @@ class ContentItem(models.Model):
             LOGGER.info(u'Stopping processing of article %s on behalf of '
                         u'an internal caller: %s.', self, unicode(e))
 
-            # HEADS UP: DO NOT return if we want to activate reads.
+            # HEADS UP: do NOT return if we want to activate reads… Because
+            #           the first succeeding fetcher/parser WILL raise this
+            #           exception to avoid running other content parsers.
             # return
 
         except SoftTimeLimitExceeded as e:
@@ -719,7 +721,7 @@ class ContentItem(models.Model):
 
             if self.content_error:
                 statsd.gauge('articles.counts.content_errors', -1, delta=True)
-                self.content_error = u''
+                self.content_error = None
 
             if commit:
                 self.save()
@@ -880,7 +882,7 @@ class ContentItem(models.Model):
 
         if self.content_error:
             statsd.gauge('articles.counts.content_errors', -1, delta=True)
-            self.content_error = u''
+            self.content_error = None
 
         #
         # TODO: word count here

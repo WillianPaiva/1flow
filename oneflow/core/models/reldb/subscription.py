@@ -324,7 +324,6 @@ class Subscription(ModelDiffMixin, AbstractTaggedModel):
     def create_read(self, item, verbose=True, **kwargs):
         """ Return a tuple (read, created) with the new (or existing) read.
 
-
         ``created`` is a boolean indicating if it was actually created
         or if it existed before.
         """
@@ -332,46 +331,46 @@ class Subscription(ModelDiffMixin, AbstractTaggedModel):
         read, created = Read.objects.get_or_create(item=item,
                                                    user=self.user)
 
-        if created:
-            read.subscriptions.add(self)
-            read.tags.add(*item.tags.all())
+        # If another feed has already created the read, be sure the
+        # current one is registered in the read via the subscriptions.
+        #
+        # NOTE: there is no problem adding again the same subscription,
+        #       it will result in only one M2M entry (cf. Django docs).
+        read.subscriptions.add(self)
 
-            need_save = False
+        need_save = False
+
+        if created:
+            read.tags.add(*item.tags.all())
 
             for key, value in kwargs.items():
                 setattr(read, key, value)
                 need_save = True
 
-            # If the item was already there and fetched (mutualized from
-            # another feed, for example), activate the read immediately.
-            # If we don't do this here, the only alternative is the daily
-            # global_reads_checker() task, which is not acceptable for
-            # "just-added" subscriptions, whose reads are created via the
-            # current method.
-            if item.is_good:
-                read.is_good = True
-                need_save = True
+            # This will include the current subscription,
+            # all its folders & the user global counters.
+            read.update_cached_descriptors(only=('all', 'unread', ))
 
-            if need_save:
-                read.save()
+        # If the item was already there and fetched (mutualized from
+        # another feed, for example), activate the read immediately.
+        # If we don't do this here, the only alternative is the daily
+        # global_reads_checker() task, which is not acceptable for
+        # "just-added" subscriptions, whose reads are created via the
+        # current method.
+        if item.is_good and not read.is_good:
+            read.is_good = True
+            need_save = True
 
-            # Update cached descriptors
-            self.all_items_count += 1
-            self.unread_items_count += 1
+            # The post_save() signal updates stats only if created.
+            # It already sent "bad" read on creation. Invert the situation.
+            with statsd.pipeline() as spipe:
+                spipe.gauge('reads.counts.good', 1, delta=True)
+                spipe.gauge('reads.counts.bad', -1, delta=True)
 
-            return read, True
+        if need_save:
+            read.save()
 
-        # If another feed has already created the read, be sure the
-        # current one is registered in the read via the subscriptions.
-        read.subscriptions.add(self)
-
-        #
-        # NOTE: we do not check `is_good` here, when the read was not
-        #       created. This is handled (indirectly) via the item
-        #       check part of Subscription.check_reads(). DRY.
-        #
-
-        return read, False
+        return read, created
 
     def check_reads(self, items=None, extended_check=False,
                     force=False, commit=True):
