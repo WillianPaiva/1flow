@@ -259,12 +259,12 @@ class UrlItem(models.Model):
             except requests.ConnectionError as e:
                 statsd.gauge('articles.counts.url_errors', 1, delta=True)
                 message = u'Connection error while absolutizing “%s”: %s'
+                args = (self.url, str(e), )
 
-                self.url_error = message % (requests_response.url, str(e))
+                self.url_error = message % args
                 self.save()
 
-                LOGGER.error(u'Connection failed while absolutizing URL or %s.',
-                             self)
+                LOGGER.error(message, *args)
                 return
 
         if not requests_response.ok or requests_response.status_code != 200:
