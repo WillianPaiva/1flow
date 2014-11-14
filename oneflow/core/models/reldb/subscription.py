@@ -218,7 +218,7 @@ class Subscription(ModelDiffMixin, AbstractTaggedModel):
     def has_unread(self):
 
         # We need a boolean value for accurate template caching.
-        return self.unread_items_count != 0
+        return self.unread_items_count > 0
 
     @property
     def is_active(self):
