@@ -1,4 +1,4 @@
-{% with unread_count=subscription.unread_articles_count all_count=subscription.all_articles_count later_count=subscription.bookmarked_articles_count %}
+{% with unread_count=subscription.unread_items_count all_count=subscription.all_items_count later_count=subscription.bookmarked_items_count %}
 
 {# TODO DJ 1.6 remove all cache arguments, and simply make the cache expire when the right conditions happen. #}
 {# I don't bother pivoting on the thumbnail, it can wait until cache expiry. #}
