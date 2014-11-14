@@ -272,7 +272,7 @@ class UrlItem(models.Model):
                     requests_response.url)
 
             with statsd.pipeline() as spipe:
-                spipe.gauge('articles.counts.orphaned', 1, delta=True)
+                # spipe.gauge('articles.counts.orphaned', 1, delta=True)
                 spipe.gauge('articles.counts.url_errors', 1, delta=True)
 
             self.is_orphaned  = True
