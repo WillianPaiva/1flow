@@ -165,7 +165,7 @@ def refresh_all_mailaccounts(force=False):
         LOGGER.warning(u'E-mail accounts check disabled in configuration.')
         return
 
-    accounts = MailAccount.objects.usable()
+    accounts = MailAccount.objects.unusable()
 
     my_lock = RedisExpiringLock('check_email_accounts',
                                 expire_time=30 * (accounts.count() + 2))
