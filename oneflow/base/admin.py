@@ -150,6 +150,7 @@ ConstanceAdmin.fieldsets = (
         'classes': ('grp-collapse grp-closed', ),
         'fields': (
             'ARTICLE_FETCHING_DEBUG',
+            'ARTICLE_REPROCESSING_DISABLED',
             'ARTICLE_ABSOLUTIZING_DISABLED',
             'ARTICLE_FETCHING_DISABLED',
             'ARTICLE_FETCHING_TEXT_DISABLED',

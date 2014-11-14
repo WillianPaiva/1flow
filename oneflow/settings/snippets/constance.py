@@ -297,6 +297,11 @@ CONSTANCE_CONFIG.update({
 
 CONSTANCE_CONFIG.update({
 
+    'ARTICLE_REPROCESSING_DISABLED': (False, ugettext(u'Disable or not '
+                                  u'the reprocessing operations that could '
+                                  u'repair failed articles. Default: '
+                                  u'enabled in normal conditions.')),
+
     'ARTICLE_FETCHING_DEBUG': (False, ugettext(u'Enable this to log '
                                u'intermediate article versions. Default: '
                                   u'not enabled in normal conditions.')),
