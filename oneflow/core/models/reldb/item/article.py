@@ -311,40 +311,44 @@ class Article(BaseItem, UrlItem, ContentItem):
 
         return new_article, True
 
-    def post_create_task(self):
+    def post_create_task(self, apply_now=False):
         """ Method meant to be run from a celery task. """
 
-        with statsd.pipeline() as spipe:
-            spipe.gauge('articles.counts.total', 1, delta=True)
-            spipe.gauge('articles.counts.empty', 1, delta=True)
+        if apply_now:
+            try:
+                baseitem_absolutize_url_task.apply((self.id, ))
+                baseitem_fetch_content_task.apply((self.id, ))
+                baseitem_postprocess_original_data_task.apply((self.id, ))
+
+            except:
+                LOGGER.exception(u'Applying Article.post_create_task(%s) '
+                                 u'failed.', self)
+            return
 
         post_absolutize_chain = tasks_chain(
             # HEADS UP: both subtasks are immutable, we just
             # want the group to run *after* the absolutization.
 
-            # HEADS UP: this task name will be registered later
-            # by the register_task_method call.
             baseitem_fetch_content_task.si(self.id),
             baseitem_postprocess_original_data_task.si(self.id),
         )
 
-        # Randomize the absolutization a little, to avoid
+        # OLD NOTES: randomize the absolutization a little, to avoid
         # http://dev.1flow.net/development/1flow-dev-alternate/group/1243/
         # as much as possible. This is not yet a full-featured solution,
         # but it's completed by the `fetch_limit` thing.
         #
-        # Absolutization conditions everything else. If it doesn't succeed:
+        # Absolutization is the condition of everything else. If it
+        # doesn't succeed:
         #   - no bother trying to post-process author data for example,
         #     because we need the absolutized website domain to make
-        #     authors unique and worthfull.
+        #     authors unique and worthful.
         #   - no bother fetching content: it uses the same mechanisms as
         #     absolutize_url(), and will probably fail the same way.
         #
         # Thus, we link the post_absolutize_chain as a callback. It will
         # be run only if absolutization succeeds. Thanks, celery :-)
-        #
-        # HEADS UP: this task name will be registered later
-        # by the register_task_method call.
+
         baseitem_absolutize_url_task.apply_async((self.id, ),
                                                  link=post_absolutize_chain)
 
