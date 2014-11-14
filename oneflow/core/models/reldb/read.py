@@ -481,8 +481,10 @@ class Read(AbstractTaggedModel):
         self.save()
 
         with statsd.pipeline() as spipe:
-            spipe.incr('reads.counts.good')
-            spipe.decr('reads.counts.bad')
+            spipe.gauge('reads.counts.good', 1, delta=True)
+            spipe.gauge('reads.counts.bad', -1, delta=True)
+
+            LOGGER.info(u'READ SWITCHED GOOD %s', self)
 
         self.update_cached_descriptors()
 
@@ -670,13 +672,16 @@ def read_post_save(instance, **kwargs):
     if kwargs.get('created', False):
 
         with statsd.pipeline() as spipe:
-            spipe.incr('reads.counts.total')
+            spipe.gauge('reads.counts.total', 1, delta=True)
 
             if read.is_good:
-                spipe.incr('reads.counts.good')
+                spipe.gauge('reads.counts.good', 1, delta=True)
 
             else:
-                spipe.incr('reads.counts.bad')
+                spipe.gauge('reads.counts.bad', 1, delta=True)
+
+        LOGGER.debug(u'READ CREATED %s: %s',
+                     u'GOOD' if read.is_good else u'BAD', read)
 
         if read.date_created < MIGRATION_DATETIME:
             # HEADS UP: REMOVE THIS WHEN migration is finished
@@ -700,13 +705,13 @@ def read_pre_delete(instance, **kwargs):
     read = instance
 
     with statsd.pipeline() as spipe:
-        spipe.decr('reads.counts.total')
+        spipe.gauge('reads.counts.total', -1, delta=True)
 
         if read.is_good:
-            spipe.decr('reads.counts.good')
+            spipe.gauge('reads.counts.good', -1, delta=True)
 
         else:
-            spipe.decr('reads.counts.bad')
+            spipe.gauge('reads.counts.bad', -1, delta=True)
 
     if not read.is_good:
         # counters already don't take this read into account.

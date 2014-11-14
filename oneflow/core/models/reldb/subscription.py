@@ -529,13 +529,13 @@ def subscription_post_save(instance, **kwargs):
     """ Subscribe the mailfeed's owner if feed is beiing created. """
 
     if kwargs.get('created', False):
-        statsd.incr('subscriptions.counts.total')
+        statsd.gauge('subscriptions.counts.total', 1, delta=True)
 
 
 def subscription_pre_delete(instance, **kwargs):
     """ Subscribe the mailfeed's owner if feed is beiing created. """
 
-    statsd.decr('subscriptions.counts.total')
+    statsd.gauge('subscriptions.counts.total', -1, delta=True)
 
 pre_save.connect(subscription_pre_save, sender=Subscription)
 post_save.connect(subscription_post_save, sender=Subscription)
