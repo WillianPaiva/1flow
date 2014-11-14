@@ -244,10 +244,7 @@ class Article(BaseItem, UrlItem, ContentItem):
                                   url_absolute=True)
                 new_article.save()
 
-                with statsd.pipeline() as spipe:
-                    spipe.gauge('articles.counts.orphaned', 1, delta=True)
-                    spipe.gauge('articles.counts.absolutes', 1, delta=True)
-                    # spipe.gauge('articles.counts.absolutes', 1, delta=True)
+                # HEADS UP: no statsd here, it's handled by post_save().
 
         else:
             url = clean_url(url)
