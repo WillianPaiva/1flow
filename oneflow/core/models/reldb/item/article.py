@@ -83,9 +83,13 @@ def generate_orphaned_hash(title, feeds):
         articles.
     """
 
-    return hashlib.sha1(u'{0}:{1}'.format(
+    to_hash = u'{0}:{1}'.format(
         u','.join(sorted(unicode(f.id)
-                  for f in feeds)), title).encode('utf-8')).hexdigest()
+                  for f in feeds)), title).encode('utf-8')
+
+    # LOGGER.warning(to_hash)
+
+    return hashlib.sha1(to_hash).hexdigest()
 
 
 def create_article_from_url(url, feeds=None):
@@ -218,6 +222,9 @@ class Article(BaseItem, UrlItem, ContentItem):
             the same feed. If more than one feed given, only returns ``True``
             or ``False`` (mutualized state is not checked). """
 
+        cur_article = None
+        new_article = None
+
         if url is None:
             # We have to build a reliable orphaned URL, because orphaned
             # articles are often duplicates. RSS feeds serve us many times
@@ -226,20 +233,31 @@ class Article(BaseItem, UrlItem, ContentItem):
             # facts, where the content is in the title, and there is no URL.
             # We have 860k+ items, out of 1k real facts… Doomed.
             url = ARTICLE_ORPHANED_BASE + generate_orphaned_hash(title, feeds)
-            article_is_orphaned = True
+
+            try:
+                cur_article = cls.objects.get(url=url)
+
+            except cls.DoesNotExist:
+                new_article = cls(name=title, url=url,
+                                  is_orphaned=True,
+                                  # Skip absolutization, it's useless.
+                                  url_absolute=True)
+                new_article.save()
+
+                # HEADS UP: no statsd here, it's handled by post_save().
 
         else:
             url = clean_url(url)
-            article_is_orphaned = False
 
-        new_article = cls(name=title, url=url)
+            new_article = cls(name=title, url=url)
 
-        try:
-            new_article.save()
+            try:
+                new_article.save()
 
-        except IntegrityError:
-            cur_article = cls.objects.get(url=url)
+            except IntegrityError:
+                cur_article = cls.objects.get(url=url)
 
+        if cur_article:
             created_retval = False
 
             if len(feeds) == 1 and feeds[0] not in cur_article.feeds.all():
@@ -253,6 +271,7 @@ class Article(BaseItem, UrlItem, ContentItem):
                             title, url, u', '.join(unicode(f) for f in feeds))
 
             else:
+                # No statsd, because we didn't create any record in database.
                 LOGGER.info(u'Duplicate article “%s” (url: %s) in feed(s) %s.',
                             title, url, u', '.join(unicode(f) for f in feeds))
 
@@ -268,23 +287,12 @@ class Article(BaseItem, UrlItem, ContentItem):
             for key, value in kwargs.items():
                 setattr(new_article, key, value)
 
-        if article_is_orphaned:
-            need_save = True
-            new_article.is_orphaned = True
-
-            # Don't count the article as "bad" because it has a non-absolute
-            # URL. In fact, its 1flow URL is completely good (even if it's not
-            # yet accessible from outside).
-            new_article.url_absolute = True
-
-            statsd.gauge('articles.counts.orphaned', 1, delta=True)
-
         if need_save:
             # Need to save because we will reload just after.
             new_article.save()
 
         LOGGER.info(u'Created %sarticle %s in feed(s) %s.', u'orphaned '
-                    if article_is_orphaned else u'', new_article,
+                    if new_article.is_orphaned else u'', new_article,
                     u', '.join(unicode(f) for f in feeds))
 
         # Tags & feeds are ManyToMany, they
@@ -300,40 +308,44 @@ class Article(BaseItem, UrlItem, ContentItem):
 
         return new_article, True
 
-    def post_create_task(self):
+    def post_create_task(self, apply_now=False):
         """ Method meant to be run from a celery task. """
 
-        with statsd.pipeline() as spipe:
-            spipe.gauge('articles.counts.total', 1, delta=True)
-            spipe.gauge('articles.counts.empty', 1, delta=True)
+        if apply_now:
+            try:
+                baseitem_absolutize_url_task.apply((self.id, ))
+                baseitem_fetch_content_task.apply((self.id, ))
+                baseitem_postprocess_original_data_task.apply((self.id, ))
+
+            except:
+                LOGGER.exception(u'Applying Article.post_create_task(%s) '
+                                 u'failed.', self)
+            return
 
         post_absolutize_chain = tasks_chain(
             # HEADS UP: both subtasks are immutable, we just
             # want the group to run *after* the absolutization.
 
-            # HEADS UP: this task name will be registered later
-            # by the register_task_method call.
             baseitem_fetch_content_task.si(self.id),
             baseitem_postprocess_original_data_task.si(self.id),
         )
 
-        # Randomize the absolutization a little, to avoid
+        # OLD NOTES: randomize the absolutization a little, to avoid
         # http://dev.1flow.net/development/1flow-dev-alternate/group/1243/
         # as much as possible. This is not yet a full-featured solution,
         # but it's completed by the `fetch_limit` thing.
         #
-        # Absolutization conditions everything else. If it doesn't succeed:
+        # Absolutization is the condition of everything else. If it
+        # doesn't succeed:
         #   - no bother trying to post-process author data for example,
         #     because we need the absolutized website domain to make
-        #     authors unique and worthfull.
+        #     authors unique and worthful.
         #   - no bother fetching content: it uses the same mechanisms as
         #     absolutize_url(), and will probably fail the same way.
         #
         # Thus, we link the post_absolutize_chain as a callback. It will
         # be run only if absolutization succeeds. Thanks, celery :-)
-        #
-        # HEADS UP: this task name will be registered later
-        # by the register_task_method call.
+
         baseitem_absolutize_url_task.apply_async((self.id, ),
                                                  link=post_absolutize_chain)
 
@@ -389,6 +401,22 @@ def article_post_save(instance, **kwargs):
     article = instance
 
     if kwargs.get('created', False):
+
+        with statsd.pipeline() as spipe:
+            spipe.gauge('articles.counts.total', 1, delta=True)
+            spipe.gauge('articles.counts.empty', 1, delta=True)
+
+            if article.is_orphaned:
+                spipe.gauge('articles.counts.orphaned', 1, delta=True)
+
+            if article.duplicate_of:
+                spipe.gauge('articles.counts.duplicates', 1, delta=True)
+
+            if article.url_error:
+                spipe.gauge('articles.counts.url_error', 1, delta=True)
+
+            if article.content_error:
+                spipe.gauge('articles.counts.content_error', 1, delta=True)
 
         # Some articles are created "already orphaned" or duplicates.
         # In the archive database this is more immediate than looking

@@ -23,4 +23,4 @@ from base import *  # NOQA
 
 from mail import *  # NOQA
 
-from twitter import *  # NOQA
+# from twitter import *  # NOQA

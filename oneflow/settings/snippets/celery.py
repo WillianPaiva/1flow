@@ -173,6 +173,23 @@ CELERYBEAT_SCHEDULE = {
         'schedule': crontab(hour='1', minute='1'),
     },
 
+
+    'reprocess-failed-articles-pass1': {
+        'task': 'oneflow.core.tasks.reprocess_failed_articles',
+        'schedule': crontab(minute='33'),
+    },
+
+    'reprocess-failed-articles-pass2': {
+        'task': 'oneflow.core.tasks.reprocess_failed_articles_pass2',
+        'schedule': crontab(hour='4', minute='44'),
+    },
+
+    'reprocess-failed-articles-pass3': {
+        'task': 'oneflow.core.tasks.reprocess_failed_articles_pass3',
+        'schedule': crontab(day_of_week='0', hour='5', minute='55'),
+    },
+
+
     # •••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••• Statistics
 
     # We update stats regularly to avoid "loosing" data and desynchronization.

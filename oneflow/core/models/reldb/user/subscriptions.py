@@ -25,7 +25,7 @@ import logging
 # from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.db.models.signals import post_save  # , pre_save, pre_delete
+# from django.db.models.signals import post_save  # , pre_save, pre_delete
 
 # from oneflow.base.utils import register_task_method
 
@@ -112,7 +112,7 @@ class UserSubscriptions(models.Model):
             self.written_items_id
         ]) | self.blogs.all()
 
-    def check(self, force=False):
+    def check(self, extended_check=False, force=False, commit=True):
         """ Create user feeds if they don't already exist. """
 
         needs_save = False
@@ -148,21 +148,30 @@ class UserSubscriptions(models.Model):
         if needs_save:
             self.save()
 
+        return True
+
 
 # ————————————————————————————————————————————————————————————————————— Signals
 
 
-def user_post_save(instance, **kwargs):
-    """ Create the UserFeeds set. """
+def User_check_user_subscriptions_method(self, extended_check=False,
+                                         force=False, commit=True):
 
-    user = instance
+    try:
+        user_subscriptions = self.user_subscriptions
 
-    if kwargs.get('created', False):
+    except UserSubscriptions.DoesNotExist:
+        user_subscriptions = UserSubscriptions(user=self)
+        user_subscriptions.save()
 
-        user_subscriptions = UserSubscriptions(user=user)
-        user_subscriptions.check()
+        LOGGER.info(u'Created user subscriptions for %s.', self)
 
-post_save.connect(user_post_save, sender=User)
+    return user_subscriptions.check(extended_check=extended_check, force=force)
+
+
+# NOTE: check methods order is guaranteed by the import order in __init__.py
+User.check_user_subscriptions = User_check_user_subscriptions_method
+User.check_methods += ['check_user_subscriptions', ]
 
 
 # ————————————————————————————————————————————————————————— External properties

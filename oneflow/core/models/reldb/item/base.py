@@ -38,7 +38,7 @@ from polymorphic import (
     PolymorphicModel,
 )
 
-# from oneflow.base.utils.dateutils import now
+from oneflow.base.utils.dateutils import now, timedelta
 # from oneflow.base.utils import register_task_method
 
 from ..common import (
@@ -87,6 +87,33 @@ class BaseItemQuerySet(PolymorphicQuerySet):
 
     def duplicate(self):
         return self.exclude(duplicate_of_id=None)
+
+    def created_previous_hour(self):
+
+        one_hour_delta = timedelta(seconds=3600)
+        one_hour_before = now() - one_hour_delta
+        two_hours_before = one_hour_before - one_hour_delta
+
+        return self.filter(date_created__lte=one_hour_before,
+                           date_created__gte=two_hours_before)
+
+    def created_previous_day(self):
+
+        one_day_delta = timedelta(days=1)
+        one_day_before = now() - one_day_delta
+        two_days_before = one_day_before - one_day_delta
+
+        return self.filter(date_created__lte=one_day_before,
+                           date_created__gte=two_days_before)
+
+    def created_previous_week(self):
+
+        one_week_delta = timedelta(days=7)
+        one_week_before = now() - one_week_delta
+        two_weeks_before = one_week_before - one_week_delta
+
+        return self.filter(date_created__lte=one_week_before,
+                           date_created__gte=two_weeks_before)
 
 
 class BaseItemManager(PolymorphicManager):

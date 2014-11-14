@@ -25,7 +25,7 @@ import logging
 from constance import config
 
 from django.db import models
-from django.db.models.signals import post_save  # , pre_save, pre_delete
+# from django.db.models.signals import post_save  # , pre_save, pre_delete
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
 from sparks.django.models import ModelDiffMixin
@@ -64,7 +64,7 @@ class Preferences(ModelDiffMixin):
     def __unicode__(self):
         return _(u'Preferences for user {0}').format(self.user.username)
 
-    def check(self):
+    def check(self, extended_check=False, force=False, commit=True):
 
         for name, model in (
             ('snap', SnapPreferences, ),
@@ -83,6 +83,7 @@ class Preferences(ModelDiffMixin):
             except ObjectDoesNotExist:
                 pref = model(preferences=self)
                 pref.save()
+
 
 # ———————————————————————————————————————————————————————————— User preferences
 
@@ -454,15 +455,23 @@ class HelpWizards(ModelDiffMixin):
 
 # ————————————————————————————————————————————————————————————————————— Signals
 
+def User_check_preferences_method(self, extended_check=False,
+                                  force=True, commit=True):
 
-def user_post_save(instance, **kwargs):
-    """ Create the UserFeeds set. """
+    LOGGER.info(u'Checking preferences for user %s.', self)
 
-    user = instance
+    try:
+        preferences = self.preferences
 
-    if kwargs.get('created', False):
+    except Preferences.DoestNotExist:
+        preferences = Preferences(user=self)
+        preferences.save()
 
-        preferences = Preferences(user=user)
-        preferences.check()
+        LOGGER.info(u'Created preferences for user %s.', self)
 
-post_save.connect(user_post_save, sender=User)
+    preferences.check()
+
+    return True
+
+User.check_preferences = User_check_preferences_method
+User.check_methods += ['check_preferences', ]
