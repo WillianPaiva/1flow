@@ -20,52 +20,56 @@
       <td>{% trans "username" %}</td>
       <td><strong>{% if not '@' in user.username %}@{% endif %}{{ user.username }}</strong></td>
     </tr>
+
+    {% if user.is_local %}
+
     <tr>
-      {% if user.is_local %}
+      <td>{% trans "First name" %}</td>
+      <td>{% inplace_edit "user.first_name" %}</td>
+    </tr>
+    <tr>
+      <td>{% trans "Last name" %}</td>
+      <td>{% inplace_edit "user.last_name" %}</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><a class="btn btn-xs btn-default" href="{% url "account_password" %}">{% trans "Change password" %}</a></td>
+    </tr>
 
-        <td>{% trans "First name" %}</td>
-        <td>{% inplace_edit "user.first_name" %}</td>
-      </tr>
-      <tr>
-        <td>{% trans "Last name" %}</td>
-        <td>{% inplace_edit "user.last_name" %}</td>
-      </tr>
-      <tr>
-        <td></td>
-        <td><a class="btn btn-xs btn-default" href="{% url "account_password" %}">{% trans "Change password" %}</a></td>
-
-      <tr>
-        <td>{% trans "Local avatar" %}</td>
-        <td>{% inplace_edit "user.avatar" %}</td>
-      </tr>
-      <tr>
-        <td>{% trans "Avatar URL" %}</td>
-        <td>{% inplace_edit "user.avatar_url" %}</td>
-      </tr>
         {% comment %}
          TODO: merge the django-user-account-settings into here.
 
         <li><a href="{% url "account_settings" %}">{% trans "Settings" %}</a></li>
         {% endcomment %}
 
-      {% else %}
+    {% else %}
 
-        <td>{% trans "First name" %}</td>
-        <td>{{ user.first_name }}</td>
-      </tr>
-      <tr>
-        <td>{% trans "Last name" %}</td>
-        <td>{{ user.last_name }}</td>
+    <tr>
+      <td>{% trans "First name" %}</td>
+      <td>{{ user.first_name }}</td>
     </tr>
-      {% comment %}
-        TODO: allow to do this. For now, as the user doesn't have any local password, the "current" will always be wrong and it won't work.
+    <tr>
+      <td>{% trans "Last name" %}</td>
+      <td>{{ user.last_name }}</td>
+    </tr>
 
-        <tr>
-          <td>{% trans "Set your password to enable your local account" %}</td>
-      {% endcomment %}
+    {% comment %}
+      TODO: allow to do this. For now, as the user doesn't have any local password, the "current" will always be wrong and it won't work.
 
-      {% endif %}
+      <tr>
+        <td>{% trans "Set your password to enable your local account" %}</td>
+      </tr>
+    {% endcomment %}
 
+    {% endif %}
+
+    <tr>
+      <td>{% trans "Local avatar" %}</td>
+      <td>{% inplace_edit "user.avatar" %}</td>
+    </tr>
+    <tr>
+      <td>{% trans "Avatar URL" %}</td>
+      <td>{% inplace_edit "user.avatar_url" %}</td>
     </tr>
     <tr>
       <td>{% trans "e-mail" %}</td>
