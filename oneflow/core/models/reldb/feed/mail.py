@@ -22,7 +22,6 @@ import json
 import logging
 
 from constance import config
-from collections import OrderedDict
 
 # from django.conf import settings
 from django.db import models
@@ -37,6 +36,16 @@ from base import (
     BaseFeedManager,
     BaseFeed,
     basefeed_pre_save,
+)
+
+from common import (
+    MAIL_MATCH_ACTIONS,
+    MAIL_FINISH_ACTIONS,
+    MAIL_RULES_OPERATIONS,
+
+    MAIL_MATCH_ACTION_DEFAULT,
+    MAIL_FINISH_ACTION_DEFAULT,
+    MAIL_RULES_OPERATION_DEFAULT,
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -60,28 +69,10 @@ class MailFeed(BaseFeed):
 
     """ Configuration of a mail-based 1flow feed. """
 
-    MATCH_ACTION_CHOICES = OrderedDict((
-        (u'store', _(u'store email in the feed')),
-        (u'scrape', _(u'scrape email, extract links and fetch articles')),
-        (u'scroarpe',
-         _(u'do both, eg. store email and extract links / fetch articles')),
-    ))
-
-    FINISH_ACTION_CHOICES = OrderedDict((
-        (u'nothing', _(u'leave e-mail untouched')),
-        (u'markread', _(u'mark e-mail read')),
-        (u'delete', _(u'delete e-mail')),
-    ))
-
-    RULES_OPERATION_ANY = u'any'
-    RULES_OPERATION_ALL = u'all'
-
-    RULES_OPERATION_CHOICES = OrderedDict((
-        (RULES_OPERATION_ALL, _(u'All rules must match')),
-        (RULES_OPERATION_ANY, _(u'Any rule matches')),
-    ))
-
-    RULES_OPERATION_DEFAULT = RULES_OPERATION_ANY
+    class Meta:
+        app_label = 'core'
+        verbose_name = _(u'e-mail feed')
+        verbose_name_plural = _(u'e-mail feeds')
 
     objects = BaseFeedManager()
 
@@ -104,30 +95,30 @@ class MailFeed(BaseFeed):
     # recurse_mailbox = models.BooleanField(verbose_name=_(u'Recurse mailbox'),
     #                                       default=True, blank=True)
 
-    match_action = models.CharField(
+    match_action = models.IntegerField(
         verbose_name=_(u'Match action'),
-        max_length=10, default=u'scrape',
-        choices=tuple(MATCH_ACTION_CHOICES.items()),
+        default=MAIL_MATCH_ACTION_DEFAULT,
+        choices=MAIL_MATCH_ACTIONS.get_choices(),
         help_text=_(u'Defines a global match action '
                     u'for all rules of the feed. You '
                     u'can override this value at the '
                     u'rule level, only for the ones '
                     u'you want.'))
 
-    finish_action = models.CharField(
+    finish_action = models.IntegerField(
         verbose_name=_(u'Finish action'),
-        max_length=10, default=u'markread',
-        choices=tuple(FINISH_ACTION_CHOICES.items()),
+        default=MAIL_FINISH_ACTION_DEFAULT,
+        choices=MAIL_FINISH_ACTIONS.get_choices(),
         help_text=_(u'Defines a global finish action '
                     u'for all rules of the feed. You '
                     u'can override this value at the '
                     u'rule level, only for the ones '
                     u'you want.'))
 
-    rules_operation = models.CharField(
+    rules_operation = models.IntegerField(
         verbose_name=_(u'Rules operation'),
-        max_length=10, default=RULES_OPERATION_DEFAULT,
-        choices=tuple(RULES_OPERATION_CHOICES.items()),
+        default=MAIL_RULES_OPERATION_DEFAULT,
+        choices=MAIL_RULES_OPERATIONS.get_choices(),
         help_text=_(u'Condition between rules or rules groups.'))
 
     #
@@ -146,9 +137,6 @@ class MailFeed(BaseFeed):
         verbose_name=_(u'Use scrape blacklist'),
         help_text=_(u'Use 1flow adblocker to avoid scrapeing '
                     u'email adds, unsubscribe links and the like.'))
-
-    class Meta:
-        app_label = 'core'
 
     # ——————————————————————————————————————————————————————————— Class methods
 
@@ -260,13 +248,12 @@ class MailFeed(BaseFeed):
         # Freeze the QuerySet as tuple() for current run.
         # This avoids having a moving set of rules for each account.
         feed_rules = tuple(
-            self.mailfeedrule_set.filter(is_valid=True).order_by('group',
-                                                                 'position')
+            self.rules.filter(is_valid=True).order_by('group', 'position')
         )
 
         usable_accounts = self.user.accounts.mail().usable()
 
-        rules_operation_any = self.rules_operation == self.RULES_OPERATION_ANY
+        rules_operation_any = self.rules_operation == MAIL_RULES_OPERATIONS.ANY
 
         total_matched   = 0
         total_unmatched = 0

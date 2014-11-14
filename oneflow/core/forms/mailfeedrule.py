@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -26,7 +26,11 @@ from constance import config
 from django import forms
 from django.utils.translation import ugettext as _
 
-from ..models import MailAccount, MailFeed, MailFeedRule
+from ..models import MailAccount, MailFeedRule
+from ..models.reldb.feed.common import (
+    MAIL_RULES_OPERATIONS,
+    MAIL_RULES_OPERATION_DEFAULT,
+)
 
 from oneflow.base.utils import get_common_values
 
@@ -163,7 +167,7 @@ class MailFeedRuleGroupForm(forms.ModelForm):
             group = instance.group
 
             instance.group = None
-            instance.group_operation = None
+            instance.group_operation = MAIL_RULES_OPERATION_DEFAULT
             instance.save()
 
             try:
@@ -176,13 +180,13 @@ class MailFeedRuleGroupForm(forms.ModelForm):
 
             else:
                 remaining.group = None
-                remaining.group_operation = None
+                remaining.group_operation = MAIL_RULES_OPERATION_DEFAULT
                 remaining.save()
 
         elif switch is True:
             operation = instance.group_operation
 
-            operations = MailFeed.RULES_OPERATION_CHOICES.keys()
+            operations = [x[0] for x in MAIL_RULES_OPERATIONS.get_choices()]
 
             next_operation = operations[
                 (operations.index(operation) + 1) % len(operations)
@@ -209,7 +213,7 @@ class MailFeedRuleGroupForm(forms.ModelForm):
                 merge_with.group = instance.group = \
                     get_random_number(exclude_from)
                 merge_with.group_operation = instance.group_operation = \
-                    MailFeed.RULES_OPERATION_DEFAULT
+                    MAIL_RULES_OPERATION_DEFAULT
 
             else:
                 # we are merging with an existing group
