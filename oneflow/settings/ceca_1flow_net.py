@@ -28,6 +28,7 @@ include_snippets(
         '00_production',
         '1flow_io_pre_common',
         'common',
+        'social_auth',
 
         # no landing page outside of 1flow.io
         #'1flow_io_post_common',

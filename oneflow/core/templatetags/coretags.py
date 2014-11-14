@@ -38,6 +38,7 @@ from ...base.utils.dateutils import (now, today,
 
 from oneflow.core import models   # , CACHE_ONE_WEEK
 from oneflow.core.models.common import READ_STATUS_DATA, CORE_CLASSES_ICONS
+from oneflow.core.models.reldb.feed.common import RULES_OPERATIONS
 from ..context_processors import models_constants
 
 LOGGER = logging.getLogger(__name__)
@@ -679,8 +680,8 @@ def operation_to_icon(ope):
     """ Return an icon for the current operation. """
 
     return {
-        u'any': 'ok',
-        u'all': 'plus',
+        RULES_OPERATIONS.ANY: 'ok',
+        RULES_OPERATIONS.ALL: 'plus',
     }[ope]
 
 
@@ -689,9 +690,9 @@ def operation_to_switch_text(ope):
     """ Return a text for the current operation. """
 
     return {
-        u'any':
+        RULES_OPERATIONS.ANY:
             _(u'Any matching rule in the group will do it. Click to change.'),
-        u'all': _(u'All rules of the group must match. Click to change.'),
+        RULES_OPERATIONS.ALL: _(u'All rules of the group must match. Click to change.'),
     }[ope]
 
 

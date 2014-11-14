@@ -432,11 +432,12 @@ class ro_classproperty(object):
 class JsContextSerializer(ContextSerializer):
     """ This class should probably move into sparks some day. """
 
-    def process_social_auth(self, social_auth, data):
-        """ Just force social_auth's LazyDict to be converted to a dict for the
-            JSON serialization to work properly. """
+    def process_backends(self, backends, data):
+        """ Just force social_auth's backend `LazyDict()` to be converted.
 
-        data['social_auth'] = dict(six.iteritems(social_auth))
+        To a dict for the JSON serialization to work properly. """
+
+        data['backends'] = dict(six.iteritems(backends))
 
     def handle_user(self, data):
         """ We just add the user ID to everything already gathered by Django.JS

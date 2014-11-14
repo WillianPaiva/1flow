@@ -120,13 +120,34 @@ class ReadManager(models.Manager):
     def get_queryset(self):
         return ReadQuerySet(self.model, using=self._db)
 
-    # VANISH in Django 1.7 → use `ReadQS.as_manager()`
+    # ———————————————————————— VANISH in Django 1.7 → use `ReadQS.as_manager()`
 
     def good(self):
-        return self.get_queryset().filter(is_good=True)
+        return self.get_queryset().good()
 
     def bad(self):
-        return self.get_queryset().filter(is_good=False)
+        return self.get_queryset().bad()
+
+    def read(self):
+        return self.get_queryset().read()
+
+    def unread(self):
+        return self.get_queryset().unread()
+
+    def auto_read(self):
+        return self.get_queryset().auto_read()
+
+    def archived(self):
+        return self.get_queryset().archived()
+
+    def bookmarked(self):
+        return self.get_queryset().bookmarked()
+
+    def starred(self):
+        return self.get_queryset().starred()
+
+
+# ——————————————————————————————————————————————————————————————————————— Model
 
 
 class Read(AbstractTaggedModel):

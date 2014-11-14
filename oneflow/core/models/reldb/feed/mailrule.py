@@ -22,7 +22,6 @@ import re
 import logging
 import operator
 
-from collections import OrderedDict
 from positions import PositionField
 
 from django.db import models
@@ -38,7 +37,20 @@ from django.utils.translation import ugettext_lazy as _
 from sparks.django.models import ModelDiffMixin
 
 from ..account.common import OTHER_VALID_HEADERS_lower, BASE_HEADERS
+
 from mail import MailFeed
+from common import (
+    RULES_OPERATIONS,
+
+    MAIL_MATCH_TYPES,
+    MAIL_HEADER_FIELDS,
+    MAIL_RULES_OPERATIONS,
+
+    MAIL_MATCH_TYPE_DEFAULT,
+    MAIL_HEADER_FIELD_DEFAULT,
+    MAIL_GROUP_OPERATION_DEFAULT,
+)
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -54,71 +66,52 @@ class MailFeedRule(ModelDiffMixin):
     If the account is null, the rule will apply to all accounts.
     """
 
+    class Meta:
+        app_label = 'core'
+        verbose_name = _(u'Mail feed rule')
+        verbose_name_plural = _(u'Mail feed rules')
+        ordering = ('group', 'position', )
+
     INPLACEEDIT_PARENTCHAIN = ('mailfeed', )
 
-    HEADER_FIELD_CHOICES = OrderedDict((
-        (u'subject', _(u'Subject')),
-        (u'from', _(u'Sender')),
-        (u'to', _(u'Recipient (To:, Cc: or Bcc:)')),
-        (u'common', _(u'Subject or addresses')),
-
-        # Not ready for that.
-        # (u'body', _(u'Message body')),
-
-        (u'list', _(u'Mailing-list')),
-        (u'other', _(u'Other header (please specify)')),
-    ))
-
-    MATCH_TYPE_CHOICES = OrderedDict((
-        (u'contains', _(u'contains')),
-        (u'ncontains', _(u'does not contain')),
-        (u'starts', _(u'starts with')),
-        (u'nstarts', _(u'does not start with')),
-        (u'ends', _(u'ends with')),
-        (u'nends', _(u'does not end with')),
-        (u'equals', _(u'strictly equals')),
-        (u'nequals', _(u'is not equal to')),
-        (u're_match', _(u'matches regular expression')),
-        (u'nre_match', _(u'does not match reg. expr.')),
-    ))
+    mailfeed = models.ForeignKey(MailFeed, related_name='rules')
 
     group = models.IntegerField(verbose_name=_(u'Rules group'),
                                 null=True, blank=True)
 
-    group_operation = models.CharField(
+    group_operation = models.IntegerField(
         verbose_name=_(u'Rules group operation'),
-        default=MailFeed.RULES_OPERATION_ANY,
-        max_length=10, blank=True, null=True,
-        choices=tuple(MailFeed.RULES_OPERATION_CHOICES.items()),
-        help_text=_(u'Condition between rules of this group.'))
+        default=MAIL_GROUP_OPERATION_DEFAULT, blank=True,
+        choices=MAIL_RULES_OPERATIONS.get_choices(),
+        help_text=_(u'Condition between rules of this group.')
+    )
 
-    mailfeed = models.ForeignKey(MailFeed)
+    header_field = models.IntegerField(
+        verbose_name=_(u'Header'),
+        default=MAIL_HEADER_FIELD_DEFAULT, blank=True,
+        choices=MAIL_HEADER_FIELDS.get_choices(),
+        help_text=_(u"E-mail field on which the match type is performed.")
+    )
 
-    header_field = models.CharField(verbose_name=_(u'Header'),
-                                    max_length=10, default=u'any',
-                                    choices=tuple(HEADER_FIELD_CHOICES.items()),
-                                    help_text=_(u"E-mail field on which the "
-                                                u"match type is applied."))
-    other_header = models.CharField(verbose_name=_(u'Other header'),
-                                    max_length=255, null=True, blank=True,
-                                    help_text=_(u"Specify here if you chose "
-                                                u"“Other header” in previous "
-                                                u"field."))
-    match_type = models.CharField(verbose_name=_(u'Match type'),
-                                  max_length=10, default=u'contains',
-                                  choices=tuple(MATCH_TYPE_CHOICES.items()),
-                                  help_text=_(u"Operation applied on the "
-                                              u"header to compare with match "
-                                              u"value."))
-    match_case = models.BooleanField(verbose_name=_(u'Match case'),
-                                     default=False, blank=True,
-                                     help_text=_(u"Do we care about uppercase "
-                                                 u"and lowercase characters?"))
-    match_value = models.CharField(verbose_name=_(u'Match value'),
-                                   default=u'', max_length=1024,
-                                   help_text=_(u"Examples: “Tweet de”, "
-                                               u"“Google Alert:”. Can be "
-                                               u"any text."))
+    match_type = models.IntegerField(
+        verbose_name=_(u'Match type'),
+        default=MAIL_MATCH_TYPE_DEFAULT, blank=True,
+        choices=MAIL_MATCH_TYPES.get_choices(),
+        help_text=_(u"Operation applied on the header "
+                    u"to compare with match value.")
+    )
+
+    match_case = models.BooleanField(
+        verbose_name=_(u'Match case'),
+        default=False, blank=True,
+        help_text=_(u"Do we care about uppercase and lowercase characters?")
+    )
+
+    match_value = models.CharField(
+        verbose_name=_(u'Match value'),
+        max_length=1024, null=True, blank=True,
+        help_text=_(u"Examples: “Tweet from”, “Google Alert:”. "
+                    u"Can be any text."))
     #
     # De-activated, considered too complex to handle.
     # This information is already in the mailfeed.
@@ -138,17 +131,25 @@ class MailFeedRule(ModelDiffMixin):
     #                 u'action defined at the feed level.'))
     #
 
+    other_header = models.CharField(
+        verbose_name=_(u'Other header'),
+        max_length=255, null=True, blank=True,
+        help_text=_(u"Specify here if you chose “Other header” "
+                    u"in previous field.")
+    )
+
     # Used to have many times the same rule in different feeds
     clone_of = models.ForeignKey('MailFeedRule', null=True, blank=True)
+
     position = PositionField(collection=('mailfeed', 'group', ),
                              default=0, blank=True)
+
     is_valid = models.BooleanField(verbose_name=_(u'Checked and valid'),
                                    default=True, blank=True)
-    check_error = models.CharField(max_length=255, default=u'', blank=True)
 
-    class Meta:
-        app_label = 'core'
-        ordering = ('group', 'position', )
+    check_error = models.CharField(max_length=255, null=True, blank=True)
+
+    # —————————————————————————————————————————————————————————————— Properties
 
     @property
     def operation(self):
@@ -179,7 +180,8 @@ class MailFeedRule(ModelDiffMixin):
             def nends(a, b):
                 return not a.endswith(b)
 
-            if self.match_type in (u're_match', u'nre_match'):
+            if self.match_type in (MAIL_MATCH_TYPES.RE_MATCH,
+                                   MAIL_MATCH_TYPES.NRE_MATCH):
                 # The .lower() should work also with the RE. It
                 # should even be faster than a standard /I match().
                 compiled_re = re.compile(self.match_value
@@ -195,16 +197,16 @@ class MailFeedRule(ModelDiffMixin):
                 return not re_match(a, b)
 
             OPERATIONS = {
-                u'contains': operator.contains,
-                u'ncontains': ncontains,
-                u'starts': mymethodcaller('startswith'),
-                u'nstarts': nstarts,
-                u'ends': mymethodcaller('endswith'),
-                u'nends': nends,
-                u'equals': operator.eq,
-                u'nequals': operator.ne,
-                u're_match': re.match,
-                u'nre_match': nre_match,
+                MAIL_MATCH_TYPES.CONTAINS: operator.contains,
+                MAIL_MATCH_TYPES.NCONTAINS: ncontains,
+                MAIL_MATCH_TYPES.STARTS: mymethodcaller('startswith'),
+                MAIL_MATCH_TYPES.NSTARTS: nstarts,
+                MAIL_MATCH_TYPES.ENDS: mymethodcaller('endswith'),
+                MAIL_MATCH_TYPES.NENDS: nends,
+                MAIL_MATCH_TYPES.EQUALS: operator.eq,
+                MAIL_MATCH_TYPES.NEQUALS: operator.ne,
+                MAIL_MATCH_TYPES.RE_MATCH: re.match,
+                MAIL_MATCH_TYPES.NRE_MATCH: nre_match,
             }
 
             self._operation_ = OPERATIONS[self.match_type]
@@ -222,8 +224,8 @@ class MailFeedRule(ModelDiffMixin):
             _(u'{0} {1} “{2}”').format(
                 self.other_header
                 if self.header_field == u'other'
-                else self.HEADER_FIELD_CHOICES[self.header_field],
-                self.MATCH_TYPE_CHOICES[self.match_type],
+                else MAIL_HEADER_FIELDS[self.header_field],
+                MAIL_MATCH_TYPES[self.match_type],
                 self.match_value,
                 # MailFeed.MATCH_ACTION_CHOICES.get(self.match_action,
                 #                                   _(u'feed default')),
@@ -267,7 +269,7 @@ class MailFeedRule(ModelDiffMixin):
 
         is_valid = True
 
-        if self.header_field == u'other':
+        if self.header_field == MAIL_HEADER_FIELDS.OTHER:
             other = self.other_header
 
             if other.strip().endswith(':'):
@@ -280,7 +282,8 @@ class MailFeedRule(ModelDiffMixin):
                                      u'to find a list of valid headers. '
                                      u'Perhaps just a typo?').format(other)
 
-        if self.match_type in (u're_match', u'nre_match'):
+        if self.match_type in (MAIL_MATCH_TYPES.RE_MATCH,
+                               MAIL_MATCH_TYPES.NRE_MATCH):
             try:
                 re.compile(self.match_value)
 
@@ -311,10 +314,10 @@ class MailFeedRule(ModelDiffMixin):
     def match_message_in_group(self, message):
         """ Return True if our rule group says so. """
 
-        operation_any = self.group_operation == MailFeed.RULES_OPERATION_ANY
+        operation_any = self.group_operation == RULES_OPERATIONS.ANY
         operation_all = not operation_any
 
-        rules_group = self.mailfeed.mailfeedrule_set.filter(group=self.group)
+        rules_group = self.mailfeed.rules.filter(group=self.group)
 
         for rule in rules_group:
 
