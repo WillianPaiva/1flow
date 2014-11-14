@@ -45,6 +45,8 @@ from sync import sync_all_nodes  # NOQA
 # Import this one, so that celery can find it,
 # Else it complains about a missing import.
 from checks import *  # NOQA
+from reprocess import *  # NOQA
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -99,7 +101,7 @@ def refresh_all_feeds(limit=None, force=False):
     feeds = BaseFeed.objects.filter(is_active=True, is_internal=False)
 
     if limit:
-        feeds = feeds.limit(limit)
+        feeds = feeds[:limit]
 
     with benchmark('refresh_all_feeds()'):
 
