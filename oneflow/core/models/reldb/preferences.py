@@ -463,7 +463,7 @@ def User_check_preferences_method(self, extended_check=False,
     try:
         preferences = self.preferences
 
-    except Preferences.DoestNotExist:
+    except Preferences.DoesNotExist:
         preferences = Preferences(user=self)
         preferences.save()
 
