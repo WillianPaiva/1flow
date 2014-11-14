@@ -573,8 +573,7 @@ def global_orphaned_checker(limit=None, force=False, verbose=False,
     if limit is None:
         limit = 0
 
-    orphaned_items    = Article.objects.filter(
-        is_orphaned=True).prefetch_related('feeds')
+    orphaned_items       = Article.objects.orphaned().master()
     orphaned_items_count = orphaned_items.count()
     processed_orphans    = 0
     changed_orphans      = 0
