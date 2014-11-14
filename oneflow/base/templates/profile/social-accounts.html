@@ -2,7 +2,7 @@
 
 <h1 class="user-profile">&nbsp;<br />{% trans "Social accounts" %}</h1>
 
-{% if social_auth.associated %}
+{% if backends.associated %}
 
   <h3>{% trans "Currently associated" %}
   </h3>
@@ -24,27 +24,27 @@ find back the spaceport.
   </p>
 
   <ul class="social-auth">
-    {% for backend in social_auth.associated %}
+    {% for backend in backends.associated %}
       {% if backend.provider == "google-oauth2" %}
         {% captureas backend_name %}Google{% endcaptureas %}
-        {% captureas backend_full_name %}{{backend|slice:'-6'}}{% endcaptureas %}
+        {% captureas backend_full_name %}{{ backend.provider|slice:'-7'}}{% endcaptureas %}
 
       {% else %}
         {% captureas backend_name %}{{ backend.name }}{% endcaptureas %}
-        {% captureas backend_full_name %}{{ backend }}{% endcaptureas %}
+        {% captureas backend_full_name %}{{ backend.provider }}{% endcaptureas %}
 
       {% endif %}
 
       {% if social_count == 1 %}
         <li><a class="btn btn-danger btn-block btn-huge" href="#" disabled="disabled"
           title="{% blocktrans %}Cannot disconnect from {{ backend_name }}{% endblocktrans %}"
-          ><i class="icon-signout"></i> {{backend_full_name|title}}</a></li>
+          ><i class="icon-signout"></i> {{ backend_full_name|title }}</a></li>
 
         {% else %}
           <li><a class="btn btn-warning btn-block btn-huge"
-            href="{% url 'socialauth_disconnect_individual' backend.provider backend.id %}?next={% absolute 'profile' %}"
+            href="{% url 'social:disconnect_individual' backend.provider backend.id %}?next={% absolute 'profile' %}"
             title="{% blocktrans %}Disconnect from {{ backend_name }}{% endblocktrans %}"
-            ><i class="icon-signout"></i> {{backend_full_name|title}}</a></li>
+            ><i class="icon-signout"></i> {{ backend_full_name|title }}</a></li>
 
         {% endif %}
 

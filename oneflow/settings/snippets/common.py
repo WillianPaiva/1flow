@@ -388,6 +388,7 @@ MIDDLEWARE_CLASSES = (
     ('raven.contrib.django.raven_compat.middleware.'
         'SentryResponseErrorIdMiddleware'),
     # 'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',
+
     'django.middleware.cache.UpdateCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
@@ -400,6 +401,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'async_messages.middleware.AsyncMiddleware',
+
+    'social.apps.django_app.middleware.SocialAuthExceptionMiddleware',
 
     # account's MW must come after 'auth', else they crash.
     #
@@ -449,10 +452,9 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'account.context_processors.account',
     'django.contrib.messages.context_processors.messages',
 
-    # Only one of them is needed.
-    # 'social_auth.context_processors.social_auth_by_name_backends',
-    'social_auth.context_processors.social_auth_backends',
-    # 'social_auth.context_processors.social_auth_login_redirect',
+    # Social auth
+    'social.apps.django_app.context_processors.backends',
+    'social.apps.django_app.context_processors.login_redirect',
 
     # `base` processors
     'oneflow.base.context_processors.oneflow_version',
@@ -539,7 +541,7 @@ INSTALLED_APPS = [
     # OMG: order matters! as DSA depends on user model,
     # it must come after 'oneflow.base' wich contains it.
     # Without this, tests fail to create database!
-    'social_auth',
+    'social.apps.django_app.default',
     'tastypie',
     'tastypie_mongoengine',
 ]
@@ -684,10 +686,15 @@ API_LIMIT_PER_PAGE = 10
 AUTHENTICATION_BACKENDS = (
     # WARNING: when activating Twitter, we MUST implement the email pipeline,
     # else the social-only registration will fail because user has no mail.
-    # 'social_auth.backends.google.GoogleOAuthBackend',
-    'social_auth.backends.google.GoogleOAuth2Backend',
-    'social_auth.backends.twitter.TwitterBackend',
-    'social_auth.backends.contrib.github.GithubBackend',
+
+    # 'social.backends.open_id.OpenIdAuth',
+    'social.backends.twitter.TwitterOAuth',
+    'social.backends.github.GithubOAuth2',
+    # 'social.backends.google.GoogleOpenId',
+    'social.backends.google.GoogleOAuth2',
+    # 'social.backends.google.GoogleOAuth',
+    'social.backends.facebook.FacebookOAuth2',
+
     # 'social_auth.backends.facebook.FacebookBackend',
     # 'social_auth.backends.google.GoogleBackend',
     # 'social_auth.backends.OpenIDBackend',
@@ -707,71 +714,6 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
-# ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••• Social Auth
-# See snippets/api_keys_*.py for API keys.
-
-
-from libgreader.auth import OAuth2Method
-
-# Get the google reader scope.
-GOOGLE_OAUTH_EXTRA_SCOPE = OAuth2Method.SCOPE
-
-# We need this to be able to refresh tokens
-# See http://stackoverflow.com/a/10857806/654755 for notes.
-GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {'access_type': 'offline'}
-
-GOOGLE_OAUTH2_CONTACTS_SCOPE = 'https://www.google.com/m8/feeds'
-GOOGLE_OAUTH2_CONTACTS_REDIRECT_URI = reverse_lazy('import_contacts_authorized')
-
-# See http://django-social-auth.readthedocs.org/en/latest/configuration.html#urls-options # NOQA
-# for social_auth specific URLs.
-LOGIN_URL          = reverse_lazy('signin')
-LOGOUT_URL         = reverse_lazy('signout')
-LOGIN_REDIRECT_URL = reverse_lazy('home')
-LOGIN_ERROR_URL    = reverse_lazy('signin_error')
-# SOCIAL_AUTH_BACKEND_ERROR_URL = reverse_lazy('signin_error')
-
-# See SOCIAL_AUTH_USER_MODEL earlier in this file.
-# SOCIAL_AUTH_SANITIZE_REDIRECTS = False
-# SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email',]
-SOCIAL_AUTH_EXTRA_DATA = True
-SOCIAL_AUTH_SESSION_EXPIRATION = False
-# SOCIAL_AUTH_RAISE_EXCEPTIONS = True
-
-SOCIAL_AUTH_PIPELINE = (
-    'social_auth.backends.pipeline.social.social_auth_user',
-    #
-    # WARNING: `associate_by_email` is safe unless we use backends which
-    #       don't check email validity. We will have to implement email
-    #       hash_code checking when we activate our own account system.
-    #
-    'social_auth.backends.pipeline.associate.associate_by_email',
-    'social_auth.backends.pipeline.user.get_username',
-    'social_auth.backends.pipeline.user.create_user',
-    'social_auth.backends.pipeline.social.associate_user',
-    'social_auth.backends.pipeline.social.load_extra_data',
-    'social_auth.backends.pipeline.user.update_user_details',
-
-    # 'oneflow.core.social_pipeline.check_1flow_requirements',
-    'sparks.django.social_pipeline.get_social_avatar',
-
-    # Given the current configuration, we do allow any user to register,
-    # or not. In both cases, we create the account, but will deactivate
-    # it if registration is disabled.
-    'sparks.django.social_pipeline.throttle_new_user_accounts',
-)
-
-# GITHUB_EXTRA_DATA = [
-#     ('avatar_url', 'avatar'),
-#     ('login', 'login'),
-# ]
-
-SOCIAL_AUTH_FACEBOOK_SCOPE = [
-    'email',
-    'user_friends',
-    'user_birthday',
-    'friends_location',
-]
 # —————————————————————————————————————————————————————————————— 1flow settings
 
 

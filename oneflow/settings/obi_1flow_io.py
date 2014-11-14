@@ -31,6 +31,8 @@ include_snippets(
         '00_production',
         '1flow_io_pre_common',
         'common',
+        'social_auth',
+
         '1flow_io_post_common',
         'constance',
         'api_keys',
