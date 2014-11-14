@@ -218,6 +218,9 @@ class Article(BaseItem, UrlItem, ContentItem):
             the same feed. If more than one feed given, only returns ``True``
             or ``False`` (mutualized state is not checked). """
 
+        cur_article = None
+        new_article = None
+
         if url is None:
             # We have to build a reliable orphaned URL, because orphaned
             # articles are often duplicates. RSS feeds serve us many times
@@ -226,20 +229,34 @@ class Article(BaseItem, UrlItem, ContentItem):
             # facts, where the content is in the title, and there is no URL.
             # We have 860k+ items, out of 1k real facts… Doomed.
             url = ARTICLE_ORPHANED_BASE + generate_orphaned_hash(title, feeds)
-            article_is_orphaned = True
+
+            try:
+                cur_article = cls.objects.get(url=url)
+
+            except cls.DoesNotExist:
+                new_article = cls(name=title, url=url,
+                                  is_orphaned=True,
+                                  # Skip absolutization, it's useless.
+                                  url_absolute=True)
+                new_article.save()
+
+                with statsd.pipeline() as spipe:
+                    spipe.gauge('articles.counts.orphaned', 1, delta=True)
+                    spipe.gauge('articles.counts.absolutes', 1, delta=True)
+                    # spipe.gauge('articles.counts.absolutes', 1, delta=True)
 
         else:
             url = clean_url(url)
-            article_is_orphaned = False
 
-        new_article = cls(name=title, url=url)
+            new_article = cls(name=title, url=url)
 
-        try:
-            new_article.save()
+            try:
+                new_article.save()
 
-        except IntegrityError:
-            cur_article = cls.objects.get(url=url)
+            except IntegrityError:
+                cur_article = cls.objects.get(url=url)
 
+        if cur_article:
             created_retval = False
 
             if len(feeds) == 1 and feeds[0] not in cur_article.feeds.all():
@@ -253,6 +270,7 @@ class Article(BaseItem, UrlItem, ContentItem):
                             title, url, u', '.join(unicode(f) for f in feeds))
 
             else:
+                # No statsd, because we didn't create any record in database.
                 LOGGER.info(u'Duplicate article “%s” (url: %s) in feed(s) %s.',
                             title, url, u', '.join(unicode(f) for f in feeds))
 
@@ -268,23 +286,12 @@ class Article(BaseItem, UrlItem, ContentItem):
             for key, value in kwargs.items():
                 setattr(new_article, key, value)
 
-        if article_is_orphaned:
-            need_save = True
-            new_article.is_orphaned = True
-
-            # Don't count the article as "bad" because it has a non-absolute
-            # URL. In fact, its 1flow URL is completely good (even if it's not
-            # yet accessible from outside).
-            new_article.url_absolute = True
-
-            statsd.gauge('articles.counts.orphaned', 1, delta=True)
-
         if need_save:
             # Need to save because we will reload just after.
             new_article.save()
 
         LOGGER.info(u'Created %sarticle %s in feed(s) %s.', u'orphaned '
-                    if article_is_orphaned else u'', new_article,
+                    if new_article.is_orphaned else u'', new_article,
                     u', '.join(unicode(f) for f in feeds))
 
         # Tags & feeds are ManyToMany, they
