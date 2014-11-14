@@ -37,7 +37,7 @@ from oneflow.base.utils.dateutils import naturaldelta, benchmark
 LOGGER = logging.getLogger(__name__)
 
 
-@task(queue='longtasks')
+@task(name='oneflow.core.tasks.reprocess_failed_articles', queue='check')
 def reprocess_failed_articles(failed=None, expiry=None,
                               limit=None, force=False):
     u""" Reprocess articles that failed absolutization.
@@ -75,7 +75,7 @@ def reprocess_failed_articles(failed=None, expiry=None,
 
     failed_count = failed.count()
 
-    with benchmark((u'Reprocess_failed_articles(expiry=%s) → %s '
+    with benchmark((u'Reprocess_failed_articles(expiry=%s): %s '
                    u'post_create() tasks chains relaunched.')
                    % (naturaldelta(expiry), failed_count)):
 
@@ -97,7 +97,8 @@ def reprocess_failed_articles(failed=None, expiry=None,
             pass
 
 
-@task(queue='longtasks')
+@task(name='oneflow.core.tasks.reprocess_failed_articles_pass2',
+      queue='check')
 def reprocess_failed_articles_pass2(limit=None, force=False):
     """ Run reprocess_failed_articles() on articles from yesterday. """
 
@@ -108,7 +109,8 @@ def reprocess_failed_articles_pass2(limit=None, force=False):
                               limit=limit, force=force)
 
 
-@task(queue='longtasks')
+@task(name='oneflow.core.tasks.reprocess_failed_articles_pass3',
+      queue='check')
 def reprocess_failed_articles_pass3(limit=None, force=False):
     """ Run reprocess_failed_articles() on articles from last week. """
 
