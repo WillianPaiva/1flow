@@ -405,6 +405,22 @@ def article_post_save(instance, **kwargs):
 
     if kwargs.get('created', False):
 
+        with statsd.pipeline() as spipe:
+            spipe.gauge('articles.counts.total', 1, delta=True)
+            spipe.gauge('articles.counts.empty', 1, delta=True)
+
+            if article.is_orphaned:
+                spipe.gauge('articles.counts.orphaned', 1, delta=True)
+
+            if article.duplicate_of:
+                spipe.gauge('articles.counts.duplicates', 1, delta=True)
+
+            if article.url_error:
+                spipe.gauge('articles.counts.url_error', 1, delta=True)
+
+            if article.content_error:
+                spipe.gauge('articles.counts.content_error', 1, delta=True)
+
         # Some articles are created "already orphaned" or duplicates.
         # In the archive database this is more immediate than looking
         # up the database name.
