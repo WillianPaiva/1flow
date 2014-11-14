@@ -210,7 +210,7 @@ class UrlItem(models.Model):
 
         if self.url_error:
             if force:
-                self.url_error = u''
+                self.url_error = None
 
                 if commit:
                     self.save()
@@ -258,7 +258,9 @@ class UrlItem(models.Model):
 
             except requests.ConnectionError as e:
                 statsd.gauge('articles.counts.url_errors', 1, delta=True)
-                self.url_error = str(e)
+                message = u'Connection error while absolutizing “%s”: %s'
+
+                self.url_error = message % (requests_response.url, str(e))
                 self.save()
 
                 LOGGER.error(u'Connection failed while absolutizing URL or %s.',
@@ -267,15 +269,24 @@ class UrlItem(models.Model):
 
         if not requests_response.ok or requests_response.status_code != 200:
 
-            message = u'HTTP Error %s (%s) while resolving %s.'
-            args = (requests_response.status_code, requests_response.reason,
-                    requests_response.url)
+            message = u'HTTP Error %s while absolutizing “%s”: %s'
+            args = (
+                requests_response.status_code,
+                requests_response.url,
+                requests_response.reason
+            )
 
             with statsd.pipeline() as spipe:
                 # spipe.gauge('articles.counts.orphaned', 1, delta=True)
                 spipe.gauge('articles.counts.url_errors', 1, delta=True)
 
-            self.is_orphaned  = True
+                if requests_response.status_code in (404, ):
+                    self.is_orphaned = True
+
+                    # This is not handled by the post_save()
+                    # which acts only at article creation.
+                    spipe.gauge('articles.counts.orphaned', 1, delta=True)
+
             self.url_error = message % args
             self.save()
 
