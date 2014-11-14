@@ -349,7 +349,7 @@ class Subscription(ModelDiffMixin, AbstractTaggedModel):
 
             # This will include the current subscription,
             # all its folders & the user global counters.
-            read.update_cached_descriptors(only=('all', 'unread', ))
+            read.update_cached_descriptors(update_only=('all', 'unread', ))
 
         # If the item was already there and fetched (mutualized from
         # another feed, for example), activate the read immediately.
