@@ -30,7 +30,7 @@ from xml.sax import SAXParseException
 
 from django.conf import settings
 from django.db import models
-from django.db.models.signals import pre_save, post_save  # , pre_delete
+from django.db.models.signals import pre_save, post_save, pre_delete
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import URLValidator
 
@@ -635,8 +635,16 @@ def rssatomfeed_post_save(instance, **kwargs):
     statsd.gauge('feeds.counts.total', 1, delta=True)
     statsd.gauge('feeds.counts.rssatom', 1, delta=True)
 
+
+def rssatomfeed_pre_delete(instance, **kwargs):
+
+    statsd.gauge('feeds.counts.total', -1, delta=True)
+    statsd.gauge('feeds.counts.rssatom', -1, delta=True)
+
+
 # Because http://stackoverflow.com/a/24624838/654755 doesn't work.
 pre_save.connect(basefeed_pre_save, sender=RssAtomFeed)
 
 pre_save.connect(rssatomfeed_pre_save, sender=RssAtomFeed)
 post_save.connect(rssatomfeed_post_save, sender=RssAtomFeed)
+pre_delete.connect(rssatomfeed_pre_delete, sender=RssAtomFeed)
