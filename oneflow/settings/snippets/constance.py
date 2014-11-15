@@ -255,6 +255,12 @@ CONSTANCE_CONFIG.update({
                               u'a feed can meet before beiing automatically '
                               u'closed.')),
 
+    'FEED_GLOBAL_REFRESH_INTERVAL': (2, ugettext(u'Interval for the '
+                                     u'refresh_all_feeds() global task. '
+                                    u'expressed in minutes. Celery beat '
+                                    u'launches the task every minute. Tuning '
+                                    u'this value allows dynamic adaptation.')),
+
     'FEED_FETCH_DEFAULT_INTERVAL': (43200, ugettext(u'Default feed fetch '
                                     u'interval in seconds. You can tune the '
                                     u'interval for each feed after creation.')),

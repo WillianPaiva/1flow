@@ -50,6 +50,7 @@ ConstanceAdmin.fieldsets = (
     (_(u'Worker control & maintenance mode'), {
         'classes': ('grp-collapse grp-open', ),
         'fields': (
+            'FEED_GLOBAL_REFRESH_INTERVAL',
             'FEED_FETCH_DISABLED',
             'FEED_FETCH_RSSATOM_DISABLED',
             'FEED_FETCH_EMAIL_DISABLED',

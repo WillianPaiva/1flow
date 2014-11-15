@@ -805,7 +805,3 @@ IPYTHON_ARGUMENTS = [
     '--NotebookApp.open_browser=False',
     # '--debug',
 ]
-
-# —————————————————————————————————————————————————————————————— 1flow settings
-
-FEED_GLOBAL_REFRESH_DELAY = 5  # expressed in minute(s)

@@ -148,15 +148,12 @@ CELERYBEAT_SCHEDULE = {
 
     'refresh-all-feeds': {
         'task': 'oneflow.core.tasks.refresh_all_feeds',
-        'schedule': crontab(minute='*{0}'.format(
-            u'' if FEED_GLOBAL_REFRESH_DELAY == 1 else u'/{0}'.format(
-                FEED_GLOBAL_REFRESH_DELAY))),
+        'schedule': crontab(minute='*'),
     },
 
     'refresh-all-mongo-feeds': {
         'task': 'oneflow.core.tasks.refresh_all_mongo_feeds',
-        'schedule': crontab(minute='*/{0}'.format(
-            FEED_GLOBAL_REFRESH_DELAY * 3)),
+        'schedule': crontab(minute='*'),
     },
 
     'refresh-all-mailaccounts': {
