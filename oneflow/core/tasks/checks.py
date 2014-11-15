@@ -395,7 +395,12 @@ def global_reads_checker(limit=None, force=False, verbose=False,
                     changed_reads_count += 1
                     continue
 
-                article = read.item
+                try:
+                    article = read.item
+
+                except:
+                    LOGGER.critical(u'Could not get read.item for %s', read)
+                    continue
 
                 if extended_check:
                     try:
