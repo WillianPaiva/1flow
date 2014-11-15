@@ -242,7 +242,7 @@ class DocumentHelperMixin(object):
         duplicate.duplicate_of = self
         duplicate.save()
 
-        statsd.gauge('%s.counts.duplicates' % lower_plural, 1, delta=True)
+        statsd.gauge('mongo.%s.counts.duplicates' % lower_plural, 1, delta=True)
 
         try:
             # Having tasks not as methods because of Celery bugs forces

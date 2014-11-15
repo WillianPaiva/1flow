@@ -174,6 +174,6 @@ class WebSite(Document, DocumentHelperMixin):
 
             self.save()
 
-            statsd.gauge('websites.counts.total', 1, delta=True)
+            statsd.gauge('mongo.websites.counts.total', 1, delta=True)
 
 register_task_method(WebSite, WebSite.post_create_task, globals(), queue=u'high')

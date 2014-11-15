@@ -808,4 +808,4 @@ IPYTHON_ARGUMENTS = [
 
 # —————————————————————————————————————————————————————————————— 1flow settings
 
-FEED_GLOBAL_REFRESH_DELAY = 1  # expressed in minute(s)
+FEED_GLOBAL_REFRESH_DELAY = 5  # expressed in minute(s)

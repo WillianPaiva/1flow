@@ -1207,11 +1207,11 @@ class Feed(Document, DocumentHelperMixin):
         if new_articles == duplicates == mutualized == 0:
 
             with statsd.pipeline() as spipe:
-                spipe.incr('feeds.refresh.fetch.global.unchanged')
+                spipe.incr('mongo.feeds.refresh.fetch.global.unchanged')
 
         else:
             with statsd.pipeline() as spipe:
-                spipe.incr('feeds.refresh.fetch.global.updated')
+                spipe.incr('mongo.feeds.refresh.fetch.global.updated')
 
         if not force:
             # forcing the refresh is most often triggered by admins
@@ -1235,9 +1235,9 @@ class Feed(Document, DocumentHelperMixin):
                 self.fetch_interval = new_interval
 
         with statsd.pipeline() as spipe:
-            spipe.incr('feeds.refresh.global.fetched', new_articles)
-            spipe.incr('feeds.refresh.global.duplicates', duplicates)
-            spipe.incr('feeds.refresh.global.mutualized', mutualized)
+            spipe.incr('mongo.feeds.refresh.global.fetched', new_articles)
+            spipe.incr('mongo.feeds.refresh.global.duplicates', duplicates)
+            spipe.incr('mongo.feeds.refresh.global.mutualized', mutualized)
 
         # Everything went fine, be sure to reset the "error counter".
         self.errors[:] = []
@@ -1246,7 +1246,7 @@ class Feed(Document, DocumentHelperMixin):
         self.save()
 
         with statsd.pipeline() as spipe:
-            spipe.incr('feeds.refresh.fetch.global.done')
+            spipe.incr('mongo.feeds.refresh.fetch.global.done')
 
         # As the last_fetch is now up-to-date, we can release the fetch lock.
         # If any other refresh job comes, it will check last_fetch and will

@@ -581,7 +581,7 @@ class Article(Document, DocumentHelperMixin):
                                                  headers=REQUEST_BASE_HEADERS)
 
             except requests.ConnectionError, e:
-                statsd.gauge('articles.counts.url_errors', 1, delta=True)
+                statsd.gauge('mongo.articles.counts.url_errors', 1, delta=True)
                 self.url_error = str(e)
                 self.save()
 
@@ -596,8 +596,8 @@ class Article(Document, DocumentHelperMixin):
                     requests_response.url)
 
             with statsd.pipeline() as spipe:
-                spipe.gauge('articles.counts.orphaned', 1, delta=True)
-                spipe.gauge('articles.counts.url_errors', 1, delta=True)
+                spipe.gauge('mongo.articles.counts.orphaned', 1, delta=True)
+                spipe.gauge('mongo.articles.counts.url_errors', 1, delta=True)
 
             self.orphaned  = True
             self.url_error = message % args
@@ -627,11 +627,11 @@ class Article(Document, DocumentHelperMixin):
             old_url = self.url
 
             if self.url_error:
-                statsd.gauge('articles.counts.url_errors', -1, delta=True)
+                statsd.gauge('mongo.articles.counts.url_errors', -1, delta=True)
 
             # Even if we are a duplicate, we came until here and everything
             # went fine. We won't need to lookup again the absolute URL.
-            statsd.gauge('articles.counts.absolutes', 1, delta=True)
+            statsd.gauge('mongo.articles.counts.absolutes', 1, delta=True)
             self.url_absolute = True
             self.url_error    = u''
 
@@ -661,9 +661,9 @@ class Article(Document, DocumentHelperMixin):
         else:
             # Don't do the job twice.
             if self.url_error:
-                statsd.gauge('articles.counts.url_errors', -1, delta=True)
+                statsd.gauge('mongo.articles.counts.url_errors', -1, delta=True)
 
-            statsd.gauge('articles.counts.absolutes', 1, delta=True)
+            statsd.gauge('mongo.articles.counts.absolutes', 1, delta=True)
             self.update(set__url_absolute=True, set__url_error='')
             self.safe_reload()
 
@@ -771,7 +771,7 @@ class Article(Document, DocumentHelperMixin):
                             self.content_type = CONTENT_TYPES.MARKDOWN
                             self.save()
 
-                            statsd.gauge('articles.counts.markdown',
+                            statsd.gauge('mongo.articles.counts.markdown',
                                          1, delta=True)
 
                         elif detail_type == 'text/html':
@@ -779,7 +779,7 @@ class Article(Document, DocumentHelperMixin):
                             self.content_type = CONTENT_TYPES.HTML
                             self.save()
 
-                            statsd.gauge('articles.counts.html',
+                            statsd.gauge('mongo.articles.counts.html',
                                          1, delta=True)
 
                             self.convert_to_markdown()
@@ -945,7 +945,7 @@ class Article(Document, DocumentHelperMixin):
                 new_article.url = \
                     ARTICLE_ORPHANED_BASE + unicode(new_article.id)
                 new_article.orphaned = True
-                statsd.gauge('articles.counts.orphaned', 1, delta=True)
+                statsd.gauge('mongo.articles.counts.orphaned', 1, delta=True)
 
             if need_save:
                 # Need to save because we will reload just after.
@@ -975,7 +975,7 @@ class Article(Document, DocumentHelperMixin):
 
         if self.content_error:
             if force:
-                statsd.gauge('articles.counts.content_errors', -1, delta=True)
+                statsd.gauge('mongo.articles.counts.content_errors', -1, delta=True)
                 self.content_error = u''
 
                 if commit:
@@ -1026,7 +1026,7 @@ class Article(Document, DocumentHelperMixin):
             return
 
         except SoftTimeLimitExceeded, e:
-            statsd.gauge('articles.counts.content_errors', 1, delta=True)
+            statsd.gauge('mongo.articles.counts.content_errors', 1, delta=True)
             self.content_error = str(e)
             self.save()
 
@@ -1034,7 +1034,7 @@ class Article(Document, DocumentHelperMixin):
             return
 
         except NotTextHtmlException, e:
-            statsd.gauge('articles.counts.content_errors', 1, delta=True)
+            statsd.gauge('mongo.articles.counts.content_errors', 1, delta=True)
             self.content_error = str(e)
             self.save()
 
@@ -1042,7 +1042,7 @@ class Article(Document, DocumentHelperMixin):
             return
 
         except requests.ConnectionError, e:
-            statsd.gauge('articles.counts.content_errors', 1, delta=True)
+            statsd.gauge('mongo.articles.counts.content_errors', 1, delta=True)
             self.content_error = str(e)
             self.save()
 
@@ -1051,7 +1051,7 @@ class Article(Document, DocumentHelperMixin):
 
         except Exception, e:
             # TODO: except urllib2.error: retry with longer delay.
-            statsd.gauge('articles.counts.content_errors', 1, delta=True)
+            statsd.gauge('mongo.articles.counts.content_errors', 1, delta=True)
             self.content_error = str(e)
             self.save()
 
@@ -1557,15 +1557,15 @@ class Article(Document, DocumentHelperMixin):
             self.content_type = CONTENT_TYPES.HTML
 
             if self.content_error:
-                statsd.gauge('articles.counts.content_errors', -1, delta=True)
+                statsd.gauge('mongo.articles.counts.content_errors', -1, delta=True)
                 self.content_error = u''
 
             if commit:
                 self.save()
 
             with statsd.pipeline() as spipe:
-                spipe.gauge('articles.counts.empty', -1, delta=True)
-                spipe.gauge('articles.counts.html', 1, delta=True)
+                spipe.gauge('mongo.articles.counts.empty', -1, delta=True)
+                spipe.gauge('mongo.articles.counts.html', 1, delta=True)
 
         #
         # TODO: parse HTML links to find other 1flow articles and convert
@@ -1596,7 +1596,7 @@ class Article(Document, DocumentHelperMixin):
                 return
 
             else:
-                statsd.gauge('articles.counts.markdown', -1, delta=True)
+                statsd.gauge('mongo.articles.counts.markdown', -1, delta=True)
 
         elif self.content_type != CONTENT_TYPES.HTML:
             LOGGER.warning(u'Article %s cannot be converted to Markdown, '
@@ -1620,7 +1620,7 @@ class Article(Document, DocumentHelperMixin):
             self.content = md_converter.handle(self.content)
 
         except Exception, e:
-            statsd.gauge('articles.counts.content_errors', 1, delta=True)
+            statsd.gauge('mongo.articles.counts.content_errors', 1, delta=True)
 
             self.content_error = str(e)
             self.save()
@@ -1631,7 +1631,7 @@ class Article(Document, DocumentHelperMixin):
         self.content_type = CONTENT_TYPES.MARKDOWN
 
         if self.content_error:
-            statsd.gauge('articles.counts.content_errors', -1, delta=True)
+            statsd.gauge('mongo.articles.counts.content_errors', -1, delta=True)
             self.content_error = u''
 
         #
@@ -1643,8 +1643,8 @@ class Article(Document, DocumentHelperMixin):
             self.save()
 
         with statsd.pipeline() as spipe:
-            spipe.gauge('articles.counts.html', -1, delta=True)
-            spipe.gauge('articles.counts.markdown', 1, delta=True)
+            spipe.gauge('mongo.articles.counts.html', -1, delta=True)
+            spipe.gauge('mongo.articles.counts.markdown', 1, delta=True)
 
         if config.ARTICLE_FETCHING_DEBUG:
             LOGGER.info(u'————————— #%s Markdown %s —————————'
@@ -1753,8 +1753,8 @@ class Article(Document, DocumentHelperMixin):
             self.save()
 
             with statsd.pipeline() as spipe:
-                spipe.gauge('articles.counts.total', 1, delta=True)
-                spipe.gauge('articles.counts.empty', 1, delta=True)
+                spipe.gauge('mongo.articles.counts.total', 1, delta=True)
+                spipe.gauge('mongo.articles.counts.empty', 1, delta=True)
 
         post_absolutize_chain = tasks_chain(
             # HEADS UP: both subtasks are immutable, we just

@@ -97,7 +97,7 @@ class Author(Document, DocumentHelperMixin):
     def post_create_task(self):
         """ Method meant to be run from a celery task. """
 
-        statsd.gauge('authors.counts.total', 1, delta=True)
+        statsd.gauge('mongo.authors.counts.total', 1, delta=True)
 
     @classmethod
     def get_authors_from_feedparser_article(cls, feedparser_article,
