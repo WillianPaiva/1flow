@@ -90,7 +90,7 @@ def subscription_bookmarked_articles_count_default(subscription):
     return subscription.reads.filter(is_bookmarked=True).count()
 
 
-@task(name='Subscription.post_delete', queue='clean')
+@task(name='Subscription.post_delete', queue='high')
 def subscription_post_delete_task(subscription, *args, **kwargs):
     """ HEADS UP: we get a real object (not an ID) as first argument.
         Without this, we have no way to get any reference to the
@@ -427,8 +427,8 @@ class Subscription(Document, DocumentHelperMixin):
 register_task_method(Subscription, Subscription.post_create_task,
                      globals(), queue=u'high')
 register_task_method(Subscription, Subscription.mark_all_read_in_database,
-                     globals(), queue=u'background')
-register_task_method(Subscription, Subscription.check_reads, globals(), queue=u'clean')
+                     globals(), queue=u'low')
+register_task_method(Subscription, Subscription.check_reads, globals(), queue=u'high')
 
 # ————————————————————————————————————————————————————————— external properties
 #                                            Defined here to avoid import loops
