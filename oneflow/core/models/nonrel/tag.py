@@ -117,7 +117,7 @@ class Tag(Document, DocumentHelperMixin):
             self.slug = slugify(self.name)
             self.save()
 
-            statsd.gauge('tags.counts.total', 1, delta=True)
+            statsd.gauge('mongo.tags.counts.total', 1, delta=True)
 
     @classmethod
     def get_tags_set(cls, tags_names, origin=None):

@@ -507,17 +507,19 @@ def synchronize_mongodb_statsd_articles_gauges(full=False):
         content_errors     = Article.objects(content_error__ne='').no_cache()
         url_errors         = Article.objects(url_error__ne='').no_cache()
 
-        statsd.gauge('articles.counts.total', Article._get_collection().count())
-        statsd.gauge('articles.counts.markdown', markdown.count())
-        statsd.gauge('articles.counts.html', html.count())
-        statsd.gauge('articles.counts.empty', empty.count())
-        statsd.gauge('articles.counts.content_errors', content_errors.count())
-        statsd.gauge('articles.counts.url_errors', url_errors.count())
+        statsd.gauge('mongo.articles.counts.total',
+                     Article._get_collection().count())
+        statsd.gauge('mongo.articles.counts.markdown', markdown.count())
+        statsd.gauge('mongo.articles.counts.html', html.count())
+        statsd.gauge('mongo.articles.counts.empty', empty.count())
+        statsd.gauge('mongo.articles.counts.content_errors',
+                     content_errors.count())
+        statsd.gauge('mongo.articles.counts.url_errors', url_errors.count())
 
         if full:
-            statsd.gauge('articles.counts.orphaned', orphaned.count())
-            statsd.gauge('articles.counts.absolutes', absolutes.count())
-            statsd.gauge('articles.counts.duplicates', duplicates.count())
+            statsd.gauge('mongo.articles.counts.orphaned', orphaned.count())
+            statsd.gauge('mongo.articles.counts.absolutes', absolutes.count())
+            statsd.gauge('mongo.articles.counts.duplicates', duplicates.count())
 
 
 def synchronize_mongodb_statsd_tags_gauges(full=False):
@@ -525,11 +527,11 @@ def synchronize_mongodb_statsd_tags_gauges(full=False):
 
     with benchmark('synchronize statsd gauges for Tag.*'):
 
-        statsd.gauge('tags.counts.total', Tag._get_collection().count())
+        statsd.gauge('mongo.tags.counts.total', Tag._get_collection().count())
 
         if full:
             duplicates = Tag.objects(duplicate_of__ne=None).no_cache()
-            statsd.gauge('tags.counts.duplicates', duplicates.count())
+            statsd.gauge('mongo.tags.counts.duplicates', duplicates.count())
 
 
 def synchronize_mongodb_statsd_websites_gauges(full=False):
@@ -537,11 +539,12 @@ def synchronize_mongodb_statsd_websites_gauges(full=False):
 
     with benchmark('synchronize statsd gauges for WebSite.*'):
 
-        statsd.gauge('websites.counts.total', WebSite._get_collection().count())
+        statsd.gauge('mongo.websites.counts.total',
+                     WebSite._get_collection().count())
 
         if full:
             duplicates = WebSite.objects(duplicate_of__ne=None).no_cache()
-            statsd.gauge('websites.counts.duplicates', duplicates.count())
+            statsd.gauge('mongo.websites.counts.duplicates', duplicates.count())
 
 
 def synchronize_mongodb_statsd_authors_gauges(full=False):
@@ -549,8 +552,9 @@ def synchronize_mongodb_statsd_authors_gauges(full=False):
 
     with benchmark('synchronize statsd gauges for Author.*'):
 
-        statsd.gauge('authors.counts.total', Author._get_collection().count())
+        statsd.gauge('mongo.authors.counts.total',
+                     Author._get_collection().count())
 
         if full:
             duplicates = Author.objects(duplicate_of__ne=None).no_cache()
-            statsd.gauge('authors.counts.duplicates', duplicates.count())
+            statsd.gauge('mongo.authors.counts.duplicates', duplicates.count())
