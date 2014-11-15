@@ -1816,11 +1816,11 @@ class Article(Document, DocumentHelperMixin):
 register_task_method(Article, Article.mongo_post_create_task,
                      globals(), queue=u'high')
 register_task_method(Article, Article.absolutize_url,
-                     globals(), queue=u'swarm', default_retry_delay=3600)
+                     globals(), queue=u'low', default_retry_delay=3600)
 register_task_method(Article, Article.fetch_content,
-                     globals(), queue=u'fetch', default_retry_delay=3600)
+                     globals(), queue=u'high', default_retry_delay=3600)
 register_task_method(Article, Article.find_image,
-                     globals(), queue=u'fetch', default_retry_delay=3600)
+                     globals(), queue=u'high', default_retry_delay=3600)
 register_task_method(Article, Article.replace_duplicate_everywhere,
                      globals(), queue=u'low')
 register_task_method(Article, Article.postprocess_original_data,
