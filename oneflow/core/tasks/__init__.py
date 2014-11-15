@@ -81,7 +81,7 @@ def refresh_all_feeds(limit=None, force=False):
     #
     my_lock = RedisExpiringLock(
         'refresh_all_feeds',
-        expire_time=settings.FEED_GLOBAL_REFRESH_DELAY * 60
+        expire_time=config.FEED_GLOBAL_REFRESH_INTERVAL * 60 - 1
     )
 
     if not my_lock.acquire():
@@ -206,7 +206,7 @@ def refresh_all_mailaccounts(force=False):
 def synchronize_statsd_gauges(full=False, force=False):
     """ Synchronize all counters to statsd. """
 
-    from stats import synchronize_mongodb_statsd_articles_gauges
+    from oneflow.core.stats import synchronize_mongodb_statsd_articles_gauges
 
     synchronize_mongodb_statsd_articles_gauges.delay()
 
