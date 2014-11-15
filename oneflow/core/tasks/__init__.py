@@ -206,7 +206,7 @@ def refresh_all_mailaccounts(force=False):
 def synchronize_statsd_gauges(full=False, force=False):
     """ Synchronize all counters to statsd. """
 
-    from stats import synchronize_mongodb_statsd_articles_gauges
+    from oneflow.core.stats import synchronize_mongodb_statsd_articles_gauges
 
     synchronize_mongodb_statsd_articles_gauges.delay()
 
