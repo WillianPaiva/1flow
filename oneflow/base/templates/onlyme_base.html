@@ -1,8 +1,19 @@
 {# NOTE: base.html is in core/templates/ #}
 {% extends 'base.html' %}
 
+
+{% block extrajs_header %}
+    {{ block.super }}
+    {% include "snippets/home-extrajs-header.html" %}
+{% endblock extrajs_header %}
+
 {% block body %}
 <div class="container">
+
+    <h1>WOWOWO</h1>
+
+    {% include "snippets/home/notifications.html" %}
+
     <div class="row">
         <div class="col-xs-12 col-md-8 col-md-offset-2">
 
