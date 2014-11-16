@@ -39,7 +39,7 @@ from django.utils.text import slugify
 
 from oneflow.base.utils import register_task_method
 from oneflow.base.utils.http import clean_url
-from oneflow.base.utils.dateutils import now, datetime
+from oneflow.base.utils.dateutils import now, datetime, benchmark
 
 from ..common import (
     DjangoUser as User,
@@ -373,6 +373,26 @@ class Article(BaseItem, UrlItem, ContentItem):
         #
 
         return
+
+    @classmethod
+    def repair_missing_authors_migration_201411(cls):
+
+        from oneflow.core.tasks.migration import vacuum_analyze
+
+        articles = Article.objects.filter(
+            authors=None,
+            date_created__gt=datetime(2014, 10, 31))
+
+        done = 0
+
+        with benchmark(u'Fix missing authors on rel-DB fetched content…'):
+            for article in articles:
+                article.postprocess_original_data(force=True)
+
+                done += 1
+
+                if done % 25000 == 0:
+                    vacuum_analyze()
 
 
 # ———————————————————————————————————————————————————————————————— Celery Tasks
