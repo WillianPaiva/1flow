@@ -34,17 +34,26 @@ from oneflow.base.utils.dateutils import benchmark, now
 LOGGER = logging.getLogger(__name__)
 
 
-def do_whatever_SQL(query, qargs, pretty_name):
+def do_whatever_SQL(query, qargs, pretty_name, commit=True):
     """ Go ahead, man. """
 
     with benchmark(pretty_name):
         cursor = connection.cursor()
+
         cursor.execute(query, qargs)
+
         try:
-            return cursor.fetchone()[0]
+            result = cursor.fetchone()[0]
 
         except:
-            return None
+            result = None
+
+        if commit:
+            cursor.execute('COMMIT;')
+
+        cursor.close()
+
+        return result
 
 
 def go(limit=None, all_hint=None):
@@ -104,9 +113,10 @@ WHERE {0}_error = '';
                         count = do_whatever_SQL(
                             one_line(COUNT_QUERY).format(to_clean),
                             [],
-                            u'Counting things'
+                            u'Counting things',
+                            commit=False
                         )
                         if count == 0:
                             break
 
-                    time.sleep(10)
+                    time.sleep(20)
