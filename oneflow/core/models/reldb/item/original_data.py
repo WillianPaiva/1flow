@@ -211,7 +211,7 @@ def BaseItem_postprocess_feedparser_data_method(self, force=False,
 
             self.update_tags(tags, initial=True, need_reload=False)
 
-        if self.authors == []:
+        if self.authors.count() == 0:
             Author.get_authors_from_feedparser_article(fpod,
                                                        set_to_article=self)
 
