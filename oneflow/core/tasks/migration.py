@@ -598,14 +598,14 @@ def migrate_article(mongo_article):
     # article.url is already set at creation
     article.is_orphaned = mongo_article.orphaned
     article.url_absolute = mongo_article.url_absolute
-    article.url_error = mongo_article.url_error
+    article.url_error = mongo_article.url_error if mongo_article.url_error != u'' else None 
 
     # ContentItem
     article.image_url = mongo_article.image_url
     article.excerpt = mongo_article.excerpt
     article.content = mongo_article.content
     article.content_type = mongo_article.content_type
-    article.content_error = mongo_article.content_error
+    article.content_error = mongo_article.content_error if mongo_article.content_error != u'' else None 
 
     # Needed for ManyToManyField() to succeed.
     article.save()
