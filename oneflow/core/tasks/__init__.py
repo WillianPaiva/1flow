@@ -206,9 +206,12 @@ def refresh_all_mailaccounts(force=False):
 def synchronize_statsd_gauges(full=False, force=False):
     """ Synchronize all counters to statsd. """
 
-    from oneflow.core.stats import synchronize_mongodb_statsd_articles_gauges
-
-    synchronize_mongodb_statsd_articles_gauges.delay()
+    from oneflow.core.stats import (
+        synchronize_mongodb_statsd_articles_gauges,
+        synchronize_mongodb_statsd_tags_gauges,
+        synchronize_mongodb_statsd_websites_gauges,
+        synchronize_mongodb_statsd_authors_gauges,
+    )
 
     from oneflow.core.dbstats import (
         synchronize_statsd_articles_gauges,
@@ -236,6 +239,17 @@ def synchronize_statsd_gauges(full=False, force=False):
             LOGGER.warning(u'synchronize_statsd_gauges() is already locked, '
                            u'aborting.')
             return
+
+    with benchmark('synchronize_statsd_gauges()'):
+
+        try:
+            synchronize_mongodb_statsd_articles_gauges(full=full)
+            synchronize_mongodb_statsd_tags_gauges(full=full)
+            synchronize_mongodb_statsd_websites_gauges(full=full)
+            synchronize_mongodb_statsd_authors_gauges(full=full)
+
+        except:
+            LOGGER.exception(u'MongoDB stats failed at some point')
 
     with benchmark('synchronize_statsd_gauges()'):
 
