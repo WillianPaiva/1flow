@@ -106,10 +106,10 @@ if 'account' in settings.INSTALLED_APPS:
         url(_(r"^signup/$"), SignupView.as_view(),
             name="account_signup"),
         # original is: url(_(r"^login/$"), but we prefer:
-        url(_(ur'^signin/$'), LoginView.as_view(),
+        url(_(ur'^signin/$'), never_cache(LoginView.as_view()),
             name="signin"),
         # original is: url(_(r"^logout/$"), but we prefer:
-        url(_(ur'^signout/$'), LogoutView.as_view(),
+        url(_(ur'^signout/$'), never_cache(LogoutView.as_view()),
             name="signout"),
         url(_(r"^confirm_email/(?P<key>\w+)/$"), ConfirmEmailView.as_view(),
             name="account_confirm_email"),

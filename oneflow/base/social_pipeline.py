@@ -22,16 +22,26 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 import logging
 
+from pprint import pformat
 from constance import config
 
 from django.shortcuts import redirect
 
-from social_auth.backends.facebook import FacebookBackend
-from social_auth.backends.twitter import TwitterBackend
-from social_auth.backends import google
+from social.backends.facebook import FacebookOAuth2
+from social.backends.twitter import TwitterOAuth
+from social.backends import google
 
 
 LOGGER = logging.getLogger(__name__)
+
+
+def debug(response, details, *args, **kwargs):
+    """ DEBUG the social pipeline. """
+
+    LOGGER.warning('RESPONSE: \n%s', pformat(response))
+    LOGGER.warning('DETAILS: \n%s', pformat(details))
+    LOGGER.warning('ARGS: \n%s', pformat(args))
+    LOGGER.warning('KWARGS: \n%s', pformat(kwargs))
 
 
 def get_social_avatar(social_user, user, details, request, response, backend,
@@ -49,7 +59,7 @@ def get_social_avatar(social_user, user, details, request, response, backend,
     try:
         url = None
 
-        if isinstance(backend, FacebookBackend):
+        if isinstance(backend, FacebookOAuth2):
             if 'id' in response:
                 url = u'http://graph.facebook.com/{}/picture?type=large'.format(
                     response['id'])
@@ -57,7 +67,7 @@ def get_social_avatar(social_user, user, details, request, response, backend,
         elif isinstance(backend, google.GoogleOAuth2Backend):
             url = response.get('picture', None)
 
-        elif isinstance(backend, TwitterBackend):
+        elif isinstance(backend, TwitterOAuth):
             url = response.get('profile_image_url', None)
 
         if url:

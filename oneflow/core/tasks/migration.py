@@ -1583,6 +1583,8 @@ def migrate_all_articles(stop_on_exception=True, verbose=False):
 
     LOGGER.info(u'Starting to migrate articles at %s…', now())
 
+    raise NotImplementedError('DEAL WITH ORPHANED PROBLEM.')
+
     # ————————————————————————————————————————————————————————————— masters
 
     master_articles = master_documents(all_articles)

@@ -1,7 +1,6 @@
 {# NOTE: base.html is in core/templates/ #}
 {% extends 'base.html' %}
 
-
 {% block extrajs_header %}
     {{ block.super }}
     {% include "snippets/home-extrajs-header.html" %}
@@ -9,8 +8,6 @@
 
 {% block body %}
 <div class="container">
-
-    <h1>WOWOWO</h1>
 
     {% include "snippets/home/notifications.html" %}
 
@@ -33,3 +30,7 @@
     </div>
 </div>
 {% endblock body %}
+
+{% block extrajs_footer %}
+    {% include "snippets/home-extrajs-footer.html" %}
+{% endblock extrajs_footer %}

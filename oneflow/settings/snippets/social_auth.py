@@ -35,6 +35,8 @@ LOGIN_ERROR_URL    = reverse_lazy('signin_error')
 #
 # FACEBOOK_AUTH_EXTRA_ARGUMENTS = {'display': 'touch'}
 
+SOCIAL_AUTH_FORCE_POST_DISCONNECT = True
+
 # SOCIAL_AUTH_REDIRECT_IS_HTTPS = False
 # SOCIAL_AUTH_<BACKEND_NAME>_WHITELISTED_DOMAINS = ['foo.com', 'bar.com']
 

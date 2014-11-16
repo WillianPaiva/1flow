@@ -715,7 +715,12 @@ class ContentItem(models.Model):
 
                 else:
                     # Strainer gives us a non-unicode boo-boo.
-                    self.content = content.decode(eventual_encoding=encoding)
+                    try:
+                        self.content = content.decode(eventual_encoding=encoding)
+
+                    except TypeError:
+                        # Oops, data doesn't come from strainer…
+                        self.content = content.decode(encoding=encoding)
 
             self.content_type = CONTENT_TYPES.HTML
 

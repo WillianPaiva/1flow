@@ -371,7 +371,7 @@ def global_reads_checker(limit=None, force=False, verbose=False,
     if limit is None:
         limit = 0
 
-    bad_reads = Read.objects.filter(is_good=False)
+    bad_reads = Read.objects.bad()
 
     total_reads_count   = bad_reads.count()
     processed_reads     = 0

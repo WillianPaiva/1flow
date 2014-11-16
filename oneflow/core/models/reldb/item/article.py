@@ -377,22 +377,26 @@ class Article(BaseItem, UrlItem, ContentItem):
     @classmethod
     def repair_missing_authors_migration_201411(cls):
 
-        from oneflow.core.tasks.migration import vacuum_analyze
+        # from oneflow.core.tasks.migration import vacuum_analyze
 
         articles = Article.objects.filter(
             authors=None,
             date_created__gt=datetime(2014, 10, 31))
 
+        count = articles.count()
         done = 0
 
+        LOGGER.info(u'Starting repairing %s missing authors @%s', count, now())
+
         with benchmark(u'Fix missing authors on rel-DB fetched content…'):
+
             for article in articles:
                 article.postprocess_original_data(force=True)
 
-                done += 1
+                # if done % 25000 == 0:
+                #     vacuum_analyze()
 
-                if done % 25000 == 0:
-                    vacuum_analyze()
+                done += 1
 
 
 # ———————————————————————————————————————————————————————————————— Celery Tasks
