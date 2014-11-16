@@ -28,7 +28,7 @@ import logging
 
 from django.db import connection
 from oneflow.base.utils.dateutils import benchmark, now
-from oneflow.core.tasks.migration import vacuum_analyze
+# from oneflow.core.tasks.migration import vacuum_analyze
 
 
 LOGGER = logging.getLogger(__name__)
@@ -97,8 +97,8 @@ WHERE {0}_error = '';
 
                     done += 1
 
-                    if done % 10 == 0:
-                        vacuum_analyze('at %s' % (done * 50000))
+                    # if done % 10 == 0:
+                    #     vacuum_analyze('at %s' % (done * 50000))
 
                     if done > (all_hint / limit):
                         count = do_whatever_SQL(
