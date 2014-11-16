@@ -170,6 +170,15 @@ def BaseItem_postprocess_guess_original_data_method(self, force=False,
 
     need_save = False
 
+    try:
+        original_data = self.original_data
+
+    except:
+        LOGGER.warning(u'Created original data for item %s.', self)
+        original_data = OriginalData(item=self)
+        original_data.save()
+        return
+
     if self.original_data.feedparser_hydrated:
         self.origin = ORIGINS.FEEDPARSER
         need_save   = True
