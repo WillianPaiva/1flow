@@ -302,8 +302,8 @@ urlpatterns = patterns(
 
     url(_(ur'^help/$'), login_required(views.help), name='help'),
 
-    url(_(ur'^signin_error/$'), TemplateView.as_view(
-        template_name='signin_error.html'), name='signin_error'),
+    url(_(ur'^signin_error/$'), never_cache(TemplateView.as_view(
+        template_name='signin_error.html')), name='signin_error'),
 
     # ——————————————————————————————————————————————————————————— Mail accounts
 
