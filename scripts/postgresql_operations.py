@@ -18,6 +18,8 @@ You should have received a copy of the GNU Affero General Public
 License along with 1flow.  If not, see http://www.gnu.org/licenses/
 """
 
+import re
+import time
 import logging
 
 # from constance import config
@@ -66,8 +68,11 @@ FROM core_article
 WHERE {0}_error = '';
 """
 
+    def one_line(a_string):
+        return re.sub(u'  +', u' ', u' '.join(a_string.splitlines()))
+
     if limit is None:
-        limit = 50000
+        limit = 10000
 
     if all_hint is None:
         all_hint = 7000000
@@ -83,7 +88,7 @@ WHERE {0}_error = '';
             with benchmark(u'Fixing %s' % to_clean):
                 while True:
                     do_whatever_SQL(
-                        URL_CLEANING_QUERY.format(
+                        one_line(URL_CLEANING_QUERY).format(
                             to_clean, limit
                         ),
                         [],
@@ -92,14 +97,16 @@ WHERE {0}_error = '';
 
                     done += 1
 
-                    if done % 5 == 0:
-                        vacuum_analyze()
+                    if done % 10 == 0:
+                        vacuum_analyze('at %s' % (done * 50000))
 
                     if done > (all_hint / limit):
                         count = do_whatever_SQL(
-                            COUNT_QUERY.format(to_clean),
+                            one_line(COUNT_QUERY).format(to_clean),
                             [],
                             u'Counting things'
                         )
                         if count == 0:
                             break
+
+                    time.sleep(10)
