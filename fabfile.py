@@ -250,6 +250,10 @@ def production():
             ),
         },
 
+        'custom_arguments': {
+            '__all__': '--without-heartbeat --without-mingle --without-gossip',
+        },
+
         'nice_arguments': {
 
             # Lower priority
