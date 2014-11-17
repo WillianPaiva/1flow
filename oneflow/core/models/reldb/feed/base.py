@@ -490,6 +490,8 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
         self.closed_reason = u'Reopen on %s' % now().isoformat()
         self.save()
 
+        statsd.gauge('feeds.counts.open', 1, delta=True)
+
         LOGGER.info(u'Feed %s has just been re-opened.', self)
 
     def close(self, reason=None, commit=True):
@@ -501,6 +503,8 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
 
         if commit:
             self.save()
+
+        statsd.gauge('feeds.counts.open', -1, delta=True)
 
         LOGGER.warning(u'Feed %s closed with reason "%s"!',
                        self, self.closed_reason)
@@ -547,6 +551,8 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
 
         if commit:
             self.save()
+
+        statsd.incr('feeds.refresh.global.errors')
 
         return retval
 
@@ -780,6 +786,7 @@ def basefeed_post_save(instance, **kwargs):
         pass
 
     statsd.gauge('feeds.counts.total', 1, delta=True)
+    statsd.gauge('feeds.counts.open', 1, delta=True)
 
 
 post_save.connect(basefeed_post_save, sender=BaseFeed)
