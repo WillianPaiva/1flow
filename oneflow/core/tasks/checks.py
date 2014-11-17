@@ -294,7 +294,7 @@ def global_duplicates_checker(limit=None, force=False):
     if limit is None:
         limit = 0
 
-    duplicates = Article.objects.exclude(duplicate_of_id=None)
+    duplicates = Article.objects.duplicate()
 
     total_dupes_count = duplicates.count()
     total_reads_count = 0
