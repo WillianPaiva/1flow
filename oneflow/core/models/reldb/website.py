@@ -32,7 +32,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
 
 from mptt.models import MPTTModelBase, MPTTModel, TreeForeignKey
-from sparks.django.models import DiffMixin
+from sparks.django.models.mixins import DiffMixin
 
 from duplicate import AbstractDuplicateAwareModel
 from oneflow.base.utils.http import split_url

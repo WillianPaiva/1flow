@@ -19,11 +19,6 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
-# import uuid
-# import operator
-
-# from datetime import datetime
-
 import logging
 
 # from constance import config
@@ -31,19 +26,12 @@ import logging
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-# from django.utils.text import slugify
-
-# from sparks.django.models import ModelDiffMixin
-
-# from oneflow.base.fields import TextRedisDescriptor
-# from oneflow.base.utils.dateutils import now, timedelta
 
 from oneflow.base.utils import (
     # register_task_method,
     RedisExpiringLock,
 )
 
-# from common import REDIS, long_in_the_past, DjangoUser
 from common import (
     SYNC_STATUS,
     SYNC_STRATEGIES,

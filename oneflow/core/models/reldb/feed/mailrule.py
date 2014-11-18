@@ -34,7 +34,7 @@ from django.utils.translation import ugettext_lazy as _
 # from sparks.django.models import ModelDiffMixin
 # from oneflow.base.utils.dateutils import now
 
-from sparks.django.models import ModelDiffMixin
+from sparks.django.models.mixins import ModelDiffMixin
 
 from ..account.common import OTHER_VALID_HEADERS_lower, BASE_HEADERS
 

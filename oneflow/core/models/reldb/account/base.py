@@ -36,7 +36,7 @@ from polymorphic import (
     PolymorphicModel,
 )
 
-from sparks.django.models import DiffMixin
+from sparks.django.models.mixins import DiffMixin
 
 from oneflow.base.utils.dateutils import now, timedelta
 

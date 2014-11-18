@@ -28,7 +28,7 @@ from django.db import models
 # from django.db.models.signals import post_save  # , pre_save, pre_delete
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
-from sparks.django.models import ModelDiffMixin
+from sparks.django.models.mixins import ModelDiffMixin
 
 from common import DjangoUser as User
 

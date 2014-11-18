@@ -42,7 +42,7 @@ from polymorphic import (
     PolymorphicManager,
     PolymorphicModel,
 )
-from sparks.django.models import DiffMixin
+from sparks.django.models.mixins import DiffMixin
 
 from oneflow.base.fields import IntRedisDescriptor, DatetimeRedisDescriptor
 from oneflow.base.utils.dateutils import now, timedelta, today
