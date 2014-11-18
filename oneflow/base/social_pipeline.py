@@ -35,13 +35,16 @@ from social.backends import google
 LOGGER = logging.getLogger(__name__)
 
 
-def debug(response, details, *args, **kwargs):
+def debug(response, **kwargs):
     """ DEBUG the social pipeline. """
 
-    LOGGER.warning('RESPONSE: \n%s', pformat(response))
-    LOGGER.warning('DETAILS: \n%s', pformat(details))
-    LOGGER.warning('ARGS: \n%s', pformat(args))
-    LOGGER.warning('KWARGS: \n%s', pformat(kwargs))
+    try:
+        LOGGER.warning('RESPONSE: \n%s', pformat(response))
+        for key, value in kwargs.items():
+            LOGGER.warning('%s: \n%s', key, pformat(value))
+
+    except:
+        LOGGER.exception('BANZAï!!!!')
 
 
 def get_social_avatar(social_user, user, details, request, response, backend,
