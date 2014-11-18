@@ -24,11 +24,75 @@ from django.utils.translation import ugettext_lazy as _  # , pgettext_lazy
 
 from django.contrib import admin
 
+from sparks.django.adminfilters import null_filter
+
 from ..models.reldb import (  # NOQA
     CONTENT_TYPES,
+    ORIGINS,
     Article,
     OriginalData,
+    Language,
 )
+
+
+class ContentTypeListFilter(admin.SimpleListFilter):
+    title = _(u'Content type')
+    parameter_name = 'content_type'
+
+    def lookups(self, request, model_admin):
+
+        return [(-1, _(u'None'), )] + CONTENT_TYPES.get_choices()
+
+    def queryset(self, request, queryset):
+
+        if self.value() == -1:
+            return queryset.filter(content_type=None)
+
+        elif self.value() >= 0:
+            return queryset.filter(content_type=self.value())
+
+        return queryset
+
+
+class OriginListFilter(admin.SimpleListFilter):
+    title = _(u'Origin')
+    parameter_name = 'origin'
+
+    def lookups(self, request, model_admin):
+
+        return [(-1, _(u'None'), )] + ORIGINS.get_choices()
+
+    def queryset(self, request, queryset):
+
+        if self.value() == -1:
+            return queryset.filter(origin=None)
+
+        elif self.value() >= 0:
+            return queryset.filter(origin=self.value())
+
+        return queryset
+
+
+class LanguageListFilter(admin.SimpleListFilter):
+    title = _(u'Language')
+    parameter_name = 'language_id'
+
+    def lookups(self, request, model_admin):
+
+        return [(-1, _(u'None'), )] + [
+            l for l in Language.objects.filter(
+                duplicate_of_id=None).values_list('id', 'name')
+        ]
+
+    def queryset(self, request, queryset):
+
+        if self.value() == -1:
+            return queryset.filter(language_id=None)
+
+        elif self.value():
+            return queryset.filter(language_id=self.value())
+
+        return queryset
 
 
 class ArticleAdmin(admin.ModelAdmin):
@@ -57,11 +121,13 @@ class ArticleAdmin(admin.ModelAdmin):
     date_hierarchy = 'date_created'
     search_fields = ('name', 'slug', )
     ordering = ('-date_published', )
-    list_filter = ('language', 'is_orphaned', 'url_absolute',
-                   ('duplicate_of', admin.BooleanFieldListFilter),
-                   ('url_error', admin.BooleanFieldListFilter),
-                   ('content_error', admin.BooleanFieldListFilter),
-                   'origin', 'content_type', )
+    list_filter = (LanguageListFilter,
+                   'is_orphaned', 'url_absolute',
+                   null_filter('duplicate_of'),
+                   null_filter('url_error'),
+                   null_filter('content_error'),
+                   'origin',
+                   'content_type', )
 
     change_list_template = "admin/change_list_filter_sidebar.html"
     change_list_filter_template = "admin/filter_listing.html"
