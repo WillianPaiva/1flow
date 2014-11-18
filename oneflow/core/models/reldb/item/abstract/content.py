@@ -716,7 +716,8 @@ class ContentItem(models.Model):
                 else:
                     # Strainer gives us a non-unicode boo-boo.
                     try:
-                        self.content = content.decode(eventual_encoding=encoding)
+                        self.content = content.decode(
+                            eventual_encoding=encoding)
 
                     except TypeError:
                         # Oops, data doesn't come from strainer…
@@ -757,7 +758,7 @@ class ContentItem(models.Model):
             LOGGER.info(u'Bookmarks fetching disabled in configuration.')
             return
 
-        if self.content_type == CONTENT_TYPES.NONE:
+        if self.content_type in (None, CONTENT_TYPES.NONE):
 
             slashes_parts = [p for p in self.url.split(u'/') if p != u'']
 
