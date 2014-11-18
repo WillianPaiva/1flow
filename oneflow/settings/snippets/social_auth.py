@@ -47,6 +47,7 @@ SOCIAL_AUTH_SESSION_EXPIRATION = False
 # ———————————————————————————————————————————————————————————————————— PIPELINE
 
 SOCIAL_AUTH_PIPELINE = (
+
     # Get the information we can about the user and return it in a simple
     # format to create the user instance later. On some cases the details are
     # already part of the auth response from the provider, but sometimes this
@@ -102,9 +103,11 @@ SOCIAL_AUTH_PIPELINE = (
     # this pipeline function will deactivate the account right after creation,
     # to be sure the user doesn't log in.
     'oneflow.base.social_pipeline.throttle_new_user_accounts',
-
-
 )
+
+if DEBUG:
+    SOCIAL_AUTH_PIPELINE = ('oneflow.base.social_pipeline.debug',
+                            ) + SOCIAL_AUTH_PIPELINE
 
 # —————————————————————————————————————————————————————————————————— EXTRA DATA
 
