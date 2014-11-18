@@ -240,7 +240,7 @@ def synchronize_statsd_gauges(full=False, force=False):
                            u'aborting.')
             return
 
-    with benchmark('synchronize_statsd_gauges()'):
+    with benchmark('synchronize_mongodb_statsd_gauges()'):
 
         try:
             synchronize_mongodb_statsd_articles_gauges(full=full)
