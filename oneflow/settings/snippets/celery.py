@@ -60,23 +60,44 @@ CELERYD_PREFETCH_MULTIPLIER = 8
 CELERY_DEFAULT_QUEUE = 'default'
 
 CELERY_QUEUES = (
+
+    # MongoDB related queues. SHOULD VANISH SOON.
     Queue('high', Exchange('high'), routing_key='high'),
     Queue('medium', Exchange('medium'), routing_key='medium'),
     Queue('low', Exchange('low'), routing_key='low'),
+
+    # the default queue.
     Queue('default', Exchange('default'), routing_key='default'),
 
-    Queue('check', Exchange('check'), routing_key='check'),
-    Queue('create', Exchange('create'), routing_key='create'),
+    # feed refresh
     Queue('refresh', Exchange('refresh'), routing_key='refresh'),
+
+    # URLs absolutization
+    Queue('swarm', Exchange('swarm'), routing_key='swarm'),
+
+    # Any model post-create tasks
+    Queue('create', Exchange('create'), routing_key='create'),
+
+    # Content fetching / parsing.
+    Queue('fetch', Exchange('fetch'), routing_key='fetch'),
+
+    # Long-running tasks
+    Queue('permanent', Exchange('permanent'), routing_key='permanent'),
+    Queue('background', Exchange('background'), routing_key='background'),
+
+    # Database-level operations; logical checks
+    # and cleaning of obsolete / duplicate entries.
+    Queue('check', Exchange('check'), routing_key='check'),
+    Queue('clean', Exchange('clean'), routing_key='clean'),
+
+    # Inter-node synchronization tasks.
+    Queue('sync', Exchange('sync'), routing_key='sync'),
+
+    # Queue('longtasks', Exchange('longtasks'), routing_key='longtasks'),
     # Queue('index', Exchange('index'), routing_key='index'),
     # Queue('crawl', Exchange('crawl'), routing_key='crawl'),
     # Queue('archive', Exchange('archive'), routing_key='archive'),
-    Queue('fetch', Exchange('fetch'), routing_key='fetch'),
-    Queue('swarm', Exchange('swarm'), routing_key='swarm'),
-    Queue('clean', Exchange('clean'), routing_key='clean'),
-    Queue('sync', Exchange('sync'), routing_key='sync'),
     # Queue('backup', Exchange('backup'), routing_key='backup'),
-    Queue('background', Exchange('background'), routing_key='background'),
 )
 
 BROKER_URL = os.environ.get('BROKER_URL')

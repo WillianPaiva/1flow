@@ -230,7 +230,7 @@ def production():
             ),
             'worker_sync': (
                 'Inter-node synchronization worker',
-                'sync'
+                'sync,permanent'
             ),
             'worker_net': (
                 'Network-related worker',
@@ -281,7 +281,7 @@ def production():
 
         'autoscale': {
             'worker_mongo':   '136,34',  # 'high,medium,low',
-            'worker_sync':    '16,4',    # 'sync',
+            'worker_sync':    '32,8',    # 'sync',
             'worker_net':     '64,16',  # 'swarm,refresh',
             'worker_default': '32,8',    # 'default,create',
             'worker_articles': '24,6',   # 'fetch,background',
