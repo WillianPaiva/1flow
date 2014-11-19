@@ -23,6 +23,8 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 import datetime
 
+ugettext = lambda s: s
+
 # CONSTANCE_REDIS_CONNECTION is to be found in 'snippets/databases*'
 CONSTANCE_BACKEND      = 'constance.backends.redisd.RedisBackend'
 CONSTANCE_REDIS_PREFIX = 'c0s1f:'
