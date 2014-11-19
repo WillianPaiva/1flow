@@ -31,6 +31,8 @@ from ..models.reldb import (
     Subscription,
     WebSite,
     FeedIsHtmlPageException,
+    create_feeds_from_url,
+    subscribe_user_to_feed,
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -76,7 +78,7 @@ def add_feed(request, feed_url, subscribe=True):
 
     if feed_exc is None:
         try:
-            feeds = Feed.create_feeds_from_url(feed_url)
+            feeds = create_feeds_from_url(feed_url)
 
         except FeedIsHtmlPageException:
             LOGGER.exception('Potential feed at %s does not provide '
@@ -104,7 +106,7 @@ def add_feed(request, feed_url, subscribe=True):
 
             except Subscription.DoesNotExist:
                 try:
-                    subscription = Subscription.subscribe_user_to_feed(
+                    subscription = subscribe_user_to_feed(
                         user, feed, background=True)
 
                 except Exception as sub_exc:
