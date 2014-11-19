@@ -118,6 +118,7 @@ ROOT_URLCONF = 'oneflow.urls'
 WSGI_APPLICATION = 'oneflow.wsgi.application'
 
 STATICFILES_DIRS = (
+    ('icon-themes', '/usr/share/icons'),
 )
 
 STATICFILES_FINDERS = (
