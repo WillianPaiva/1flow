@@ -54,7 +54,7 @@ for url_trans, url_untrans in (
 
     suffix = u'_' + url_untrans
 
-    # MongoDB: type_url = ur'%s/(?P<%s>(?:[0-9a-f]{24,24})+)$' % (url_trans, url_untrans)
+    # MongoDB: type_url = ur'%s/(?P<%s>(?:[0-9a-f]{24,24})+)$' % (url_trans, url_untrans)  # NOQA
     type_url = ur'%s/(?P<%s>\d+)$' % (url_trans, url_untrans)
 
     read_patterns += tuple((
