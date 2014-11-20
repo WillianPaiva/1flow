@@ -42,26 +42,43 @@ RULES_OPERATIONS = NamedTupleChoices(
     ('ALL', 2, _(u'All rules must match')),
 )
 
-MATCH_TYPES = NamedTupleChoices(
-    'MATCH_TYPES',
+_COMMON_MATCH_TYPES = (
+    ('EQUALS',     6, _(u'strictly equals')),
+    ('NEQUALS',    7, _(u'is not equal to')),
+)
 
-    ('CONTAINS',  1, _(u'contains')),
-    ('NCONTAINS', 2, _(u'does not contain')),
-    ('STARTS',    3, _(u'starts with')),
-    ('NSTARTS',   4, _(u'does not start with')),
-    ('ENDS',      4, _(u'ends with')),
-    ('NENDS',     5, _(u'does not end with')),
-    ('EQUALS',    6, _(u'strictly equals')),
-    ('NEQUALS',   7, _(u'is not equal to')),
-    ('RE_MATCH',  8, _(u'matches regular expression')),
-    ('NRE_MATCH', 9, _(u'does not match reg. expr.')),
+_TEXT_MATCH_TYPES = (
+    ('CONTAINS',   1, _(u'contains')),
+    ('NCONTAINS',  2, _(u'does not contain')),
+    ('STARTS',     3, _(u'starts with')),
+    ('NSTARTS',    4, _(u'does not start with')),
+    ('ENDS',       4, _(u'ends with')),
+    ('NENDS',      5, _(u'does not end with')),
+    ('RE_MATCH',   8, _(u'matches regular expression')),
+    ('NRE_MATCH',  9, _(u'does not match reg. expr.')),
+)
+
+_NUMERIC_MATCH_TYPES = (
+    ('LOWER',     20, _(u'is lower than')),
+    ('LOWEREQ',   21, _(u'is lower or equal than')),
+    ('GREATER',   22, _(u'is greater than')),
+    ('GREATEREQ', 23, _(u'is greater or equal than')),
+)
+
+_SPECIAL_MATCH_TYPES = (
+    ('EXISTS',     30, _(u'exists / is present')),
+    ('NEXISTS',    31, _(u'does not exist / is not present')),
 )
 
 # —————————————————————————————————————————————————————————————————————— E-mail
 
 # A simple copy, for the eventuality we could need a separate tuple.
 MAIL_RULES_OPERATIONS = RULES_OPERATIONS
-MAIL_MATCH_TYPES = MATCH_TYPES
+MAIL_MATCH_TYPES = NamedTupleChoices(*(
+    ('MAIL_MATCH_TYPES', )
+    + _TEXT_MATCH_TYPES
+    + _COMMON_MATCH_TYPES
+))
 
 MAIL_MATCH_ACTIONS = NamedTupleChoices(
     'MAIL_MATCH_ACTIONS',
@@ -96,7 +113,7 @@ MAIL_HEADER_FIELDS = NamedTupleChoices(
 )
 
 MAIL_HEADER_FIELD_DEFAULT = MAIL_HEADER_FIELDS.COMMON
-MAIL_MATCH_TYPE_DEFAULT = MATCH_TYPES.CONTAINS
+MAIL_MATCH_TYPE_DEFAULT = MAIL_MATCH_TYPES.CONTAINS
 MAIL_MATCH_ACTION_DEFAULT = MAIL_MATCH_ACTIONS.SCRAPE
 MAIL_FINISH_ACTION_DEFAULT = MAIL_FINISH_ACTIONS.MARK_READ
 MAIL_RULES_OPERATION_DEFAULT = RULES_OPERATIONS.ANY
