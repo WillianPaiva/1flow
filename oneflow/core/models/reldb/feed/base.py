@@ -194,6 +194,9 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
         errors : ListField(StringField) → JSONField
     """
 
+    # This should be overriden by subclasses if needed.
+    REFRESH_LOCK_INTERVAL = None
+
     class Meta:
         app_label = 'core'
         translate = ('short_description', 'description', )
@@ -470,7 +473,7 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
         except AttributeError:
             self.__refresh_lock = RedisExpiringLock(
                 self, lock_name='fetch',
-                expire_time=self.fetch_interval
+                expire_time=self.REFRESH_LOCK_INTERVAL or self.fetch_interval
             )
             return self.__refresh_lock
 
