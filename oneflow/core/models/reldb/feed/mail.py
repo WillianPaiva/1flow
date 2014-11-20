@@ -21,11 +21,12 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 import json
 import logging
 
+from statsd import statsd
 from constance import config
 
 # from django.conf import settings
 from django.db import models
-from django.db.models.signals import pre_save  # , post_save  # , pre_delete
+from django.db.models.signals import pre_save, post_save, pre_delete
 from django.utils.translation import ugettext_lazy as _
 # from django.utils.text import slugify
 
@@ -378,14 +379,33 @@ def mailfeed_pre_save(instance, **kwargs):
         # Push the name update from the mailfeed
         # to the owner's corresponding subscription.
         #
-        # HEADS UP: we use filter()/update()
+        # HEADS UP: we use filter()/update(), and not get()
+        # even if are sure there is only one subscription,
         # to avoid a post_save() signal loop.
-        mailfeed.user.subscription_set.filter(
-            feed=mailfeed).update(name=mailfeed.name)
+        #
+        # TODO: refactor/merge this in BaseFeed, with a test
+        # on feed.user to avoid crashing on feeds types other
+        # than twitter/mail that are user-created.
+        mailfeed.subscriptions.filter(
+            user=mailfeed.user).update(name=mailfeed.name)
+
+
+def mailfeed_post_save(instance, **kwargs):
+    """ Increment stats. """
+
+    if kwargs.get('created', False):
+        statsd.gauge('feeds.counts.mail', 1, delta=True)
+
+
+def mailfeed_pre_delete(instance, **kwargs):
+    """ Decrement stats. """
+
+    statsd.gauge('feeds.counts.mail', -1, delta=True)
+
 
 # Because http://stackoverflow.com/a/24624838/654755 doesn't work.
 pre_save.connect(basefeed_pre_save, sender=MailFeed)
 
 pre_save.connect(mailfeed_pre_save, sender=MailFeed)
-# post_save.connect(mailfeed_post_save, sender=MailFeed)
-# pre_delete.connect(mailfeed_pre_delete, sender=MailFeed)
+post_save.connect(mailfeed_post_save, sender=MailFeed)
+pre_delete.connect(mailfeed_pre_delete, sender=MailFeed)
