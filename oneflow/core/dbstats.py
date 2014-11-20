@@ -126,14 +126,17 @@ def synchronize_statsd_feeds_gauges(full=False):
 
     with benchmark('synchronize statsd gauges for BaseFeed.*'):
 
-        statsd.gauge('feeds.counts.total', BaseFeed.objects.all().count())
+        all_feeds = BaseFeed.objects.all()
+
+        statsd.gauge('feeds.counts.total', all_feeds.count())
         statsd.gauge('feeds.counts.open', BaseFeed.objects.active().count())
 
         if full:
+            statsd.gauge('feeds.counts.mail', all_feeds.mail().count())
+
             duplicates = BaseFeed.objects.exclude(duplicate_of=None)
             statsd.gauge('feeds.counts.duplicates', duplicates.count())
 
-        # TODO: stats by Feed type (email, rss, twitter…)
         pass
 
 
