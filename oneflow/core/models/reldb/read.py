@@ -27,7 +27,7 @@ import operator
 from statsd import statsd
 
 from django.db import models
-from django.db.models.signals import pre_delete, post_save  # , pre_save
+from django.db.models.signals import pre_delete, post_save, pre_save
 from django.db.models.query import QuerySet
 # from django.conf import settings
 from django.utils.translation import ugettext_lazy as _, pgettext_lazy
@@ -685,6 +685,15 @@ for attr_name in WATCH_ATTRIBUTES_FIELDS_NAMES:
 # ————————————————————————————————————————————————————————————————————— Signals
 
 
+def read_pre_save(instance, **kwargs):
+    """ Try to avoid work for checker tasks. """
+
+    read = instance
+
+    if read.item.is_good and not read.is_good:
+        read.is_good = True
+
+
 def read_post_save(instance, **kwargs):
     """ Method meant to be run from a celery task. """
 
@@ -743,6 +752,7 @@ def read_pre_delete(instance, **kwargs):
 
 pre_delete.connect(read_pre_delete, sender=Read)
 post_save.connect(read_post_save, sender=Read)
+pre_save.connect(read_pre_save, sender=Read)
 
 
 # ————————————————————————————————————————————————————————— external properties
