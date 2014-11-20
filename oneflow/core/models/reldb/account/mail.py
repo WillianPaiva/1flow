@@ -34,6 +34,7 @@ from oneflow.base.fields import TextRedisDescriptor
 from oneflow.base.utils import register_task_method, list_chunks
 
 from ..common import REDIS
+
 from common import (
     email_prettify_raw_message,
     MAILBOXES_STRING_SEPARATOR,
