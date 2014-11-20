@@ -633,6 +633,12 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
                 # In case it's still open, slow down things.
                 preventive_slow_down = True
 
+            elif data is True:
+                # The feed is handling its internals on his own behalf.
+                # Eg. a Twitter feed will tweak self.last_fetch anyhow
+                # it needs to prevent quota overflows. Just let it go.
+                return
+
         if preventive_slow_down:
             # do not the queue be overflowed by refresh_all_feeds()
             # checking this feed over and over again. Let the lock
