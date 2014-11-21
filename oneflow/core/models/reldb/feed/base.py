@@ -805,7 +805,7 @@ pre_save.connect(basefeed_pre_save, sender=BaseFeed)
 # ————————————————————————————————————————————————————————— Export class method
 
 
-def basefeed_export_content_classmethod(cls, since, folder=None):
+def basefeed_export_content_classmethod(cls, since, until=None, folder=None):
     """ Pull articles & feeds since :param:`param` and return them in a dict.
 
         if a feed has no new article, it's not represented at all. The returned
@@ -881,11 +881,15 @@ def basefeed_export_content_classmethod(cls, since, folder=None):
 
     for feed in active_feeds:
 
+        new_items = feed.good_items
+
         if since:
-            new_items = feed.good_items.filter(
+            new_items = new_items.filter(
                 Article___date_published__gte=since)
-        else:
-            new_items = feed.good_items
+
+        if until:
+            new_items = new_items.filter(
+                Article___date_published__lt=until)
 
         new_items.select_related(
             'language', 'author', 'tags'

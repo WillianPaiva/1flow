@@ -406,16 +406,31 @@ urlpatterns = patterns(
     url(_(ur'^export/folder/(?P<folder_id>\d+)/'
           ur'(?P<since>[^/]+)/(?P<token>\w{32,32})/?$'),
         never_cache(views.export_content),
-        name='export_folder_content'),
+        name='export_folder_content_by_id'),
+
+    url(_(ur'^export/folder/(?P<folder_id>\d+)/'
+          ur'(?P<since>[^/]+)/(?P<until>[^/]+)/(?P<token>\w{32,32})/?$'),
+        never_cache(views.export_content),
+        name='export_folder_content_by_id_until'),
 
     url(_(ur'^export/folder/(?P<folder_slug>[-\w]+)/'
           ur'(?P<since>[^/]+)/(?P<token>\w{32,32})/?$'),
         never_cache(views.export_content),
         name='export_folder_content'),
 
+    url(_(ur'^export/folder/(?P<folder_slug>[-\w]+)/'
+          ur'(?P<since>[^/]+)/(?P<until>[^/]+)/(?P<token>\w{32,32})/?$'),
+        never_cache(views.export_content),
+        name='export_folder_content_until'),
+
     url(_(ur'^export/(?P<since>[^/]+)/(?P<token>\w{32,32})/?$'),
         never_cache(views.export_content),
         name='export_content'),
+
+    url(_(ur'^export/(?P<since>[^/]+)/(?P<until>[^/]+)'
+        ur'/(?P<token>\w{32,32})/?$'),
+        never_cache(views.export_content),
+        name='export_content_until'),
 
     # ——————————————————————————————————————————————————————————— Read patterns
 
