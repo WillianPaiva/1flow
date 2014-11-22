@@ -119,6 +119,79 @@ MAIL_FINISH_ACTION_DEFAULT = MAIL_FINISH_ACTIONS.MARK_READ
 MAIL_RULES_OPERATION_DEFAULT = RULES_OPERATIONS.ANY
 MAIL_GROUP_OPERATION_DEFAULT = RULES_OPERATIONS.ANY
 
+# ————————————————————————————————————————————————————————————— Twitter
+
+# A simple copy, for the eventuality we could need a separate tuple.
+TWITTER_RULES_OPERATIONS = RULES_OPERATIONS
+TWITTER_MATCH_TYPES = NamedTupleChoices(*(
+    ('TWITTER_MATCH_TYPES', )
+    + _TEXT_MATCH_TYPES
+    + _COMMON_MATCH_TYPES
+    + _NUMERIC_MATCH_TYPES
+    + _SPECIAL_MATCH_TYPES
+))
+
+TWITTER_MATCH_ACTIONS = NamedTupleChoices(
+    'TWITTER_MATCH_ACTIONS',
+
+    ('STORE_TWEET', 1, _(u'Store the tweet as is')),
+
+    ('CRAWL_LINKS', 2,
+     _(u'Crawl links in the tweet and fetch them as articles')),
+    ('STORE_LINKS', 3, _(u'Crawl tweet links, store them and the tweet too')),
+
+    ('CRAWL_MEDIA', 4, _(u'Crawl tweet media and store them')),
+    ('STORE_MEDIA', 8, _(u'Crawl tweet media, store them and the tweet too')),
+
+    ('CRAWL_IMAGE', 5, _(u'Crawl & store only tweet images')),
+    ('STORE_IMAGE', 10, _(u'Crawl & store tweet images, and the tweet')),
+
+    ('CRAWL_VIDEO', 6, _(u'Crawl & store only tweet videos')),
+    ('STORE_VIDEO', 12, _(u'Crawl & store tweet videos, and the tweet')),
+
+    ('CRAWL_ALL', 7, _(u'Crawl anything (articles, media…) and store it')),
+    ('STORE_ALL', 14, _(u'Crawl anything, store it, and the tweet too')),
+)
+
+TWITTER_MATCH_FIELDS = NamedTupleChoices(
+    'TWITTER_MATCH_FIELDS',
+
+    ('TWEET',       1, _(u'Tweet content')),
+    ('DATE',        2, _(u'Date')),
+    ('LANGUAGE',    3, _(u'Language')),
+    ('COORDINATES', 4, _(u'Language')),
+    ('CREATOR',     9, _(u'Creator')),
+
+    ('FAVORITES',  20, _(u'Favorites count')),
+    ('RETWEETS',   30, _(u'Retweets count')),
+    ('MEDIA',      40, _(u'Media')),
+    ('URLS',       50, _(u'URLs')),
+
+    ('FAVORITERS', 60, _(u'Favoriters')),
+    ('RETWEETERS', 70, _(u'Retweeters')),
+
+    ('MENTIONS',   80, _(u'Mentions')),
+    ('HASHTAGS',   90, _(u'Hashtags')),
+
+    ('DESTROYED',  200, _(u'Destroyed')),
+)
+
+TWITTER_FINISH_ACTIONS = NamedTupleChoices(
+    'TWITTER_FINISH_ACTIONS',
+    ('NOTHING', 1, _(u'Let the tweet as is')),
+    ('UNSTAR', 2, _(u'Unfavorite the tweet')),
+    ('STAR', 3, _(u'Favorite the tweet')),
+    ('RETWEET', 4, _(u'Retweet the tweet')),
+)
+
+TWITTER_RULES_OPERATION_DEFAULT = RULES_OPERATIONS.ANY
+TWITTER_MATCH_TYPE_DEFAULT = TWITTER_MATCH_TYPES.CONTAINS
+TWITTER_MATCH_FIELD_DEFAULT = TWITTER_MATCH_FIELDS.TWEET
+TWITTER_MATCH_ACTION_DEFAULT = TWITTER_MATCH_ACTIONS.STORE_LINKS
+TWITTER_FINISH_ACTION_DEFAULT = TWITTER_FINISH_ACTIONS.NOTHING
+TWITTER_RULES_OPERATION_DEFAULT = RULES_OPERATIONS.ANY
+TWITTER_GROUP_OPERATION_DEFAULT = RULES_OPERATIONS.ANY
+
 # ——————————————————————————————————————————————————————————————————— Functions
 
 

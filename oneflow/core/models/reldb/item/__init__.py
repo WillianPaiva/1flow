@@ -39,4 +39,4 @@ from original_data import *  # NOQA
 
 # from comment import Comment  # NOQA
 
-# from tweet import Tweet  # NOQA
+from tweet import *  # NOQA
