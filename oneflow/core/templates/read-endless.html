@@ -41,8 +41,21 @@
             {% endif %}
 
         {% else %}
+            <div class="spacer100"></div>
             <div class="jumbotron col-md-8 col-md-offset-2">
-                <h2>{% trans "Nothing to read yet. Buy a book?" %}</h2>
+                <h2>{% trans "Nothing to read here. Buy a book?" %}</h2>
+                <p></p>
+
+              {% if folder %}
+                {% if current_mode != "all" %}
+                    {% container_reading_list_with_count 'read_all' 'folder' folder 'all' _('or display all read items?') %}
+                {% endif %}
+              {% elif subscription %}
+                {% if current_mode != "all" %}
+                    {% container_reading_list_with_count 'read_all' 'feed' subscription 'all' _('or display all read items?') %}
+                {% endif %}
+              {% endif %}
+
             </div>
 
         {% endif %}
