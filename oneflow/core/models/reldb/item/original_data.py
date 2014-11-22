@@ -48,6 +48,13 @@ __all__ = [
 ]
 
 
+class OriginalDataReprocessException(Exception):
+
+    """ raised when an origin has been found on an item that hadn't one. """
+
+    pass
+
+
 class OriginalData(models.Model):
 
     """ Allow to keep any “raw” data associated with a base item.
@@ -109,8 +116,13 @@ class OriginalData(models.Model):
 # ———————————————————————————————————————————————————————————— External methods
 
 
-def BaseItem_add_original_data_method(self, name, value, commit=True):
-    """ Direct property writer for an original data. """
+def BaseItem_add_original_data_method(self, name, value, launch_task=False,
+                                      apply_now=False, commit=True):
+    """ Direct property writer for an original data.
+
+    Launches the post-processor celery task if told so. Else, it is the
+    responsibility of the caller (or the programmer) to do it somewhere.
+    """
 
     try:
         od = self.original_data
@@ -118,10 +130,24 @@ def BaseItem_add_original_data_method(self, name, value, commit=True):
     except OriginalData.DoesNotExist:
         od = OriginalData(item=self)
 
-    setattr(od, name, value)
+    if getattr(od, name, None) == value:
+        LOGGER.warning(u'Not re-setting original data on %s!', self)
 
-    if commit:
-        od.save()
+    else:
+        setattr(od, name, value)
+
+        if commit:
+            od.save()
+
+        if launch_task:
+
+            the_task = globals()['baseitem_postprocess_original_data_task']
+
+            if apply_now:
+                the_task.apply((self.id, ))
+
+            else:
+                the_task.delay(self.id)
 
     return od
 
@@ -146,8 +172,14 @@ def BaseItem_remove_original_data_method(self, name, commit=True):
             od.save()
 
 
-def BaseItem_postprocess_original_data_method(self, force=False, commit=True):
+def BaseItem_postprocess_original_data_method(self, force=False,
+                                              commit=True, first_run=True):
     """ Generic method for original data post_processing. """
+
+    if self.duplicate_of_id:
+        LOGGER.error(u'Item %s: aborting post-processing of original data, '
+                     u'we are a duplicate.', self.id)
+        return
 
     methods_table = {
         None: self.postprocess_guess_original_data,
@@ -159,10 +191,25 @@ def BaseItem_postprocess_original_data_method(self, force=False, commit=True):
 
     if meth is None:
         LOGGER.warning(u'No method to post-process origin type %s of '
-                       u'article %s.', self.origin, self)
+                       u'item %s.', self.origin, self)
         return
 
-    meth(force=force, commit=commit)
+    try:
+        meth(force=force, commit=commit)
+
+    except OriginalDataReprocessException:
+        if first_run:
+            self.postprocess_original_data(force=force, commit=commit,
+                                           first_run=False)
+        else:
+            # This is a programmer's bug.
+            raise RuntimeError(u'Running postprocess_original_data() should '
+                               u'not happen twice automatically.')
+    except:
+        LOGGER.exception(u'Exception while post-processing '
+                         u'original data for %s', self)
+    else:
+        LOGGER.info(u'Post-processed original data for %s.', self)
 
 
 def BaseItem_postprocess_guess_original_data_method(self, force=False,
@@ -194,8 +241,7 @@ def BaseItem_postprocess_guess_original_data_method(self, force=False,
         LOGGER.warning(u'Found origin type %s for item %s which had '
                        u'none before.', self.origin, self)
 
-        # Now that we have an origin type, re-run the real post-processor.
-        self.postprocess_original_data(force=force, commit=commit)
+        raise OriginalDataReprocessException()
 
 
 def BaseItem_postprocess_feedparser_data_method(self, force=False,
