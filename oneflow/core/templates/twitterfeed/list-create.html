@@ -1,0 +1,148 @@
+{% extends 'home.html' %}
+{% load sorting_tags %}
+
+{% block title %}{% trans "Twitter feeds" %}{% endblock title %}
+{% block body_id %}twitter-feeds{% endblock body_id %}
+
+{% block application_content %}
+
+{% inplace_static %}
+
+<div class="spacer50"></div>
+
+<div class="row">
+	<div>
+	{% if twitterfeed_list %}
+
+		 <div class="pull-right">
+		 	<div class="btn-group very-muted">
+		 		{% blocktrans count counter=twitterfeed_list|length %}
+		 		    {{ counter }} twitter feed
+		 		{% plural %}
+					{{ counter }} twitter feeds
+		 		{% endblocktrans %}
+		 	</div>
+			<div class="btn-group" style="margin-left: 50px;">
+				<button id="form-collapser" class="btn btn-primary">{% trans "Add new" %}</button>
+			</div>
+		</div>
+
+		<h1>
+			<a href="{% url 'twitteraccount_list_create' %}"
+					title="{% trans "Switch to twitter accounts" %}"
+					data-toggle="tooltip"
+					class="popover-top">
+				{% core_icon 'TwitterAccount' %}
+			</a>
+
+			<span class="very-muted">&nbsp;&nbsp;
+			<i class="icon icon-angle-right"></i>
+			&nbsp;&nbsp;</span>
+
+			<span>{% core_icon 'TwitterFeed' %}&nbsp;
+			{% trans "Twitter feeds" %}</span>
+		</h1>
+
+		<div class="spacer50"></div>
+
+		<table class="table table-hover">
+		<thead>
+
+		  {% include "twitterfeed/form.html" %}
+
+		  <tr>
+			{% sort_th _("Feed name") 'name' '' 'col-sm-2' %}
+			<th class="col-sm-1 centered">{% trans "Status" %}</th>
+			{% sort_th _("Restricted") 'is_restricted' '' 'col-sm-1' %}
+
+			<th class="col-sm-2">{% trans "Twitter account" %}</th>
+			<th class="col-sm-2">{% trans "Backfilled?" %}</th>
+
+			<th class="col-sm-2">{% trans "Default action" %}</th>
+			<th class="col-sm-2">{% trans "Default finish" %}</th>
+			<th class="col-sm-1">{% trans "Rules" %}</th>
+			<th class="col-sm-1 right">{% trans "Actions" %}</th>
+		  </tr>
+		</thead>
+		<tbody>
+		{% for twitterfeed in twitterfeed_list %}
+			<tr>
+				<td>{% inplace_edit 'twitterfeed.name' %}</td>
+
+				<td class="centered">{#{% twitter_is_usable_to_icon twitterfeed %}#}<i class="icon icon-time"></i></td>
+				<td>{% inplace_edit 'twitterfeed.is_restricted' autoSave="1" %}</td>
+
+				{% if twitterfeed.is_timeline or twitterfeed.is_list %}
+					<td>{{ twitterfeed.account.name }}
+					<small class="muted">{% trans "(immutable)" %}</small></td>
+
+				{% else %}
+					<td>{% inplace_edit 'twitterfeed.account' edit_empty_value=_('All') %}</td>
+				{% endif %}
+
+				<td>{% inplace_edit 'twitterfeed.is_backfilled' %}</td>
+
+				{% if twitterfeed.is_timeline or twitterfeed.is_list %}
+					<td><span class="muted">{% trans "not applicable" %}</span></td>
+					<td><span class="muted">{% trans "not applicable" %}</span></td>
+
+					<td>—</td>
+
+					<td class="right">&nbsp;</td>
+
+
+
+				{% else %}
+					<td>{% inplace_edit 'twitterfeed.match_action' %}</td>
+					<td>{% inplace_edit 'twitterfeed.finish_action' %}</td>
+
+					<td><a href="{% url 'twitterfeedrule_list_create' twitterfeed.pk %}"
+						class="btn btn-primary btn-xs">
+							{% core_icon 'TwitterFeedRule' %}&nbsp;
+							{% trans "Manage" %}
+						</a>
+					</td>
+
+					<td class="right">
+						{% url 'twitterfeed_delete' twitterfeed.pk as delete_url %}
+						{% include "widgets/delete-form-button.html" %}
+					</td>
+				{% endif %}
+
+			</tr>
+		{% endfor %}
+		</tbody>
+		</table>
+	{% else %}
+
+		<h2>
+			{% include "twitterfeedrule/breadcrumbs.html" %}
+
+			<span>
+			{% core_icon 'TwitterFeed' %}&nbsp;{% blocktrans %}
+			    No twitter feed yet.
+			{% endblocktrans %}</span>
+		</h2>
+
+		<div class="spacer50"></div>
+
+		<table class="table">
+			<tbody>
+				{% include "twitterfeed/form.html" with create_first=1 %}
+			</tbody>
+		</table>
+	{% endif %}
+
+	<div class="spacer50"></div>
+	<p class="muted">{% trans "Twitter feeds are sets of rules defining how to examine your e-twitter box(es) contents. When e-twitters match any rule of a feed, 1flow will either store the whole etwitter in the feed, or can scrap their bodies, looking for links to fetch external articles in the feed.</em>" %}</p>
+
+	</div>
+</div>
+{% endblock application_content %}
+
+{% block extrajs_footer %}
+    {{ block.super }}
+
+	{% include "snippets/mail-collapse-js-glue.html" with focus_name='id_name' object_list=twitterfeed_list %}
+
+{% endblock extrajs_footer %}

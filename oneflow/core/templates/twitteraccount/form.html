@@ -1,0 +1,13 @@
+
+<tr class="{% if not form.errors %}collapse{% endif %} collapsible">
+    <td colspan="3">
+        <p>{% trans "To create a new Twitter account, just associate another one to your local 1flow account." %}</p>
+        <p>{% trans "NOTE: You may need to visit <a href='https://twitter.com/'>Twitter.com</a> and signin as your other account before proceeding." %}</p>
+    </td>
+    <td colspan="2">
+        <a class="btn btn-block btn-huge btn-primary"
+          href="{% url "social:begin" 'twitter' %}?next={% url 'twitteraccount_list_create' %}">
+            <i class="icon-twitter"></i> {% trans " Associate a twitter account" %}
+        </a>
+    </td>
+</tr>

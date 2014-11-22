@@ -1,0 +1,108 @@
+{% extends 'home.html' %}
+{% load sorting_tags %}
+
+{% block title %}{% trans "Twitter accounts" %}{% endblock title %}
+{% block body_id %}twitter-accounts{% endblock body_id %}
+
+{% block application_content %}
+
+{% inplace_static %}
+
+<div class="spacer50"></div>
+
+<div class="row">
+	<div>
+	{% if twitteraccount_list %}
+
+		 <div class="actions pull-right">
+		 	<div class="btn-group very-muted">
+		 		{% blocktrans count counter=twitteraccount_list|length %}
+		 		    {{ counter }} twitter account
+		 		{% plural %}
+					{{ counter }} twitter accounts
+		 		{% endblocktrans %}
+		 	</div>
+			<div class="btn-group" style="margin-left: 50px;">
+				<button id="form-collapser" class="btn btn-primary">{% trans "Add new" %}</button>
+			</div>
+		</div>
+
+		<h1>
+			<a href="{% url 'twitterfeed_list_create' %}"
+					title="{% trans "Switch to twitter feeds" %}"
+					data-toggle="tooltip"
+					class="popover-top">
+				{% core_icon 'TwitterFeed' %}
+			</a>
+
+			<span class="very-muted">&nbsp;&nbsp;
+			<i class="icon icon-angle-left"></i>
+			<i class="icon icon-angle-right"></i>
+			&nbsp;&nbsp;</span>
+
+			<span>
+				{% core_icon 'TwitterAccount' %}&nbsp;
+				{% trans "Twitter accounts" %}
+			</span>
+		</h1>
+
+		<div class="spacer50"></div>
+
+		<table class="table table-hover">
+		<thead>
+
+		  {% include "twitteraccount/form.html" %}
+
+		  <tr>
+			{% sort_th _("Account name") 'name' %}
+			{% sort_th _("Fetch owned lists") 'fetch_owned_lists' %}
+			{% sort_th _("Fetch subscribed lists") 'fetch_subscribed_lists' %}
+
+			<th class="centered">{% trans "Status" %}</th>
+			<th class="right">{% trans "Actions" %}</th>
+		  </tr>
+		</thead>
+		<tbody>
+		{% for twitteraccount in twitteraccount_list %}
+			<tr>
+				<td>{% inplace_edit 'twitteraccount.name' %}</td>
+				<td>{% inplace_edit 'twitteraccount.fetch_owned_lists' %}</td>
+				<td>{% inplace_edit 'twitteraccount.fetch_subscribed_lists' %}</td>
+				<td></td>
+				{#<td class="centered">{% twitter_is_usable_to_icon twitteraccount %}</td>#}
+				{% url 'twitteraccount_delete' twitteraccount.pk as delete_url %}
+				<td class="right">{% include "widgets/delete-form-button.html" %}</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+		</table>
+	{% else %}
+
+		<h2>{% core_icon 'TwitterAccount' %}&nbsp;{% blocktrans %}
+		    No twitter account yet.
+		{% endblocktrans %}</h2>
+
+		<div class="spacer50"></div>
+
+		<table class="table">
+			<tbody>
+				{% include "twitteraccount/form.html" with create_first=1 %}
+			</tbody>
+		</table>
+
+	{% endif %}
+
+	<div class="spacer50"></div>
+	<p class="muted">{% trans "Twitter accounts allow the 1flow engine to access your twitter timeline and run background live searches for you." %}</p>
+
+
+	</div>
+</div>
+{% endblock application_content %}
+
+{% block extrajs_footer %}
+    {{ block.super }}
+
+	{% include "snippets/mail-collapse-js-glue.html" with focus_name='id_name' object_list=twitteraccount_list %}
+
+{% endblock extrajs_footer %}

@@ -1,0 +1,165 @@
+{% extends 'home.html' %}
+{% load sorting_tags %}
+
+{% block title %}{% blocktrans with feed_name=twitterfeed.name %}Rules for {{ feed_name }}{% endblocktrans %}{% endblock title %}
+{% block body_id %}mail-feed-rules{% endblock body_id %}
+
+{% block application_content %}
+
+{% inplace_static %}
+
+<div class="spacer50"></div>
+
+<div class="row">
+	<div>
+	{% if twitterfeedrule_list %}
+
+		 <div class="actions pull-right">
+		 	<div class="btn-group very-muted">
+		 		{% blocktrans count counter=twitterfeedrule_list|length %}
+		 		    {{ counter }} rule
+		 		{% plural %}
+					{{ counter }} rules
+		 		{% endblocktrans %}
+		 	</div>
+			<div class="btn-group" style="margin-left: 50px;">
+				<button id="form-collapser" class="btn btn-primary">{% trans "Add new" %}</button>
+			</div>
+		</div>
+
+		<h1>
+			{% include "twitterfeedrule/breadcrumbs.html" %}
+
+			<span>
+			{% core_icon 'MailFeedRule' %}&nbsp;
+			{% blocktrans with feed_name=twitterfeed.name %}
+		    	Rules for <strong>{{ feed_name }}</strong>
+			{% endblocktrans %}</span>
+		</h1>
+
+		<div class="row">
+			<div class="col-md-4 right">
+				<h4 class="muted">{% trans "Global feed match action:" %}</h4>
+			</div>
+			<div class="col-md-8">
+			 <h4>{% inplace_edit "twitterfeed.match_action" tag_name_cover:'span' %}</h4>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-4 right">
+				<h4 class="muted">{% trans "Global feed final action:" %}</h4>
+			</div>
+			<div class="col-md-8">
+			 <h4>{% inplace_edit "twitterfeed.finish_action" tag_name_cover:'span' %}</h4>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-4 right">
+				<h4 class="muted">{% trans "Inter-rule/groups operation:" %}</h4>
+			</div>
+			<div class="col-md-8">
+			 <h4>{% inplace_edit "twitterfeed.rules_operation" tag_name_cover:'span' %}</h4>
+			</div>
+		</div>
+
+		<div class="spacer50"></div>
+
+		<table class="table table-hover">
+		<thead>
+
+		  {% include "twitterfeedrule/form.html" %}
+
+		  <tr>
+			<th class="col-sm-2">{% trans "Field" %}</th>
+			<th class="col-sm-2">{% trans "Match type" %}</th>
+			<th class="col-sm-2">{% trans "Value" %}</th>
+
+			{% comment %}
+			<th>{% trans "Result" %}</th>
+			<th>{% trans "Finish" %}</th>
+			{% endcomment %}
+
+			<th class="col-sm-2 centered">{% trans "Status" %}</th>
+			<th class="col-sm-2 right">{% trans "Actions" %}</th>
+		  </tr>
+		</thead>
+		<tbody>
+		{% for previous, twitterfeedrule, next in twitterfeedrule_list|prevcurnext %}
+			<tr>
+				<td>{% inplace_edit 'twitterfeedrule.match_field' %}</td>
+
+				{% comment %}
+
+				<td>
+				{% if twitterfeedrule.match_field != 'other' %}
+					<span class="very-muted">
+						{% trans "not applicable" %}
+					</span>
+
+				{% else %}
+					{% inplace_edit 'twitterfeedrule.other_field' edit_empty_value=_('please edit') %}
+
+				{% endif %}
+				</td>
+				{% endcomment %}
+
+				<td>{% inplace_edit 'twitterfeedrule.match_type' %}</td>
+				<td>{% inplace_edit 'twitterfeedrule.match_value' %}</td>
+
+				{% comment %}
+				<td>{% inplace_edit 'twitterfeedrule.match_action' edit_empty_value=_('global feed action') %}</td>
+				<td>{% inplace_edit 'twitterfeedrule.finish_action' edit_empty_value=_('global feed action') %}</td>
+				{% endcomment %}
+
+				<td></td>
+				{#<td class="centered">{% mail_is_usable_to_icon twitterfeedrule %}</td>#}
+
+				<td class="right">
+					{% url 'twitterfeedrule_group' twitterfeed.pk twitterfeedrule.pk as group_url %}
+					{% include "widgets/group-buttons.html" with obj=twitterfeedrule is_first=forloop.first is_last=forloop.last previous=previous next=next items_count=twitterfeedrule_list|length %}
+
+					{% url 'twitterfeedrule_position' twitterfeed.pk twitterfeedrule.pk as position_url %}
+					{% include "widgets/position-buttons.html" with obj=twitterfeedrule position_first=forloop.first position_last=forloop.last %}
+
+					{% url 'twitterfeedrule_delete' twitterfeed.pk twitterfeedrule.pk as delete_url %}
+					{% include "widgets/delete-form-button.html" %}
+					</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+		</table>
+	{% else %}
+
+		<h2>
+			{% include "twitterfeedrule/breadcrumbs.html" %}
+
+			<span>
+			{% core_icon 'MailFeedRule' %}&nbsp;
+			{% blocktrans with feed_name=twitterfeed.name %}
+			    No rule yet for <strong>{{ feed_name }}</strong>.
+			{% endblocktrans %}</span>
+		</h2>
+
+		<div class="spacer50"></div>
+
+		<table class="table">
+			<tbody>
+				{% include "twitterfeedrule/form.html" with create_first=1 %}
+			</tbody>
+		</table>
+	{% endif %}
+
+		<div class="spacer50"></div>
+
+		<div class="muted">{% trans "<p>Notes:</p><ul><li><strong>only the timeline</strong> is processed for now (eg. no lists).</li><li>All rules are applied <strong>case insensitive</strong>, even regular expressions.</li></ul><p>These points will eventually be customizable in the future.</p>" %}</div>
+
+	</div>
+</div>
+{% endblock application_content %}
+
+{% block extrajs_footer %}
+    {{ block.super }}
+
+	{% include "snippets/mail-collapse-js-glue.html" with focus_name='id_account' object_list=twitterfeedrule_list %}
+
+{% endblock extrajs_footer %}

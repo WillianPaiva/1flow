@@ -1,0 +1,12 @@
+			{% include "twitterfeed/breadcrumbs.html" %}
+
+			<a href="{% url 'twitterfeed_list_create' %}"
+					title="{% trans "Back to Twitter feeds" %}"
+					data-toggle="tooltip"
+					class="popover-top">
+				{% core_icon 'TwitterFeed' %}
+			</a>
+
+			<span class="very-muted">&nbsp;&nbsp;
+			<i class="icon icon-angle-right"></i>
+			&nbsp;&nbsp;</span>
