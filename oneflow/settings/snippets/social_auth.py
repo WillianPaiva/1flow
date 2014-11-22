@@ -18,7 +18,7 @@ LOGIN_REDIRECT_URL = reverse_lazy('home')
 LOGIN_ERROR_URL    = reverse_lazy('signin_error')
 # SOCIAL_AUTH_BACKEND_ERROR_URL = reverse_lazy('signin_error')
 
-SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email', ]
+# SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email', ]
 SOCIAL_AUTH_FORCE_POST_DISCONNECT = True
 SOCIAL_AUTH_EXTRA_DATA = True
 SOCIAL_AUTH_SESSION_EXPIRATION = False
@@ -33,7 +33,7 @@ SOCIAL_AUTH_SESSION_EXPIRATION = False
 
 # ———————————————————————————————————————————————————————————————————— PIPELINE
 
-SOCIAL_AUTH_PIPELINE = (
+SOCIAL_AUTH_PIPELINE_BLAHBLAH = (
 
     # Get the information we can about the user and return it in a simple
     # format to create the user instance later. On some cases the details are
@@ -92,10 +92,10 @@ SOCIAL_AUTH_PIPELINE = (
     'oneflow.base.social_pipeline.throttle_new_user_accounts',
 )
 
-if DEBUG:
-    SOCIAL_AUTH_PIPELINE = (
-        'oneflow.base.social_pipeline.debug',
-    ) + SOCIAL_AUTH_PIPELINE
+# if DEBUG:
+#     SOCIAL_AUTH_PIPELINE = (
+#         'oneflow.base.social_pipeline.debug',
+#     ) + SOCIAL_AUTH_PIPELINE
 
 # import sys
 # sys.stdout.write('>>>\n')
@@ -119,10 +119,16 @@ TWITTER_EXTRA_DATA = [
     ('screen_name', 'username'),
     ('name', 'fullname'),
     ('location', 'location'),
+
+    ('statuses_count', 'statuses_count'),       # Number of tweets I made
+    ('friends_count', 'friends_count'),         # Who I follow
+    ('followers_count', 'followers_count'),     # Who follows me
     ('favourites_count', 'favourites_count'),
+    ('retweets_count', 'retweets_count'),       # ??
+    ('retweet_count', 'retweet_count'),         # ??
     ('listed_count', 'listed_count'),
+
     ('lang', 'language'),
-    ('followers_count', 'followers_count'),
     ('profile_background_image_url', 'profile_background_image_url'),
     ('profile_background_image_url_https',
      'profile_background_image_url_https'),
@@ -131,8 +137,6 @@ TWITTER_EXTRA_DATA = [
     ('geo_enabled', 'geo_enabled'),
     ('time_zone', 'time_zone'),
     ('description', 'description'),
-    ('statuses_count', 'statuses_count'),
-    ('friends_count', 'friends_count'),
     # ('', ''),
 ]
 
