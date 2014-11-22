@@ -26,10 +26,6 @@ from statsd import statsd
 # from constance import config
 
 from celery import chain as tasks_chain
-# from celery.exceptions import SoftTimeLimitExceeded
-
-from humanize.time import naturaldelta
-from humanize.i18n import django_language
 
 from django.conf import settings
 from django.db import models, IntegrityError
@@ -183,12 +179,6 @@ class Article(BaseItem, UrlItem, ContentItem):
     publishers = models.ManyToManyField(
         User, null=True, blank=True, related_name='publications')
 
-    date_published = models.DateTimeField(
-        verbose_name=_(u'date published'),
-        null=True, blank=True, db_index=True,
-        help_text=_(u"When the article first appeared on the publisher's "
-                    u"website."))
-
     # —————————————————————————————————————————————————————————————— Django
 
     def __unicode__(self):
@@ -196,12 +186,6 @@ class Article(BaseItem, UrlItem, ContentItem):
             self.name[:40] + (self.name[40:] and u'…'), self.id, self.url)
 
     # —————————————————————————————————————————————————————————————— Properties
-
-    @property
-    def date_published_delta(self):
-
-        with django_language():
-            return _(u'{0} ago').format(naturaldelta(self.date_published))
 
     @property
     def is_good(self):
