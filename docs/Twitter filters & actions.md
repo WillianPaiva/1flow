@@ -110,3 +110,24 @@ OK DEFAULT: with=followings
 follow=
 track=
 OMGYES: locations=
+
+
+# Situations
+
+- first connection
+    + no data
+        + no backfill
+        + no latest
+        + no earliest
+
+    → follow stream
+    → backfill until limit or start of stream
+
+- subsequent connections
+    + incomplete backfill
+    + latest (somewhere)
+    + oldest (somewhere)
+
+    → follow stream
+    → eventually backfill to complete between stream first and our latest
+    → check history to backfill until limit if not already done
