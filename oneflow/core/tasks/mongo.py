@@ -38,7 +38,7 @@ from ..models.nonrel import (
 LOGGER = logging.getLogger(__name__)
 
 
-@task(name="oneflow.core.tasks.refresh_all_mongo_feeds", queue='default')
+@task(name="oneflow.core.tasks.refresh_all_mongo_feeds", queue='high')
 def refresh_all_mongo_feeds(limit=None, force=False):
     u""" Refresh all MongoEngine feeds (RSS).
 
