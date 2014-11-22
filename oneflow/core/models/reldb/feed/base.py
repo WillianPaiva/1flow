@@ -203,6 +203,8 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
         verbose_name = _(u'Base feed')
         verbose_name_plural = _(u'Base feeds')
 
+    INPLACEEDIT_EXCLUDE = ('errors', 'options', )
+
     # ———————————————————————————————————————————————————————————————— Managers
 
     objects = BaseFeedManager()
