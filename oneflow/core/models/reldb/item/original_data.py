@@ -21,6 +21,7 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 import re
 import ast
+import json
 import logging
 
 from statsd import statsd
@@ -29,6 +30,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from oneflow.base.utils import register_task_method
+from oneflow.base.utils.dateutils import twitter_datestring_to_datetime_utc
 
 from ..common import ORIGINS, CONTENT_TYPES
 from ..account.common import email_prettify_raw_message
@@ -72,14 +74,16 @@ class OriginalData(models.Model):
                                 related_name='original_data')
 
     # This should go away soon, after a full re-parsing.
-    google_reader = models.TextField()
-    feedparser    = models.TextField()
-    raw_email     = models.TextField()
+    google_reader = models.TextField(null=True, blank=True)
+    feedparser    = models.TextField(null=True, blank=True)
+    raw_email     = models.TextField(null=True, blank=True)
+    twitter       = models.TextField(null=True, blank=True)
 
     # These are set to True to avoid endless re-processing.
     google_reader_processed = models.BooleanField(default=False)
     feedparser_processed    = models.BooleanField(default=False)
     raw_email_processed     = models.BooleanField(default=False)
+    twitter_processed       = models.BooleanField(default=False)
 
     def __unicode__(self):
         return u'Original data for {0}'.format(self.item)
@@ -112,6 +116,11 @@ class OriginalData(models.Model):
 
         return None
 
+    @property
+    def twitter_hydrated(self):
+        """ Hydrate via JSON. """
+
+        return json.loads(self.twitter)
 
 # ———————————————————————————————————————————————————————————— External methods
 
@@ -185,6 +194,7 @@ def BaseItem_postprocess_original_data_method(self, force=False,
         None: self.postprocess_guess_original_data,
         ORIGINS.NONE: self.postprocess_guess_original_data,
         ORIGINS.FEEDPARSER: self.postprocess_feedparser_data,
+        ORIGINS.TWITTER: self.postprocess_twitter_data,
     }
 
     meth = methods_table.get(self.origin, None)
@@ -232,6 +242,10 @@ def BaseItem_postprocess_guess_original_data_method(self, force=False,
 
     elif self.original_data.google_reader_hydrated:
         self.origin = ORIGINS.GOOGLE_READER
+        need_save   = True
+
+    elif self.original_data.twitter_hydrated:
+        self.origin = ORIGINS.TWITTER
         need_save   = True
 
     if need_save:
@@ -358,6 +372,41 @@ def BaseItem_postprocess_google_reader_data_method(self, force=False,
                    u'yet but it was called for article %s!', self)
 
 
+def BaseItem_postprocess_twitter_data_method(self, force=True, commit=True):
+    """ Post-process the original tweet to make our tweet richer. """
+
+    if self.original_data.twitter_processed and not force:
+        LOGGER.info('Twitter data already post-processed.')
+        return
+
+    json_tweet = self.original_data.twitter_hydrated
+
+    if json_tweet:
+
+        LOGGER.debug(u'Post-processing Twitter data for %s…', self)
+
+        self.language = Language.get_by_code(json_tweet['lang'])
+
+        self.date_published = twitter_datestring_to_datetime_utc(
+            json_tweet['created_at'])
+
+        # WTF: putting this line after the "if tags:" doesn't do the job!
+        self.save()
+
+        tags = Tag.get_tags_set(
+            [x['text'] for x in json_tweet['entities']['hashtags']],
+            origin=self)
+
+        if tags:
+            self.tags.add(*tags)
+
+    else:
+        LOGGER.warning(u'Original data for %s is empty!', self)
+
+    self.original_data.twitter_processed = True
+    self.original_data.save()
+
+
 BaseItem.add_original_data               = \
     BaseItem_add_original_data_method
 BaseItem.remove_original_data            = \
@@ -370,6 +419,8 @@ BaseItem.postprocess_feedparser_data     = \
     BaseItem_postprocess_feedparser_data_method
 BaseItem.postprocess_google_reader_data  = \
     BaseItem_postprocess_google_reader_data_method
+BaseItem.postprocess_twitter_data  = \
+    BaseItem_postprocess_twitter_data_method
 
 
 # HEADS UP: we need to register against BaseItem, because OriginalData
