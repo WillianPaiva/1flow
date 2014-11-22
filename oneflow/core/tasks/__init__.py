@@ -24,6 +24,7 @@ import time as pytime
 from constance import config
 
 from celery import task
+from celery.signals import beat_init
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -49,6 +50,10 @@ from reprocess import *  # NOQA
 
 
 LOGGER = logging.getLogger(__name__)
+
+REFRESH_ALL_FEEDS_LOCK_NAME = 'refresh_all_feeds'
+REFRESH_ALL_MAILACCOUNTS_LOCK_NAME = 'check_email_accounts'
+SYNCHRONIZE_STATSD_LOCK_NAME = 'synchronize_statsd_gauges'
 
 
 @task(queue='clean')
@@ -80,7 +85,7 @@ def refresh_all_feeds(limit=None, force=False):
     #       oneflow.core.tasks.refresh_all_feeds succeeded in 1.99886608124s.
     #
     my_lock = RedisExpiringLock(
-        'refresh_all_feeds',
+        REFRESH_ALL_FEEDS_LOCK_NAME,
         expire_time=config.FEED_GLOBAL_REFRESH_INTERVAL * 60 - 1
     )
 
@@ -129,16 +134,13 @@ def refresh_all_feeds(limit=None, force=False):
                     how_late = feed.date_last_fetch + interval - mynow
                     how_late = how_late.days * 86400 + how_late.seconds
 
-                    countdown = 0
+                    late = feed.date_last_fetch + interval < mynow
+
                     basefeed_refresh_task.delay(feed.id, force)
 
-                    LOGGER.info(u'%s refresh of feed %s %s (%s late).',
-                                u'Scheduled randomized'
-                                if countdown else u'Launched',
-                                feed,
-                                u' in {0}'.format(naturaldelta(countdown))
-                                if countdown else u'in the background',
-                                naturaldelta(how_late))
+                    LOGGER.info(u'Launched refresh of feed %s (%s %s).',
+                                feed, naturaldelta(how_late),
+                                u'late' if late else u'earlier')
                     count += 1
 
         finally:
@@ -155,6 +157,9 @@ def refresh_all_feeds(limit=None, force=False):
         LOGGER.info(u'Launched %s refreshes out of %s feed(s) checked.',
                     count, feeds.count())
 
+# Allow to release the lock manually for testing purposes.
+refresh_all_feeds.lock = RedisExpiringLock(REFRESH_ALL_FEEDS_LOCK_NAME)
+
 
 @task(queue='refresh')
 def refresh_all_mailaccounts(force=False):
@@ -167,7 +172,7 @@ def refresh_all_mailaccounts(force=False):
 
     accounts = MailAccount.objects.unusable()
 
-    my_lock = RedisExpiringLock('check_email_accounts',
+    my_lock = RedisExpiringLock(REFRESH_ALL_MAILACCOUNTS_LOCK_NAME,
                                 expire_time=30 * (accounts.count() + 2))
 
     if not my_lock.acquire():
@@ -201,6 +206,10 @@ def refresh_all_mailaccounts(force=False):
         LOGGER.info(u'Launched %s checks on unusable accounts out of %s total.',
                     accounts.count(), MailAccount.objects.all().count())
 
+# Allow to release the lock manually for testing purposes.
+refresh_all_mailaccounts.lock = RedisExpiringLock(
+    REFRESH_ALL_MAILACCOUNTS_LOCK_NAME)
+
 
 @task(queue='clean')
 def synchronize_statsd_gauges(full=False, force=False):
@@ -223,8 +232,7 @@ def synchronize_statsd_gauges(full=False, force=False):
         synchronize_statsd_reads_gauges,
     )
 
-    my_lock = RedisExpiringLock('synchronize_statsd_gauges',
-                                expire_time=3600)
+    my_lock = RedisExpiringLock(SYNCHRONIZE_STATSD_LOCK_NAME, expire_time=3600)
 
     if not my_lock.acquire():
         if force:
@@ -264,3 +272,33 @@ def synchronize_statsd_gauges(full=False, force=False):
 
         finally:
             my_lock.release()
+
+
+# Allow to release the lock manually for testing purposes.
+synchronize_statsd_gauges.lock = RedisExpiringLock(
+    SYNCHRONIZE_STATSD_LOCK_NAME)
+
+
+@beat_init.connect()
+def clear_all_locks(conf=None, **kwargs):
+    """ Clear all expiring locks when celery beat starts. """
+
+    for key, value in globals().items():
+        if hasattr(value, 'lock'):
+            getattr(value, 'lock').release()
+
+            LOGGER.info(u'Released %s() lock.', key)
+
+    locked_count = 0
+
+    for feed in BaseFeed.objects.filter(is_active=True, is_internal=False):
+        released = feed.refresh_lock.release()
+
+        if released:
+            locked_count += 1
+
+    if locked_count:
+        LOGGER.info(u'Released %s feeds refresh locks.', locked_count)
+
+    else:
+        LOGGER.info(u'No feed refresh lock released.')
