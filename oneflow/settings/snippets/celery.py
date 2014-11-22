@@ -146,7 +146,7 @@ CELERY_ACCEPT_CONTENT = ['pickle', 'json']
 CELERY_TASK_SERIALIZER = 'pickle'
 CELERY_RESULT_SERIALIZER = 'json'
 
-# CELERY_ALWAYS_EAGER=True
+CELERY_ALWAYS_EAGER = bool(os.environ.get('CELERY_ALWAYS_EAGER', False))
 
 # Both are cool but imply too much trafic.
 # CELERY_TRACK_STARTED = True
