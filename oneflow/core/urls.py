@@ -179,6 +179,11 @@ urlpatterns = patterns(
         login_required(never_cache(views.UserAddressBookView.as_view())),
         name='user_address_book'),
 
+    url(_(ur'^sources/$'),
+        login_required(never_cache(TemplateView.as_view(
+            template_name='sources-list.html'))),
+        name='sources_list'),
+
     url(_(ur'^selector/$'),
         login_required(never_cache(views.source_selector)),
         name='source_selector'),

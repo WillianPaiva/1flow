@@ -1,0 +1,149 @@
+{% extends 'home.html' %}
+
+{% block title %}{% trans 'Features' %}{% endblock title %}
+{% block body_id %}help{% endblock body_id %}
+{% block body_data %}data-spy="scroll" data-target="#sidebar"{% endblock body_data %}
+
+{% block application_header %}
+    <header class="subhead">
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12">
+          <h1 class="centered">{% trans "Your accounts & feeds" %}</h1>
+          <div class="spacer40"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+{% endblock application_header %}
+
+{% block application_content %}
+
+  <div class="row">
+
+    <div class="col-md-4">
+      <div class="row">
+        <div class="col-xs-10 col-xs-offset-1 well well-lg">
+          <h2>{% core_icon 'RssAtomFeed' %} {% trans "RSS/Atom feeds" %}</h2>
+          {% include "sources-list/rssatom.html" %}
+        </div>
+      </div>
+    </div>
+    {# Every 3 items we make a new row. #}
+    {% cycle '' '' '</div><div class="row">' as row_divs %}
+
+    <div class="col-md-4">
+      <div class="row">
+        <div class="col-xs-10 col-xs-offset-1 well well-lg">
+          <h2>{% core_icon 'MailFeed' %} {% trans "E-mail" %}</h2>
+          {% include "sources-list/mail.html" %}
+        </div>
+      </div>
+    </div>
+    {% cycle row_divs %}
+
+    {% if 'twitter' in backends.backends %}
+    <div class="col-md-4">
+      <div class="row">
+        <div class="col-xs-10 col-xs-offset-1 well well-lg">
+          <h2>{% core_icon 'TwitterFeed' %} {% trans "Twitter" %}</h2>
+          {% include "sources-list/twitter.html" %}
+        </div>
+      </div>
+    </div>
+    {% cycle row_divs %}
+    {% endif %}
+
+    {% if 'facebook' in backends.backends %}
+    <div class="col-md-4">
+      <div class="row">
+        <div class="col-xs-10 col-xs-offset-1 well well-lg">
+          <h2 class="muted not-ready">{% core_icon 'FacebookFeed' %} {% trans "Facebook" %}</h2>
+          <div class="spacer100"></div>
+        </div>
+      </div>
+    </div>
+    {% cycle row_divs %}
+    {% endif %}
+
+    {% if 'google-oauth2' in backends.backends %}
+    <div class="col-md-4">
+      <div class="row">
+        <div class="col-xs-10 col-xs-offset-1 well well-lg">
+          <h2 class="muted not-ready">{% core_icon 'TwitterFeed' %} {% trans "Google+" %}</h2>
+          <div class="spacer100"></div>
+        </div>
+      </div>
+    </div>
+    {% cycle row_divs %}
+    {% endif %}
+
+    {% if 'tumblr' in backends.backends %}
+    <div class="col-md-4">
+      <div class="row">
+        <div class="col-xs-10 col-xs-offset-1 well well-lg">
+          <h2 class="muted not-ready">{% trans "Tumblr" %}</h2>
+          <div class="spacer100"></div>
+        </div>
+      </div>
+    </div>
+    {% cycle row_divs %}
+    {% endif %}
+
+    {% if 'pinterest' in backends.backends %}
+    <div class="col-md-4">
+      <div class="row">
+        <div class="col-xs-10 col-xs-offset-1 well well-lg">
+          <h2 class="muted not-ready">{% trans "Pinterest" %}</h2>
+          <div class="spacer100"></div>
+        </div>
+      </div>
+    </div>
+    {% cycle row_divs %}
+    {% endif %}
+
+    {% if 'github' in backends.backends %}
+    <div class="col-md-4">
+      <div class="row">
+        <div class="col-xs-10 col-xs-offset-1 well well-lg">
+          <h2 class="muted not-ready">{% trans "Github" %}</h2>
+          <div class="spacer100"></div>
+        </div>
+      </div>
+    </div>
+    {% cycle row_divs %}
+    {% endif %}
+
+    {% if 'linkedin' in backends.backends %}
+    <div class="col-md-4">
+      <div class="row">
+        <div class="col-xs-10 col-xs-offset-1 well well-lg">
+          <h2 class="muted not-ready">{% trans "LinkedIn" %}</h2>
+          <div class="spacer100"></div>
+        </div>
+      </div>
+    </div>
+    {% cycle row_divs %}
+    {% endif %}
+
+    {% if 'flikr' in backends.backends %}
+    <div class="col-md-4">
+      <div class="row">
+        <div class="col-xs-10 col-xs-offset-1 well well-lg">
+          <h2 class="muted not-ready">{% trans "Flikr" %}</h2>
+          <div class="spacer100"></div>
+        </div>
+      </div>
+    </div>
+    {% cycle row_divs %}
+    {% endif %}
+
+
+  </div>
+
+{% endblock application_content %}
+
+{% block extrajs_footer %}
+    {{ block.super }}
+    {% compressed_js 'core' %}
+{% endblock extrajs_footer %}

@@ -1,0 +1,85 @@
+
+{% if user.accounts.twitter.usable.count == 0 %}
+
+  {% if user.accounts.twitter.unusable.count > 0 %}
+
+    <div class="alert alert-warning" role="alert">{% trans "No working Twitter account. Please check your parameters." %}</div>
+
+    <div><a
+        href="{% url 'twitteraccount_list_create' %}"
+        data-tooltip="tooltip"
+        title="{% trans "Manage your Twitter accounts" %}"
+        class="btn btn-lg btn-warning btn-block centered popover-top">
+      {% core_icon 'TwitterAccount' %}&nbsp;{% trans "Manage Twitter accounts" %}</a>
+    </div>
+
+  {% else %}
+    <div class="alert alert-info" role="alert">{% trans "No Twitter account available. Please associate at least one Twitter account with 1flow to create Twitter feeds." %}</div>
+
+        <a class="btn btn-block btn-huge btn-primary"
+          href="{% url "social:begin" 'twitter' %}?next={% url 'sources_list' %}">
+            <i class="icon-twitter"></i> {% trans " Associate a twitter account" %}
+        </a>
+
+  {% endif %}
+
+{% else %}
+
+  {% if user.accounts.twitter.unusable.count > 0 %}
+
+    <div class="alert alert-warning" role="alert">{% trans "At least one of your Twitter accounts does not work properly. Please check your parameters." %}</div>
+
+    <div><a
+        href="{% url 'twitteraccount_list_create' %}"
+        data-tooltip="tooltip"
+        title="{% trans "Manage your Twitter accounts" %}"
+        class="btn btn-lg btn-warning btn-block centered popover-top">
+      {% core_icon 'TwitterAccount' %}&nbsp;{% trans "Manage Twitter accounts" %}</a>
+    </div>
+
+    {% else %}
+
+    <div><a
+        href="{% url 'twitteraccount_list_create' %}"
+        data-tooltip="tooltip"
+        title="{% trans "Manage your Twitter accounts" %}"
+        class="btn btn-lg btn-primary btn-block centered popover-top">
+      {% core_icon 'TwitterAccount' %}&nbsp;{% trans "Manage Twitter accounts" %}</a>
+    </div>
+
+  {% endif %}
+
+
+  {% if user.feeds.twitter.count > 0 %}
+
+    <div class="spacer20"></div>
+
+    <div><a id="twitterfeed-list-trigger"
+        href="{% url 'twitterfeed_list_create' %}"
+        data-tooltip="tooltip"
+        title="{% trans "Manage your Twitter streams" %}"
+        class="btn btn-lg btn-primary btn-block centered popover-top">
+      {% core_icon 'TwitterFeed' %}&nbsp;{% trans "Manage Twitter streams" %}</a>
+    </div>
+
+  {% else %}
+
+    <div class="spacer20"></div>
+
+    <div class="alert alert-success">{% trans "Create your first Twitter stream, from rules applied on any of your Twitter accounts." %}</div>
+
+    <div><a id="twitterfeed-list-trigger"
+        href="{% url 'twitterfeed_list_create' %}"
+        data-tooltip="tooltip"
+        title="{% trans "Create a Twitter stream" %}"
+        class="btn btn-lg btn-success btn-block centered popover-top">
+      {% core_icon 'TwitterFeed' %}&nbsp;{% trans "Create a Twitter stream" %}</a>
+    </div>
+
+    <div class="spacer20"></div>
+
+    <div>{% trans "Note: You will be able to share this stream with other 1flow users, or keep it completely private if you wish." %}</div>
+
+  {% endif %}
+
+{% endif %}

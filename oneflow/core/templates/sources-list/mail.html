@@ -1,0 +1,88 @@
+
+{% if user.accounts.mail.usable.count == 0 %}
+
+  {% if user.accounts.mail.unusable.count > 0 %}
+
+    <div class="alert alert-warning" role="alert">{% trans "No working mail account. Please check your parameters." %}</div>
+
+    <div><a
+        href="{% url 'mailaccount_list_create' %}"
+        data-tooltip="tooltip"
+        title="{% trans "Manage your e-mail accounts" %}"
+        class="btn btn-lg btn-warning btn-block centered popover-top">
+      {% core_icon 'MailAccount' %}&nbsp;{% trans "Manage e-mail accounts" %}</a>
+    </div>
+
+  {% else %}
+    <div class="alert alert-info" role="alert">{% trans "No mail account available. Please add one in order to create mail feeds." %}</div>
+
+    <div><a
+        href="{% url 'mailaccount_list_create' %}"
+        data-tooltip="tooltip"
+        title="{% trans "Create an e-mail account" %}"
+        class="btn btn-lg btn-success btn-block centered popover-top">
+      {% core_icon 'MailAccount' %}&nbsp;{% trans "Create an e-mail account" %}</a>
+    </div>
+
+  {% endif %}
+
+{% else %}
+
+  {% if user.accounts.mail.unusable.count > 0 %}
+
+    <div class="alert alert-warning" role="alert">{% trans "At least one of your e-mail accounts does not work properly. Please check your parameters." %}</div>
+
+    <div><a
+        href="{% url 'mailaccount_list_create' %}"
+        data-tooltip="tooltip"
+        title="{% trans "Manage your e-mail accounts" %}"
+        class="btn btn-lg btn-warning btn-block centered popover-top">
+      {% core_icon 'MailAccount' %}&nbsp;{% trans "Manage e-mail accounts" %}</a>
+    </div>
+
+    {% else %}
+
+    <div><a
+        href="{% url 'mailaccount_list_create' %}"
+        data-tooltip="tooltip"
+        title="{% trans "Manage your e-mail accounts" %}"
+        class="btn btn-lg btn-primary btn-block centered popover-top">
+      {% core_icon 'MailAccount' %}&nbsp;{% trans "Manage e-mail accounts" %}</a>
+    </div>
+
+  {% endif %}
+
+
+  {% if user.feeds.mail.count > 0 %}
+
+    <div class="spacer20"></div>
+
+    <div><a id="mailfeed-list-trigger"
+        href="{% url 'mailfeed_list_create' %}"
+        data-tooltip="tooltip"
+        title="{% trans "Manage your e-mail streams" %}"
+        class="btn btn-lg btn-primary btn-block centered popover-top">
+      {% core_icon 'MailFeed' %}&nbsp;{% trans "Manage e-mail streams" %}</a>
+    </div>
+
+  {% else %}
+
+    <div class="spacer20"></div>
+
+    <div class="alert alert-success">{% trans "Create your first e-mail stream, from rules applied on any of your e-mail accounts." %}</div>
+
+    <div><a id="mailfeed-list-trigger"
+        href="{% url 'mailfeed_list_create' %}"
+        data-tooltip="tooltip"
+        title="{% trans "Create an e-mail stream" %}"
+        class="btn btn-lg btn-success btn-block centered popover-top">
+      {% core_icon 'MailFeed' %}&nbsp;{% trans "Create an e-mail stream" %}</a>
+    </div>
+
+    <div class="spacer20"></div>
+
+    <div>{% trans "Note: You will be able to share this stream with other 1flow users, or keep it completely private if you wish." %}</div>
+
+  {% endif %}
+
+{% endif %}
