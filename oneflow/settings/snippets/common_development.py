@@ -113,3 +113,5 @@ import logging
 import south.logger  # NOQA
 
 logging.getLogger('south').setLevel(logging.CRITICAL)
+logging.getLogger('oauthlib').setLevel(logging.CRITICAL)
+logging.getLogger('requests_oauthlib').setLevel(logging.CRITICAL)

@@ -36,7 +36,7 @@ from polymorphic import (
     PolymorphicModel,
 )
 
-from sparks.django.models import DiffMixin
+from sparks.django.models.mixins import DiffMixin
 
 from oneflow.base.utils.dateutils import now, timedelta
 
@@ -120,6 +120,8 @@ class BaseAccount(PolymorphicModel, DiffMixin):
     # Can be overriden by inherited classes.
     usable_start_task_name   = None
     reset_unusable_task_name = None
+
+    INPLACEEDIT_FORM_EXCLUDE = ('options', )
 
     # ———————————————————————————————————————————————————————————————— Managers
 

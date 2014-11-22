@@ -1,0 +1,21 @@
+
+
+<div><a id="import-web-item-trigger"
+    href="{% url 'import_web_pages' %}"
+    data-toggle="modal" data-target="#"
+    data-tooltip="tooltip"
+    title="{% trans "Add one or more RSS/Atom feed to 1flow via their web URL." %}"
+    class="btn btn-lg btn-primary btn-block centered popover-top">
+    {% core_icon 'RssAtomCreate' %}{% trans "Add an RSS/Atom feed" %}</a>
+</div>
+
+<div class="spacer20"></div>
+
+<div><a id="add-subscription-trigger"
+    href="{% url 'add_subscription' %}"
+    data-toggle="modal" data-target="#"
+    data-tooltip="tooltip"
+    title="{% trans "Subscribe to any feed already present in our database, or shared by other users of 1flow databases across the world." %}"
+    class="btn btn-lg btn-primary btn-block centered popover-top">
+    {% core_icon 'RssAtomFeed' %}{% trans "Subscribe to a 1flow stream" %}</a>
+</div>

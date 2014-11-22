@@ -402,6 +402,7 @@ def export_content(request, **kwargs):
     """ Export recent feeds/articles as JSON. """
 
     since = kwargs.get('since')
+    until = kwargs.get('until', None)
     format = request.GET.get('format', 'json')
     folder_id = kwargs.get('folder_id', None)
     folder_slug = kwargs.get('folder_slug', None)
@@ -420,7 +421,7 @@ def export_content(request, **kwargs):
         try:
             content = {
                 'result': 'OK',
-                'data': BaseFeed.export_content(since, folder=folder),
+                'data': BaseFeed.export_content(since, until, folder=folder),
             }
 
         except Exception as e:
@@ -459,6 +460,20 @@ from mailfeedrule import (  # NOQA
     MailFeedRuleGroupUpdateView,
     MailFeedRuleDeleteView,
 )
+
+from twitteraccount import (TwitterAccountListCreateView,   # NOQA
+                            TwitterAccountDeleteView)
+
+from twitterfeed import TwitterFeedListCreateView, TwitterFeedDeleteView  # NOQA
+from twitterfeedrule import (  # NOQA
+   TwitterFeedRuleListCreateView,
+   TwitterFeedRulePositionUpdateView,
+   TwitterFeedRuleGroupUpdateView,
+   TwitterFeedRuleDeleteView,
+)
+
+# —————————————————————————————————————————————————————————————— Smaller things
+
 
 from folder import manage_folder, delete_folder  # NOQA
 

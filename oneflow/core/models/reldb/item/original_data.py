@@ -21,6 +21,7 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 import re
 import ast
+import json
 import logging
 
 from statsd import statsd
@@ -29,6 +30,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from oneflow.base.utils import register_task_method
+from oneflow.base.utils.dateutils import twitter_datestring_to_datetime_utc
 
 from ..common import ORIGINS, CONTENT_TYPES
 from ..account.common import email_prettify_raw_message
@@ -48,6 +50,13 @@ __all__ = [
 ]
 
 
+class OriginalDataReprocessException(Exception):
+
+    """ raised when an origin has been found on an item that hadn't one. """
+
+    pass
+
+
 class OriginalData(models.Model):
 
     """ Allow to keep any “raw” data associated with a base item.
@@ -65,14 +74,16 @@ class OriginalData(models.Model):
                                 related_name='original_data')
 
     # This should go away soon, after a full re-parsing.
-    google_reader = models.TextField()
-    feedparser    = models.TextField()
-    raw_email     = models.TextField()
+    google_reader = models.TextField(null=True, blank=True)
+    feedparser    = models.TextField(null=True, blank=True)
+    raw_email     = models.TextField(null=True, blank=True)
+    twitter       = models.TextField(null=True, blank=True)
 
     # These are set to True to avoid endless re-processing.
     google_reader_processed = models.BooleanField(default=False)
     feedparser_processed    = models.BooleanField(default=False)
     raw_email_processed     = models.BooleanField(default=False)
+    twitter_processed       = models.BooleanField(default=False)
 
     def __unicode__(self):
         return u'Original data for {0}'.format(self.item)
@@ -105,12 +116,22 @@ class OriginalData(models.Model):
 
         return None
 
+    @property
+    def twitter_hydrated(self):
+        """ Hydrate via JSON. """
+
+        return json.loads(self.twitter)
 
 # ———————————————————————————————————————————————————————————— External methods
 
 
-def BaseItem_add_original_data_method(self, name, value, commit=True):
-    """ Direct property writer for an original data. """
+def BaseItem_add_original_data_method(self, name, value, launch_task=False,
+                                      apply_now=False, commit=True):
+    """ Direct property writer for an original data.
+
+    Launches the post-processor celery task if told so. Else, it is the
+    responsibility of the caller (or the programmer) to do it somewhere.
+    """
 
     try:
         od = self.original_data
@@ -118,10 +139,24 @@ def BaseItem_add_original_data_method(self, name, value, commit=True):
     except OriginalData.DoesNotExist:
         od = OriginalData(item=self)
 
-    setattr(od, name, value)
+    if getattr(od, name, None) == value:
+        LOGGER.warning(u'Not re-setting original data on %s!', self)
 
-    if commit:
-        od.save()
+    else:
+        setattr(od, name, value)
+
+        if commit:
+            od.save()
+
+        if launch_task:
+
+            the_task = globals()['baseitem_postprocess_original_data_task']
+
+            if apply_now:
+                the_task.apply((self.id, ))
+
+            else:
+                the_task.delay(self.id)
 
     return od
 
@@ -146,23 +181,45 @@ def BaseItem_remove_original_data_method(self, name, commit=True):
             od.save()
 
 
-def BaseItem_postprocess_original_data_method(self, force=False, commit=True):
+def BaseItem_postprocess_original_data_method(self, force=False,
+                                              commit=True, first_run=True):
     """ Generic method for original data post_processing. """
+
+    if self.duplicate_of_id:
+        LOGGER.error(u'Item %s: aborting post-processing of original data, '
+                     u'we are a duplicate.', self.id)
+        return
 
     methods_table = {
         None: self.postprocess_guess_original_data,
         ORIGINS.NONE: self.postprocess_guess_original_data,
         ORIGINS.FEEDPARSER: self.postprocess_feedparser_data,
+        ORIGINS.TWITTER: self.postprocess_twitter_data,
     }
 
     meth = methods_table.get(self.origin, None)
 
     if meth is None:
         LOGGER.warning(u'No method to post-process origin type %s of '
-                       u'article %s.', self.origin, self)
+                       u'item %s.', self.origin, self)
         return
 
-    meth(force=force, commit=commit)
+    try:
+        meth(force=force, commit=commit)
+
+    except OriginalDataReprocessException:
+        if first_run:
+            self.postprocess_original_data(force=force, commit=commit,
+                                           first_run=False)
+        else:
+            # This is a programmer's bug.
+            raise RuntimeError(u'Running postprocess_original_data() should '
+                               u'not happen twice automatically.')
+    except:
+        LOGGER.exception(u'Exception while post-processing '
+                         u'original data for %s', self)
+    else:
+        LOGGER.info(u'Post-processed original data for %s.', self)
 
 
 def BaseItem_postprocess_guess_original_data_method(self, force=False,
@@ -187,6 +244,10 @@ def BaseItem_postprocess_guess_original_data_method(self, force=False,
         self.origin = ORIGINS.GOOGLE_READER
         need_save   = True
 
+    elif self.original_data.twitter_hydrated:
+        self.origin = ORIGINS.TWITTER
+        need_save   = True
+
     if need_save:
         if commit:
             self.save()
@@ -194,8 +255,7 @@ def BaseItem_postprocess_guess_original_data_method(self, force=False,
         LOGGER.warning(u'Found origin type %s for item %s which had '
                        u'none before.', self.origin, self)
 
-        # Now that we have an origin type, re-run the real post-processor.
-        self.postprocess_original_data(force=force, commit=commit)
+        raise OriginalDataReprocessException()
 
 
 def BaseItem_postprocess_feedparser_data_method(self, force=False,
@@ -312,6 +372,41 @@ def BaseItem_postprocess_google_reader_data_method(self, force=False,
                    u'yet but it was called for article %s!', self)
 
 
+def BaseItem_postprocess_twitter_data_method(self, force=True, commit=True):
+    """ Post-process the original tweet to make our tweet richer. """
+
+    if self.original_data.twitter_processed and not force:
+        LOGGER.info('Twitter data already post-processed.')
+        return
+
+    json_tweet = self.original_data.twitter_hydrated
+
+    if json_tweet:
+
+        LOGGER.debug(u'Post-processing Twitter data for %s…', self)
+
+        self.language = Language.get_by_code(json_tweet['lang'])
+
+        self.date_published = twitter_datestring_to_datetime_utc(
+            json_tweet['created_at'])
+
+        # WTF: putting this line after the "if tags:" doesn't do the job!
+        self.save()
+
+        tags = Tag.get_tags_set(
+            [x['text'] for x in json_tweet['entities']['hashtags']],
+            origin=self)
+
+        if tags:
+            self.tags.add(*tags)
+
+    else:
+        LOGGER.warning(u'Original data for %s is empty!', self)
+
+    self.original_data.twitter_processed = True
+    self.original_data.save()
+
+
 BaseItem.add_original_data               = \
     BaseItem_add_original_data_method
 BaseItem.remove_original_data            = \
@@ -324,6 +419,8 @@ BaseItem.postprocess_feedparser_data     = \
     BaseItem_postprocess_feedparser_data_method
 BaseItem.postprocess_google_reader_data  = \
     BaseItem_postprocess_google_reader_data_method
+BaseItem.postprocess_twitter_data  = \
+    BaseItem_postprocess_twitter_data_method
 
 
 # HEADS UP: we need to register against BaseItem, because OriginalData

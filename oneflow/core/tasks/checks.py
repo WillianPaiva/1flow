@@ -43,7 +43,9 @@ from ..models import (
     generate_orphaned_hash,
     DUPLICATE_STATUS,
     BaseFeed,
-    UserFeeds, UserSubscriptions,
+    UserFeeds,
+    UserSubscriptions,
+    UserCounters,
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -56,6 +58,9 @@ def global_checker_task(*args, **kwargs):
     """ Just run all tasks in a celery chain.
 
     This avoids them to overlap and hit the database too much.
+
+    :param *args: ignored.
+    :param *kwargs: ignored.
     """
 
     global_check_chain = tasks_chain(
@@ -80,7 +85,10 @@ def global_checker_task(*args, **kwargs):
 
 @task(name="oneflow.core.tasks.global_feeds_checker", queue='check')
 def global_feeds_checker():
-    """ Check all RSS feeds and their dependants. Close them if needed. """
+    """ Check all RSS feeds and their dependants. Close them if needed.
+
+    No parameter.
+    """
 
     def pretty_print_feed(feed):
 
@@ -267,6 +275,11 @@ def global_duplicates_checker(limit=None, force=False):
     """ Check that duplicate articles have no more Reads anywhere.
 
     Fix it if not, and update all counters accordingly.
+
+    :param limit: integer, the maximum number of duplicates to check.
+        Default: none.
+    :param force: boolean, default ``False``, allows to by bypass and
+        reacquire the lock.
     """
 
     if config.CHECK_DUPLICATES_DISABLED:
@@ -294,7 +307,7 @@ def global_duplicates_checker(limit=None, force=False):
     if limit is None:
         limit = 0
 
-    duplicates = Article.objects.exclude(duplicate_of_id=None)
+    duplicates = Article.objects.duplicate()
 
     total_dupes_count = duplicates.count()
     total_reads_count = 0
@@ -337,12 +350,32 @@ def global_duplicates_checker(limit=None, force=False):
 
 
 @task(name="oneflow.core.tasks.global_reads_checker", queue='check')
-def global_reads_checker(limit=None, force=False, verbose=False,
-                         break_on_exception=False, extended_check=False):
-    """ Check all Reads and their dependants.
+def global_reads_checker(limit=None, extended_check=False, force=False,
+                         verbose=False, break_on_exception=False):
+    """ Check all reads and their dependants.
+
+    Will activate reads that are currently bad, but whose article is OK
+    to display.
 
     This task is one of the most expensive thing in 1flow.
-    It can run for hours and literrally kill the database.
+    It can run for hours because it scans all the bad reads and their
+    articles, but will not kill the database with massive updates, it
+    does them one by one.
+
+    Can be disabled by ``config.CHECK_READS_DISABLED`` directive.
+
+    :param limit: integer, the maximum number of duplicates to check.
+        Default: none.
+    :param extended_check: boolean, default ``False``.
+        Runs :meth:`Read.set_subscriptions` if ``True`` and checked read
+        has no subscription.
+    :param force: boolean, default ``False``, allows to by bypass and
+        reacquire the lock.
+    :param verbose: boolean, default ``False``, display (more)
+        informative messages.
+    :param break_on_exception: boolean, default ``False``, stop processing
+        at the first encountered exception. Whatever it is, the exception
+        will be logged to sentry.
     """
 
     if config.CHECK_READS_DISABLED:
@@ -459,8 +492,17 @@ def global_reads_checker(limit=None, force=False, verbose=False,
                 skipped_count * 100.0 / processed_reads)
 
 
-def check_one_user(user, force=False, verbose=False, extended_check=False):
-    u""" Completely check a user account and its “things”. """
+def check_one_user(user, extended_check=False, force=False, verbose=False):
+    u""" Completely check a user account and its “things”.
+
+    Eg. user feeds, user subscriptions, user counters. Extended check:
+
+    - recompute user counters (can be very long).
+
+    :param extended_check: default ``False``, check more things.
+    :param force: default ``False``, currently ignored.
+    :param verbose: default ``False``, currently ignored.
+    """
 
     try:
         user_feeds = user.user_feeds
@@ -480,14 +522,36 @@ def check_one_user(user, force=False, verbose=False, extended_check=False):
 
     user_subscriptions.check()
 
+    try:
+        user_counters = user.user_counters
+
+    except:
+        user_counters = UserCounters(user=user)
+        user_counters.save()
+
     if extended_check:
-        pass
+        with benchmark(u'Recomputing cached descriptors'):
+            user.user_counters.compute_cached_descriptors()
 
 
 @task(name="oneflow.core.tasks.global_users_checker", queue='check')
-def global_users_checker(limit=None, force=False, verbose=False,
-                         break_on_exception=False, extended_check=False):
-    """ Check all Users and their dependants. """
+def global_users_checker(limit=None, extended_check=False, force=False,
+                         verbose=False, break_on_exception=False):
+    """ Check all Users and their dependancies.
+
+    Can be disabled by ``config.CHECK_USERS_DISABLED`` directive.
+
+    :param limit: integer, the maximum number of users to check.
+        Default: none.
+    :param extended_check: boolean, default ``False``. Forwarded
+        to :func:`check_one_user`.
+    :param force: boolean, default ``False``, allows to by bypass and
+        reacquire the lock.
+    :param verbose: boolean, default ``False``. Forwarded
+        to :func:`check_one_user`.
+    :param break_on_exception: boolean, default ``False``, currently
+        ignored in this function.
+    """
 
     if config.CHECK_USERS_DISABLED:
         LOGGER.warning(u'Users check disabled in configuration.')
@@ -531,8 +595,8 @@ def global_users_checker(limit=None, force=False, verbose=False,
                 if limit and changed_users >= limit:
                     break
 
-                check_one_user(user, force=force, verbose=verbose,
-                               extended_check=extended_check)
+                check_one_user(user, extended_check=extended_check,
+                               force=force, verbose=verbose)
 
         finally:
             my_lock.release()
@@ -548,9 +612,28 @@ def global_users_checker(limit=None, force=False, verbose=False,
 
 
 @task(name="oneflow.core.tasks.global_orphaned_checker", queue='check')
-def global_orphaned_checker(limit=None, force=False, verbose=False,
-                            break_on_exception=False, extended_check=False):
-    """ Check all Users and their dependants. """
+def global_orphaned_checker(limit=None, extended_check=False, force=False,
+                            verbose=False, break_on_exception=False):
+    """ Check all orphaned articles and delete them.
+
+    They will be deleted only if they are duplicate of other orphaned ones,
+    and only if the duplication replacement process finished successfully.
+    If it failed, the orphan is left in place, to be able to re-run the
+    operation later.
+
+    Can be disabled by ``config.CHECK_ORPHANED_DISABLED`` directive.
+
+    :param limit: integer, the maximum number of users to check.
+        Default: none.
+    :param extended_check: boolean, default ``False``. Forwarded
+        to :func:`check_one_user`.
+    :param force: boolean, default ``False``, allows to by bypass and
+        reacquire the lock.
+    :param verbose: boolean, default ``False``. Forwarded
+        to :func:`check_one_user`.
+    :param break_on_exception: boolean, default ``False``, currently
+        ignored in this function.
+    """
 
     if config.CHECK_ORPHANED_DISABLED:
         LOGGER.warning(u'Orphaned check disabled in configuration.')

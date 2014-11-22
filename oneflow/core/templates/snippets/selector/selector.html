@@ -57,47 +57,36 @@
         href="{% url 'import_web_pages' %}"
         data-toggle="modal" data-target="#"
         data-tooltip="tooltip"
-        title="Import standalone web pages, keep their content or create simple bookmarks from their URLs."
+        title="{% trans "Import standalone web pages, keep their content or create simple bookmarks from their URLs. You can also paste RSS/Atom feeds URLs to subscribe to them. Keyboard shortcut: “i i” (=“import item”)." %}"
         class="btn btn-lg btn-primary btn-block centered popover-top"><i
             class="icon-fixed-width icon-cloud-download">
             </i>&nbsp;{% trans "Import elements" %}</a>
-    </div>
-
-    <div class="col-sm-4"><a id="mailfeed-list-trigger"
-        href="{% url 'mailfeed_list_create' %}"
-        {# data-toggle="modal" data-target="#" #}
-        data-tooltip="tooltip"
-        title="Create a local 1flow stream from any rules on any of your mail accounts. You will be able to share this stream to other users if you wish."
-        class="btn btn-lg btn-primary btn-block centered popover-top"><i
-            class="icon-fixed-width icon-envelope">
-            </i>&nbsp;{% trans "Manage mail streams" %}</a>
     </div>
 
     <div class="col-sm-4"><a id="add-subscription-trigger"
         href="{% url 'add_subscription' %}"
         data-toggle="modal" data-target="#"
         data-tooltip="tooltip"
-        title="Subscribe to any stream (RSS, mail…) already present and shared by users of 1flow databases across the world."
+        title="{% trans "Subscribe to any stream already present and shared by other users of 1flow databases across the world. Keyboard shortcut: “a s” (=“add subscription”)." %}"
         class="btn btn-lg btn-primary btn-block centered popover-top"><i
             class="icon-fixed-width icon-rss">
             </i>&nbsp;{% trans "Subscribe to a 1flow stream" %}</a>
     </div>
+
+    <div class="col-sm-4"><a id="add-folder-trigger"
+        href="{% url 'add_folder' %}"
+        data-toggle="modal" data-target="#"
+        data-tooltip="tooltip"
+        title="{% trans "Add a folder to your sources selector (this page). Keyboard shortcut: “a f” (= “add folder”)." %}"
+        class="btn btn-lg btn-default btn-block"><i
+            class="icon-fixed-width icon-folder-close">
+            </i>&nbsp;{% trans "Add a folder" %}</a>
+        </div>
+    </div>
+
 </div>
 
 <div id="folders">
-<div class="row">
-    <div class="col-xs-12">
-        <div class="pull-right centered">
-        <div class="spacer25"></div>
-        <a id="add-folder-trigger"
-            href="{% url 'add_folder' %}"
-            data-toggle="modal" data-target="#"
-            class="btn btn-lg btn-default btn-block">&nbsp;&nbsp;&nbsp;<i
-                class="icon-fixed-width icon-folder-close">
-                </i>&nbsp;{% trans "Add a folder" %}&nbsp;&nbsp;&nbsp;</a>
-        </div>
-    </div>
-</div>
     {% for folder in user.top_folders %}
         {% captureas folder_color_border %}{% html_background_color_for_name folder.name 0.5 %}{% endcaptureas %}
         {% include "snippets/selector/folder.html" with folder=folder level=0 %}

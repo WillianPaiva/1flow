@@ -4,22 +4,11 @@
 
 from django.core.urlresolvers import reverse_lazy
 
-# Get the google reader scope.
-# from libgreader.auth import OAuth2Method
-# GOOGLE_OAUTH_EXTRA_SCOPE = OAuth2Method.SCOPE
-
-# TODO:
-# SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE
+# NO NEED, social-auth will use “USER_MODEL” from Django
+# SOCIAL_AUTH_USER_MODEL = 'base.User'
 
 SOCIAL_AUTH_ADMIN_USER_SEARCH_FIELDS = ['username', 'first_name',
                                         'last_name', 'email']
-
-# We need this to be able to refresh tokens
-# See http://stackoverflow.com/a/10857806/654755 for notes.
-SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_ARGUMENTS = {'access_type': 'offline'}
-SOCIAL_AUTH_GOOGLE_OAUTH2_CONTACTS_SCOPE = 'https://www.google.com/m8/feeds'
-SOCIAL_AUTH_GOOGLE_OAUTH2_CONTACTS_REDIRECT_URI = \
-    reverse_lazy('import_contacts_authorized')
 
 # http://psa.matiasaguirre.net/docs/configuration/settings.html#settings-name
 # http://psa.matiasaguirre.net/docs/configuration/settings.html#urls-options
@@ -29,24 +18,23 @@ LOGIN_REDIRECT_URL = reverse_lazy('home')
 LOGIN_ERROR_URL    = reverse_lazy('signin_error')
 # SOCIAL_AUTH_BACKEND_ERROR_URL = reverse_lazy('signin_error')
 
-# See SOCIAL_AUTH_USER_MODEL earlier in this file.
-# SOCIAL_AUTH_SANITIZE_REDIRECTS = False
-# SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email',]
-#
-# FACEBOOK_AUTH_EXTRA_ARGUMENTS = {'display': 'touch'}
-
+# SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email', ]
 SOCIAL_AUTH_FORCE_POST_DISCONNECT = True
-
-# SOCIAL_AUTH_REDIRECT_IS_HTTPS = False
-# SOCIAL_AUTH_<BACKEND_NAME>_WHITELISTED_DOMAINS = ['foo.com', 'bar.com']
-
 SOCIAL_AUTH_EXTRA_DATA = True
 SOCIAL_AUTH_SESSION_EXPIRATION = False
+
+# Doesn't help #444
+# SOCIAL_AUTH_AUTHENTICATION_BACKENDS = AUTHENTICATION_BACKENDS  # NOQA
+# SOCIAL_AUTH_SANITIZE_REDIRECTS = False
+# FACEBOOK_AUTH_EXTRA_ARGUMENTS = {'display': 'touch'}
+# SOCIAL_AUTH_REDIRECT_IS_HTTPS = False
+# SOCIAL_AUTH_<BACKEND_NAME>_WHITELISTED_DOMAINS = ['foo.com', 'bar.com']
 # SOCIAL_AUTH_RAISE_EXCEPTIONS = True
 
 # ———————————————————————————————————————————————————————————————————— PIPELINE
 
-SOCIAL_AUTH_PIPELINE = (
+SOCIAL_AUTH_PIPELINE_BLAHBLAH = (
+
     # Get the information we can about the user and return it in a simple
     # format to create the user instance later. On some cases the details are
     # already part of the auth response from the provider, but sometimes this
@@ -102,16 +90,71 @@ SOCIAL_AUTH_PIPELINE = (
     # this pipeline function will deactivate the account right after creation,
     # to be sure the user doesn't log in.
     'oneflow.base.social_pipeline.throttle_new_user_accounts',
-
-
 )
+
+# if DEBUG:
+#     SOCIAL_AUTH_PIPELINE = (
+#         'oneflow.base.social_pipeline.debug',
+#     ) + SOCIAL_AUTH_PIPELINE
+
+# import sys
+# sys.stdout.write('>>>\n')
+# sys.stdout.write('>>> %s\n' % (SOCIAL_AUTH_PIPELINE, ))
+# sys.stdout.write('>>>\n')
+# sys.stdout.flush()
 
 # —————————————————————————————————————————————————————————————————— EXTRA DATA
 
-# GITHUB_EXTRA_DATA = [
-#     ('avatar_url', 'avatar'),
-#     ('login', 'login'),
-# ]
+GITHUB_EXTRA_DATA = [
+    ('created_at', 'date_created'),
+    ('avatar_url', 'avatar_url'),
+    ('login', 'username'),
+    ('name', 'fullname'),
+    # 'email': 'john@example.com',
+]
+
+TWITTER_EXTRA_DATA = [
+    ('created_at', 'date_created'),
+    ('profile_image_url', 'avatar_url'),
+    ('screen_name', 'username'),
+    ('name', 'fullname'),
+    ('location', 'location'),
+
+    ('statuses_count', 'statuses_count'),       # Number of tweets I made
+    ('friends_count', 'friends_count'),         # Who I follow
+    ('followers_count', 'followers_count'),     # Who follows me
+    ('favourites_count', 'favourites_count'),
+    ('retweets_count', 'retweets_count'),       # ??
+    ('retweet_count', 'retweet_count'),         # ??
+    ('listed_count', 'listed_count'),
+
+    ('lang', 'language'),
+    ('profile_background_image_url', 'profile_background_image_url'),
+    ('profile_background_image_url_https',
+     'profile_background_image_url_https'),
+    ('profile_background_color', 'profile_background_color'),
+    ('verified', 'verified'),
+    ('geo_enabled', 'geo_enabled'),
+    ('time_zone', 'time_zone'),
+    ('description', 'description'),
+    # ('', ''),
+]
+
+# ——————————————————————————————————————————————————————————————— Google Oauth2
+
+# Get the google reader scope.
+# from libgreader.auth import OAuth2Method
+# GOOGLE_OAUTH_EXTRA_SCOPE = OAuth2Method.SCOPE
+
+# TODO:
+# SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE
+# We need this to be able to refresh tokens
+# See http://stackoverflow.com/a/10857806/654755 for notes.
+SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_ARGUMENTS = {'access_type': 'offline'}
+SOCIAL_AUTH_GOOGLE_OAUTH2_CONTACTS_SCOPE = 'https://www.google.com/m8/feeds'
+SOCIAL_AUTH_GOOGLE_OAUTH2_CONTACTS_REDIRECT_URI = \
+    reverse_lazy('import_contacts_authorized')
+
 
 # —————————————————————————————————————————————————————————————————————— SCOPES
 

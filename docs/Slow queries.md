@@ -50,16 +50,8 @@ ON (
    AND "core_baseitem"."date_created" >= '2014-11-02 04:55:00.362460+00:00' 
 );
 
-CREATE INDEX core_article_url_error_not_null 
-ON core_article(url_error) 
-WHERE url_error IS NOT NULL;
-
-CREATE INDEX core_article_content_error_not_null 
-ON core_article(content_error) 
-WHERE content_error IS NOT NULL;
 
 —————————————————————————————————————————————————————————————
-
 
 
 # Update the number of feed recent items

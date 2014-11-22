@@ -131,6 +131,16 @@ ConstanceAdmin.fieldsets = (
         'fields': (
             'TWITTER_ACCOUNT_REFRESH_DISABLED',
             'TWITTER_ACCOUNT_REFRESH_PERIOD',
+            'TWITTER_FEEDS_RELAUNCH_INTERVAL',
+
+            'TWITTER_ACCOUNT_FETCH_OWNED_LISTS',
+            'TWITTER_ACCOUNT_FETCH_SUBSCRIBED_LISTS',
+
+            'TWITTER_FEEDS_BACKFILL_ENABLED_DEFAULT',
+            'TWITTER_BACKFILL_ALLOWED_REWIND_RANGE',
+
+            'TWITTER_DEFAULT_CACHE_EXPIRY',
+            'TWITTER_LISTS_CACHE_EXPIRY',
         ),
     }),
     (_(u'e-Mail accounts & IMAP'), {

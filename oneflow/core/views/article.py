@@ -29,7 +29,7 @@ from django.shortcuts import render, get_object_or_404
 
 from sparks.django.utils import HttpResponseTemporaryServerError
 
-from ..models import Article
+from ..models import BaseItem, Article  # , Tweet
 
 LOGGER = logging.getLogger(__name__)
 
@@ -58,30 +58,32 @@ def article_content(request, article_id):
 
 
 def article_image(request, article_id):
-    """ Get the article image for displaying to the user. """
+    """ Get the item image for displaying to the user. """
 
-    try:
-        article = get_object_or_404(Article, id=article_id)
+    item = get_object_or_404(BaseItem, id=article_id)
 
-    except:
-        return HttpResponseTemporaryServerError()
+    if hasattr(item, 'image_url'):
 
-    if article.image_url:
-        return HttpResponse(article.image_url)
+        if item.image_url:
+            return HttpResponse(item.image_url)
 
-    # BIG FAT WARNING: do not commit until the method gets more love.
-    image_url = article.find_image(commit=False)
+        # BIG FAT WARNING: do not commit until the method gets more love.
+        image_url = item.find_image(commit=False)
 
-    if image_url:
-        return HttpResponse(image_url)
+        if image_url:
+            return HttpResponse(image_url)
+
+    else:
+        # TODO: implement this for tweets and other item types.
+        pass
 
     numbers    = (1, 2, 3, 4, 5, 6, 7, 8, 9)
     categories = ('abstract', 'animals', 'business', 'cats', 'city', 'food',
                   'nightlife', 'fashion', 'people', 'nature', 'sports',
                   'technics', 'transport')
 
-    tags = set([t.name.lower() for t in article.tags.all()]
-               + [t.name.lower() for t in article.feeds.all()[0].tags.all()])
+    tags = set([t.name.lower() for t in item.tags.all()]
+               + [t.name.lower() for t in item.feeds.all()[0].tags.all()])
 
     #
     # HEADS UP: if you change LoremPixel dimensions,

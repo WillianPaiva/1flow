@@ -185,10 +185,15 @@ class AddSubscriptionForm(forms.Form):
         created_subscriptions = []
 
         base_folder, created = Folder.add_folder(
-            name=ugettext(u'☄ Recently subscribed feeds'), user=self.owner)
+            name=ugettext(u'Recently subscribed feeds'),
+            user=self.owner)
+
+        if base_folder.image_url is None:
+            base_folder.image_url = \
+                u'/static/icon-themes/Faenza/mimetypes/96/gnome-mime-application-rss+xml.png'  # NOQA
+            base_folder.save()
 
         for feed in self.cleaned_data['feeds']:
-
             subscription = subscribe_user_to_feed(user=self.owner,
                                                   feed=feed,
                                                   background=True)

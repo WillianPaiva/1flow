@@ -33,7 +33,7 @@ from django.utils.translation import ugettext_lazy as _
 # from sparks.django.models import ModelDiffMixin
 # from oneflow.base.utils.dateutils import now
 
-from sparks.django.models import ModelDiffMixin
+from sparks.django.models.mixins import ModelDiffMixin
 
 from base import BaseFeed
 # import mail_common as common

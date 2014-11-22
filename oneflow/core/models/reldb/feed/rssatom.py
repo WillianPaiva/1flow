@@ -23,13 +23,14 @@ import requests
 import newspaper
 import feedparser
 
+from celery import task
 from statsd import statsd
 from constance import config
 
 from xml.sax import SAXParseException
 
 from django.conf import settings
-from django.db import models
+from django.db import models, IntegrityError
 from django.db.models.signals import pre_save, post_save, pre_delete
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import URLValidator
@@ -68,6 +69,7 @@ __all__ = [
     'create_feeds_from_url',
     'prepare_feed_url',
     'parse_feeds_urls',
+    'discover_feeds_urls',
 ]
 
 # —————————————————————————————————————————————— External modules configuration
@@ -211,19 +213,6 @@ def create_feeds_from_url(feed_url, creator=None, recurse=True):
             new_feeds = []
             urls_to_try = set(parse_feeds_urls(parsed_feed))
 
-            # LOGGER.info(u'Search through the website via newspaper…')
-
-            try:
-                site = newspaper.build(feed_url)
-
-                urls_to_try.union(set(site.feed_urls()))
-
-            except:
-                LOGGER.exception(u'Newspaper did not help finding feeds '
-                                 u'from “%s”', feed_url)
-
-            # LOGGER.info(u'Trying to create feeds recursively…')
-
             for sub_url in urls_to_try:
                 try:
                     new_feeds += create_feeds_from_url(
@@ -242,6 +231,10 @@ def create_feeds_from_url(feed_url, creator=None, recurse=True):
             if new_feeds:
                 # LOGGER.info(u'Returning %s created feeds.', len(new_feeds))
                 return new_feeds
+
+            # Just before giving up, try a little more with newspaper.
+            # As it is quite slow, do it in the background.
+            discover_feeds_urls.delay(feed_url)
 
             raise
 
@@ -266,7 +259,14 @@ def create_feeds_from_url(feed_url, creator=None, recurse=True):
             url=feed_url,
             user=creator,
             website=website)
-        new_feed.save()
+
+        try:
+            new_feed.save()
+
+        except IntegrityError:
+            # It could have been created in the background.
+            new_feed = RssAtomFeed.objects.get(url=feed_url)
+            return [(new_feed, False)]
 
         return [(new_feed, True)]
 
@@ -605,6 +605,39 @@ class RssAtomFeed(BaseFeed):
 
         # Don't forget the parenthesis else we return ``False`` everytime.
         return created or (None if mutualized else False)
+
+
+# ———————————————————————————————————————————————————————————————— Celery tasks
+
+
+@task(queue='default')
+def discover_feeds_urls(feed_url):
+    """ Try to discover more feed URLs in one. """
+
+    LOGGER.info(u'Trying to discover new RSS/Atom feeds from %s…', feed_url)
+
+    try:
+        site = newspaper.build(feed_url)
+
+        urls_to_try = set(site.feed_urls())
+
+    except:
+        LOGGER.exception(u'Newspaper did not help finding feeds '
+                         u'from “%s”', feed_url)
+
+    created = []
+    known = []
+
+    for url in urls_to_try:
+        result = create_feeds_from_url(url, recurse=False)
+
+        if result:
+            # keep feeds if they have been created
+            created.extend(x[0] for x in result if x[1])
+            known.extend(x[0] for x in result if not x[1])
+
+    LOGGER.info(u'Done discovering %s: %s feeds created, %s already known.',
+                feed_url, len(created), len(known))
 
 
 # ————————————————————————————————————————————————————————————————————— Signals

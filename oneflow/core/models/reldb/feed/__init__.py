@@ -26,5 +26,8 @@ from rssatom import *  # NOQA
 from mail import *  # NOQA
 from mailrule import *  # NOQA
 
+from twitter import *  # NOQA
+from twitterrule import *  # NOQA
+
 from combined import *  # NOQA
 from combinedrule import *  # NOQA

@@ -54,7 +54,7 @@ for url_trans, url_untrans in (
 
     suffix = u'_' + url_untrans
 
-    # MongoDB: type_url = ur'%s/(?P<%s>(?:[0-9a-f]{24,24})+)$' % (url_trans, url_untrans)
+    # MongoDB: type_url = ur'%s/(?P<%s>(?:[0-9a-f]{24,24})+)$' % (url_trans, url_untrans)  # NOQA
     type_url = ur'%s/(?P<%s>\d+)$' % (url_trans, url_untrans)
 
     read_patterns += tuple((
@@ -178,6 +178,11 @@ urlpatterns = patterns(
     url(_(ur'^json/user-address-book/$'),
         login_required(never_cache(views.UserAddressBookView.as_view())),
         name='user_address_book'),
+
+    url(_(ur'^sources/$'),
+        login_required(never_cache(TemplateView.as_view(
+            template_name='sources-list.html'))),
+        name='sources_list'),
 
     url(_(ur'^selector/$'),
         login_required(never_cache(views.source_selector)),
@@ -353,6 +358,48 @@ urlpatterns = patterns(
             views.MailFeedRuleDeleteView.as_view())),
         name='mailfeedrule_delete'),
 
+    # ———————————————————————————————————————————————————————— Twitter accounts
+
+    url(_(ur'^twitteraccount/?$'),
+        login_required(never_cache(
+            views.TwitterAccountListCreateView.as_view())),
+        name='twitteraccount_list_create'),
+
+    url(_(ur'^twitteraccount/(?P<pk>\d+)/delete/?$'),
+        login_required(never_cache(
+            views.TwitterAccountDeleteView.as_view())),
+        name='twitteraccount_delete'),
+
+    url(_(ur'^twitterfeed/?$'),
+        login_required(never_cache(
+            views.TwitterFeedListCreateView.as_view())),
+        name='twitterfeed_list_create'),
+
+    url(_(ur'^twitterfeed/(?P<pk>\d+)/delete/?$'),
+        login_required(never_cache(
+            views.TwitterFeedDeleteView.as_view())),
+        name='twitterfeed_delete'),
+
+    url(_(ur'^twitterfeed/(?P<twitterfeed_id>\d+)/rules/?$'),
+        login_required(never_cache(
+            views.TwitterFeedRuleListCreateView.as_view())),
+        name='twitterfeedrule_list_create'),
+
+    url(_(ur'^twitterfeed/(?P<twitterfeed_id>\d+)/rule/(?P<pk>\d+)/position/?$'),  # NOQA
+        login_required(never_cache(
+            views.TwitterFeedRulePositionUpdateView.as_view())),
+        name='twitterfeedrule_position'),
+
+    url(_(ur'^twitterfeed/(?P<twitterfeed_id>\d+)/rule/(?P<pk>\d+)/group/?$'),
+        login_required(never_cache(
+            views.TwitterFeedRuleGroupUpdateView.as_view())),
+        name='twitterfeedrule_group'),
+
+    url(_(ur'^twitterfeed/(?P<twitterfeed_id>\d+)/rule/(?P<pk>\d+)/delete/?$'),
+        login_required(never_cache(
+            views.TwitterFeedRuleDeleteView.as_view())),
+        name='twitterfeedrule_delete'),
+
     # ——————————————————————————————————————————————————————————  Google Reader
 
     url(_(ur'^grimport/(?:(?P<user_id>\d+)/)?$'),
@@ -406,16 +453,31 @@ urlpatterns = patterns(
     url(_(ur'^export/folder/(?P<folder_id>\d+)/'
           ur'(?P<since>[^/]+)/(?P<token>\w{32,32})/?$'),
         never_cache(views.export_content),
-        name='export_folder_content'),
+        name='export_folder_content_by_id'),
 
-    url(_(ur'^export/folder/(?P<folder_slug>\w+)/'
+    url(_(ur'^export/folder/(?P<folder_id>\d+)/'
+          ur'(?P<since>[^/]+)/(?P<until>[^/]+)/(?P<token>\w{32,32})/?$'),
+        never_cache(views.export_content),
+        name='export_folder_content_by_id_until'),
+
+    url(_(ur'^export/folder/(?P<folder_slug>[-\w]+)/'
           ur'(?P<since>[^/]+)/(?P<token>\w{32,32})/?$'),
         never_cache(views.export_content),
         name='export_folder_content'),
 
+    url(_(ur'^export/folder/(?P<folder_slug>[-\w]+)/'
+          ur'(?P<since>[^/]+)/(?P<until>[^/]+)/(?P<token>\w{32,32})/?$'),
+        never_cache(views.export_content),
+        name='export_folder_content_until'),
+
     url(_(ur'^export/(?P<since>[^/]+)/(?P<token>\w{32,32})/?$'),
         never_cache(views.export_content),
         name='export_content'),
+
+    url(_(ur'^export/(?P<since>[^/]+)/(?P<until>[^/]+)'
+        ur'/(?P<token>\w{32,32})/?$'),
+        never_cache(views.export_content),
+        name='export_content_until'),
 
     # ——————————————————————————————————————————————————————————— Read patterns
 

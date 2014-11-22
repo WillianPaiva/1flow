@@ -91,6 +91,12 @@
 
         {% if user.is_authenticated and wizards.welcome_beta_shown %}
 
+          <li class="nowrap hidden-xs">
+                <a href="{% url 'sources_list' %}" class="">
+              {% trans 'Sources' %}
+            </a>
+          </li>
+
           <li class="nowrap">
             {% if preferences.home.read_shows == 1 %}
                 <a href="{% url 'read' %}"

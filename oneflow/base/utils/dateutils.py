@@ -24,7 +24,10 @@
 
 import logging
 
-import email.utils as email_utils
+from email.utils import (
+    mktime_tz as email_utils_mktime_tz,
+    parsedate_tz as email_utils_parsedate_tz,
+)
 import time as pytime
 import datetime as pydatetime
 from humanize.i18n import django_language
@@ -129,17 +132,26 @@ def email_date_to_datetime_tz(email_date):
     msg_datetime = None
 
     if email_date:
-        date_tuple = email_utils.parsedate_tz(email_date)
+        date_tuple = email_utils_parsedate_tz(email_date)
 
         if date_tuple:
             msg_datetime = pydatetime.datetime.fromtimestamp(
-                email_utils.mktime_tz(date_tuple))
+                email_utils_mktime_tz(date_tuple))
 
     return msg_datetime
 
+
+def twitter_datestring_to_datetime_utc(twitter_datestring):
+
+    time_tuple = email_utils_parsedate_tz(twitter_datestring.strip())
+
+    dt = datetime(*time_tuple[:6])
+
+    return dt - timedelta(seconds=time_tuple[-1])
 
 __all__ = ('today', 'timedelta', 'naturaltime', 'naturaldelta',
            'now', 'ftstamp', 'tzcombine', 'combine', 'time', 'datetime',
            'is_aware', 'is_naive',
            'until_tomorrow_delta', 'stats_datetime', 'benchmark',
-           'pytime', 'pydatetime', 'email_date_to_datetime_tz', )
+           'pytime', 'pydatetime', 'email_date_to_datetime_tz',
+           'twitter_datestring_to_datetime_utc', )

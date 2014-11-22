@@ -42,26 +42,43 @@ RULES_OPERATIONS = NamedTupleChoices(
     ('ALL', 2, _(u'All rules must match')),
 )
 
-MATCH_TYPES = NamedTupleChoices(
-    'MATCH_TYPES',
+_COMMON_MATCH_TYPES = (
+    ('EQUALS',     6, _(u'strictly equals')),
+    ('NEQUALS',    7, _(u'is not equal to')),
+)
 
-    ('CONTAINS',  1, _(u'contains')),
-    ('NCONTAINS', 2, _(u'does not contain')),
-    ('STARTS',    3, _(u'starts with')),
-    ('NSTARTS',   4, _(u'does not start with')),
-    ('ENDS',      4, _(u'ends with')),
-    ('NENDS',     5, _(u'does not end with')),
-    ('EQUALS',    6, _(u'strictly equals')),
-    ('NEQUALS',   7, _(u'is not equal to')),
-    ('RE_MATCH',  8, _(u'matches regular expression')),
-    ('NRE_MATCH', 9, _(u'does not match reg. expr.')),
+_TEXT_MATCH_TYPES = (
+    ('CONTAINS',   1, _(u'contains')),
+    ('NCONTAINS',  2, _(u'does not contain')),
+    ('STARTS',     3, _(u'starts with')),
+    ('NSTARTS',    4, _(u'does not start with')),
+    ('ENDS',       4, _(u'ends with')),
+    ('NENDS',      5, _(u'does not end with')),
+    ('RE_MATCH',   8, _(u'matches regular expression')),
+    ('NRE_MATCH',  9, _(u'does not match reg. expr.')),
+)
+
+_NUMERIC_MATCH_TYPES = (
+    ('LOWER',     20, _(u'is lower than')),
+    ('LOWEREQ',   21, _(u'is lower or equal than')),
+    ('GREATER',   22, _(u'is greater than')),
+    ('GREATEREQ', 23, _(u'is greater or equal than')),
+)
+
+_SPECIAL_MATCH_TYPES = (
+    ('EXISTS',     30, _(u'exists / is present')),
+    ('NEXISTS',    31, _(u'does not exist / is not present')),
 )
 
 # —————————————————————————————————————————————————————————————————————— E-mail
 
 # A simple copy, for the eventuality we could need a separate tuple.
 MAIL_RULES_OPERATIONS = RULES_OPERATIONS
-MAIL_MATCH_TYPES = MATCH_TYPES
+MAIL_MATCH_TYPES = NamedTupleChoices(*(
+    ('MAIL_MATCH_TYPES', )
+    + _TEXT_MATCH_TYPES
+    + _COMMON_MATCH_TYPES
+))
 
 MAIL_MATCH_ACTIONS = NamedTupleChoices(
     'MAIL_MATCH_ACTIONS',
@@ -96,11 +113,84 @@ MAIL_HEADER_FIELDS = NamedTupleChoices(
 )
 
 MAIL_HEADER_FIELD_DEFAULT = MAIL_HEADER_FIELDS.COMMON
-MAIL_MATCH_TYPE_DEFAULT = MATCH_TYPES.CONTAINS
+MAIL_MATCH_TYPE_DEFAULT = MAIL_MATCH_TYPES.CONTAINS
 MAIL_MATCH_ACTION_DEFAULT = MAIL_MATCH_ACTIONS.SCRAPE
 MAIL_FINISH_ACTION_DEFAULT = MAIL_FINISH_ACTIONS.MARK_READ
 MAIL_RULES_OPERATION_DEFAULT = RULES_OPERATIONS.ANY
 MAIL_GROUP_OPERATION_DEFAULT = RULES_OPERATIONS.ANY
+
+# ————————————————————————————————————————————————————————————— Twitter
+
+# A simple copy, for the eventuality we could need a separate tuple.
+TWITTER_RULES_OPERATIONS = RULES_OPERATIONS
+TWITTER_MATCH_TYPES = NamedTupleChoices(*(
+    ('TWITTER_MATCH_TYPES', )
+    + _TEXT_MATCH_TYPES
+    + _COMMON_MATCH_TYPES
+    + _NUMERIC_MATCH_TYPES
+    + _SPECIAL_MATCH_TYPES
+))
+
+TWITTER_MATCH_ACTIONS = NamedTupleChoices(
+    'TWITTER_MATCH_ACTIONS',
+
+    ('STORE_TWEET', 1, _(u'Store the tweet as is')),
+
+    ('CRAWL_LINKS', 2,
+     _(u'Crawl links in the tweet and fetch them as articles')),
+    ('STORE_LINKS', 3, _(u'Crawl tweet links, store them and the tweet too')),
+
+    ('CRAWL_MEDIA', 4, _(u'Crawl tweet media and store them')),
+    ('STORE_MEDIA', 8, _(u'Crawl tweet media, store them and the tweet too')),
+
+    ('CRAWL_IMAGE', 5, _(u'Crawl & store only tweet images')),
+    ('STORE_IMAGE', 10, _(u'Crawl & store tweet images, and the tweet')),
+
+    ('CRAWL_VIDEO', 6, _(u'Crawl & store only tweet videos')),
+    ('STORE_VIDEO', 12, _(u'Crawl & store tweet videos, and the tweet')),
+
+    ('CRAWL_ALL', 7, _(u'Crawl anything (articles, media…) and store it')),
+    ('STORE_ALL', 14, _(u'Crawl anything, store it, and the tweet too')),
+)
+
+TWITTER_MATCH_FIELDS = NamedTupleChoices(
+    'TWITTER_MATCH_FIELDS',
+
+    ('TWEET',       1, _(u'Tweet content')),
+    ('DATE',        2, _(u'Date')),
+    ('LANGUAGE',    3, _(u'Language')),
+    ('COORDINATES', 4, _(u'Language')),
+    ('CREATOR',     9, _(u'Creator')),
+
+    ('FAVORITES',  20, _(u'Favorites count')),
+    ('RETWEETS',   30, _(u'Retweets count')),
+    ('MEDIA',      40, _(u'Media')),
+    ('URLS',       50, _(u'URLs')),
+
+    ('FAVORITERS', 60, _(u'Favoriters')),
+    ('RETWEETERS', 70, _(u'Retweeters')),
+
+    ('MENTIONS',   80, _(u'Mentions')),
+    ('HASHTAGS',   90, _(u'Hashtags')),
+
+    ('DESTROYED',  200, _(u'Destroyed')),
+)
+
+TWITTER_FINISH_ACTIONS = NamedTupleChoices(
+    'TWITTER_FINISH_ACTIONS',
+    ('NOTHING', 1, _(u'Let the tweet as is')),
+    ('UNSTAR', 2, _(u'Unfavorite the tweet')),
+    ('STAR', 3, _(u'Favorite the tweet')),
+    ('RETWEET', 4, _(u'Retweet the tweet')),
+)
+
+TWITTER_RULES_OPERATION_DEFAULT = RULES_OPERATIONS.ANY
+TWITTER_MATCH_TYPE_DEFAULT = TWITTER_MATCH_TYPES.CONTAINS
+TWITTER_MATCH_FIELD_DEFAULT = TWITTER_MATCH_FIELDS.TWEET
+TWITTER_MATCH_ACTION_DEFAULT = TWITTER_MATCH_ACTIONS.STORE_LINKS
+TWITTER_FINISH_ACTION_DEFAULT = TWITTER_FINISH_ACTIONS.NOTHING
+TWITTER_RULES_OPERATION_DEFAULT = RULES_OPERATIONS.ANY
+TWITTER_GROUP_OPERATION_DEFAULT = RULES_OPERATIONS.ANY
 
 # ——————————————————————————————————————————————————————————————————— Functions
 

@@ -42,6 +42,18 @@ from mailfeedrule import (  # NOQA
     MailFeedRuleGroupForm,
 )
 
+# ————————————————————————————————————————————————————————————————————— Twitter
+
+from twitteraccount import TwitterAccountForm  # NOQA
+
+from twitterfeed import TwitterFeedForm  # NOQA
+
+from twitterfeedrule import (  # NOQA
+    TwitterFeedRuleForm,
+    TwitterFeedRulePositionForm,
+    TwitterFeedRuleGroupForm,
+)
+
 # ———————————————————————————————————————————————————————————————————————— Sync
 
 from sync import SyncNodeForm  # NOQA

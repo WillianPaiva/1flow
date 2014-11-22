@@ -150,6 +150,9 @@ from exceptions import (  # NOQA
 
 CORE_CLASSES_ICONS = {
 
+    'RssAtomCreate': 'rss-sign',
+    'RssAtomFeed': 'rss',
+
     'MailAccount': 'inbox',
     'MailFeed': 'envelope',
     'MailFeedRule': 'random',

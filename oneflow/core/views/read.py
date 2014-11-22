@@ -44,7 +44,9 @@ from ..forms import ReadShareForm
 from ..models.common import READ_STATUS_DATA
 from ..models import (
     Subscription,
-    Article, Read,
+    BaseItem,
+    Article,
+    Read,
     Folder,
     SimpleTag as Tag,
     CONTENT_TYPES_FINAL
@@ -105,14 +107,18 @@ def _rwep_generate_query_kwargs(request, **kwargs):
 
 def _rwep_generate_order_by(request, **kwargs):
 
+    #
+    # TODO: https://stackoverflow.com/questions/5235209/django-order-by-position-ignoring-null  # NOQA
+    #
+
     def check_order_by(value):
-        if value in (u'date_created', u'date_added',
+        if value in (u'item__date_published', u'item__date_created',
                      u'name', 'id', ):
             return
 
         raise NotImplementedError('order_by needs love!')
 
-    default_order_by = (u'-date_created', )
+    default_order_by = (u'-item__date_published', u'-item__date_created', )
 
     if request.user.is_staff_or_superuser_and_enabled:
         order_by = request.GET.get('order_by', None)
@@ -495,7 +501,7 @@ def read_with_endless_pagination(request, **kwargs):
         elif request.GET.get('mark_all_read', False):
 
             latest_displayed_read = user.reads.get(
-                item=Article.objects.get(
+                item=BaseItem.objects.get(
                     id=request.GET.get('mark_all_read')))
 
             _rwep_ajax_mark_all_read(subscription, folder, user,

@@ -23,6 +23,8 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 import datetime
 
+ugettext = lambda s: s
+
 # CONSTANCE_REDIS_CONNECTION is to be found in 'snippets/databases*'
 CONSTANCE_BACKEND      = 'constance.backends.redisd.RedisBackend'
 CONSTANCE_REDIS_PREFIX = 'c0s1f:'
@@ -380,11 +382,64 @@ CONSTANCE_CONFIG.update({
                                       u'periodic check of unusable Twitter '
                                       u'accounts.')),
 
-
     'TWITTER_ACCOUNT_REFRESH_PERIOD': (3600*1, ugettext(u'Default period '
                                        u'after which Twitter accounts will be '
                                        u'tested again for connection and '
                                        u'listing.')),
+
+    'TWITTER_FEEDS_RELAUNCH_INTERVAL': (
+        48,
+        ugettext(u'Average idle period between 2 refreshes of the same '
+                 u'twitter feed. Minimum value: 12, because of Twitter\'s '
+                 u'180 API calls / 15 min.')),
+
+
+    'TWITTER_ACCOUNT_FETCH_OWNED_LISTS': (
+        False,
+        ugettext(u'Enable or disable to set the default value for '
+                 u'auto-following and fetching the lists owned by a '
+                 u'Twitter account. WARNING: this could be quite '
+                 u'expensive, depending the global number of twitter '
+                 u'accounts of your 1flow node.')),
+
+    'TWITTER_ACCOUNT_FETCH_SUBSCRIBED_LISTS': (
+        False,
+        ugettext(u'Enable or disable to set the default value for '
+                 u'auto-following and fetching the lists a Twitter account '
+                 u'is subscribed to. NOTE: if '
+                 u'TWITTER_ACCOUNT_FETCH_OWNED_LISTS is disabled, only the '
+                 u'lists not owned by the user will be followed. WARNING: '
+                 u'this could be quite expensive, depending the global '
+                 u'number of twitter accounts of your 1flow node.')),
+
+    'TWITTER_FEEDS_BACKFILL_ENABLED_DEFAULT': (
+        False,
+        ugettext(u'Enable or disable twitter-based feeds to be backfilled '
+                 u'upon creation. WARNING: this could be quite expensive, '
+                 u'depending the global number of twitter accounts of your '
+                 u'1flow node, and their creation date. You could also '
+                 u'exhaust your API rate quickly.')),
+
+    'TWITTER_BACKFILL_ALLOWED_REWIND_RANGE': (
+        5,
+        ugettext(u'Specify the maximum backfill allowed on twitter feeds, '
+                 u'expressed in weeks, as an integer. If you you want to '
+                 u'backfill until the creation of Twitter, set it to zero '
+                 u'(0), and prepare to see your machine work a lot, and '
+                 u'exhaust all its Twitter quotas.')),
+
+    'TWITTER_DEFAULT_CACHE_EXPIRY': (
+        3600 * 24 * 2,
+        ugettext(u'Make twitter cached objects expire after this amount of '
+                 u' seconds. Concerns all twitter objects that have no '
+                 u'dedicated cache settings.')),
+
+
+    'TWITTER_LISTS_CACHE_EXPIRY': (
+        3600 * 24 * 7,
+        ugettext(u'Make cached lists expire after this amount of seconds. '
+                 u'Set to 0 to use default cache expiry delay.')),
+
 
 })
 

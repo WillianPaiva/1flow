@@ -28,15 +28,11 @@ from django.db import models
 from django.db.models.signals import pre_save  # , post_save, pre_delete
 
 from django.utils.translation import ugettext_lazy as _
-# from django.utils.text import slugify
 
-# from oneflow.base.fields import TextRedisDescriptor
-# from oneflow.base.utils import register_task_method
-
-from sparks.django.models import ModelDiffMixin
+from sparks.django.models.mixins import ModelDiffMixin
 
 from ..common import User
-# from oneflow.base.utils.dateutils import now, timedelta
+
 from common import (
     BROADCAST_CHOICES,
     NODE_PERMISSIONS,

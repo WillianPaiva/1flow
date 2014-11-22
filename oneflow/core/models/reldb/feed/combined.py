@@ -26,7 +26,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 # from django.db.models.signals import pre_save, post_save, pre_delete
 
-from sparks.django.models import ModelDiffMixin
+from sparks.django.models.mixins import ModelDiffMixin
 
 from ..common import DjangoUser as User  # , REDIS
 

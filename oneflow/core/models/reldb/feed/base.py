@@ -42,7 +42,7 @@ from polymorphic import (
     PolymorphicManager,
     PolymorphicModel,
 )
-from sparks.django.models import DiffMixin
+from sparks.django.models.mixins import DiffMixin
 
 from oneflow.base.fields import IntRedisDescriptor, DatetimeRedisDescriptor
 from oneflow.base.utils.dateutils import now, timedelta, today
@@ -194,11 +194,16 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
         errors : ListField(StringField) → JSONField
     """
 
+    # This should be overriden by subclasses if needed.
+    REFRESH_LOCK_INTERVAL = None
+
     class Meta:
         app_label = 'core'
         translate = ('short_description', 'description', )
         verbose_name = _(u'Base feed')
         verbose_name_plural = _(u'Base feeds')
+
+    INPLACEEDIT_EXCLUDE = ('errors', 'options', )
 
     # ———————————————————————————————————————————————————————————————— Managers
 
@@ -470,7 +475,7 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
         except AttributeError:
             self.__refresh_lock = RedisExpiringLock(
                 self, lock_name='fetch',
-                expire_time=self.fetch_interval
+                expire_time=self.REFRESH_LOCK_INTERVAL or self.fetch_interval
             )
             return self.__refresh_lock
 
@@ -490,6 +495,8 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
         self.closed_reason = u'Reopen on %s' % now().isoformat()
         self.save()
 
+        statsd.gauge('feeds.counts.open', 1, delta=True)
+
         LOGGER.info(u'Feed %s has just been re-opened.', self)
 
     def close(self, reason=None, commit=True):
@@ -501,6 +508,8 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
 
         if commit:
             self.save()
+
+        statsd.gauge('feeds.counts.open', -1, delta=True)
 
         LOGGER.warning(u'Feed %s closed with reason "%s"!',
                        self, self.closed_reason)
@@ -547,6 +556,8 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
 
         if commit:
             self.save()
+
+        statsd.incr('feeds.refresh.global.errors')
 
         return retval
 
@@ -626,6 +637,12 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
                 # has eventually already been closed if too many errors.
                 # In case it's still open, slow down things.
                 preventive_slow_down = True
+
+            elif data is True:
+                # The feed is handling its internals on his own behalf.
+                # Eg. a Twitter feed will tweak self.last_fetch anyhow
+                # it needs to prevent quota overflows. Just let it go.
+                return
 
         if preventive_slow_down:
             # do not the queue be overflowed by refresh_all_feeds()
@@ -780,6 +797,7 @@ def basefeed_post_save(instance, **kwargs):
         pass
 
     statsd.gauge('feeds.counts.total', 1, delta=True)
+    statsd.gauge('feeds.counts.open', 1, delta=True)
 
 
 post_save.connect(basefeed_post_save, sender=BaseFeed)
@@ -789,7 +807,7 @@ pre_save.connect(basefeed_pre_save, sender=BaseFeed)
 # ————————————————————————————————————————————————————————— Export class method
 
 
-def basefeed_export_content_classmethod(cls, since, folder=None):
+def basefeed_export_content_classmethod(cls, since, until=None, folder=None):
     """ Pull articles & feeds since :param:`param` and return them in a dict.
 
         if a feed has no new article, it's not represented at all. The returned
@@ -865,11 +883,15 @@ def basefeed_export_content_classmethod(cls, since, folder=None):
 
     for feed in active_feeds:
 
+        new_items = feed.good_items
+
         if since:
-            new_items = feed.good_items.filter(
+            new_items = new_items.filter(
                 Article___date_published__gte=since)
-        else:
-            new_items = feed.good_items
+
+        if until:
+            new_items = new_items.filter(
+                Article___date_published__lt=until)
 
         new_items.select_related(
             'language', 'author', 'tags'

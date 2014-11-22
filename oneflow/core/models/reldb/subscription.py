@@ -33,7 +33,7 @@ from django.db.models.signals import pre_save, post_save, pre_delete
 from django.utils.translation import ugettext_lazy as _
 
 from sparks.foundations.classes import SimpleObject
-from sparks.django.models import ModelDiffMixin
+from sparks.django.models.mixins import ModelDiffMixin
 
 from oneflow.base.fields import IntRedisDescriptor
 from oneflow.base.utils import register_task_method

@@ -27,7 +27,7 @@ from django.db.models.signals import pre_save
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
 
-from sparks.django.models import DiffMixin
+from sparks.django.models.mixins import DiffMixin
 
 from mptt.models import MPTTModel, TreeForeignKey
 

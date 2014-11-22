@@ -24,8 +24,8 @@ import logging
 # from statsd import statsd
 # from constance import config
 
-# from humanize.time import naturaldelta
-# from humanize.i18n import django_language
+from humanize.time import naturaldelta
+from humanize.i18n import django_language
 
 # from django.conf import settings
 from django.db import models, IntegrityError
@@ -147,6 +147,7 @@ class BaseItem(PolymorphicModel,
         app_label = 'core'
         verbose_name = _(u'Base item')
         verbose_name_plural = _(u'Base items')
+        get_latest_by = 'date_published'
 
     objects = BaseItemManager()
 
@@ -172,6 +173,11 @@ class BaseItem(PolymorphicModel,
     date_updated = models.DateTimeField(
         auto_now=True, verbose_name=_(u'Date updated'),
         help_text=_(u'When the article was updated.'))
+
+    date_published = models.DateTimeField(
+        verbose_name=_(u'date published'),
+        null=True, blank=True, db_index=True,
+        help_text=_(u"When the item was put online."))
 
     authors = models.ManyToManyField(
         Author, null=True, blank=True,
@@ -225,6 +231,12 @@ class BaseItem(PolymorphicModel,
             u' by {0}'.format(self.user.username) if self.user else u'')
 
     # —————————————————————————————————————————————————————————————— Properties
+
+    @property
+    def date_published_delta(self):
+
+        with django_language():
+            return _(u'{0} ago').format(naturaldelta(self.date_published))
 
     @property
     def a_feed(self):
