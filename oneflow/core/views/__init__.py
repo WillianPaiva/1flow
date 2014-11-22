@@ -461,6 +461,20 @@ from mailfeedrule import (  # NOQA
     MailFeedRuleDeleteView,
 )
 
+from twitteraccount import (TwitterAccountListCreateView,   # NOQA
+                            TwitterAccountDeleteView)
+
+from twitterfeed import TwitterFeedListCreateView, TwitterFeedDeleteView  # NOQA
+from twitterfeedrule import (  # NOQA
+   TwitterFeedRuleListCreateView,
+   TwitterFeedRulePositionUpdateView,
+   TwitterFeedRuleGroupUpdateView,
+   TwitterFeedRuleDeleteView,
+)
+
+# —————————————————————————————————————————————————————————————— Smaller things
+
+
 from folder import manage_folder, delete_folder  # NOQA
 
 from mongo_feed import add_feed  # NOQA

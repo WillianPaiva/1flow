@@ -1,0 +1,122 @@
+# -*- coding: utf-8 -*-
+u"""
+Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
+
+This file is part of the 1flow project.
+
+1flow is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+
+1flow is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public
+License along with 1flow.  If not, see http://www.gnu.org/licenses/
+
+"""
+
+import logging
+
+from sparks.django.views import mixins
+
+from django.views import generic
+from django.core.urlresolvers import reverse  # , reverse_lazy
+from django.shortcuts import get_object_or_404
+
+from oneflow.core import forms, models
+
+LOGGER = logging.getLogger(__name__)
+
+
+class TwitterFeedRuleCommonViewsMixin(object):
+
+    """ Mixin common to all TwitterFeedRule views. """
+
+    model = models.TwitterFeedRule
+
+    def get_success_url(self):
+        """ Return to our twitter feed rules list. """
+
+        return reverse('twitterfeedrule_list_create',
+                       args=(self.kwargs['twitterfeed_id'], ))
+
+
+class TwitterFeedRuleListCreateView(TwitterFeedRuleCommonViewsMixin,
+                                    mixins.ListCreateViewMixin,
+                                    generic.CreateView):
+
+    """ Mix create and list views for twitter feeds. """
+
+    model = models.TwitterFeedRule
+    default_sort_param = ('group', 'position')
+    default_filter_param = 'all'
+    form_class = forms.TwitterFeedRuleForm
+    template_name = 'twitterfeedrule/list-create.html'
+
+    def list_queryset_filter(self, qs):
+        """ Filter the twitterfeed rules list of the current feed only. """
+
+        return qs.filter(twitterfeed_id=self.kwargs.get('twitterfeed_id'))
+
+    def get_form_kwargs(self):
+        """ Get the current user for the TwitterFeedRuleForm. """
+
+        kwargs = super(TwitterFeedRuleListCreateView, self).get_form_kwargs()
+
+        kwargs.update({'user': self.request.user})
+
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        """ Add our twitterfeed to the context. """
+
+        kwargs['twitterfeed'] = get_object_or_404(
+            models.TwitterFeed, id=self.kwargs['twitterfeed_id'])
+
+        return super(TwitterFeedRuleListCreateView,
+                     self).get_context_data(**kwargs)
+
+    def form_valid(self, form):
+        """ Give the TwitterFeedRule to its owner on the fly. """
+
+        form.instance.twitterfeed = get_object_or_404(
+            models.TwitterFeed, id=self.kwargs.get('twitterfeed_id'))
+
+        return super(TwitterFeedRuleListCreateView, self).form_valid(form)
+
+
+class TwitterFeedRulePositionUpdateView(TwitterFeedRuleCommonViewsMixin,
+                                        mixins.OwnerQuerySetMixin,
+                                        generic.UpdateView):
+
+    """ Simple view to update twitter feed rule position.
+
+    .. todo:: if possible, refactor this for any kind
+        of model which as a position attribute.
+    """
+
+    form_class = forms.TwitterFeedRulePositionForm
+    ownerqueryset_filter = 'twitterfeed__user'
+
+
+class TwitterFeedRuleGroupUpdateView(TwitterFeedRuleCommonViewsMixin,
+                                     mixins.OwnerQuerySetMixin,
+                                     generic.UpdateView):
+
+    """ Simple view to update twitter feed rule group. """
+
+    form_class = forms.TwitterFeedRuleGroupForm
+    ownerqueryset_filter = 'twitterfeed__user'
+
+
+class TwitterFeedRuleDeleteView(TwitterFeedRuleCommonViewsMixin,
+                                mixins.OwnerQuerySetMixin,
+                                generic.DeleteView):
+
+    """ Delete a twitter feed rule. """
+
+    ownerqueryset_filter = 'twitterfeed__user'

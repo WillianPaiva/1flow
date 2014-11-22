@@ -353,6 +353,48 @@ urlpatterns = patterns(
             views.MailFeedRuleDeleteView.as_view())),
         name='mailfeedrule_delete'),
 
+    # ———————————————————————————————————————————————————————— Twitter accounts
+
+    url(_(ur'^twitteraccount/?$'),
+        login_required(never_cache(
+            views.TwitterAccountListCreateView.as_view())),
+        name='twitteraccount_list_create'),
+
+    url(_(ur'^twitteraccount/(?P<pk>\d+)/delete/?$'),
+        login_required(never_cache(
+            views.TwitterAccountDeleteView.as_view())),
+        name='twitteraccount_delete'),
+
+    url(_(ur'^twitterfeed/?$'),
+        login_required(never_cache(
+            views.TwitterFeedListCreateView.as_view())),
+        name='twitterfeed_list_create'),
+
+    url(_(ur'^twitterfeed/(?P<pk>\d+)/delete/?$'),
+        login_required(never_cache(
+            views.TwitterFeedDeleteView.as_view())),
+        name='twitterfeed_delete'),
+
+    url(_(ur'^twitterfeed/(?P<twitterfeed_id>\d+)/rules/?$'),
+        login_required(never_cache(
+            views.TwitterFeedRuleListCreateView.as_view())),
+        name='twitterfeedrule_list_create'),
+
+    url(_(ur'^twitterfeed/(?P<twitterfeed_id>\d+)/rule/(?P<pk>\d+)/position/?$'),  # NOQA
+        login_required(never_cache(
+            views.TwitterFeedRulePositionUpdateView.as_view())),
+        name='twitterfeedrule_position'),
+
+    url(_(ur'^twitterfeed/(?P<twitterfeed_id>\d+)/rule/(?P<pk>\d+)/group/?$'),
+        login_required(never_cache(
+            views.TwitterFeedRuleGroupUpdateView.as_view())),
+        name='twitterfeedrule_group'),
+
+    url(_(ur'^twitterfeed/(?P<twitterfeed_id>\d+)/rule/(?P<pk>\d+)/delete/?$'),
+        login_required(never_cache(
+            views.TwitterFeedRuleDeleteView.as_view())),
+        name='twitterfeedrule_delete'),
+
     # ——————————————————————————————————————————————————————————  Google Reader
 
     url(_(ur'^grimport/(?:(?P<user_id>\d+)/)?$'),
