@@ -133,6 +133,7 @@ def synchronize_statsd_feeds_gauges(full=False):
 
         if full:
             statsd.gauge('feeds.counts.mail', all_feeds.mail().count())
+            statsd.gauge('feeds.counts.twitter', all_feeds.twitter().count())
 
             duplicates = BaseFeed.objects.exclude(duplicate_of=None)
             statsd.gauge('feeds.counts.duplicates', duplicates.count())
