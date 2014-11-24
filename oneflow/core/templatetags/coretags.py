@@ -714,28 +714,32 @@ def mail_is_usable_to_icon(mailthing):
         message_ok = _(u'Account successfully working, tested {ago} ago.')
         message_er = _(u'Account not working, tested {ago} ago. '
                        u'Error reported: {err}')
-        ago = onef_naturaldelta(now() - mailthing.date_last_conn)
+
     else:
         attr_name = 'is_valid'
         err_attr  = 'check_error'
         message_ok = _(u'Rule validated successfully and will be '
                        u'used for next fetch.')
         message_er = _(u'Rule did not validate. Error reported: {err}')
-        ago = None
 
     template = (u'<span class="label label-{0}" title="{2}" '
                 u'data-toggle="tooltip" data-placement="top">'
                 u'<i class="icon icon-fixed-width icon-{1}"></i></span>')
 
     if getattr(mailthing, attr_name):
-        return template.format('success', 'ok', message_ok.format(ago=ago))
+        return template.format('success', 'ok', message_ok.format(
+            ago=onef_naturaldelta(now() - mailthing.date_last_conn)
+            if hasattr(mailthing, 'data_last_conn') else None))
 
     else:
         error_text = getattr(mailthing, err_attr)
 
         if error_text:
-            return template.format('danger', 'exclamation',
-                                   message_er.format(ago=ago, err=error_text))
+            return template.format(
+                'danger', 'exclamation',
+                message_er.format(
+                    ago=onef_naturaldelta(now() - mailthing.date_last_conn),
+                    err=error_text))
         else:
             return template.format('warning', 'question',
                                    _(u'Account connectivity not yet tested. '
@@ -773,6 +777,15 @@ def userimport_feeds_details(user, feeds_urls):
     }
 
 
+@register.inclusion_tag('snippets/history/history-entry-actions.html')
+def history_entry_actions(history_entry):
+
+    return {
+        'history_entry': history_entry,
+        'is_userimport': isinstance(history_entry, models.UserImport),
+    }
+
+
 @register.inclusion_tag('snippets/history/userimport-articles.html')
 def userimport_articles_details(user, articles_urls):
 
@@ -787,6 +800,7 @@ def userimport_articles_details(user, articles_urls):
         'reads': reads,
         'articles': unread_articles,
     }
+
 
 @register.filter
 def randcolor(number):

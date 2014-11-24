@@ -65,6 +65,8 @@
 				<td>{{ historyentry.date_created }}</td>
 
 				<td class="right">
+					{% history_entry_actions historyentry %}
+
 					{% url 'historyentry_delete' historyentry.pk as delete_url %}
 					{% include "widgets/delete-form-button.html" %}
 				</td>

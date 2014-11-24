@@ -1,0 +1,16 @@
+
+{% if is_userimport %}
+
+	{% if history_entry.status == IMPORT_STATUS.FAILED or history_entry.running_old %}
+
+		<a href="{% url 'historyentry_retry' history_entry.id %}"
+			class="btn btn-default btn-xs"
+			title="{% trans "Retry this import" %}">
+			<i class="icon icon-refresh"></i>
+		</a>
+
+	{% endif %}
+
+{% else %}
+
+{% endif %}
