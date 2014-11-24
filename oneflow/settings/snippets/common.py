@@ -688,15 +688,9 @@ AUTHENTICATION_BACKENDS = (
     # else the social-only registration will fail because user has no mail.
 
     # 'social.backends.open_id.OpenIdAuth',
-    'social.backends.twitter.TwitterOAuth',
-    'social.backends.github.GithubOAuth2',
-    # 'social.backends.google.GoogleOpenId',
-    'social.backends.google.GoogleOAuth2',
-    # 'social.backends.google.GoogleOAuth',
-    'social.backends.facebook.FacebookOAuth2',
-
     'django.contrib.auth.backends.ModelBackend',
 )
+
 
 # —————————————————————————————————————————————————————————————— 1flow settings
 
