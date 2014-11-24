@@ -105,6 +105,16 @@ class UserImport(HistoryEntry):
     # ——————————————————————————————————————————————————————————————————— Utils
 
     @property
+    def running_old(self):
+        """ An import running for too long is probably crashed.
+
+        But we didn't notice it, or celery crashed. Whatever.
+        """
+
+        return self.status == IMPORT_STATUS.RUNNING \
+            and self.date_started < (now() - timedelta(seconds=21600))
+
+    @property
     def count(self):
         """ Count how many lines we have in this import. """
 
@@ -366,10 +376,12 @@ class UserImport(HistoryEntry):
         """ Run the import. """
 
         #
-        # NOTE: we don't care if the import was already running,  finished,
+        # NOTE: we don't care if the import was already running, finished,
         #       whatever. This class is able to recover and re-run itself
         #       over and over without doing bad thing in the database.
         #
+
+        is_retrying = self.status == IMPORT_STATUS.RETRY
 
         self.status = IMPORT_STATUS.RUNNING
         self.date_started = now()
@@ -379,16 +391,32 @@ class UserImport(HistoryEntry):
             return self.run_internal()
 
         except:
-            countdown = randrange(1800, 3600)
-            LOGGER.exception(u'Import %s failed (retry in %s)',
-                             self, naturaldelta(timedelta(seconds=countdown)))
+            LOGGER.exception(u'User import %s failed')
 
-            # HEADS UP: this task is declared by
-            # the register_task_method call below.
-            userimport_run_task.apply_async((self.id, ),  # NOQA
-                                            countdown=countdown)
+            if is_retrying:
+                message_user(self.user,
+                             _(u'Your import #{0} failed to run after a '
+                               u'retry. Please review it before relaunching '
+                               u'it manually again.').format(self.id),
+                             constants.ERROR)
 
-            self.status = IMPORT_STATUS.RETRY
+                self.status = IMPORT_STATUS.FAILED
+
+            else:
+                countdown = randrange(1800, 3600)
+                delta_cd = naturaldelta(timedelta(seconds=countdown))
+
+                message_user(self.user,
+                             _(u'Your import #{0} failed to run. If will '
+                               u'be automatically retried in {1}').format(
+                                 self.id, delta_cd),
+                             constants.WARNING)
+
+                globals()['userimport_run_task'].apply_async(
+                    (self.id, ), countdown=countdown)
+
+                self.status = IMPORT_STATUS.RETRY
+
             self.save()
 
     def run_internal(self):
