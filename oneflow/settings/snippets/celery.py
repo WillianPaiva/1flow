@@ -169,7 +169,7 @@ CELERYBEAT_SCHEDULE = {
 
     'throttle-feed-refresh': {
         'task': 'oneflow.core.tasks.throttle_feed_refresh',
-        'schedule': crontab(minute='*'),
+        'schedule': crontab(minute='*/10'),
     },
 
     'refresh-all-feeds': {
