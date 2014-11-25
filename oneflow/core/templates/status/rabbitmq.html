@@ -1,0 +1,28 @@
+
+<h1>{% trans "RabbitMQ queues" %} <small class="very-muted">({{ rabbitmq_status|length }})</small></h1>
+<table class="table table-striped table-hover">
+
+<thead>
+	<tr>
+		<th>{% trans "Name" %}</th>
+		<th>{% trans "Items" %}</th>
+		<th>{% trans "Consumers" %}</th>
+		<th>{% trans "Idle since" %}</th>
+		<th>{% trans "Memory" %}</th>
+	</tr>
+</thead>
+
+<tbody>
+{% for queue in rabbitmq_status %}
+
+	<tr>
+		<td>{{ queue.name|title }}</td>
+		<td>{% firstof queue.backing_queue_status.len ' ' %}</td>
+		<td>{{ queue.consumers }}</td>
+		<td>{{ queue.idle_since }}</td>
+		<td>{{ queue.memory|naturalsize }}</td>
+	</tr>
+
+{% endfor %}
+</tbody>
+</table>
