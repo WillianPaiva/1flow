@@ -22,7 +22,7 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 import json
 import logging
 
-# from datetime import datetime
+from celery import task
 from constance import config
 from TwitterAPI import TwitterAPI
 from async_messages import message_user
@@ -105,6 +105,8 @@ class TwitterAccount(BaseAccount):
         verbose_name_plural = _(u'Twitter accounts')
         # unique_together = ('user', 'username', )
 
+    INPLACEEDIT_EXCLUDE = ('errors', 'options', )
+
     objects = BaseAccountManager()
 
     social_auth = models.OneToOneField(UserSocialAuth,
@@ -154,27 +156,6 @@ class TwitterAccount(BaseAccount):
     _lists_ = TextRedisDescriptor(
         attr_name='ta.ls', default=twitteraccount_lists_default,
         set_default=True)
-
-    # ——————————————————————————————————————————————————————————— Class methods
-
-    @classmethod
-    def check_social_user(cls, social_user, **kwargs):
-
-        LOGGER.warning(u'Check social user %s', social_user)
-
-        if not social_user.provider == 'twitter':
-            return
-
-        try:
-            social_user.twitter_account
-
-        except TwitterAccount.DoesNotExist:
-
-            twitter_account = TwitterAccount(user=social_user.user,
-                                             social_auth=social_user)
-            twitter_account.save()
-
-        globals['twitteraccount_check_feeds_task'].delay(twitter_account.id)
 
     # —————————————————————————————————————————————————————————————— Properties
 
@@ -250,27 +231,18 @@ class TwitterAccount(BaseAccount):
 
         if not hasattr(self, '_tweetapi_') or self._tweetapi_ is None:
 
-            if settings.DEBUG or settings.SITE_DOMAIN in ('lil.1flow.io',
-                                                          'big.1flow.io', ):
-                self._tweetapi_ = TwitterAPI(
-                    settings.SOCIAL_AUTH_TWITTER_KEY,
-                    settings.SOCIAL_AUTH_TWITTER_SECRET,
-                    '1119347214-bdMoepqko61yWiQ9BMKeTMNWI0LwhQweOD8P7A1',
-                    'OyJ3KzCej9MZRMXML4iLsoebUykQOIcr8BDa8USqKxO0K')
+            social_user_tokens = self.social_auth.tokens
+            access_token_key = social_user_tokens['oauth_token']
+            access_token_secret = social_user_tokens['oauth_token_secret']
 
-            else:
-                raise NotImplementedError(
-                    u'Not implemented until '
-                    u'https://github.com/omab/python-social-auth/issues/444 is resolved.')  # NOQA
+            LOGGER.debug(u'%s: connecting to Twitter API with @%s tokens,',
+                         self, social_user_tokens['screen_name'])
 
-                access_token_key, access_token_secret = \
-                    self.social_auth.tokens.split('&')
-
-                self._tweetapi_ = TwitterAPI(
-                    settings.SOCIAL_AUTH_TWITTER_KEY,
-                    settings.SOCIAL_AUTH_TWITTER_SECRET,
-                    access_token_key,
-                    access_token_secret)
+            self._tweetapi_ = TwitterAPI(
+                settings.SOCIAL_AUTH_TWITTER_KEY,
+                settings.SOCIAL_AUTH_TWITTER_SECRET,
+                access_token_key,
+                access_token_secret)
 
         return self._tweetapi_
 
@@ -366,7 +338,7 @@ class TwitterAccount(BaseAccount):
                 name=_(u'Twitter timeline for @{0}').format(username),
                 is_timeline=True,
                 is_backfilled=True,
-                id_good=True,
+                is_good=True,
             )
 
             timeline.save()
@@ -395,7 +367,7 @@ class TwitterAccount(BaseAccount):
 
         self.check_lists(force=force, commit=commit)
 
-    def _create_feed_from_list_and_subscribe_to_it(self, list_name):
+    def _create_feed_from_list_and_subscribe_to_it(self, username, list_name):
         """ Create a 1flow feed and subscribe account owner to it.
 
 
@@ -421,11 +393,11 @@ class TwitterAccount(BaseAccount):
 
         twitter_feed = TwitterFeed(
             user=self.user,
-            name=_(u'Twitter list “{0}”').format(
-                twitter_list['name']),
+            name=_(u'{0} list of {1}').format(
+                twitter_list['name'], username),
             uri=twitter_list['uri'],
             is_timeline=False,
-            is_backfilled=config.TWITTER_FEEDS_DEFAULT_BACKFILL,
+            is_backfilled=config.TWITTER_FEEDS_BACKFILL_ENABLED_DEFAULT,
             is_good=True,
         )
 
@@ -435,7 +407,7 @@ class TwitterAccount(BaseAccount):
         except IntegrityError:
 
             # TODO: check attributes have good values…
-            #       for example if TWITTER_FEEDS_DEFAULT_BACKFILL
+            #       for example if TWITTER_FEEDS_BACKFILL_ENABLED_DEFAULT
             #       changed…
 
             twitter_feed = TwitterFeed.objects.get(
@@ -484,11 +456,14 @@ class TwitterAccount(BaseAccount):
         created_lists = []
         deleted_lists = []
 
+        username = self.social_auth.extra_data.get(
+            'username', self.social_auth.uid)
+
         if self.fetch_owned_lists:
             for list_name in lists.owned:
                 feed, subscription, created = \
                     self._create_feed_from_list_and_subscribe_to_it(
-                        list_name)
+                        username, list_name)
 
                 if created:
                     created_lists.append(list_name)
@@ -497,7 +472,7 @@ class TwitterAccount(BaseAccount):
             for list_name in lists.owned:
                 feed, subscription, created = \
                     self._create_feed_from_list_and_subscribe_to_it(
-                        list_name)
+                        username, list_name)
 
                 feed.close(u'Owner does not fetch owned lists anymore')
                 subscription.delete()
@@ -508,7 +483,7 @@ class TwitterAccount(BaseAccount):
             for list_name in lists.subscribed:
                 feed, subscription, created = \
                     self._create_feed_from_list_and_subscribe_to_it(
-                        list_name)
+                        username, list_name)
 
                 if created:
                     created_lists.append(list_name)
@@ -516,7 +491,7 @@ class TwitterAccount(BaseAccount):
             for list_name in lists.subscribed:
                 feed, subscription, created = \
                     self._create_feed_from_list_and_subscribe_to_it(
-                        list_name)
+                        username, list_name)
 
                 feed.close(u'Owner does not fetch subscribed lists anymore')
                 subscription.delete()
@@ -691,6 +666,8 @@ class TwitterAccount(BaseAccount):
 
 # ———————————————————————————————————————————————————————————————— Celery tasks
 
+register_task_method(TwitterAccount, TwitterAccount.check_feeds,
+                     globals(), queue=u'background')
 register_task_method(TwitterAccount, TwitterAccount.check_lists,
                      globals(), queue=u'background')
 register_task_method(TwitterAccount, TwitterAccount.test_connection,
@@ -698,12 +675,43 @@ register_task_method(TwitterAccount, TwitterAccount.test_connection,
 register_task_method(TwitterAccount, TwitterAccount.update_lists,
                      globals(), queue=u'low')
 
+
+@task
+def check_social_user(social_user_id, **kwargs):
+
+    social_user = UserSocialAuth.objects.get(id=social_user_id)
+
+    if not social_user.provider == 'twitter':
+        return
+
+    LOGGER.debug(u'TwitterAccount: check social user %s', social_user)
+
+    try:
+        twitter_account = social_user.twitter_account
+
+    except TwitterAccount.DoesNotExist:
+
+        twitter_account = TwitterAccount(user=social_user.user,
+                                         social_auth=social_user)
+        twitter_account.save()
+
+    globals()['twitteraccount_check_feeds_task'].apply_async(
+        args=(twitter_account.id, ), countdown=10)
+
+
 # ————————————————————————————————————————————————————————————————————— Signals
 
 
 def twitteraccount_pre_save(instance, **kwargs):
 
     twitter_account = instance
+
+    if twitter_account.id:
+        if 'fetch_owned_lists' in twitter_account.changed_fields \
+                or 'fetch_subscribed_lists' in twitter_account.changed_fields:
+
+            globals()['twitteraccount_check_lists_task'].delay(
+                twitter_account.id)
 
     if twitter_account.fetch_owned_lists is None:
         twitter_account.fetch_owned_lists = \
@@ -715,7 +723,15 @@ def twitteraccount_pre_save(instance, **kwargs):
 
     if twitter_account.name in (None, u''):
 
-        username = twitter_account.social_auth.extra_data.get('username', None)
+        username = twitter_account.social_auth.extra_data.get(
+            'username', None)
+
+        if username is None:
+            username = twitter_account.social_auth.extra_data.get(
+                'access_token', {}).get('screen_name', None)
+
+        if username is None:
+            username = twitter_account.social_auth.uid
 
         if username:
             twitter_account.name = u'@{0}'.format(username)
@@ -732,7 +748,7 @@ def usersocialauth_post_save(instance, **kwargs):
         checker function. Advise with experience / tests.
     """
 
-    TwitterAccount.check_social_user(social_user=instance)
+    globals()['check_social_user'].delay(instance.id)
 
 
 post_save.connect(usersocialauth_post_save, sender=UserSocialAuth)

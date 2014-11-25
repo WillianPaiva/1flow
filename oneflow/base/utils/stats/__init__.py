@@ -19,7 +19,14 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
-from postgres import pg_version_to_string, postgresql_status  # NOQA
+from postgres import (  # NOQA
+    pg_version_to_string,
+    postgresq_indexes,
+    postgresql_activity,
+    postgresql_database_size,
+    postgresql_relations_sizes,
+    postgresql_status,
+)
 
 from celeries import celery_status  # NOQA
 

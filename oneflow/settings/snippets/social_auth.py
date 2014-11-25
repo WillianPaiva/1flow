@@ -102,7 +102,7 @@ SOCIAL_AUTH_PIPELINE_BLAHBLAH = (
     'oneflow.base.social_pipeline.get_social_avatar',
 
     # Check & pre-populate accounts & feeds from the backend.
-    'oneflow.core.social_pipeline.check_feeds',
+    # 'oneflow.core.social_pipeline.check_feeds',
 
     # Given the configuration, we do allow any user to register, or not.
     # In both cases, we create the account, but if registration is disabled

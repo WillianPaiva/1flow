@@ -415,8 +415,6 @@ MIDDLEWARE_CLASSES = (
     # 'account.middleware.LocaleMiddleware',
     'account.middleware.TimezoneMiddleware',
 
-    # TODO: activate this if needed.
-    # 'social_auth.middleware.SocialAuthExceptionMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'maintenancemode.middleware.MaintenanceModeMiddleware',
     'django.middleware.gzip.GZipMiddleware',

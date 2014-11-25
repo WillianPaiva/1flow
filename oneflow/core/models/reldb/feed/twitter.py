@@ -414,6 +414,13 @@ class TwitterFeed(BaseFeed):
                     # Forward to latest tweet
                     self.set_latest_id(tweet_id)
 
+        elif 'code' in item:
+            if item['code'] == 88:
+                # {u'message': u'Rate limit exceeded', u'code': 88}
+                LOGGER.error(u'%s: disconnecting because %s',
+                             self, item['message'])
+                exit_loop = True
+
         elif 'warning' in item:
             percent = item['percent_full']
 
@@ -525,6 +532,7 @@ class TwitterFeed(BaseFeed):
         cur_processed = 0
 
         old_latest = self.latest_id
+        last_item = None
 
         if self.account.exists():
             twitter_account = self.account.order_by('?').first()
@@ -575,11 +583,14 @@ class TwitterFeed(BaseFeed):
                                 u'now true.', self)
                             exit_loop = True
 
+                        last_item = item
+
                         if exit_loop:
                             break
 
                     if backfilling and max_rewind_range:
-                        if twitter_datetime(item['created_at']) \
+                        if last_item \
+                            and twitter_datetime(last_item['created_at']) \
                                 < max_rewind_range_as_dt_from_now:
                             self.backfill_completed = max_rewind_range
                             self.save()

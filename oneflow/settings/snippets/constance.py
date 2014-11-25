@@ -395,7 +395,7 @@ CONSTANCE_CONFIG.update({
 
 
     'TWITTER_ACCOUNT_FETCH_OWNED_LISTS': (
-        False,
+        True,
         ugettext(u'Enable or disable to set the default value for '
                  u'auto-following and fetching the lists owned by a '
                  u'Twitter account. WARNING: this could be quite '
@@ -403,7 +403,7 @@ CONSTANCE_CONFIG.update({
                  u'accounts of your 1flow node.')),
 
     'TWITTER_ACCOUNT_FETCH_SUBSCRIBED_LISTS': (
-        False,
+        True,
         ugettext(u'Enable or disable to set the default value for '
                  u'auto-following and fetching the lists a Twitter account '
                  u'is subscribed to. NOTE: if '
