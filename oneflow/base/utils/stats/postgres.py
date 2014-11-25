@@ -144,8 +144,8 @@ def pg_version_to_string(version):
     return u'.'.join(unicode(x) for x in (major, medium, minor))
 
 
-def postgresql_status():
-    """ Return PG version, queries, indexes. """
+def postgresq_indexes():
+    """ Return postgreSQL indexes sizes. """
 
     cursor = connection.cursor()
 
@@ -153,13 +153,26 @@ def postgresql_status():
 
     # table, column, type, notnull, index_name, is_index, primarykey,
     # uniquekey, default
-    indexes = cursor.fetchall()
+    return cursor.fetchall()
+
+
+def postgresql_activity():
+    """ Return PostgreSQL activity table. """
+
+    cursor = connection.cursor()
 
     # datid, datname, pid, usesysid, usename, application_name, client_addr,
     # client_hostname, client_port, backend_start, xact_start, query_start,
     # state_change, waiting, state, query
     cursor.execute('SELECT * FROM pg_stat_activity;')
-    activity = cursor.fetchall()
+
+    return cursor.fetchall()
+
+
+def postgresql_database_size():
+    """ Return PostgreSQL database size, in bytes. """
+
+    cursor = connection.cursor()
 
     # Cf. http://dba.stackexchange.com/a/14624/51426
     # SELECT spcname, pg_size_pretty(pg_tablespace_size(spcname))
@@ -173,10 +186,30 @@ def postgresql_status():
     #
     #
     cursor.execute(PG_DATABASE_SIZE_QUERY, [cursor.db.settings_dict['NAME']])
-    total_size = cursor.fetchone()[-1]
+
+    return cursor.fetchone()[-1]
+
+
+def postgresql_relations_sizes():
+    """ Return PostgreSQL relations sizes and details, in bytes. """
+
+    cursor = connection.cursor()
 
     cursor.execute(PG_TABLE_SIZES_QUERY)
-    tables_sizes = cursor.fetchall()
+
+    return cursor.fetchall()
+
+
+def postgresql_status():
+    """ Return PG version, queries, indexes. """
+
+    indexes = postgresq_indexes()
+
+    activity = postgresql_activity()
+
+    total_size = postgresql_database_size()
+
+    tables_sizes = postgresql_relations_sizes()
 
     total_tuples = total_indices = total_data = total_total = 0
 
@@ -186,6 +219,8 @@ def postgresql_status():
         total_data += int(data)
         total_indices += int(indices)
         total_total += int(total)
+
+    cursor = connection.cursor()
 
     db = cursor.db
 
