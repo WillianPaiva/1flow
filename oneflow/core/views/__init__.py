@@ -389,6 +389,7 @@ def admin_status(request):
         'host_infos': stats.host_infos(),
         'pg_stats': stats.postgresql_status(),
         'celery_status': stats.celery_status(),
+        'rabbitmq_status': stats.rabbitmq_queues(),
         'memory': stats.memory(),
         'partitions': {
             part: stats.disk_usage(part.mountpoint)

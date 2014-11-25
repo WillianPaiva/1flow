@@ -21,6 +21,7 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 import logging
 import pyrabbit
+from pyrabbit.api import PermissionError
 
 from django.conf import settings
 
@@ -48,7 +49,7 @@ def get_rabbitmq_client_args_from_broker_url():
     if not vhost:
         vhost = '/'
 
-    host_and_port = host_and_port.replace(':5672', ':55672')
+    host_and_port = host_and_port.replace(':5672', ':15672')
 
     return [host_and_port, username, password, vhost]
 
@@ -59,8 +60,16 @@ if settings.BROKER_URL.lower().startswith('amqp://'):
 
     try:
         rabbitmq_client.is_alive()
+
+    except PermissionError:
+        pass
+
     except:
-        rabbitmq_params[0] = rabbitmq_params[0].replace(':55672', ':15672')
+        LOGGER.exception(u'Could not connect to RabbitMQ API. '
+                         u'Is the web interface plugin enabled?'
+                         u'Do your user have the "management" permission?')
+
+        rabbitmq_params[0] = rabbitmq_params[0].replace(':15672', ':55672')
         rabbitmq_client = pyrabbit.Client(*rabbitmq_params[:-1])
 
     rabbitmq_vhost  = rabbitmq_params[-1]
@@ -86,6 +95,10 @@ def rabbitmq_queues():
                          u'Is the web interface plugin enabled?')
         return {}
 
-    return [q for q in sorted(queues, key=lambda q: q['name'])
-            if not (q['name'].startswith('amq.gen')
-                    or q['name'].startswith('celery'))]
+    return [
+        q for q in sorted(queues, key=lambda q: q['name'])
+        if not (
+            q['name'].startswith('amq.gen')
+            or 'celery' in q['name']
+        )
+    ]
