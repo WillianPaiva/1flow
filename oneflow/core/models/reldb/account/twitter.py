@@ -684,6 +684,8 @@ class TwitterAccount(BaseAccount):
 
 # ———————————————————————————————————————————————————————————————— Celery tasks
 
+register_task_method(TwitterAccount, TwitterAccount.check_feeds,
+                     globals(), queue=u'background')
 register_task_method(TwitterAccount, TwitterAccount.check_lists,
                      globals(), queue=u'background')
 register_task_method(TwitterAccount, TwitterAccount.test_connection,
