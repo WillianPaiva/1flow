@@ -13,6 +13,15 @@
         <li class="secondary-nav">
         	<a data-toggle="tab" href="#celery">{% trans "Celery" %}</a>
     	</li>
+
+    	{% if rabbitmq_status %}
+
+        <li class="secondary-nav">
+        	<a data-toggle="tab" href="#rabbitmq">{% trans "RabbitMQ" %}</a>
+    	</li>
+
+    	{% endif %}
+
         <li class="secondary-nav">
         	<a data-toggle="tab" href="#redis">{% trans "Redis" %}</a>
     	</li>
@@ -37,6 +46,16 @@
 			<div class="spacer25"></div>
 			{% include "status/redis.html" %}
 		</div>
+
+    	{% if rabbitmq_status %}
+
+		<div class="tab-pane fade" id="rabbitmq">
+			<div class="spacer25"></div>
+			{% include "status/rabbitmq.html" %}
+		</div>
+
+    	{% endif %}
+
 		<div class="tab-pane fade" id="celery">
 			<div class="spacer25"></div>
 			{% include "status/celery.html" %}

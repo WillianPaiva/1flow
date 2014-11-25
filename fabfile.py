@@ -26,7 +26,7 @@ from fabric.api import env, task, roles, local as fablocal
 
 from sparks.fabric import (with_remote_configuration,
                            set_roledefs_and_parallel,
-                           worker_roles)
+                           worker_roles, custom_roles)
 import sparks.django.fabfile as sdf
 
 # Make the main deployment tasks and my other favorites immediately accessible
@@ -175,7 +175,7 @@ def workers(with_shell=False, with_flower=False):
     #       This will not work as expected for hosts assuming more than
     #       one role (the first of them will get run multiple times).
     #
-    roles = worker_roles[:] + ['beat']
+    roles = custom_roles() + worker_roles[:] + ['beat']
 
     if with_shell:
         roles.append('shell')
@@ -203,6 +203,27 @@ def count():
 
     run_command("ps ax | grep 'celery.*worker' | grep -v grep "
                 "| wc -l")
+
+
+@task
+def logs(logs=None):
+    """ get logs worker processes. """
+
+    if logs is None:
+        logs = u'worker*.log'
+
+    run_command(u"tail -f ~/logs/{0}".format(logs))
+
+
+@task
+def purge(queue=None):
+    """ get logs worker processes. """
+
+    if queue is None:
+        queue = u'refresh'
+
+    run_command(u"./manage.py celery amqp queue.purge {0}".format(queue),
+                sparks_roles=('db', ))
 
 
 @task(alias='prod')

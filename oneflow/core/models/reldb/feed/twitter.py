@@ -834,7 +834,7 @@ class TwitterFeed(BaseFeed):
                 # WARNING: statuses/home_timeline API 15 per 15 minute only…
 
                 parameters.update({
-                    'count': 200,  # Else it's 20 by default…
+                    'count': count or 200,  # Else it's 20 by default…
                     'trim_user': 1,
                 })
 
@@ -846,7 +846,7 @@ class TwitterFeed(BaseFeed):
                 owner_screen_name, _, slug = self.uri[1:].split(u'/')
 
                 parameters.update({
-                    'count': 200,  # Else it's 20 by default…
+                    'count': count or 200,  # Else it's 20 by default…
                     'include_rts': 1,
                     'slug': slug,
                     'owner_screen_name': owner_screen_name
@@ -858,6 +858,7 @@ class TwitterFeed(BaseFeed):
             elif self.track_terms or self.track_locations:
 
                 parameters.update({
+                    'count': count or 200,  # Else it's 20 by default…
                     'result_type': 'recent',  # or: 'mixed', 'popular'
                 })
 

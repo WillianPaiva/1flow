@@ -31,6 +31,25 @@ SOCIAL_AUTH_SESSION_EXPIRATION = False
 # SOCIAL_AUTH_<BACKEND_NAME>_WHITELISTED_DOMAINS = ['foo.com', 'bar.com']
 # SOCIAL_AUTH_RAISE_EXCEPTIONS = True
 
+MORE_AUTH_BACKENDS = tuple()
+
+for var_name, backend in (
+    ('SOCIAL_AUTH_TWITTER_KEY', 'social.backends.twitter.TwitterOAuth',),
+    ('SOCIAL_AUTH_GITHUB_KEY', 'social.backends.github.GithubOAuth2',),
+    ('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', 'social.backends.google.GoogleOAuth2',),
+    ('SOCIAL_AUTH_FACEBOOK_KEY', 'social.backends.facebook.FacebookOAuth2',),
+
+    # ( , '# 'social.backends.google.GoogleOpenId',),
+    # ( , '# 'social.backends.google.GoogleOAuth',),
+):
+
+    if os.environ.get(var_name, None):
+        MORE_AUTH_BACKENDS = MORE_AUTH_BACKENDS + (backend, )
+
+if MORE_AUTH_BACKENDS:
+    AUTHENTICATION_BACKENDS = MORE_AUTH_BACKENDS + AUTHENTICATION_BACKENDS
+
+
 # ———————————————————————————————————————————————————————————————————— PIPELINE
 
 SOCIAL_AUTH_PIPELINE_BLAHBLAH = (

@@ -444,7 +444,11 @@ def export_content(request, **kwargs):
 
 # ——————————————————————————————————————————————————————————————— Views imports
 
-from history import HistoryEntryListView, HistoryEntryDeleteView  # NOQA
+from history import (  # NOQA
+    HistoryEntryListView,
+    HistoryEntryActionView,
+    HistoryEntryDeleteView,
+)
 
 from mailaccount import MailAccountListCreateView, MailAccountDeleteView  # NOQA
 

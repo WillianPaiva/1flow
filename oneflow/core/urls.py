@@ -426,6 +426,12 @@ urlpatterns = patterns(
                        views.HistoryEntryDeleteView.as_view())),
         name='historyentry_delete'),
 
+    url(_(ur'^history/(?P<pk>\d+)/retry/?$'),
+        login_required(never_cache(
+                       views.HistoryEntryActionView.as_view())),
+        name='historyentry_retry', kwargs={'action': 'retry'}),
+
+
     # —————————————————————————————————————————————————————————————— Staff only
 
     url(_(ur'^syncnode/?$'),
