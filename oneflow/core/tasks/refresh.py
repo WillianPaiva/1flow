@@ -58,7 +58,8 @@ def refresh_all_feeds(limit=None, force=False):
     #
     my_lock = RedisExpiringLock(
         REFRESH_ALL_FEEDS_LOCK_NAME,
-        expire_time=config.FEED_GLOBAL_REFRESH_INTERVAL * 60 - 1
+        expire_time=config.FEED_GLOBAL_REFRESH_INTERVAL * 60
+        - config.FEED_GLOBAL_REFRESH_INTERVAL
     )
 
     if not my_lock.acquire():
@@ -89,10 +90,12 @@ def refresh_all_feeds(limit=None, force=False):
             for feed in feeds:
 
                 if feed.refresh_lock.is_locked():
-                    LOGGER.info(u'Feed %s already locked, skipped.', feed)
+                    LOGGER.debug(u'Feed %s already locked, skipped.', feed)
                     continue
 
                 interval = timedelta(seconds=feed.fetch_interval)
+
+                feed.refresh_lock.acquire()
 
                 if feed.date_last_fetch is None:
 

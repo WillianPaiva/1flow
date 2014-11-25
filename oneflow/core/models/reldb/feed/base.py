@@ -591,16 +591,6 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
 
         # ————————————————————————————————————————————————  Try to acquire lock
 
-        if not self.refresh_lock.acquire():
-            if force:
-                LOGGER.warning(u'Forcing refresh for feed %s, despite of '
-                               u'lock already acquired.', self)
-                self.refresh_lock.release()
-                self.refresh_lock.acquire()
-            else:
-                LOGGER.info(u'Refresh for %s already running, aborting.', self)
-                return True
-
         if self.date_last_fetch is not None and self.date_last_fetch >= (
                 now() - timedelta(seconds=self.fetch_interval)):
             if force:
