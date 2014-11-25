@@ -414,6 +414,13 @@ class TwitterFeed(BaseFeed):
                     # Forward to latest tweet
                     self.set_latest_id(tweet_id)
 
+        elif 'code' in item:
+            if item['code'] == 88:
+                # {u'message': u'Rate limit exceeded', u'code': 88}
+                LOGGER.error(u'%s: disconnecting because %s',
+                             self, item['message'])
+                exit_loop = True
+
         elif 'warning' in item:
             percent = item['percent_full']
 
