@@ -52,7 +52,7 @@ worker:
 	./manage.py celery worker -P gevent --without-mingle --without-gossip --without-heartbeat --loglevel=$(loglevel) --autoscale=$(autoscale) --queues=$(queues)
 
 clean:
-	ps ax | grep manage.py | grep -v grep | awk '{print $$1}' | xargs kill -9 || true
+	ps ax | grep manage.py | grep -v grep | grep -v shell_plus | awk '{print $$1}' | xargs kill -9 || true
 	ps ax | grep celeryd | grep -v grep | awk '{print $$1}' | xargs kill -9 || true
 	rm -f celery*.pid
 
