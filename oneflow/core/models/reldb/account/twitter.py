@@ -700,6 +700,13 @@ def twitteraccount_pre_save(instance, **kwargs):
 
     twitter_account = instance
 
+    if twitter_account.id:
+        if 'fetch_owned_lists' in twitter_account.changed_fields \
+                or 'fetch_subscribed_lists' in twitter_account.changed_fields:
+
+            globals()['twitteraccount_check_lists_task'].delay(
+                twitter_account.id)
+
     if twitter_account.fetch_owned_lists is None:
         twitter_account.fetch_owned_lists = \
             config.TWITTER_ACCOUNT_FETCH_OWNED_LISTS
