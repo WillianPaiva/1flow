@@ -115,6 +115,26 @@ class BaseItemQuerySet(PolymorphicQuerySet):
         return self.filter(date_created__lte=one_week_before,
                            date_created__gte=two_weeks_before)
 
+    def older_than_two_weeks(self):
+
+        two_week_delta = timedelta(days=14)
+        two_weeks_before = now() - two_week_delta
+
+        return self.filter(date_created__lte=two_weeks_before)
+
+    def older_than_one_month(self):
+
+        one_month_delta = timedelta(days=31)
+        one_month_before = now() - one_month_delta
+
+        return self.filter(date_created__lte=one_month_before)
+
+    def older_than_delta(self, custom_timedelta):
+
+        custom_delta_before = now() - custom_timedelta
+
+        return self.filter(date_created__lt=custom_delta_before)
+
 
 class BaseItemManager(PolymorphicManager):
 
