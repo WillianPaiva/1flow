@@ -47,13 +47,18 @@ def debug(response, **kwargs):
         LOGGER.exception('BANZAï!!!!')
 
 
-def get_social_avatar(social_user, user, details, request, response, backend,
-                      is_new=False, *args, **kwargs):
+def get_social_avatar(**kwargs):
     """ Get the user's social avatar and store it in social-auth's DB.
 
     Current implementation handles facebook, Google (oauth2) and Twitter.
 
     """
+    # get_social_avatar(): ['username', 'pipeline_index', 'uid',
+    # 'storage', 'user', 'request', 'is_new', 'response', 'details',
+    # 'social', 'strategy', 'new_association', 'backend']
+    # LOGGER.debug(u'get_social_avatar(): %s', kwargs.keys())
+
+    user = kwargs.get('user')
 
     # If user has a local avatar, don't bother checking all this.
     if user.avatar:
@@ -61,6 +66,8 @@ def get_social_avatar(social_user, user, details, request, response, backend,
 
     try:
         url = None
+        backend = kwargs.get('backend')
+        response = kwargs.get('response')
 
         if isinstance(backend, FacebookOAuth2):
             if 'id' in response:
@@ -79,7 +86,7 @@ def get_social_avatar(social_user, user, details, request, response, backend,
                 user.save()
 
                 LOGGER.info(u'Saved new avatar for user %s from backend %s.',
-                            user, social_user)
+                            user, backend)
 
         #     avatar = urlopen(url)
         #     photo = Photo(author=user, is_avatar=True)
@@ -89,12 +96,10 @@ def get_social_avatar(social_user, user, details, request, response, backend,
 
     except:
         LOGGER.exception(u'Could not get avatar for user %s from '
-                         u'backend %s.', user, social_user)
+                         u'backend %s.', user, backend)
 
 
-def throttle_new_user_accounts(social_user, user, details, request,
-                               response, backend, is_new=False,
-                               *args, **kwargs):
+def throttle_new_user_accounts(**kwargs):
     """ Deactivate newly created users if registrations are closed.
 
     They are also redirected to the ``social_signup_closed`` page to
@@ -105,14 +110,18 @@ def throttle_new_user_accounts(social_user, user, details, request,
         opened again later.
     """
 
+    user = kwargs.get('user')
+    is_new = kwargs.get('is_new', False)
+
     if is_new and not config.SOCIAL_REGISTRATION_ENABLED:
+        backend = kwargs.get('backend')
 
         user.is_active = False
         user.save()
 
         LOGGER.warning(u'De-activated new user account %s from backend %s on '
                        u'the fly because social registrations are currently '
-                       u'disabled.', user, social_user)
+                       u'disabled.', user, backend)
 
         # Wrap the 'official' account view to signify the user we are closed.
         return redirect('social_signup_closed')
