@@ -85,7 +85,13 @@ def celery_status():
 
     i = inspect()
 
+    try:
+        active_queues = celery_active_queues(i)
+    except:
+        LOGGER.exception(u'Could not get Celery active queues')
+        active_queues = {}
+
     return {
         'tasks_names': sorted(celery_tasks_names(i)),
-        'active_queues': celery_active_queues(i),
+        'active_queues': active_queues,
     }
