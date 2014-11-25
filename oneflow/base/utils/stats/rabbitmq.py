@@ -86,6 +86,10 @@ def rabbitmq_queues():
                          u'Is the web interface plugin enabled?')
         return {}
 
-    return [q for q in sorted(queues, key=lambda q: q['name'])
-            if not (q['name'].startswith('amq.gen')
-                    or q['name'].startswith('celery'))]
+    return [
+        q for q in sorted(queues, key=lambda q: q['name'])
+        if not (
+            q['name'].startswith('amq.gen')
+            or 'celery' in q['name']
+        )
+    ]
