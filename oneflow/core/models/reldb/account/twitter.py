@@ -105,6 +105,8 @@ class TwitterAccount(BaseAccount):
         verbose_name_plural = _(u'Twitter accounts')
         # unique_together = ('user', 'username', )
 
+    INPLACEEDIT_EXCLUDE = ('errors', 'options', )
+
     objects = BaseAccountManager()
 
     social_auth = models.OneToOneField(UserSocialAuth,
