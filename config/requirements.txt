@@ -106,6 +106,7 @@ python-memcached==1.53
 python-mimeparse==0.1.4
 python-openid==2.2.5
 python-social-auth==0.2.1
+pyrabbit==1.1.0
 pytz==2014.7
 PyYAML==3.11
 pyzmq==14.3.1
