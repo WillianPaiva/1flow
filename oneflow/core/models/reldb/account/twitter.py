@@ -359,7 +359,7 @@ class TwitterAccount(BaseAccount):
                 name=_(u'Twitter timeline for @{0}').format(username),
                 is_timeline=True,
                 is_backfilled=True,
-                id_good=True,
+                is_good=True,
             )
 
             timeline.save()
