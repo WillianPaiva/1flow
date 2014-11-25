@@ -252,27 +252,18 @@ class TwitterAccount(BaseAccount):
 
         if not hasattr(self, '_tweetapi_') or self._tweetapi_ is None:
 
-            if settings.DEBUG or settings.SITE_DOMAIN in ('lil.1flow.io',
-                                                          'big.1flow.io', ):
-                self._tweetapi_ = TwitterAPI(
-                    settings.SOCIAL_AUTH_TWITTER_KEY,
-                    settings.SOCIAL_AUTH_TWITTER_SECRET,
-                    '1119347214-bdMoepqko61yWiQ9BMKeTMNWI0LwhQweOD8P7A1',
-                    'OyJ3KzCej9MZRMXML4iLsoebUykQOIcr8BDa8USqKxO0K')
+            social_user_tokens = self.social_auth.tokens
+            access_token_key = social_user_tokens['oauth_token']
+            access_token_secret = social_user_tokens['oauth_token_secret']
 
-            else:
-                raise NotImplementedError(
-                    u'Not implemented until '
-                    u'https://github.com/omab/python-social-auth/issues/444 is resolved.')  # NOQA
+            LOGGER.debug(u'%s: connecting to Twitter API with @%s tokens,',
+                         self, social_user_tokens['screen_name'])
 
-                access_token_key, access_token_secret = \
-                    self.social_auth.tokens.split('&')
-
-                self._tweetapi_ = TwitterAPI(
-                    settings.SOCIAL_AUTH_TWITTER_KEY,
-                    settings.SOCIAL_AUTH_TWITTER_SECRET,
-                    access_token_key,
-                    access_token_secret)
+            self._tweetapi_ = TwitterAPI(
+                settings.SOCIAL_AUTH_TWITTER_KEY,
+                settings.SOCIAL_AUTH_TWITTER_SECRET,
+                access_token_key,
+                access_token_secret)
 
         return self._tweetapi_
 
