@@ -606,16 +606,13 @@ class TwitterFeed(BaseFeed):
                             # on lists is not reliable at all. For now we just
                             # abort to avoid mode damage (API exhaustion, etc).
 
-                            if self.is_timeline:
-                                if parameters.get('since_id', None):
-                                    LOGGER.info(u'%s: reached start of stream!',
-                                                self)
-                                    self.backfill_completed = 0
-                                    self.save()
+                            if parameters.get('since_id', None):
+                                LOGGER.info(u'%s: reached end of available '
+                                            u'data on the Twitter side.',
+                                            self)
+                                self.backfill_completed = 0
+                                self.save()
 
-                            else:
-                                LOGGER.warning(u'%s: No past item discovered '
-                                               u'in this loop, exiting.', self)
                         else:
                             # We got out of the loop without getting any new
                             # item. Just bail out, else we will keep polling
