@@ -20,7 +20,6 @@ LOGIN_ERROR_URL    = reverse_lazy('signin_error')
 
 # SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email', ]
 SOCIAL_AUTH_FORCE_POST_DISCONNECT = True
-SOCIAL_AUTH_EXTRA_DATA = True
 SOCIAL_AUTH_SESSION_EXPIRATION = False
 
 # Doesn't help #444
@@ -52,7 +51,7 @@ if MORE_AUTH_BACKENDS:
 
 # ———————————————————————————————————————————————————————————————————— PIPELINE
 
-SOCIAL_AUTH_PIPELINE_BLAHBLAH = (
+SOCIAL_AUTH_PIPELINE = (
 
     # Get the information we can about the user and return it in a simple
     # format to create the user instance later. On some cases the details are
@@ -101,9 +100,6 @@ SOCIAL_AUTH_PIPELINE_BLAHBLAH = (
     # user hasn't set one in his/her profile.
     'oneflow.base.social_pipeline.get_social_avatar',
 
-    # Check & pre-populate accounts & feeds from the backend.
-    # 'oneflow.core.social_pipeline.check_feeds',
-
     # Given the configuration, we do allow any user to register, or not.
     # In both cases, we create the account, but if registration is disabled
     # this pipeline function will deactivate the account right after creation,
@@ -111,10 +107,10 @@ SOCIAL_AUTH_PIPELINE_BLAHBLAH = (
     'oneflow.base.social_pipeline.throttle_new_user_accounts',
 )
 
-# if DEBUG:
-#     SOCIAL_AUTH_PIPELINE = (
-#         'oneflow.base.social_pipeline.debug',
-#     ) + SOCIAL_AUTH_PIPELINE
+if DEBUG:
+    SOCIAL_AUTH_PIPELINE = (
+        'oneflow.base.social_pipeline.debug',
+    ) + SOCIAL_AUTH_PIPELINE
 
 # import sys
 # sys.stdout.write('>>>\n')
@@ -124,7 +120,7 @@ SOCIAL_AUTH_PIPELINE_BLAHBLAH = (
 
 # —————————————————————————————————————————————————————————————————— EXTRA DATA
 
-GITHUB_EXTRA_DATA = [
+SOCIAL_AUTH_GITHUB_EXTRA_DATA = [
     ('created_at', 'date_created'),
     ('avatar_url', 'avatar_url'),
     ('login', 'username'),
@@ -132,7 +128,7 @@ GITHUB_EXTRA_DATA = [
     # 'email': 'john@example.com',
 ]
 
-TWITTER_EXTRA_DATA = [
+SOCIAL_AUTH_TWITTER_EXTRA_DATA = [
     ('created_at', 'date_created'),
     ('profile_image_url', 'avatar_url'),
     ('screen_name', 'username'),
@@ -152,6 +148,7 @@ TWITTER_EXTRA_DATA = [
     ('profile_background_image_url_https',
      'profile_background_image_url_https'),
     ('profile_background_color', 'profile_background_color'),
+
     ('verified', 'verified'),
     ('geo_enabled', 'geo_enabled'),
     ('time_zone', 'time_zone'),
