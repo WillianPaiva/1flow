@@ -32,7 +32,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from oneflow.base.utils import register_task_method
 from oneflow.base.utils.dateutils import (
-    naturaldelta, now, timedelta,
+    naturaldelta, now, timedelta, utc,
     twitter_datestring_to_datetime_utc as twitter_datetime
 )
 
@@ -480,7 +480,7 @@ class TwitterFeed(BaseFeed):
 
             else:
                 return u'; quota exhausted, reset in %s' % (
-                    naturaldelta(now() - quota['reset'])
+                    naturaldelta(now() - quota['reset'].replace(tzinfo=utc))
                 )
 
         def backfill_if_needed(old_latest, max_id):
