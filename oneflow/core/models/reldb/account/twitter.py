@@ -235,7 +235,7 @@ class TwitterAccount(BaseAccount):
             access_token_key = social_user_tokens['oauth_token']
             access_token_secret = social_user_tokens['oauth_token_secret']
 
-            LOGGER.debug(u'%s: connecting to Twitter API with @%s tokens,',
+            LOGGER.debug(u'%s: connecting to Twitter API with @%s\'s tokens.',
                          self, social_user_tokens['screen_name'])
 
             self._tweetapi_ = TwitterAPI(

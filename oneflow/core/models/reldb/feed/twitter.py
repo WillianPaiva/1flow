@@ -417,8 +417,9 @@ class TwitterFeed(BaseFeed):
         elif 'code' in item:
             if item['code'] == 88:
                 # {u'message': u'Rate limit exceeded', u'code': 88}
-                LOGGER.error(u'%s: disconnecting because %s',
-                             self, item['message'])
+                LOGGER.error(u'%s: disconnecting while %s because %s', self,
+                             u'backfilling' if backfilling else u'consuming',
+                             item['message'])
                 exit_loop = True
 
         elif 'warning' in item:
@@ -528,6 +529,7 @@ class TwitterFeed(BaseFeed):
         max_rewind_range_as_dt_from_now = (
             now() - timedelta(days=max_rewind_range * 7))
 
+        infinite_count = 0
         all_processed = 0
         cur_processed = 0
 
@@ -548,6 +550,11 @@ class TwitterFeed(BaseFeed):
 
         with twitter_account as tweetapi:
             while True:
+                LOGGER.debug(u'%s: %s (loop #%s)…', self,
+                             u'backfilling' if backfilling else u'consuming',
+                             infinite_count)
+                infinite_count += 1
+
                 try:
                     if parameters:
                         result = tweetapi.request(api_path, parameters)
@@ -606,16 +613,13 @@ class TwitterFeed(BaseFeed):
                             # on lists is not reliable at all. For now we just
                             # abort to avoid mode damage (API exhaustion, etc).
 
-                            if self.is_timeline:
-                                if parameters.get('since_id', None):
-                                    LOGGER.info(u'%s: reached start of stream!',
-                                                self)
-                                    self.backfill_completed = 0
-                                    self.save()
+                            if parameters.get('since_id', None):
+                                LOGGER.info(u'%s: reached end of available '
+                                            u'data on the Twitter side.',
+                                            self)
+                                self.backfill_completed = 0
+                                self.save()
 
-                            else:
-                                LOGGER.warning(u'%s: No past item discovered '
-                                               u'in this loop, exiting.', self)
                         else:
                             # We got out of the loop without getting any new
                             # item. Just bail out, else we will keep polling
@@ -668,9 +672,10 @@ class TwitterFeed(BaseFeed):
                     #       last TID, and exit for a while if relevant.
                     #       Else, just continue and let the stream flow.
                     #
-                    LOGGER.exception(u'%s: exception after having consumed '
-                                     u'%s item(s), re-starting…',
-                                     self, cur_processed)
+                    LOGGER.exception(u'%s: exception in loop #%s after '
+                                     u'having consumed %s item(s), '
+                                     u're-starting…', self,
+                                     infinite_count, cur_processed)
 
                 all_processed += cur_processed
                 cur_processed = 0
@@ -678,9 +683,11 @@ class TwitterFeed(BaseFeed):
                 if exit_loop:
                     break
 
-        LOGGER.info(u'%s: exiting %sconsume() after %s items processed%s.',
-                    self, u'backfilling ' if backfilling else u'',
-                    all_processed, format_quota(result.get_rest_quota()))
+        LOGGER.info(u'%s: exiting %sconsume() after %s items processed '
+                    u'in %s loop(s)%s.', self,
+                    u'backfilling ' if backfilling else u'',
+                    all_processed, infinite_count,
+                    format_quota(result.get_rest_quota()))
 
     def consume(self):
         u""" Consume a Twitter stream, forward, and permanently.
@@ -744,10 +751,17 @@ class TwitterFeed(BaseFeed):
                 if self.track_locations:
                     parameters['locations'] = self.track_locations
 
+                # Ex: Canéjan
+                #               44.7800
+                # -0.6890,                      -0.6269
+                #               44.7343
                 #
+                # Eg. -0.6890,44.7343,-0.6269,44.7800
+                # Terms: Canéjan,Canejan
                 # TODO: implement 'following' to make more than
                 #       10k users a reality.
 
+                # https://dev.twitter.com/streaming/overview/request-parameters#locations  # NOQA
                 self.__consume_items('statuses/filter', parameters)
 
         finally:
@@ -878,6 +892,11 @@ class TwitterFeed(BaseFeed):
 
                 if self.track_locations:
                     parameters['locations'] = self.track_locations
+
+                # Search/tweets doesn't use locations (bounding boxes),
+                # but geocodes (bounding circles)… We need to convert,
+                # and results won't be exactly the same.
+                # Geocode: 37.781157,-122.398720,1mi
 
                 self.__consume_items('search/tweets',
                                      parameters, backfilling=True)
