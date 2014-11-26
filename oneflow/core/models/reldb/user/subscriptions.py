@@ -218,7 +218,7 @@ def User_standard_subscriptions_property_get(self):
 
 def User_has_content_property_get(self):
 
-    return self.all_articles_count > 0 \
+    return self.user_counters.all_articles_count > 0 \
         or self.open_subscriptions.filter(feed__is_internal=False).count > 0
 
 
