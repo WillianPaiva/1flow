@@ -44,8 +44,7 @@ from common import DjangoUser as User
 
 from tag import AbstractTaggedModel
 from folder import Folder
-from feed import BaseFeed
-from feed.mail import MailFeed
+from feed import BaseFeed, RssAtomFeed, MailFeed, TwitterFeed
 from read import Read
 from item import Article
 
@@ -508,7 +507,7 @@ def subscription_pre_save(instance, **kwargs):
         # The subscription is beeing created.
         return
 
-    if isinstance(subscription.feed, MailFeed) \
+    if not isinstance(subscription.feed, RssAtomFeed) \
             and 'name' in subscription.changed_fields:
         if subscription.user == subscription.feed.user:
             # The subscription's owner has changed the name
@@ -546,27 +545,31 @@ pre_delete.connect(subscription_pre_delete, sender=Subscription)
 # because they depend on subscription features.
 
 
-def mailfeed_post_save(instance, **kwargs):
-    """ Subscribe the mailfeed's owner if feed is beiing created.
+def any_feed_with_user_post_save(instance, **kwargs):
+    """ Subscribe any feed's owner to it, if the feed is beiing created.
 
-    When a user creates a mailfeed (obviously for him/her), we subscribe
-    him/her automatically to this feed. This seems natural that he/she will
-    except the Subscription to appear somewhere in the source selector.
+    When a user creates a mailfeed/twitterfeed (obviously for him/her),
+    we subscribe him/her automatically to this feed. This seems natural
+    that he/she will except the Subscription to appear somewhere in the
+    source selector.
     """
 
-    if not kwargs.get('created', False):
-        # The feed already exists, don't bother.
-        return
+    LOGGER.debug(u'feed_with_user_post_save() %s', instance)
 
-    mailfeed = instance
+    if kwargs.get('created', False):
+        feed = instance
 
-    subscribe_user_to_feed(feed=mailfeed,
-                           user=mailfeed.user,
-                           background=True)
+        if feed.user:
+            subscribe_user_to_feed(feed=feed,
+                                   user=feed.user,
+                                   background=True)
 
 
-post_save.connect(mailfeed_post_save, sender=MailFeed)
+# NOT for RSS/Atom, this is handled in forms/views
+# post_save.connect(any_feed_with_user_post_save, sender=RssAtomFeed)
 
+post_save.connect(any_feed_with_user_post_save, sender=MailFeed)
+post_save.connect(any_feed_with_user_post_save, sender=TwitterFeed)
 
 # ————————————————————————————————————————————————————————————————————— Helpers
 
