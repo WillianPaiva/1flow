@@ -826,13 +826,13 @@ class TwitterFeed(BaseFeed):
                     # BTW, store it.
                     self.set_oldest_id(oldest_id)
 
-            # We don't use since_id (even not "1"). We will rewind slowly
-            # from (now) present to past. Using 1 would make us begin at
-            # stream start, which seems less relevant for me, because more
-            # recent data is more important to my eye.
-            #
-            # We “- 1” because https://dev.twitter.com/rest/public/timelines
-            max_id = oldest_id - 1
+                    # We don't use since_id (even not "1"). We will rewind
+                    # slowly from (now) present to past. Using 1 would make
+                    # us begin at stream start, which seems less relevant
+                    # for me, because more recent data is more important to
+                    # my eye. We “- 1” because
+                    # https://dev.twitter.com/rest/public/timelines
+                    max_id = oldest_id - 1
 
         if since_id:
             parameters['since_id'] = since_id
