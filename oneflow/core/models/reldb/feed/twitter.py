@@ -818,14 +818,7 @@ class TwitterFeed(BaseFeed):
             oldest_id = self.oldest_id
 
             if oldest_id is None:
-                if latest_id is None:
-                    # We never got any item from this stream.
-                    # Who called us ??? It was too early.
-                    LOGGER.error(u'%s: Cannot backfill without an item to '
-                                 u'start from; aborting.', self)
-                    return
-
-                else:
+                if latest_id is not None:
                     # We never backfilled before, but already got some data.
                     oldest_id = self.items.tweet().order_by(
                         'Tweet___tweet_id').first().tweet_id
@@ -849,9 +842,17 @@ class TwitterFeed(BaseFeed):
 
         # —————————————————————————————————————————————— The backfill operation
 
-        LOGGER.info(u'%s: backfilling since %s to max %s…',
-                    self, since_id, max_id)
+        if since_id or max_id:
+            LOGGER.info(u'%s: backfilling since %s to max %s…',
+                        self, since_id, max_id)
 
+        else:
+            # We never got any item from this stream.
+            # Who called us ??? It was too early.
+            LOGGER.info(u'%s: Backfilling for first '
+                        u'content in the feed.', self)
+
+        # can be None
         period_start_item = self.oldest_id
 
         try:
