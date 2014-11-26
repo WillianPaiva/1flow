@@ -65,14 +65,22 @@ if settings.BROKER_URL.lower().startswith('amqp://'):
         pass
 
     except:
-        LOGGER.exception(u'Could not connect to RabbitMQ API. '
-                         u'Is the web interface plugin enabled?'
-                         u'Do your user have the "management" permission?')
-
         rabbitmq_params[0] = rabbitmq_params[0].replace(':15672', ':55672')
         rabbitmq_client = pyrabbit.Client(*rabbitmq_params[:-1])
 
+        try:
+            rabbitmq_client.is_alive()
+
+        except PermissionError:
+            pass
+
+        except:
+            LOGGER.exception(u'Could not connect to RabbitMQ API. '
+                             u'Is the web interface plugin enabled?'
+                             u'Do your user have the "management" permission?')
+
     rabbitmq_vhost  = rabbitmq_params[-1]
+
 else:
     rabbitmq_client = None
 
