@@ -98,6 +98,10 @@ def refresh_all_feeds(limit=None, force=False):
             for feed in feeds:
 
                 if feed.refresh_lock.is_locked():
+                    # The refresh task lauched before its expiration, and is
+                    # still [long] running while we want to launch another.
+                    # Avoid, because the new would exit immediately on
+                    # date_last_fetch too recent.
                     LOGGER.debug(u'Feed %s already locked, skipped.', feed)
                     continue
 
