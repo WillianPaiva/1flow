@@ -125,8 +125,8 @@ def check_feedparser_error(parsed_feed, feed=None):
 
     if isinstance(error, feedparser.NonXMLContentType):
 
-        raise FeedIsHtmlPageException(u'URL leads to an HTML page, '
-                                      u'not a real feed.')
+        raise FeedIsHtmlPageException(
+            u'Final feed page is advertised as non-XML.')
 
 
 def prepare_feed_url(feed_url):
