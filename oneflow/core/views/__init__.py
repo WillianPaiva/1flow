@@ -142,7 +142,7 @@ def skip_welcome_beta(request):
     Then skip to the next functional view.
     """
 
-    user = request.user.mongo
+    user = request.user
 
     user.preferences.wizards.welcome_beta_shown = True
     user.preferences.save()
@@ -159,7 +159,7 @@ def skip_welcome_beta(request):
 def home(request):
     """ root of the application. """
 
-    user    = request.user.mongo
+    user    = request.user
     wizards = user.preferences.wizards
 
     if wizards.welcome_beta_shown or not wizards.show_all:
