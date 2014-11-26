@@ -696,7 +696,12 @@ AUTHENTICATION_BACKENDS = (
 DEFAULT_USER_AGENT = u'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:21.0) Gecko/20100101 Firefox/21.0'  # NOQA
 
 
-# ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••• Logging
+# ————————————————————————————————————————————————————————————————————— Logging
+
+logging.getLogger('oauthlib').setLevel(
+    logging.ERROR if DEBUG else logging.CRITICAL)
+logging.getLogger('requests_oauthlib').setLevel(
+    logging.ERROR if DEBUG else logging.CRITICAL)
 
 LOGGING = {
     'version': 1,
@@ -771,6 +776,8 @@ LOGGING = {
     }
 }
 
+
+# ————————————————————————————————————————————————————————————————————— iPython
 
 # For django-extensions ipython notebook
 IPYTHON_ARGUMENTS = [
