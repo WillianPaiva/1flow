@@ -82,7 +82,9 @@ def refresh_all_feeds(limit=None, force=False):
             return
 
     # This should bring us a Polymorphic Query to refresh all feeds types.
-    feeds = BaseFeed.objects.filter(is_active=True, is_internal=False)
+    feeds = BaseFeed.objects.filter(is_active=True,
+                                    is_internal=False).order_by(
+                                        'date_last_fetch')
 
     if limit:
         feeds = feeds[:limit]
