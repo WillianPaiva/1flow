@@ -81,21 +81,40 @@ def throttle_feed_refresh(force=False):
 
     feeds_count = relations[BaseFeed._meta.db_table]
 
+    low_limit = feeds_count / 5
+
     try:
         if feed_qitems > feeds_count:
 
             try:
                 refresh_all_feeds.lock.release()
+
             except:
                 pass
+
             refresh_all_feeds.lock.acquire()
 
             LOGGER.warning(u'Throttled feed refresh because queue items '
                            u'is going too high (%s > %s)',
                            feed_qitems, feeds_count)
+
+        elif feed_qitems < low_limit:
+            # Unleash the kraken!
+
+            try:
+                refresh_all_feeds.lock.release()
+
+            except:
+                pass
+
+            LOGGER.info(u'Unthrottled feed refreshes, queue items number '
+                        u'is low enough (%s for %s feeds).',
+                        feed_qitems, feeds_count)
+
         else:
-            LOGGER.debug(u'Not throttled, items=%s <= feeds=%s.',
-                         feed_qitems, feeds_count)
+            LOGGER.debug(u'Not throttled, %s < items(%s) <= feeds(%s).',
+                         low_limit, feed_qitems, feeds_count)
+
     finally:
         my_lock.release()
 

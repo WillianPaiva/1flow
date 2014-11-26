@@ -341,6 +341,11 @@ class RssAtomFeed(BaseFeed):
         verbose_name = _(u'RSS/Atom feed')
         verbose_name_plural = _(u'RSS/Atom feeds')
 
+    # In case the system is overloaded, feeds can wait a long time before
+    # beiing refreshed. be sure they are not re-refreshed again, this just
+    # wastes resources.
+    REFRESH_LOCK_INTERVAL = 2700
+
     objects = BaseFeedManager()
 
     url = models.URLField(unique=True, max_length=512,
