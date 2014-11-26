@@ -50,6 +50,13 @@ def refresh_all_feeds(limit=None, force=False):
         LOGGER.warning(u'Feed refresh disabled in configuration.')
         return
 
+    # As FEED_GLOBAL_REFRESH_INTERVAL is dynamically modifiable,
+    # we should re-evaluate it each time we run.
+    this_round_expire_time = (
+        config.FEED_GLOBAL_REFRESH_INTERVAL * 60
+        - config.FEED_GLOBAL_REFRESH_INTERVAL
+    )
+
     # Be sure two refresh operations don't overlap, but don't hold the
     # lock too long if something goes wrong. In production conditions
     # as of 20130812, refreshing all feeds takes only a moment:
@@ -58,8 +65,7 @@ def refresh_all_feeds(limit=None, force=False):
     #
     my_lock = RedisExpiringLock(
         REFRESH_ALL_FEEDS_LOCK_NAME,
-        expire_time=config.FEED_GLOBAL_REFRESH_INTERVAL * 60
-        - config.FEED_GLOBAL_REFRESH_INTERVAL
+        expire_time=this_round_expire_time
     )
 
     if not my_lock.acquire():
@@ -93,16 +99,20 @@ def refresh_all_feeds(limit=None, force=False):
                     LOGGER.debug(u'Feed %s already locked, skipped.', feed)
                     continue
 
-                interval = timedelta(seconds=feed.fetch_interval)
-
-                feed.refresh_lock.acquire()
-
                 if feed.date_last_fetch is None:
 
-                    basefeed_refresh_task.delay(feed.id)
+                    basefeed_refresh_task.apply_async(
+                        args=(feed.id, ),
+
+                        # in `this_round_expire_time`, we will relaunch it
+                        expire=this_round_expire_time,
+                    )
 
                     LOGGER.info(u'Launched immediate refresh of feed %s which '
                                 u'has never been refreshed.', feed)
+                    count += 1
+                    continue
+
                 if feed.fetch_interval > 86399:
                     interval_days = feed.fetch_interval / 86400
                     interval_seconds = feed.fetch_interval - (
@@ -114,14 +124,18 @@ def refresh_all_feeds(limit=None, force=False):
                 else:
                     interval = timedelta(seconds=feed.fetch_interval)
 
-                elif force or feed.date_last_fetch + interval < mynow:
+                if force or feed.date_last_fetch + interval < mynow:
 
                     how_late = feed.date_last_fetch + interval - mynow
                     how_late = how_late.days * 86400 + how_late.seconds
 
                     late = feed.date_last_fetch + interval < mynow
 
-                    basefeed_refresh_task.delay(feed.id, force)
+                    basefeed_refresh_task.apply_async(
+                        args=(feed.id, ),
+                        kwargs={'force': force},
+                        expire=this_round_expire_time,
+                    )
 
                     LOGGER.info(u'Launched refresh of feed %s (%s %s).',
                                 feed, naturaldelta(how_late),
