@@ -103,6 +103,16 @@ def refresh_all_feeds(limit=None, force=False):
 
                     LOGGER.info(u'Launched immediate refresh of feed %s which '
                                 u'has never been refreshed.', feed)
+                if feed.fetch_interval > 86399:
+                    interval_days = feed.fetch_interval / 86400
+                    interval_seconds = feed.fetch_interval - (
+                        interval_days * 86400)
+
+                    interval = timedelta(days=interval_days,
+                                         seconds=interval_seconds)
+
+                else:
+                    interval = timedelta(seconds=feed.fetch_interval)
 
                 elif force or feed.date_last_fetch + interval < mynow:
 
