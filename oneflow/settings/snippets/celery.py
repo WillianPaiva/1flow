@@ -167,50 +167,86 @@ CELERYBEAT_SCHEDULE = {
     #
     # •••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••• Core tasks
 
-    'throttle-feed-refresh': {
-        'task': 'oneflow.core.tasks.throttle_feed_refresh',
-        'schedule': crontab(minute='*/10'),
-    },
+    # Should vanish now that we have expire on tasks.
+    # 'throttle-feed-refresh': {
+    #     'task': 'oneflow.core.tasks.throttle_feed_refresh',
+    #     'schedule': crontab(minute='*/10'),
+    #     'options': {
+    #         'expire': 540,
+    #     }
+    # },
 
     'refresh-all-feeds': {
         'task': 'oneflow.core.tasks.refresh_all_feeds',
         'schedule': crontab(minute='*'),
+        'options': {
+            'expire': 50,
+            'queue': 'refresh',
+        }
     },
 
     'refresh-all-mongo-feeds': {
         'task': 'oneflow.core.tasks.refresh_all_mongo_feeds',
         'schedule': crontab(minute='*'),
+        'options': {
+            'expire': 50,
+            'queue': 'refresh',
+        }
     },
 
     'refresh-all-mailaccounts': {
         'task': 'oneflow.core.tasks.refresh_all_mailaccounts',
         'schedule': crontab(hour='*/4', minute='4'),
+        'options': {
+            'expire': 14280,
+            'queue': 'refresh',
+        }
     },
 
     'sync-all-nodes': {
         'task': 'oneflow.core.tasks.sync_all_nodes',
         'schedule': crontab(minute=unicode(randint(0, 59))),
+        'options': {
+            'expire': 3540,
+            'queue': 'sync',
+        }
     },
 
     'global-checker-task': {
         'task': 'oneflow.core.tasks.global_checker_task',
         'schedule': crontab(hour='1', minute='1'),
+        'options': {
+            'expire': 3540,
+            'queue': 'check',
+        }
     },
 
 
     'reprocess-failed-articles-pass1': {
         'task': 'oneflow.core.tasks.reprocess_failed_articles',
         'schedule': crontab(minute='33'),
+        'options': {
+            'expire': 3480,
+            'queue': 'clean',
+        }
     },
 
     'reprocess-failed-articles-pass2': {
         'task': 'oneflow.core.tasks.reprocess_failed_articles_pass2',
         'schedule': crontab(hour='4', minute='44'),
+        'options': {
+            'expire': 14280,
+            'queue': 'clean',
+        }
     },
 
     'reprocess-failed-articles-pass3': {
         'task': 'oneflow.core.tasks.reprocess_failed_articles_pass3',
         'schedule': crontab(day_of_week='0', hour='5', minute='55'),
+        'options': {
+            'expire': 518400,
+            'queue': 'clean',
+        }
     },
 
 
@@ -222,6 +258,10 @@ CELERYBEAT_SCHEDULE = {
         'task': 'oneflow.core.tasks.synchronize_statsd_gauges',
         'schedule': crontab(minute='59'),
         'args': (True, ),
+        'options': {
+            'expire': 2400,
+            'queue': 'clean',
+        }
     },
 
     # •••••••••••••••••••••••••••••••••••••••••••••••••••••••••• Cleaning tasks
