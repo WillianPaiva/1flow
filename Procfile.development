@@ -14,6 +14,6 @@ flower: ./manage.py celery flower --logging=warning --broker=${BROKER_URL} --bro
 
 beat: ./manage.py celery beat --loglevel=warning
 
-worker: ./manage.py celery worker -E --loglevel=info -P gevent --hostname worker.${HOSTNAME} --autoscale 12,12 --exclude-queues=high,medium,low --maxtasksperchild 32
+worker: ./manage.py celery worker --without-gossip --without-mingle --without-heartbeat --hostname worker.${HOSTNAME} --concurrency 24 --exclude-queues=high,medium,low --maxtasksperchild 32 -P gevent -E --loglevel=info --autoreload --soft-time-limit 60
 
-mongo: ./manage.py celery worker -E --loglevel=critical -P gevent --hostname mongo.${HOSTNAME} --autoscale 8,8 --queues=high,medium,low --maxtasksperchild 32
+mongo: ./manage.py celery worker --without-gossip --without-mingle --without-heartbeat -E --loglevel=error -P gevent --hostname mongo.${HOSTNAME} --concurrency 2 --queues=high,medium,low --maxtasksperchild 32 --autoreload --soft-time-limit 60
