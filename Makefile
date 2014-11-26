@@ -38,7 +38,7 @@ runweb: clean
 	honcho -f Procfile.development start web
 
 runworkers:
-	honcho -f Procfile.development start flower celery_beat --quiet flower,celery_beat
+	honcho -f Procfile.development start flower beat worker mongo --quiet flower,beat,shell
 
 	#,worker_high,worker_medium,worker_low,worker_fetch,worker_background,worker_swarm,worker_clean
 

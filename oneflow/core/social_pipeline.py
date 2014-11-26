@@ -26,34 +26,14 @@ import logging
 
 # from django.shortcuts import redirect
 
-from social_auth.backends.facebook import FacebookBackend
-from social_auth.backends.twitter import TwitterBackend
-from social_auth.backends import google
+# from social_auth.backends.facebook import FacebookBackend
+# from social_auth.backends.twitter import TwitterBackend
+# from social_auth.backends import google
 
-from models import (
-    TwitterAccount,
-    # FacebookAccount, FacebookFeed,
-)
+# from models import (
+#     TwitterAccount,
+#     # FacebookAccount, FacebookFeed,
+# )
 
 
 LOGGER = logging.getLogger(__name__)
-
-
-def check_feeds(social_user, user, details, request, response, backend,
-                is_new=False, *args, **kwargs):
-    """ Create Accounts & feeds associated with social networks. """
-
-    try:
-
-        if isinstance(backend, FacebookBackend):
-            pass
-
-        elif isinstance(backend, google.GoogleOAuth2Backend):
-            pass
-
-        elif isinstance(backend, TwitterBackend):
-            TwitterAccount.check_social_user(social_user, user, backend)
-
-    except:
-        LOGGER.exception(u'Could not check feeds for user %s from '
-                         u'backend %s.', user, social_user)

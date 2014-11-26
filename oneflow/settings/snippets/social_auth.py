@@ -20,7 +20,6 @@ LOGIN_ERROR_URL    = reverse_lazy('signin_error')
 
 # SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email', ]
 SOCIAL_AUTH_FORCE_POST_DISCONNECT = True
-SOCIAL_AUTH_EXTRA_DATA = True
 SOCIAL_AUTH_SESSION_EXPIRATION = False
 
 # Doesn't help #444
@@ -52,7 +51,7 @@ if MORE_AUTH_BACKENDS:
 
 # ———————————————————————————————————————————————————————————————————— PIPELINE
 
-SOCIAL_AUTH_PIPELINE_BLAHBLAH = (
+SOCIAL_AUTH_PIPELINE = (
 
     # Get the information we can about the user and return it in a simple
     # format to create the user instance later. On some cases the details are
@@ -101,9 +100,6 @@ SOCIAL_AUTH_PIPELINE_BLAHBLAH = (
     # user hasn't set one in his/her profile.
     'oneflow.base.social_pipeline.get_social_avatar',
 
-    # Check & pre-populate accounts & feeds from the backend.
-    # 'oneflow.core.social_pipeline.check_feeds',
-
     # Given the configuration, we do allow any user to register, or not.
     # In both cases, we create the account, but if registration is disabled
     # this pipeline function will deactivate the account right after creation,
@@ -111,10 +107,10 @@ SOCIAL_AUTH_PIPELINE_BLAHBLAH = (
     'oneflow.base.social_pipeline.throttle_new_user_accounts',
 )
 
-# if DEBUG:
-#     SOCIAL_AUTH_PIPELINE = (
-#         'oneflow.base.social_pipeline.debug',
-#     ) + SOCIAL_AUTH_PIPELINE
+if DEBUG:
+    SOCIAL_AUTH_PIPELINE = (
+        'oneflow.base.social_pipeline.debug',
+    ) + SOCIAL_AUTH_PIPELINE
 
 # import sys
 # sys.stdout.write('>>>\n')
@@ -124,15 +120,41 @@ SOCIAL_AUTH_PIPELINE_BLAHBLAH = (
 
 # —————————————————————————————————————————————————————————————————— EXTRA DATA
 
-GITHUB_EXTRA_DATA = [
+SOCIAL_AUTH_GITHUB_EXTRA_DATA = [
     ('created_at', 'date_created'),
     ('avatar_url', 'avatar_url'),
     ('login', 'username'),
     ('name', 'fullname'),
-    # 'email': 'john@example.com',
+    ('bio', 'bio'),
+    ('blog', 'blog'),
+    ('company', 'company'),
+    ('email', 'email'),
+    ('events_url', 'events_url'),
+    ('followers', 'followers'),
+    ('followers_url', 'followers_url'),
+    ('following', 'following'),
+    ('following_url', 'following_url'),
+    ('gists_url', 'gists_url'),
+    ('gravatar_id', 'gravatar_id'),
+    ('hireable', 'hireable'),
+    ('html_url', 'html_url'),
+    ('location', 'location'),
+    ('organizations_url', 'organizations_url'),
+    ('public_gists', 'public_gists'),
+    ('public_repos', 'public_repos'),
+    ('received_events_url', 'received_events_url'),
+    ('repos_url', 'repos_url'),
+    ('scope', 'scope'),
+    ('site_admin', 'site_admin'),
+    ('starred_url', 'starred_url'),
+    ('subscriptions_url', 'subscriptions_url'),
+    ('token_type', 'token_type'),
+    ('type', 'type'),
+    ('updated_at', 'updated_at'),
+    ('url', 'url'),
 ]
 
-TWITTER_EXTRA_DATA = [
+SOCIAL_AUTH_TWITTER_EXTRA_DATA = [
     ('created_at', 'date_created'),
     ('profile_image_url', 'avatar_url'),
     ('screen_name', 'username'),
@@ -152,12 +174,47 @@ TWITTER_EXTRA_DATA = [
     ('profile_background_image_url_https',
      'profile_background_image_url_https'),
     ('profile_background_color', 'profile_background_color'),
+
     ('verified', 'verified'),
     ('geo_enabled', 'geo_enabled'),
     ('time_zone', 'time_zone'),
     ('description', 'description'),
     # ('', ''),
 ]
+
+SOCIAL_AUTH_FACEBOOK_EXTRA_DATA = [
+    ('birthday', 'birthday'),
+    ('email', 'username'),
+    ('first_name', 'first_name'),
+    ('gender', 'gender'),
+    ('last_name', 'last_name'),
+    ('link', 'link'),
+    ('locale', 'locale'),
+    ('name', 'name'),
+    ('timezone', 'timezone'),
+    ('updated_time', 'updated_time'),
+    ('verified', 'verified'),
+]
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = [
+    ('circledByCount', 'circledByCount'),
+    ('displayName', 'displayName'),
+    ('emails', 'emails'),
+    ('etag', 'etag'),
+    ('expires_in', 'expires_in'),
+    ('gender', 'gender'),
+    ('image', 'image'),
+    ('isPlusUser', 'isPlusUser'),
+    ('kind', 'kind'),
+    ('language', 'language'),
+    ('name', 'name'),
+    ('objectType', 'objectType'),
+    ('token_type', 'token_type'),
+    ('url', 'url'),
+    ('urls', 'urls'),
+    ('verified', 'verified'),
+]
+
 
 # ——————————————————————————————————————————————————————————————— Google Oauth2
 
