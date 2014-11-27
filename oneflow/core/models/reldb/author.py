@@ -290,12 +290,18 @@ class Author(models.Model):
 
         twitter_ws = SOCIAL_WEBSITES[ORIGINS.TWITTER]
 
+        username = twitter_user.get('screen_name', twitter_user['id_str'])
+
+        # Sometimes 'name' is not available (seen 20141127)
+        # http://dev.1flow.net/development/1flow-dev/group/48650/
+        name = twitter_user.get('name', username)
+
         author, created = cls.objects.get_or_create(
             origin_id=twitter_user['id'],
             website=twitter_ws,
             defaults={
-                'name': twitter_user['name'],
-                'username': twitter_user['screen_name'],
+                'name': name,
+                'username': username,
                 'website_data': twitter_user,
                 'is_unsure': False,
 
