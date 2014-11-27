@@ -37,6 +37,7 @@ from oneflow.base.utils.http import clean_url
 from oneflow.base.utils.dateutils import now, datetime
 
 from ..common import ORIGINS
+from ..author import Author
 
 from base import (
     BaseItemQuerySet,
@@ -282,10 +283,51 @@ class Tweet(BaseItem):
 
         return new_tweet, True
 
-    def fetch_entities(self):
+    def fetch_entities(self, entities=None, commit=True):
         """ Fetch Tweet entities. """
 
-        LOGGER.warning(u'Please implement Tweet media fetching (%s).', self)
+        # u'entities': {
+        #     u'hashtags': [],
+        #     u'symbols': [],
+        #     u'urls': [
+        #       {
+        #           u'display_url': u'oncletom.io',
+        #           u'expanded_url': u'http://oncletom.io',
+        #           u'indices': [0, 22],
+        #           u'url': u'http://t.co/xdbcCzdQOn'
+        #       }
+        #     ],
+        #     u'user_mentions': []
+        # },
+
+        if entities is None:
+            entities = self.original_data.twitter_hydrated['entities']
+
+        all_went_ok = True
+
+        entities_urls = entities['urls']
+
+        if entities_urls:
+            from create import create_item_from_url
+
+            for entity_url in entities_urls:
+                try:
+                    item, created = create_item_from_url(
+                        url=entity_url['expanded_url'],
+                        feeds=self.feeds.all(),
+                        origin=ORIGINS.TWITTER
+                    )
+                except:
+                    all_went_ok = False
+
+                else:
+                    self.entities.add(item)
+
+        if all_went_ok:
+            self.entities_fetched = True
+
+            if commit:
+                self.save()
 
     def post_create_task(self, apply_now=False):
         """ Method meant to be run from a celery task. """
