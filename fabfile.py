@@ -27,6 +27,7 @@ from fabric.api import env, task, roles, local as fablocal
 from sparks.fabric import (with_remote_configuration,
                            set_roledefs_and_parallel,
                            worker_roles, custom_roles)
+
 import sparks.django.fabfile as sdf
 
 # Make the main deployment tasks and my other favorites immediately accessible
@@ -37,6 +38,7 @@ stop, start, status = sdf.stop_services, sdf.start_services, sdf.status_services
 remove, pick, role = sdf.remove_services, sdf.pick, sdf.role
 push_environment, git_pull = sdf.push_environment, sdf.git_pull
 migrate, git_update = sdf.migrate, sdf.git_update
+mail_test = sdf.mail_test
 
 USE_JENKINS  = pwd.getpwuid(os.getuid()).pw_name == 'jenkins'
 JENKINS_JOB  = os.environ.get('JOB_NAME', '1flow')
@@ -301,11 +303,11 @@ def production():
         # },
 
         'autoscale': {
-            'worker_mongo':   '136,34',  # 'high,medium,low',
-            'worker_sync':    '32,8',    # 'sync',
-            'worker_net':     '64,16',  # 'swarm,refresh',
-            'worker_default': '32,8',    # 'default,create',
-            'worker_articles': '24,6',   # 'fetch,background',
+            'worker_mongo':     '136,34',  # 'high,medium,low',
+            'worker_sync':      '32,8',    # 'sync',
+            'worker_net':       '96,24',  # 'swarm,refresh',
+            'worker_default':   '32,8',    # 'default,create',
+            'worker_articles':  '24,6',   # 'fetch,background',
             'worker_longtasks': '2,1',   # 'check,clean',
 
             '__all__': '8,2',

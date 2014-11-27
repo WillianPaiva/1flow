@@ -19,7 +19,6 @@
 
 """
 
-import hashlib
 import logging
 
 from statsd import statsd
@@ -27,7 +26,6 @@ from statsd import statsd
 
 from celery import chain as tasks_chain
 
-from django.conf import settings
 from django.db import models, IntegrityError
 from django.db.models.signals import post_save, pre_save, pre_delete
 from django.utils.translation import ugettext_lazy as _
@@ -39,10 +37,11 @@ from oneflow.base.utils.dateutils import now, datetime, benchmark
 
 from ..common import (
     DjangoUser as User,
-    ORIGINS,
     CONTENT_TYPES,
     ARTICLE_ORPHANED_BASE,
 )
+
+from common import generate_orphaned_hash
 
 from base import (
     BaseItemQuerySet,
@@ -67,58 +66,22 @@ MIGRATION_DATETIME = datetime(2014, 11, 1)
 __all__ = [
     'Article',
     'create_article_from_url',
-    'generate_orphaned_hash',
+
     # Tasks will be added below.
 ]
 
 
-def generate_orphaned_hash(title, feeds):
-    """ Return a unique hash for an article title in some feeds.
-
-    .. warning:: should be used only for orphaned articles. At least,
-        I created this function to distinguish duplicates in orphaned
-        articles.
-    """
-
-    to_hash = u'{0}:{1}'.format(
-        u','.join(sorted(unicode(f.id)
-                  for f in feeds)), title).encode('utf-8')
-
-    # LOGGER.warning(to_hash)
-
-    return hashlib.sha1(to_hash).hexdigest()
-
-
-def create_article_from_url(url, feeds=None):
-    """ PLEASE REVIEW. """
-
-    if feeds is None:
-        feeds = []
-
-    elif not hasattr(feeds, '__iter__'):
-        feeds = [feeds]
+def create_article_from_url(url, feeds, origin):
+    """ Create an article from a web url, in feeds, with an origin. """
 
     # TODO: find article publication date while fetching content…
     # TODO: set Title during fetch…
-
-    if settings.SITE_DOMAIN in url:
-        # The following code should not fail, because the URL has
-        # already been idiot-proof-checked in core.forms.selector
-        #   .WebPagesImportForm.validate_url()
-        read_id = url[-26:].split('/', 1)[1].replace('/', '')
-
-        # Avoid an import cycle.
-        from .read import Read
-
-        # HEADS UP: we just patch the URL to benefit from all the
-        # Article.create_article() mechanisms (eg. mutualization, etc).
-        url = Read.objects.get(id=read_id).article.url
 
     try:
         new_article, created = Article.create_article(
             url=url.replace(' ', '%20'),
             title=_(u'Imported item from {0}').format(clean_url(url)),
-            feeds=feeds, origin=ORIGINS.WEBIMPORT)
+            feeds=feeds, origin=origin)
 
     except:
         # NOTE: duplication handling is already
@@ -128,15 +91,20 @@ def create_article_from_url(url, feeds=None):
 
     mutualized = created is None
 
+    if created and not mutualized:
+        LOGGER.error(u'Please implement add_original_data() for '
+                     u'externaly-imported articles (eg. %s).',
+                     new_article)
+
     if created or mutualized:
         for feed in feeds:
             feed.recent_items_count += 1
             feed.all_items_count += 1
 
-    ze_now = now()
-
     for feed in feeds:
-        feed.latest_item_date_published = ze_now
+        if new_article.date_published:
+            if new_article.date_published > feed.latest_item_date_published:
+                feed.latest_item_date_published = new_article.date_published
 
         # Even if the article wasn't created, we need to create reads.
         # In the case of a mutualized article, it will be fetched only
@@ -260,7 +228,12 @@ class Article(BaseItem, UrlItem, ContentItem):
                 LOGGER.info(u'Duplicate article “%s” (url: %s) in feed(s) %s.',
                             title, url, u', '.join(unicode(f) for f in feeds))
 
-            cur_article.feeds.add(*feeds)
+            try:
+                cur_article.feeds.add(*feeds)
+
+            except IntegrityError:
+                LOGGER.exception(u'Could not add article %s to feeds %s',
+                                 cur_article, feeds)
 
             return cur_article, created_retval
 
@@ -289,7 +262,11 @@ class Article(BaseItem, UrlItem, ContentItem):
             new_article.tags.add(*tags)
 
         if feeds:
-            new_article.feeds.add(*feeds)
+            try:
+                new_article.feeds.add(*feeds)
+            except:
+                LOGGER.exception(u'Could not add article %s to feeds %s',
+                                 new_article, feeds)
 
         return new_article, True
 

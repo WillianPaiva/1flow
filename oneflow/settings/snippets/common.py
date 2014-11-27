@@ -28,6 +28,7 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 import os
 import sys
+import logging
 import warnings
 
 from django.core.urlresolvers import reverse_lazy
@@ -561,7 +562,7 @@ INPLACEEDIT_EDIT_EMPTY_VALUE = ugettext_lazy(u'Click to edit')
 INPLACEEDIT_AUTO_SAVE = True
 INPLACEEDIT_EVENT = "click"
 # INPLACEEDIT_DISABLE_CLICK = True  # For inplace edit text into a link tag
-# INPLACEEDIT_EDIT_MESSAGE_TRANSLATION = 'Write a translation' # transmeta option
+# INPLACEEDIT_EDIT_MESSAGE_TRANSLATION = 'Write a translation' # transmeta option  # NOQA
 INPLACEEDIT_SUCCESS_TEXT = ugettext_lazy(u'Successfully saved')
 INPLACEEDIT_UNSAVED_TEXT = ugettext_lazy(u'You have unsaved changes')
 # INPLACE_ENABLE_CLASS = 'form-control'
@@ -580,10 +581,10 @@ ADAPTOR_INPLACEEDIT_EDIT = 'oneflow.base.models.OwnerOrSuperuserEditAdaptor'
 ADAPTOR_INPLACEEDIT = {
     # example: 'tiny': 'inplaceeditform_extra_fields.fields.AdaptorTinyMCEField'
     # 'date': 'inplaceeditform_bootstrap.fields.AdaptorDateBootStrapField',
-    # 'datetime': 'inplaceeditform_bootstrap.fields.AdaptorDateTimeBootStrapField',
+    # 'datetime': 'inplaceeditform_bootstrap.fields.AdaptorDateTimeBootStrapField',  # NOQA
 }
-# INPLACE_GET_FIELD_URL = None # to change the url where django-inplaceedit use to get a field
-# INPLACE_SAVE_URL = None # to change the url where django-inplaceedit use to save a field
+# INPLACE_GET_FIELD_URL = None # to change the url where django-inplaceedit use to get a field  # NOQA
+# INPLACE_SAVE_URL = None # to change the url where django-inplaceedit use to save a field  # NOQA
 
 # A django-inplaceedit-bootstrap setting.
 INPLACEEDIT_EDIT_TOOLTIP_TEXT = ugettext_lazy(u'Click to edit')
@@ -696,7 +697,12 @@ AUTHENTICATION_BACKENDS = (
 DEFAULT_USER_AGENT = u'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:21.0) Gecko/20100101 Firefox/21.0'  # NOQA
 
 
-# ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••• Logging
+# ————————————————————————————————————————————————————————————————————— Logging
+
+logging.getLogger('oauthlib').setLevel(
+    logging.ERROR if DEBUG else logging.CRITICAL)
+logging.getLogger('requests_oauthlib').setLevel(
+    logging.ERROR if DEBUG else logging.CRITICAL)
 
 LOGGING = {
     'version': 1,
@@ -771,6 +777,8 @@ LOGGING = {
     }
 }
 
+
+# ————————————————————————————————————————————————————————————————————— iPython
 
 # For django-extensions ipython notebook
 IPYTHON_ARGUMENTS = [

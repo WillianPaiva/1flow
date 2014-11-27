@@ -39,6 +39,7 @@ from ..language import Language
 from ..author import Author
 
 from base import BaseItem
+from tweet import Tweet
 
 LOGGER = logging.getLogger(__name__)
 
@@ -375,6 +376,11 @@ def BaseItem_postprocess_google_reader_data_method(self, force=False,
 def BaseItem_postprocess_twitter_data_method(self, force=True, commit=True):
     """ Post-process the original tweet to make our tweet richer. """
 
+    if not isinstance(self, Tweet):
+        LOGGER.warning(u'Tried to postprocess Twitter original data '
+                       u'from %s %s.', self._meta.model.__name__, self.id)
+        return
+
     if self.original_data.twitter_processed and not force:
         LOGGER.info('Twitter data already post-processed.')
         return
@@ -385,13 +391,31 @@ def BaseItem_postprocess_twitter_data_method(self, force=True, commit=True):
 
         LOGGER.debug(u'Post-processing Twitter data for %s…', self)
 
-        self.language = Language.get_by_code(json_tweet['lang'])
+        language = Language.get_by_code(json_tweet['lang'])
 
-        self.date_published = twitter_datestring_to_datetime_utc(
-            json_tweet['created_at'])
+        if language:
+            self.language = language
+
+        try:
+            date_published = twitter_datestring_to_datetime_utc(
+                json_tweet['created_at'])
+
+        except:
+            LOGGER.exception(u'Could not get tweet #%s date', self.tweet_id)
+
+        else:
+            self.date_published = date_published
+
+        self.fetch_entities(json_tweet['entities'], commit=False)
 
         # WTF: putting this line after the "if tags:" doesn't do the job!
         self.save()
+
+        if self.authors.count() == 0:
+            author = Author.get_author_from_twitter_user(json_tweet['user'])
+
+            if author:
+                self.authors.add(author)
 
         tags = Tag.get_tags_set(
             [x['text'] for x in json_tweet['entities']['hashtags']],

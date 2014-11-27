@@ -26,7 +26,7 @@ from celery import task
 from statsd import statsd
 # from constance import config
 
-from django.conf import settings
+# from django.conf import settings
 from django.db import models, IntegrityError
 from django.db.models.signals import post_save, pre_save, pre_delete
 from django.utils.translation import ugettext_lazy as _
@@ -37,12 +37,14 @@ from oneflow.base.utils.http import clean_url
 from oneflow.base.utils.dateutils import now, datetime
 
 from ..common import ORIGINS
+from ..author import Author
 
 from base import (
     BaseItemQuerySet,
     BaseItemManager,
     BaseItem,
 )
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -51,15 +53,22 @@ MIGRATION_DATETIME = datetime(2014, 11, 1)
 
 __all__ = [
     'Tweet',
-    'create_tweet_from_url',
+    'create_tweet_from_id',
     'mark_tweet_deleted',
 
     # Tasks will be added below by register_task_method().
 ]
 
 
-def create_tweet_from_url(url, feeds=None):
-    """ PLEASE REVIEW. """
+def create_tweet_from_id(tweet_id, feeds=None):
+    """ From a Tweet ID, create a 1flow tweet via the REST API.
+
+
+    https://dev.twitter.com/rest/reference/get/statuses/show/%3Aid
+
+    .. todo:: use http://celery.readthedocs.org/en/latest/reference/celery.contrib.batches.html  # NOQA
+        to bulk get statuses and not exhaust the API Quota.
+    """
 
     raise NotImplementedError('Needs a full review / redesign for tweets.')
 
@@ -72,29 +81,16 @@ def create_tweet_from_url(url, feeds=None):
     # TODO: find tweet publication date while fetching content…
     # TODO: set Title during fetch…
 
-    if settings.SITE_DOMAIN in url:
-        # The following code should not fail, because the URL has
-        # already been idiot-proof-checked in core.forms.selector
-        #   .WebPagesImportForm.validate_url()
-        read_id = url[-26:].split('/', 1)[1].replace('/', '')
-
-        # Avoid an import cycle.
-        from .read import Read
-
-        # HEADS UP: we just patch the URL to benefit from all the
-        # Tweet.create_tweet() mechanisms (eg. mutualization, etc).
-        url = Read.objects.get(id=read_id).tweet.url
-
     try:
         new_tweet, created = Tweet.create_tweet(
-            url=url.replace(' ', '%20'),
-            title=_(u'Imported item from {0}').format(clean_url(url)),
+            url=tweet_id.replace(' ', '%20'),
+            title=_(u'Imported item from {0}').format(clean_url(tweet_id)),
             feeds=feeds, origin=ORIGINS.WEBIMPORT)
 
     except:
         # NOTE: duplication handling is already
         # taken care of in Tweet.create_tweet().
-        LOGGER.exception(u'Tweet creation from URL %s failed.', url)
+        LOGGER.exception(u'Tweet creation from URL %s failed.', tweet_id)
         return None, False
 
     mutualized = created is None
@@ -157,8 +153,29 @@ class Tweet(BaseItem):
 
     is_deleted = models.BooleanField(
         verbose_name=_(u'deleted from timeline'),
+
         # Should have a partial index.
-        default=False, blank=True)
+        default=False, blank=True
+    )
+
+    entities_fetched = models.BooleanField(
+        verbose_name=_(u'Entities fetched?'),
+
+        # Should have a partial index.
+        default=False, blank=True
+    )
+
+    entities = models.ManyToManyField(
+        BaseItem, blank=True, null=True,
+        verbose_name=_(u'Entities'),
+        related_name='tweets'
+    )
+
+    mentions = models.ManyToManyField(
+        Author, blank=True, null=True,
+        verbose_name=_(u'mentions'),
+        related_name='mentions'
+    )
 
     # text → name
     # lang → BaseItem.language
@@ -266,10 +283,51 @@ class Tweet(BaseItem):
 
         return new_tweet, True
 
-    def fetch_entities(self):
+    def fetch_entities(self, entities=None, commit=True):
         """ Fetch Tweet entities. """
 
-        LOGGER.warning(u'Please implement Tweet media fetching (%s).', self)
+        # u'entities': {
+        #     u'hashtags': [],
+        #     u'symbols': [],
+        #     u'urls': [
+        #       {
+        #           u'display_url': u'oncletom.io',
+        #           u'expanded_url': u'http://oncletom.io',
+        #           u'indices': [0, 22],
+        #           u'url': u'http://t.co/xdbcCzdQOn'
+        #       }
+        #     ],
+        #     u'user_mentions': []
+        # },
+
+        if entities is None:
+            entities = self.original_data.twitter_hydrated['entities']
+
+        all_went_ok = True
+
+        entities_urls = entities['urls']
+
+        if entities_urls:
+            from create import create_item_from_url
+
+            for entity_url in entities_urls:
+                try:
+                    item, created = create_item_from_url(
+                        url=entity_url['expanded_url'],
+                        feeds=self.feeds.all(),
+                        origin=ORIGINS.TWITTER
+                    )
+                except:
+                    all_went_ok = False
+
+                else:
+                    self.entities.add(item)
+
+        if all_went_ok:
+            self.entities_fetched = True
+
+            if commit:
+                self.save()
 
     def post_create_task(self, apply_now=False):
         """ Method meant to be run from a celery task. """

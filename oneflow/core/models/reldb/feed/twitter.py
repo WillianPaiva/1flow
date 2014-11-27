@@ -32,7 +32,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from oneflow.base.utils import register_task_method
 from oneflow.base.utils.dateutils import (
-    naturaldelta, now, timedelta,
+    naturaldelta, now, timedelta, utc,
     twitter_datestring_to_datetime_utc as twitter_datetime
 )
 
@@ -253,6 +253,23 @@ class TwitterFeed(BaseFeed):
 
         return int(REDIS.scard(self.redis_good_periods_key) or 0)
 
+    @property
+    def can_backfill_more(self):
+        """ See if we can backfill for history (boolean).
+
+        Return ``False`` if we already got the maximum from Twitter.
+        """
+
+        max_rewind_range = config.TWITTER_BACKFILL_ALLOWED_REWIND_RANGE
+
+        if self.backfill_completed == 0 \
+            or max_rewind_range > 0 \
+                and self.backfill_completed >= max_rewind_range:
+            LOGGER.debug(u'%s: history backfill already completed.', self)
+            return False
+
+        return True
+
     # —————————————————————————————————————————————————————————————————— Django
 
     def __unicode__(self):
@@ -361,7 +378,7 @@ class TwitterFeed(BaseFeed):
         if self.is_timeline or self.uri \
                 or self.track_terms or self.track_locations:
 
-            if self.is_backfilled:
+            if self.is_backfilled and self.can_backfill_more:
                 globals()['twitterfeed_backfill_task'].delay(self.id)
                 # LOGGER.debug(u'%s: launched backfill() task.', self)
 
@@ -480,7 +497,7 @@ class TwitterFeed(BaseFeed):
 
             else:
                 return u'; quota exhausted, reset in %s' % (
-                    naturaldelta(now() - quota['reset'])
+                    naturaldelta(now() - quota['reset'].replace(tzinfo=utc))
                 )
 
         def backfill_if_needed(old_latest, max_id):
@@ -609,11 +626,11 @@ class TwitterFeed(BaseFeed):
                     if cur_processed == 0:
 
                         if backfilling:
-                            # NOTE: determining the reach of start of stream
-                            # on lists is not reliable at all. For now we just
-                            # abort to avoid mode damage (API exhaustion, etc).
-
-                            if parameters.get('since_id', None):
+                            # Twitter did not send us any new data while
+                            # were backfilling for full history. We won't
+                            # get any data further in the past, we just
+                            # hit the 800/3200 limit.
+                            if parameters.get('since_id', None) is None:
                                 LOGGER.info(u'%s: reached end of available '
                                             u'data on the Twitter side.',
                                             self)
@@ -800,32 +817,21 @@ class TwitterFeed(BaseFeed):
         # if self.is_backfilled:
         #     r = api.request('search/tweets', {'q': SEARCH_TERM})
 
-        max_rewind_range = config.TWITTER_BACKFILL_ALLOWED_REWIND_RANGE
-
         parameters = {}
 
         if since_id is None and max_id is None:
-            # This is the “backfill history” call. See if we are already
-            # done, else do a full backfill until start of stream is
-            # reached on the Twitter side, or max_rewind_range locally.
-            if self.backfill_completed == 0 \
-                or max_rewind_range > 0 \
-                    and self.backfill_completed >= max_rewind_range:
-                LOGGER.info(u'%s: backfill already completed, aborting.', self)
+            # If both are None, we are backfilling for history.
+
+            # Sanity check to be sure we don't hit Twitter API limits,
+            # and we won't try to create duplicates again and again.
+            if not self.can_backfill_more:
                 return
 
             latest_id = self.latest_id
             oldest_id = self.oldest_id
 
             if oldest_id is None:
-                if latest_id is None:
-                    # We never got any item from this stream.
-                    # Who called us ??? It was too early.
-                    LOGGER.error(u'%s: Cannot backfill without an item to '
-                                 u'start from; aborting.', self)
-                    return
-
-                else:
+                if latest_id is not None:
                     # We never backfilled before, but already got some data.
                     oldest_id = self.items.tweet().order_by(
                         'Tweet___tweet_id').first().tweet_id
@@ -833,13 +839,15 @@ class TwitterFeed(BaseFeed):
                     # BTW, store it.
                     self.set_oldest_id(oldest_id)
 
-            # We don't use since_id (even not "1"). We will rewind slowly
-            # from (now) present to past. Using 1 would make us begin at
-            # stream start, which seems less relevant for me, because more
-            # recent data is more important to my eye.
-            #
-            # We “- 1” because https://dev.twitter.com/rest/public/timelines
-            max_id = oldest_id - 1
+                    # We don't use since_id (even not "1"). We will rewind
+                    # slowly from (now) present to past. Using 1 would make
+                    # us begin at stream start, which seems less relevant
+                    # for me, because more recent data is more important to
+                    # my eye. We “- 1” because
+                    # https://dev.twitter.com/rest/public/timelines
+                    max_id = oldest_id - 1
+            else:
+                max_id = oldest_id - 1
 
         if since_id:
             parameters['since_id'] = since_id
@@ -849,9 +857,17 @@ class TwitterFeed(BaseFeed):
 
         # —————————————————————————————————————————————— The backfill operation
 
-        LOGGER.info(u'%s: backfilling since %s to max %s…',
-                    self, since_id, max_id)
+        if since_id or max_id:
+            LOGGER.info(u'%s: backfilling since %s to max %s…',
+                        self, since_id, max_id)
 
+        else:
+            # We never got any item from this stream.
+            # Who called us ??? It was too early.
+            LOGGER.info(u'%s: Backfilling for first '
+                        u'content in the feed.', self)
+
+        # can be None
         period_start_item = self.oldest_id
 
         try:
