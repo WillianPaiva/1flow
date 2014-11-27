@@ -223,7 +223,12 @@ class Article(BaseItem, UrlItem, ContentItem):
                 LOGGER.info(u'Duplicate article “%s” (url: %s) in feed(s) %s.',
                             title, url, u', '.join(unicode(f) for f in feeds))
 
-            cur_article.feeds.add(*feeds)
+            try:
+                cur_article.feeds.add(*feeds)
+
+            except IntegrityError:
+                LOGGER.exception(u'Could not add article %s to feeds %s',
+                                 cur_article, feeds)
 
             return cur_article, created_retval
 
@@ -252,7 +257,11 @@ class Article(BaseItem, UrlItem, ContentItem):
             new_article.tags.add(*tags)
 
         if feeds:
-            new_article.feeds.add(*feeds)
+            try:
+                new_article.feeds.add(*feeds)
+            except:
+                LOGGER.exception(u'Could not add article %s to feeds %s',
+                                 new_article, feeds)
 
         return new_article, True
 
