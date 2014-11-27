@@ -44,6 +44,8 @@ from ..common import (
     ARTICLE_ORPHANED_BASE,
 )
 
+from common import generate_orphaned_hash
+
 from base import (
     BaseItemQuerySet,
     BaseItemManager,
@@ -67,26 +69,9 @@ MIGRATION_DATETIME = datetime(2014, 11, 1)
 __all__ = [
     'Article',
     'create_article_from_url',
-    'generate_orphaned_hash',
+
     # Tasks will be added below.
 ]
-
-
-def generate_orphaned_hash(title, feeds):
-    """ Return a unique hash for an article title in some feeds.
-
-    .. warning:: should be used only for orphaned articles. At least,
-        I created this function to distinguish duplicates in orphaned
-        articles.
-    """
-
-    to_hash = u'{0}:{1}'.format(
-        u','.join(sorted(unicode(f.id)
-                  for f in feeds)), title).encode('utf-8')
-
-    # LOGGER.warning(to_hash)
-
-    return hashlib.sha1(to_hash).hexdigest()
 
 
 def create_article_from_url(url, feeds=None):

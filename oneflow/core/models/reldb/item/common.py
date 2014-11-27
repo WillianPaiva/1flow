@@ -19,26 +19,32 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
-from common import *  # NOQA
+import hashlib
+import logging
 
-from base import *  # NOQA
 
-from abstract import *  # NOQA
+LOGGER = logging.getLogger(__name__)
 
-# from document import (  # NOQA
-#    Document,
-#    Image,
-#    Video,
-#    PdfDocument,
-#    ZipDocument,
-# )
 
-from article import *  # NOQA
+__all__ = [
+    'generate_orphaned_hash',
+]
 
-from original_data import *  # NOQA
 
-# from bookmark import Bookmark  # NOQA
+def generate_orphaned_hash(title, feeds):
+    """ Return a unique hash for an article title in some feeds.
 
-# from comment import Comment  # NOQA
+    .. warning:: should be used only for orphaned articles. At least,
+        I created this function to distinguish duplicates in orphaned
+        articles.
+    """
 
-from tweet import *  # NOQA
+    to_hash = u'{0}:{1}'.format(
+        u','.join(sorted(unicode(f.id)
+                  for f in feeds)), title).encode('utf-8')
+
+    ze_hash = hashlib.sha1(to_hash).hexdigest()
+
+    # LOGGER.debug(u'New HASH from : %s → %s', to_hash, ze_hash)
+
+    return ze_hash
