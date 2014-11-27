@@ -490,9 +490,18 @@ class ContentItem(models.Model):
         """ Try to extract title from the HTML content, and set the article
             title from there. """
 
-        if self.origin != ORIGINS.WEBIMPORT and not force:
-            LOGGER.warning(u'Skipped title extraction on non-imported article '
-                           u'#%s (use `force=True`).', self.id)
+        if self.origin == ORIGINS.WRITING:
+            raise RuntimeError(u'Calling extract_and_set_title() '
+                               u'on written items is nonsense!')
+
+        # Article can now be imported from various origins.
+        # Eg. Twitter entities include articles URLs that we
+        # fetch from the internet like any other WEBIMPORT item.
+
+        if self.origin in (ORIGINS.FEEDPARSER,
+                           ORIGINS.GOOGLE_READER) and not force:
+            LOGGER.info(u'Skipped title extraction on non-imported item '
+                        u'#%s (use `force=True`).', self.id)
             return
 
         if self.name and not self.name.endswith(self.url):
@@ -502,8 +511,8 @@ class ContentItem(models.Model):
             #
             # NOTE: this will probably change with twitter and other social
             # related imports, thus we'll have to rework the conditions.
-            LOGGER.error(u'NO WAY I will rework already-set title of '
-                         u'article #%s (even with `force=True`).', self.id)
+            LOGGER.error(u'NO WAY I will overwrite already-set name of '
+                         u'item #%s, even with `force=True`.', self.id)
             return
 
         if content is None:
