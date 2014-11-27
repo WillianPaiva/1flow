@@ -91,6 +91,11 @@ def create_article_from_url(url, feeds, origin):
 
     mutualized = created is None
 
+    if created and not mutualized:
+        LOGGER.error(u'Please implement add_original_data() for '
+                     u'externaly-imported articles (eg. %s).',
+                     new_article)
+
     if created or mutualized:
         for feed in feeds:
             feed.recent_items_count += 1
