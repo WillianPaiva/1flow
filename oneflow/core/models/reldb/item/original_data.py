@@ -385,13 +385,29 @@ def BaseItem_postprocess_twitter_data_method(self, force=True, commit=True):
 
         LOGGER.debug(u'Post-processing Twitter data for %s…', self)
 
-        self.language = Language.get_by_code(json_tweet['lang'])
+        language = Language.get_by_code(json_tweet['lang'])
 
-        self.date_published = twitter_datestring_to_datetime_utc(
-            json_tweet['created_at'])
+        if language:
+            self.language = language
+
+        try:
+            date_published = twitter_datestring_to_datetime_utc(
+                json_tweet['created_at'])
+
+        except:
+            LOGGER.exception(u'Could not get tweet #%s date', self.tweet_id)
+
+        else:
+            self.date_published = date_published
 
         # WTF: putting this line after the "if tags:" doesn't do the job!
         self.save()
+
+        if self.authors.count() == 0:
+            author = Author.get_author_from_twitter_user(json_tweet['user'])
+
+            if author:
+                self.authors.add(author)
 
         tags = Tag.get_tags_set(
             [x['text'] for x in json_tweet['entities']['hashtags']],
