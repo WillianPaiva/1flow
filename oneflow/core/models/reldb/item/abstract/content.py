@@ -830,7 +830,7 @@ class ContentItem(models.Model):
             # TODO: generate a snapshot of the website and store the image.
 
                 raise StopProcessingException(u'Done setting up bookmark '
-                                              u'content for article %s.', self)
+                                              u'content for article %s.' % self)
 
     # ———————————————————————————————————————————————————————— NOT SURE TO KEEP
 
