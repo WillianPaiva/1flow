@@ -833,6 +833,8 @@ class TwitterFeed(BaseFeed):
                     # my eye. We “- 1” because
                     # https://dev.twitter.com/rest/public/timelines
                     max_id = oldest_id - 1
+            else:
+                max_id = oldest_id - 1
 
         if since_id:
             parameters['since_id'] = since_id
