@@ -26,7 +26,7 @@ from celery import task
 from statsd import statsd
 # from constance import config
 
-from django.conf import settings
+# from django.conf import settings
 from django.db import models, IntegrityError
 from django.db.models.signals import post_save, pre_save, pre_delete
 from django.utils.translation import ugettext_lazy as _
@@ -152,8 +152,29 @@ class Tweet(BaseItem):
 
     is_deleted = models.BooleanField(
         verbose_name=_(u'deleted from timeline'),
+
         # Should have a partial index.
-        default=False, blank=True)
+        default=False, blank=True
+    )
+
+    entities_fetched = models.BooleanField(
+        verbose_name=_(u'Entities fetched?'),
+
+        # Should have a partial index.
+        default=False, blank=True
+    )
+
+    entities = models.ManyToManyField(
+        BaseItem, blank=True, null=True,
+        verbose_name=_(u'Entities'),
+        related_name='tweets'
+    )
+
+    mentions = models.ManyToManyField(
+        Author, blank=True, null=True,
+        verbose_name=_(u'mentions'),
+        related_name='mentions'
+    )
 
     # text → name
     # lang → BaseItem.language
