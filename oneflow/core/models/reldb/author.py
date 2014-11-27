@@ -238,6 +238,77 @@ class Author(models.Model):
 
         return None
 
+    @classmethod
+    def get_author_from_twitter_user(cls, twitter_user):
+        """ Get or create an author from a Twitter user JSON structure. """
+
+        # u'user': {
+        #     u'contributors_enabled': False,
+        #     u'created_at': u'Tue Nov 11 09:08:21 +0000 2014',
+        #     u'default_profile': True,
+        #     u'default_profile_image': True,
+        #     u'description': None,
+        #     u'favourites_count': 0,
+        #     u'follow_request_sent': None,
+        #     u'followers_count': 1,
+        #     u'following': None,
+        #     u'friends_count': 2,
+        #     u'geo_enabled': False,
+        #     u'id': 2872004451,
+        #     u'id_str': u'2872004451',
+        #     u'is_translation_enabled': False,
+        #     u'is_translator': False,
+        #     u'lang': u'fr',
+        #     u'listed_count': 0,
+        #     u'location': u'',
+        #     u'name': u'1flow.io data stream',
+        #     u'notifications': None,
+        #     u'profile_background_color': u'C0DEED',
+        #     u'profile_background_image_url':
+        #       u'http://abs.twimg.com/images/themes/theme1/bg.png',
+        #     u'profile_background_image_url_https':
+        #       u'https://abs.twimg.com/images/themes/theme1/bg.png',
+        #     u'profile_background_tile': False,
+        #     u'profile_image_url':
+        #       u'http://abs.twimg.com/sticky/default_profile_images/default_profile_1_normal.png',  # NOQA
+        #     u'profile_image_url_https':
+        #       u'https://abs.twimg.com/sticky/default_profile_images/default_profile_1_normal.png',  # NOQA
+        #     u'profile_link_color': u'0084B4',
+        #     u'profile_location': None,
+        #     u'profile_sidebar_border_color': u'C0DEED',
+        #     u'profile_sidebar_fill_color': u'DDEEF6',
+        #     u'profile_text_color': u'333333',
+        #     u'profile_use_background_image': True,
+        #     u'protected': False,
+        #     u'screen_name': u'1flow_io_data',
+        #     u'statuses_count': 6,
+        #     u'time_zone': u'Paris',
+        #     u'url': None,
+        #     u'utc_offset': 3600,
+        #     u'verified': False
+        # }
+
+        twitter_ws = SOCIAL_WEBSITES[ORIGINS.TWITTER]
+
+        author, created = cls.objects.get_or_create(
+            origin_id=twitter_user['id'],
+            website=twitter_ws,
+            defaults={
+                'name': twitter_user['name'],
+                'username': twitter_user['screen_name'],
+                'website_data': twitter_user,
+                'is_unsure': False,
+
+                # For index uniqueness purposes only.
+                'origin_name': twitter_user['id_str'],
+            }
+        )
+
+        if created:
+            LOGGER.info(u'Created Twitter author %s.', author)
+
+        return author
+
 
 # ————————————————————————————————————————————————————————————————————— Signals
 
