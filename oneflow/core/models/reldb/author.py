@@ -22,6 +22,7 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 import logging
 
 from statsd import statsd
+from json_field import JSONField
 
 # from django.conf import settings
 from django.db import models
@@ -30,16 +31,17 @@ from django.utils.translation import ugettext_lazy as _
 
 # from oneflow.base.utils import register_task_method
 
+from ..common import ORIGINS
+
 from common import DjangoUser as User
-from website import WebSite
+from website import WebSite, SOCIAL_WEBSITES
 
 LOGGER = logging.getLogger(__name__)
 
 
-__all__ = ['Author', ]
-
-
-# ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••• Authors
+__all__ = [
+    'Author',
+]
 
 
 class Author(models.Model):
@@ -56,6 +58,10 @@ class Author(models.Model):
                             null=True, blank=True,
                             verbose_name=_(u'Name'))
 
+    username = models.CharField(max_length=128,
+                                null=True, blank=True,
+                                verbose_name=_(u'Username (nick)'))
+
     website = models.ForeignKey(
         WebSite, verbose_name=_(u'Web site'), null=True, blank=True,
         help_text=_(u'Web site where this author was discovered.'))
@@ -68,6 +74,21 @@ class Author(models.Model):
                     u'store it for future comparisons in case '
                     u'firstname and lastname get manually modified '
                     u'after author creation.'))
+
+    origin_id = models.BigIntegerField(
+        verbose_name=_(u'Numerical ID'),
+        null=True, blank=True, db_index=True,
+        help_text=_(u'ID on the original website, where available (eg. '
+                    u'on social networks).'),
+    )
+
+    origin_id_str = models.CharField(
+        verbose_name=_(u'Alphanumeric ID'), max_length=64,
+        null=True, blank=True, db_index=True,
+        help_text=_(u'ID on the original website (as characters), where '
+                    u'available (eg. on social networks which do not offer '
+                    u'integer IDs).'),
+    )
 
     is_unsure = models.BooleanField(
         verbose_name=_(u'unsure identity'), default=False, blank=True,
@@ -85,15 +106,30 @@ class Author(models.Model):
         verbose_name=_('1flow accounts'), related_name='authors',
         help_text=_('1flow accounts linked to this author'))
 
+    identities = models.ManyToManyField(
+        'self', null=True, blank=True,
+        verbose_name=_('Other identities'),
+        help_text=_('Other authors elsewhere that are really the same person.'))
+
+    website_data = JSONField(default=dict, blank=True)
+
+    # XXX: shoud vanish when inheriting from the abstract duplicate model.
     duplicate_of = models.ForeignKey('self', null=True, blank=True)
 
     def __unicode__(self):
         """ pep257, YOU BORING ME. """
 
-        return u'%s%s #%s for website %s' % (self.name or self.origin_name,
-                                             _(u' (unsure)')
-                                             if self.is_unsure else u'',
-                                             self.id, self.website)
+        if self.website == SOCIAL_WEBSITES[ORIGINS.TWITTER]:
+            # Verified icons: ∗ⓥ⊛◆◈✌✓✔
+            return u'{0}{1} (@{2}) #{3}'.format(
+                self.name,
+                u'✔' if self.website_data.get('verified', False) else u'',
+                self.username, self.origin_id)
+
+        return u'{0}{1} #{2} for website {3}'.format(
+            self.name or self.origin_name,
+            _(u' (unsure)') if self.is_unsure else u'',
+            self.id, self.website)
 
     # ——————————————————————————————————————————————————————————— Class-methods
 
@@ -115,6 +151,7 @@ class Author(models.Model):
 
         else:
             LOGGER.critical(u'NO url, cannot get any author.')
+            return []
 
         # Use a set() internally to avoid duplicates (seen a lot in RSS feeds).
         authors = set()
