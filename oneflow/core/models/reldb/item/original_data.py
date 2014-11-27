@@ -39,6 +39,7 @@ from ..language import Language
 from ..author import Author
 
 from base import BaseItem
+from tweet import Tweet
 
 LOGGER = logging.getLogger(__name__)
 
@@ -404,6 +405,8 @@ def BaseItem_postprocess_twitter_data_method(self, force=True, commit=True):
 
         else:
             self.date_published = date_published
+
+        self.fetch_entities(json_tweet['entities'], commit=False)
 
         # WTF: putting this line after the "if tags:" doesn't do the job!
         self.save()
