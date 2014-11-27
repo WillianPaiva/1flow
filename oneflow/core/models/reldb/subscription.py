@@ -46,7 +46,7 @@ from tag import AbstractTaggedModel
 from folder import Folder
 from feed import BaseFeed, RssAtomFeed, MailFeed, TwitterFeed
 from read import Read
-from item import Article
+from item import BaseItem, Article
 
 LOGGER = logging.getLogger(__name__)
 
@@ -327,7 +327,13 @@ class Subscription(ModelDiffMixin, AbstractTaggedModel):
         or if it existed before.
         """
 
-        read, created = Read.objects.get_or_create(item=item,
+        # We force item.id, to be sure the item is reloaded from the DB.
+        # In many cases, the item has been fetched in the background, and
+        # the current one is not fresh enough, it will report
+        # `is_good` == False whereas in reality it's OK.
+        item = BaseItem.objects.get(id=item.id)
+
+        read, created = Read.objects.get_or_create(item_id=item.id,
                                                    user=self.user)
 
         # If another feed has already created the read, be sure the
