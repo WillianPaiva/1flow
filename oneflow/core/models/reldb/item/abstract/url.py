@@ -325,6 +325,12 @@ class UrlItem(models.Model):
             self.url = final_url
 
             try:
+                if self.name.endswith(old_url):
+                    self.name = self.name.replace(old_url, final_url)
+            except:
+                LOGGER.exception(u'Could not replace URL in name of %s', self)
+
+            try:
                 self.save()
 
             except IntegrityError as e:
