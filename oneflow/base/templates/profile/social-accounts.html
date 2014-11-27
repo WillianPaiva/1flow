@@ -2,17 +2,22 @@
 
 <h1 class="user-profile">&nbsp;<br />{% trans "Social accounts" %}</h1>
 
+  <p>
+  {% trans "When you associate social accounts to your local 1flow account, you can use any of them to log into 1flow. Some of them can also add features to 1flow (eg. Twitter)." %}
+  </p>
+
 {% if backends.associated %}
 
   <h3>{% trans "Currently associated" %}
   </h3>
-  <p class="muted small">
+  <p>
       {% if social_count > 1 %}
         {% filter markdown %}{% blocktrans %}
 Click to disassociate any of your accounts, but beware:
-if it's the account you're signed in, you will be
+if it's the account you're signed in, you could be
 immediately disconnected from **1flow**.
 {% endblocktrans %}{% endfilter %}
+
       {% elif not user.is_local %}
         {% filter markdown %}{% blocktrans %}
 As you have currently only one social account, you cannot de-associate it
