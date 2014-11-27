@@ -609,11 +609,11 @@ class TwitterFeed(BaseFeed):
                     if cur_processed == 0:
 
                         if backfilling:
-                            # NOTE: determining the reach of start of stream
-                            # on lists is not reliable at all. For now we just
-                            # abort to avoid mode damage (API exhaustion, etc).
-
-                            if parameters.get('since_id', None):
+                            # Twitter did not send us any new data while
+                            # were backfilling for full history. We won't
+                            # get any data further in the past, we just
+                            # hit the 800/3200 limit.
+                            if parameters.get('since_id', None) is None:
                                 LOGGER.info(u'%s: reached end of available '
                                             u'data on the Twitter side.',
                                             self)
