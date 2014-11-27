@@ -35,7 +35,14 @@ find back the spaceport.
 
       {% endif %}
 
-      {% captureas buser %}{% if backend.provider == 'twitter' %}@{% endif %}{% firstof backend.extra_data.username backend.uid %}{% endcaptureas %}
+      {% captureas buser %}
+        {% if backend.provider == 'twitter' %}@{% endif %}
+        {% if backend.provider == 'linkedin' %}
+          {{ backend.extra_data.first_name }} {{ backend.extra_data.last_name }}
+        {% else %}
+          {% firstof backend.extra_data.username backend.uid %}
+        {% endif %}
+      {% endcaptureas %}
 
       {% if social_count == 1 and not user.is_local %}
         <li><a class="btn btn-danger btn-block btn-huge" href="#" disabled="disabled"
