@@ -45,7 +45,7 @@ from history import HistoryEntry
 
 from . import (
     Article, Read,
-    create_article_from_url,
+    create_item_from_url,
     create_feeds_from_url,
     subscribe_user_to_feed,
     FeedIsHtmlPageException,
@@ -346,13 +346,11 @@ class UserImport(HistoryEntry):
         article = None
 
         try:
-            article, created = create_article_from_url(
+            article, created = create_item_from_url(
                 url, feeds=[self.user.user_feeds.imported_items])
 
-            # Keep the read accessible over time.
-            LOGGER.warning(u'TODO: make sure import_one_article_from_url() has '
-                           u'no race condition when marking new read archived.')
-
+            # create_item_from_url() will run subscription.create_read()
+            # for all feeds, thus the read is assumed to be ready now.
             read = Read.objects.get(item=article, user=self.user)
             read.mark_archived()
 

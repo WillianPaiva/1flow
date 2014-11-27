@@ -19,7 +19,6 @@
 
 """
 
-import hashlib
 import logging
 
 from statsd import statsd
@@ -27,7 +26,6 @@ from statsd import statsd
 
 from celery import chain as tasks_chain
 
-from django.conf import settings
 from django.db import models, IntegrityError
 from django.db.models.signals import post_save, pre_save, pre_delete
 from django.utils.translation import ugettext_lazy as _
@@ -39,7 +37,6 @@ from oneflow.base.utils.dateutils import now, datetime, benchmark
 
 from ..common import (
     DjangoUser as User,
-    ORIGINS,
     CONTENT_TYPES,
     ARTICLE_ORPHANED_BASE,
 )
@@ -74,36 +71,17 @@ __all__ = [
 ]
 
 
-def create_article_from_url(url, feeds=None):
-    """ PLEASE REVIEW. """
-
-    if feeds is None:
-        feeds = []
-
-    elif not hasattr(feeds, '__iter__'):
-        feeds = [feeds]
+def create_article_from_url(url, feeds, origin):
+    """ Create an article from a web url, in feeds, with an origin. """
 
     # TODO: find article publication date while fetching content…
     # TODO: set Title during fetch…
-
-    if settings.SITE_DOMAIN in url:
-        # The following code should not fail, because the URL has
-        # already been idiot-proof-checked in core.forms.selector
-        #   .WebPagesImportForm.validate_url()
-        read_id = url[-26:].split('/', 1)[1].replace('/', '')
-
-        # Avoid an import cycle.
-        from .read import Read
-
-        # HEADS UP: we just patch the URL to benefit from all the
-        # Article.create_article() mechanisms (eg. mutualization, etc).
-        url = Read.objects.get(id=read_id).article.url
 
     try:
         new_article, created = Article.create_article(
             url=url.replace(' ', '%20'),
             title=_(u'Imported item from {0}').format(clean_url(url)),
-            feeds=feeds, origin=ORIGINS.WEBIMPORT)
+            feeds=feeds, origin=origin)
 
     except:
         # NOTE: duplication handling is already
@@ -118,10 +96,10 @@ def create_article_from_url(url, feeds=None):
             feed.recent_items_count += 1
             feed.all_items_count += 1
 
-    ze_now = now()
-
     for feed in feeds:
-        feed.latest_item_date_published = ze_now
+        if new_article.date_published:
+            if new_article.date_published > feed.latest_item_date_published:
+                feed.latest_item_date_published = new_article.date_published
 
         # Even if the article wasn't created, we need to create reads.
         # In the case of a mutualized article, it will be fetched only
