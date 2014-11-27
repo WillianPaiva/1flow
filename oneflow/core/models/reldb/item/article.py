@@ -175,8 +175,7 @@ class Article(BaseItem, UrlItem, ContentItem):
             the same feed. If more than one feed given, only returns ``True``
             or ``False`` (mutualized state is not checked). """
 
-        cur_article = None
-        new_article = None
+        tags = kwargs.pop('tags', [])
 
         if url is None:
             # We have to build a reliable orphaned URL, because orphaned
@@ -187,33 +186,34 @@ class Article(BaseItem, UrlItem, ContentItem):
             # We have 860k+ items, out of 1k real facts… Doomed.
             url = ARTICLE_ORPHANED_BASE + generate_orphaned_hash(title, feeds)
 
-            try:
-                cur_article = cls.objects.get(url=url)
+            defaults = {
+                'name': title,
+                'is_orphaned': True,
 
-            except cls.DoesNotExist:
-                new_article = cls(name=title, url=url,
-                                  is_orphaned=True,
-                                  # Skip absolutization, it's useless.
-                                  url_absolute=True)
-                new_article.save()
+                # Skip absolutization, it's useless.
+                'url_absolute': True
+            }
 
-                # HEADS UP: no statsd here, it's handled by post_save().
+            defaults.update(kwargs)
+
+            article, created = cls.objects.get_or_create(url=url,
+                                                         defaults=defaults)
+
+            # HEADS UP: no statsd here, it's handled by post_save().
 
         else:
             url = clean_url(url)
 
-            new_article = cls(name=title, url=url)
+            defaults = {'name': title}
+            defaults.update(kwargs)
 
-            try:
-                new_article.save()
+            article, created = cls.objects.get_or_create(url=url,
+                                                         defaults=defaults)
 
-            except IntegrityError:
-                cur_article = cls.objects.get(url=url)
-
-        if cur_article:
+        if not created:
             created_retval = False
 
-            if len(feeds) == 1 and feeds[0] not in cur_article.feeds.all():
+            if len(feeds) == 1 and feeds[0] not in article.feeds.all():
                 # This article is already there, but has not yet been
                 # fetched for this feed. It's mutualized, and as such
                 # it is considered at partly new. At least, it's not
@@ -229,46 +229,32 @@ class Article(BaseItem, UrlItem, ContentItem):
                             title, url, u', '.join(unicode(f) for f in feeds))
 
             try:
-                cur_article.feeds.add(*feeds)
+                article.feeds.add(*feeds)
 
             except IntegrityError:
                 LOGGER.exception(u'Could not add article %s to feeds %s',
-                                 cur_article, feeds)
+                                 article, feeds)
 
-            return cur_article, created_retval
-
-        need_save = False
-
-        if kwargs:
-            need_save = True
-
-            for key, value in kwargs.items():
-                setattr(new_article, key, value)
-
-        if need_save:
-            # Need to save because we will reload just after.
-            new_article.save()
+            return article, created_retval
 
         LOGGER.info(u'Created %sarticle %s in feed(s) %s.', u'orphaned '
-                    if new_article.is_orphaned else u'', new_article,
+                    if article.is_orphaned else u'', article,
                     u', '.join(unicode(f) for f in feeds))
 
         # Tags & feeds are ManyToMany, they
         # need the article to be saved before.
 
-        tags = kwargs.pop('tags', [])
-
         if tags:
-            new_article.tags.add(*tags)
+            article.tags.add(*tags)
 
         if feeds:
             try:
-                new_article.feeds.add(*feeds)
+                article.feeds.add(*feeds)
             except:
                 LOGGER.exception(u'Could not add article %s to feeds %s',
-                                 new_article, feeds)
+                                 article, feeds)
 
-        return new_article, True
+        return article, True
 
     def post_create_task(self, apply_now=False):
         """ Method meant to be run from a celery task. """
