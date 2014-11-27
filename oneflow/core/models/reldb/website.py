@@ -37,11 +37,15 @@ from sparks.django.models.mixins import DiffMixin
 from duplicate import AbstractDuplicateAwareModel
 from oneflow.base.utils.http import split_url
 
+from ..common import ORIGINS
 
 LOGGER = logging.getLogger(__name__)
 
 
-__all__ = ['WebSite', ]
+__all__ = [
+    'WebSite',
+    'SOCIAL_WEBSITES',
+]
 
 
 # ————————————————————————————————————————————————————————————— Class & related
@@ -214,3 +218,13 @@ def website_post_save(instance, **kwargs):
 
 pre_save.connect(website_pre_save, sender=WebSite)
 post_save.connect(website_post_save, sender=WebSite)
+
+
+# ————————————————————————————————————————————————————————————— Exported things
+
+
+# Having these objects handy doesn't costs and avoids a DB lookup
+# when creating a bunch of authors.
+SOCIAL_WEBSITES = {
+    ORIGINS.TWITTER: WebSite.get_from_url('https://twitter.com/'),
+}
