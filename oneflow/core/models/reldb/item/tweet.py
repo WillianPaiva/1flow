@@ -44,6 +44,7 @@ from base import (
     BaseItem,
 )
 
+
 LOGGER = logging.getLogger(__name__)
 
 MIGRATION_DATETIME = datetime(2014, 11, 1)
@@ -51,15 +52,22 @@ MIGRATION_DATETIME = datetime(2014, 11, 1)
 
 __all__ = [
     'Tweet',
-    'create_tweet_from_url',
+    'create_tweet_from_id',
     'mark_tweet_deleted',
 
     # Tasks will be added below by register_task_method().
 ]
 
 
-def create_tweet_from_url(url, feeds=None):
-    """ PLEASE REVIEW. """
+def create_tweet_from_id(tweet_id, feeds=None):
+    """ From a Tweet ID, create a 1flow tweet via the REST API.
+
+
+    https://dev.twitter.com/rest/reference/get/statuses/show/%3Aid
+
+    .. todo:: use http://celery.readthedocs.org/en/latest/reference/celery.contrib.batches.html  # NOQA
+        to bulk get statuses and not exhaust the API Quota.
+    """
 
     raise NotImplementedError('Needs a full review / redesign for tweets.')
 
@@ -72,29 +80,16 @@ def create_tweet_from_url(url, feeds=None):
     # TODO: find tweet publication date while fetching content…
     # TODO: set Title during fetch…
 
-    if settings.SITE_DOMAIN in url:
-        # The following code should not fail, because the URL has
-        # already been idiot-proof-checked in core.forms.selector
-        #   .WebPagesImportForm.validate_url()
-        read_id = url[-26:].split('/', 1)[1].replace('/', '')
-
-        # Avoid an import cycle.
-        from .read import Read
-
-        # HEADS UP: we just patch the URL to benefit from all the
-        # Tweet.create_tweet() mechanisms (eg. mutualization, etc).
-        url = Read.objects.get(id=read_id).tweet.url
-
     try:
         new_tweet, created = Tweet.create_tweet(
-            url=url.replace(' ', '%20'),
-            title=_(u'Imported item from {0}').format(clean_url(url)),
+            url=tweet_id.replace(' ', '%20'),
+            title=_(u'Imported item from {0}').format(clean_url(tweet_id)),
             feeds=feeds, origin=ORIGINS.WEBIMPORT)
 
     except:
         # NOTE: duplication handling is already
         # taken care of in Tweet.create_tweet().
-        LOGGER.exception(u'Tweet creation from URL %s failed.', url)
+        LOGGER.exception(u'Tweet creation from URL %s failed.', tweet_id)
         return None, False
 
     mutualized = created is None
