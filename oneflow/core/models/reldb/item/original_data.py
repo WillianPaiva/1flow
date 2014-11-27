@@ -375,6 +375,11 @@ def BaseItem_postprocess_google_reader_data_method(self, force=False,
 def BaseItem_postprocess_twitter_data_method(self, force=True, commit=True):
     """ Post-process the original tweet to make our tweet richer. """
 
+    if not isinstance(self, Tweet):
+        LOGGER.warning(u'Tried to postprocess Twitter original data '
+                       u'from %s %s.', self._meta.model.__name__, self.id)
+        return
+
     if self.original_data.twitter_processed and not force:
         LOGGER.info('Twitter data already post-processed.')
         return
