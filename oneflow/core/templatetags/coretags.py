@@ -467,28 +467,32 @@ def article_full_content_display(article):
 
         if len(article.content) > config.READ_ARTICLE_MIN_LENGTH:
 
-            # START temporary measure.
-            # TODO: please get rid of this…
+            if isinstance(article, models.Tweet):
+                transient_content = article.content
 
-            title_len = len(article.name)
+            else:
+                # START temporary measure.
+                # TODO: please get rid of this…
 
-            transient_content = article.content
+                title_len = len(article.name)
 
-            if title_len > 10:
-                search_len = title_len * 2
+                transient_content = article.content
 
-                diff = difflib.SequenceMatcher(None,
-                                               article.content[:search_len],
-                                               article.name)
+                if title_len > 10:
+                    search_len = title_len * 2
 
-                if diff.ratio() > 0.51:
-                    for blk in reversed(diff.matching_blocks):
-                        # Sometimes, last match is the empty string… Skip it.
-                        if blk[-1] != 0:
-                            transient_content = article.content[
-                                blk[0] + blk[2]:
-                            ]
-                            break
+                    diff = difflib.SequenceMatcher(None,
+                                                   article.content[:search_len],
+                                                   article.name)
+
+                    if diff.ratio() > 0.51:
+                        for blk in reversed(diff.matching_blocks):
+                            # Sometimes, last match is the empty string… Skip.
+                            if blk[-1] != 0:
+                                transient_content = article.content[
+                                    blk[0] + blk[2]:
+                                ]
+                                break
 
             # END temporary measure.
 
