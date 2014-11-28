@@ -237,9 +237,11 @@ class Article(BaseItem, UrlItem, ContentItem):
 
             return article, created_retval
 
-        LOGGER.info(u'Created %sarticle %s in feed(s) %s.', u'orphaned '
+        LOGGER.info(u'Created %sarticle %s %s.', u'orphaned '
                     if article.is_orphaned else u'', article,
-                    u', '.join(unicode(f) for f in feeds))
+                    u'in feed(s) {0}'.format(
+                        u', '.join(unicode(f) for f in feeds))
+                    if feeds else u'without a feed')
 
         # Tags & feeds are ManyToMany, they
         # need the article to be saved before.
