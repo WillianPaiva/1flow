@@ -460,7 +460,7 @@ def read_action_toggle_url(read):
     return u'data-url-action-toggle={0}'.format(url_base)
 
 
-#@cached(CACHE_ONE_WEEK)
+# @cached(CACHE_ONE_WEEK)
 def article_full_content_display(article):
 
     if article.content_type == models.CONTENT_TYPES.MARKDOWN:
