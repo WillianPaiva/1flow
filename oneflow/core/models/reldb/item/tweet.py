@@ -36,8 +36,9 @@ from oneflow.base.utils import register_task_method
 from oneflow.base.utils.http import clean_url
 from oneflow.base.utils.dateutils import now, datetime
 
-from ..common import ORIGINS
+from ..common import ORIGINS, CONTENT_TYPES
 from ..author import Author
+from ..website import SOCIAL_WEBSITES
 
 from base import (
     BaseItemQuerySet,
@@ -200,6 +201,53 @@ class Tweet(BaseItem):
         """ Return True. A tweet is always good. """
 
         return True
+
+    # —————————————————————————————————————————— Article backward compatibility
+    #       Only for rendering, should vanish when we have dedicated templates.
+
+    @property
+    def url(self):
+        """ Be compatible with articles for rendering. """
+        try:
+            username = self.authors.get().username
+        except:
+            username = u'UNKNOWN'
+
+        return u'{0}/{1}/status/{2}'.format(
+            SOCIAL_WEBSITES[ORIGINS.TWITTER].url,
+            username,
+            self.tweet_id)
+
+    @property
+    def content_type(self):
+        """ Be compatible with articles for rendering. """
+
+        return CONTENT_TYPES.MARKDOWN
+
+    @property
+    def content(self):
+        """ Be compatible with articles for rendering. """
+
+        content = self.name[:]
+
+        json_tweet = self.original_data.twitter_hydrated
+        entities = json_tweet.get('entities', {})
+
+        for entity_url in entities.get('urls', []):
+
+            indices = entity_url['indices']
+            LOGGER.debug('replace %s', indices)
+
+            content = content[:indices[0]] + u'[{0}]({1})'.format(
+                entity_url['display_url'], entity_url['expanded_url']
+            ) + content[indices[1]:]
+
+            #
+            # TODO: indexes love when there are more than one…
+            #
+            break
+
+        return content
 
     # ————————————————————————————————————————————————————————————————— Methods
 
