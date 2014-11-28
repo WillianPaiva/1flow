@@ -27,9 +27,7 @@ from django.http import HttpResponseBadRequest, HttpResponse
 
 from django.shortcuts import render, get_object_or_404
 
-from sparks.django.utils import HttpResponseTemporaryServerError
-
-from ..models import BaseItem, Article  # , Tweet
+from ..models import BaseItem  # , Tweet
 
 LOGGER = logging.getLogger(__name__)
 
@@ -37,24 +35,16 @@ LOGGER = logging.getLogger(__name__)
 def article_content(request, article_id):
     """ Get the article content for displaying to the user. """
 
-    try:
-        article = get_object_or_404(Article, id=article_id)
+    item = get_object_or_404(BaseItem, id=article_id)
 
-    except:
-        return HttpResponseTemporaryServerError()
-
-    try:
-        read = request.user.reads.get(item=article)
-
-    except:
-        return HttpResponseTemporaryServerError()
+    read = request.user.reads.get(item=item)
 
     if not request.is_ajax():
         return HttpResponseBadRequest('Must be called via Ajax')
 
     return render(request,
                   'snippets/read/article-content-async.html',
-                  {'article': article, 'read': read})
+                  {'article': item, 'read': read})
 
 
 def article_image(request, article_id):
