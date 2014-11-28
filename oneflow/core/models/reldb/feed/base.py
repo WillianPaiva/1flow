@@ -815,6 +815,59 @@ def basefeed_export_content_classmethod(cls, since, until=None, folder=None):
         dict is suitable to be converted to JSON.
     """
 
+    def export_feed(feed, exported_items, subscription=None):
+
+        if subscription is None:
+            if hasattr(feed, 'url'):
+                return OrderedDict(
+                    id=unicode(feed.id),
+                    name=feed.name,
+                    url=feed.url,
+                    thumbnail_url=feed.thumbnail.url
+                    if feed.thumbnail else feed.thumbnail_url,
+                    short_description=feed.short_description,
+                    tags=[t.name for t in feed.tags.all()],
+                    articles=exported_items,
+                )
+            else:
+                return OrderedDict(
+                    id=unicode(feed.id),
+                    name=feed.name,
+                    url=feed.uri,
+                    thumbnail_url=feed.thumbnail.url
+                    if feed.thumbnail else feed.thumbnail_url,
+                    short_description=feed.short_description,
+                    tags=[t.name for t in feed.tags.all()],
+                    articles=exported_items,
+                )
+
+        if hasattr(feed, 'url'):
+            return OrderedDict(
+                id=unicode(feed.id),
+                name=subscription.name,
+                url=feed.url,
+                thumbnail_url=subscription.thumbnail.url
+                if subscription.thumbnail else subscription.thumbnail_url
+                if subscription.thumbnail_url else feed.thumbnail.url
+                if feed.thumbnail else feed.thumbnail_url,
+                short_description=feed.short_description,
+                tags=[t.name for t in subscription.tags.all()],
+                articles=exported_items,
+            )
+
+        else:
+            # Twitter feed ?
+            return OrderedDict(
+                id=unicode(feed.id),
+                name=subscription.name,
+                url=feed.uri,
+                thumbnail_url=subscription.thumbnail.url
+                if subscription.thumbnail else subscription.thumbnail_url,
+                short_description=feed.short_description,
+                tags=[t.name for t in subscription.tags.all()],
+                articles=exported_items,
+            )
+
     def origin(origin):
 
         if origin in (ORIGINS.FEEDPARSER, ORIGINS.GOOGLE_READER):
@@ -853,6 +906,7 @@ def basefeed_export_content_classmethod(cls, since, until=None, folder=None):
         active_feeds_count = active_feeds.count()
 
         folders = None
+
     else:
         folders = folder.get_descendants(include_self=True)
 
@@ -910,7 +964,7 @@ def basefeed_export_content_classmethod(cls, since, until=None, folder=None):
                 id=unicode(article.id),
                 title=article.name,
                 pages_url=[article.url],
-                image_url=article.image_url,
+                image_url=article.image_url if hasattr(article, '') else None,
                 excerpt=article.excerpt,
                 content=article.content,
                 media=origin(article.origin),
@@ -955,30 +1009,10 @@ def basefeed_export_content_classmethod(cls, since, until=None, folder=None):
         if folder:
             subscription = feed.subscriptions.get(user=folder.user)
 
-            exported_feed = OrderedDict(
-                id=unicode(feed.id),
-                name=subscription.name,
-                url=feed.url,
-                thumbnail_url=subscription.thumbnail.url
-                if subscription.thumbnail else subscription.thumbnail_url
-                if subscription.thumbnail_url else feed.thumbnail.url
-                if feed.thumbnail else feed.thumbnail_url,
-                short_description=feed.short_description,
-                tags=[t.name for t in subscription.tags.all()],
-                articles=exported_items,
-            )
+            exported_feed = export_feed(feed, exported_items, subscription)
 
         else:
-            exported_feed = OrderedDict(
-                id=unicode(feed.id),
-                name=feed.name,
-                url=feed.url,
-                thumbnail_url=feed.thumbnail.url
-                if feed.thumbnail else feed.thumbnail_url,
-                short_description=feed.short_description,
-                tags=[t.name for t in feed.tags.all()],
-                articles=exported_items,
-            )
+            exported_feed = export_feed(feed, exported_items)
 
         if exported_website:
             exported_feed['website'] = exported_website
