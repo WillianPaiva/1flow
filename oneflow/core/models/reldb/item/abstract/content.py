@@ -656,6 +656,10 @@ class ContentItem(models.Model):
                 break
 
         if not successfully_parsed:
+
+            # Breadability logs too much, too.
+            logging.disable(logging.WARNING)
+
             try:
                 breadability_article = breadability.readable.Article(
                     content, url=self.url)
@@ -663,8 +667,11 @@ class ContentItem(models.Model):
                 successfully_parsed = True
 
             except:
+                logging.disable(logging.NOTSET)
                 LOGGER.exception(u'Breadability extraction failed for '
                                  u'%s #%s', self._meta.model.__name__, self.id)
+            else:
+                logging.disable(logging.NOTSET)
 
         if not successfully_parsed:
             newspaper_article = newspaper.Article(url=self.url)
