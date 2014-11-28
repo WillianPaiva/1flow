@@ -200,12 +200,13 @@ class UrlItem(models.Model):
             return True
 
         if self.url_absolute and not force:
-            LOGGER.info(u'URL of article %s is already absolute!', self)
+            LOGGER.info(u'URL of %s #%s is already absolute!',
+                        self._meta.model.__name__, self.id)
             return True
 
         if self.is_orphaned and not force:
-            LOGGER.warning(u'Item %s is orphaned, absolutization aborted.',
-                           self)
+            LOGGER.warning(u'%s #%s is orphaned, absolutization aborted.',
+                           self._meta.model.__name__, self.id)
             return True
 
         if self.url_error:
@@ -215,9 +216,10 @@ class UrlItem(models.Model):
                 if commit:
                     self.save()
             else:
-                LOGGER.warning(u'Item %s already has an URL error, '
+                LOGGER.warning(u'%s #%s already has an URL error, '
                                u'aborting absolutization (currently: %s).',
-                               self, self.url_error)
+                               self._meta.model.__name__, self.id,
+                               self.url_error)
                 return True
 
         return False
@@ -277,7 +279,6 @@ class UrlItem(models.Model):
             )
 
             with statsd.pipeline() as spipe:
-                # spipe.gauge('articles.counts.orphaned', 1, delta=True)
                 spipe.gauge('articles.counts.url_errors', 1, delta=True)
 
                 if requests_response.status_code in (404, ):
@@ -307,6 +308,8 @@ class UrlItem(models.Model):
         #
 
         final_url = clean_url(requests_response.url)
+
+        # LOGGER.info(u'\n\nFINAL: %s vs. ORIG: %s\n\n', final_url, self.url)
 
         if final_url != self.url:
 
@@ -344,17 +347,18 @@ class UrlItem(models.Model):
                 # Just to display the right "old" one in sentry errors and logs.
                 self.url = old_url
 
-                LOGGER.info(u'Item %s is a duplicate of %s, '
-                            u'registering as such.', self, original)
+                LOGGER.info(u'%s #%s is a duplicate of #%s, '
+                            u'registering as such.',
+                            self._meta.model.__name__, self.id, original.id)
 
                 original.register_duplicate(self)
                 return False
 
             # Any other exception will raise. This is intentional.
             else:
-                LOGGER.info(u'Item %s (#%s) successfully absolutized URL '
-                            u'from %s to %s.', self.name, self.id,
-                            old_url, final_url)
+                LOGGER.info(u'URL of %s (#%s) successfully absolutized '
+                            u'from %s to %s.', self._meta.model.__name__,
+                            self.id, old_url, final_url)
 
         else:
             # Don't do the job twice.
