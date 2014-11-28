@@ -213,6 +213,13 @@ class Article(BaseItem, UrlItem, ContentItem):
         if not created:
             created_retval = False
 
+            if article.duplicate_of_id:
+                LOGGER.info(u'Swaping duplicate %s #%s for master #%s on '
+                            u'the fly.', article._meta.model.__name__,
+                            article.id, article.duplicate_of_id)
+
+                article = article.duplicate_of
+
             if len(feeds) == 1 and feeds[0] not in article.feeds.all():
                 # This article is already there, but has not yet been
                 # fetched for this feed. It's mutualized, and as such
@@ -252,9 +259,23 @@ class Article(BaseItem, UrlItem, ContentItem):
         if feeds:
             try:
                 article.feeds.add(*feeds)
+
             except:
                 LOGGER.exception(u'Could not add article %s to its feeds',
                                  article)
+
+        # Get a chance to catch the duplicate if workers were fast.
+        # At the cost of another DB read, this will save some work
+        # in repair scripts, and avoid some writes when creating reads.
+        article = cls.objects.get(id=article.id)
+
+        if article.duplicate_of_id:
+            if settings.DEBUG:
+                LOGGER.debug(u'Catched on-the-fly duplicate #%s, returning '
+                             u'master #%s instead.', article.id,
+                             article.duplicate_of_id)
+
+            return article.duplicate_of, False
 
         return article, True
 
