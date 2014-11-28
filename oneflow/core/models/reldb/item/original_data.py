@@ -58,6 +58,27 @@ class OriginalDataReprocessException(Exception):
     pass
 
 
+class OriginalDataStopProcessingException(Exception):
+
+    """ raised when we want to abort post-processing for any reason. """
+
+    pass
+
+
+class OriginalDataIncompatibleException(Exception):
+
+    """ raised when an origin doesn't match the item content.
+
+    Happens when an article is fetched from the internet, originating
+    from a tweet entities field. Origin is TWITTER but item is an Article,
+    we should not post-process anything, this will not work.
+
+    This particular situation should be investigated later.
+    """
+
+    pass
+
+
 class OriginalData(models.Model):
 
     """ Allow to keep any “raw” data associated with a base item.
@@ -190,6 +211,7 @@ def BaseItem_postprocess_original_data_method(self, force=False,
         LOGGER.warning(u'Not post-processing original data of duplicate '
                        u'%s #%s.', self._meta.model.__name__, self.id)
         return
+        # raise OriginalDataStopProcessingException
 
     methods_table = {
         None: self.postprocess_guess_original_data,
@@ -207,6 +229,12 @@ def BaseItem_postprocess_original_data_method(self, force=False,
 
     try:
         meth(force=force, commit=commit)
+
+    except OriginalDataIncompatibleException:
+        pass
+
+    except OriginalDataStopProcessingException:
+        pass
 
     except OriginalDataReprocessException:
         if first_run:
@@ -265,7 +293,7 @@ def BaseItem_postprocess_feedparser_data_method(self, force=False,
 
     if self.original_data.feedparser_processed and not force:
         LOGGER.info('feedparser data already post-processed.')
-        return
+        raise OriginalDataStopProcessingException
 
     fpod = self.original_data.feedparser_hydrated
 
@@ -371,6 +399,7 @@ def BaseItem_postprocess_google_reader_data_method(self, force=False,
 
     LOGGER.warning(u'postprocess_google_reader_data() is not implemented '
                    u'yet but it was called for article %s!', self)
+    raise OriginalDataStopProcessingException
 
 
 def BaseItem_postprocess_twitter_data_method(self, force=True, commit=True):
@@ -379,11 +408,11 @@ def BaseItem_postprocess_twitter_data_method(self, force=True, commit=True):
     if not isinstance(self, Tweet):
         LOGGER.warning(u'Not postprocessing twitter original data of '
                        u'non-tweet %s #%s.', self._meta.model.__name__, self.id)
-        return
+        raise OriginalDataIncompatibleException
 
     if self.original_data.twitter_processed and not force:
         LOGGER.info('Twitter data already post-processed.')
-        return
+        raise OriginalDataStopProcessingException
 
     json_tweet = self.original_data.twitter_hydrated
 
