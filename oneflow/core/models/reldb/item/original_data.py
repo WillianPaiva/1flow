@@ -187,8 +187,8 @@ def BaseItem_postprocess_original_data_method(self, force=False,
     """ Generic method for original data post_processing. """
 
     if self.duplicate_of_id:
-        LOGGER.error(u'Item %s: aborting post-processing of original data, '
-                     u'we are a duplicate.', self.id)
+        LOGGER.warning(u'Not post-processing original data of duplicate '
+                       u'%s #%s.', self._meta.model.__name__, self.id)
         return
 
     methods_table = {
@@ -377,8 +377,8 @@ def BaseItem_postprocess_twitter_data_method(self, force=True, commit=True):
     """ Post-process the original tweet to make our tweet richer. """
 
     if not isinstance(self, Tweet):
-        LOGGER.warning(u'Tried to postprocess Twitter original data '
-                       u'from %s %s.', self._meta.model.__name__, self.id)
+        LOGGER.warning(u'Not postprocessing twitter original data of '
+                       u'non-tweet %s #%s.', self._meta.model.__name__, self.id)
         return
 
     if self.original_data.twitter_processed and not force:
