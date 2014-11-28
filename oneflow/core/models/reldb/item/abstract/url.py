@@ -30,6 +30,8 @@ from constance import config
 
 # from django.conf import settings
 from django.db import models, IntegrityError
+from django.db import transaction
+
 from django.utils.translation import ugettext_lazy as _
 # from django.utils.text import slugify
 
@@ -331,20 +333,30 @@ class UrlItem(models.Model):
                 if self.name.endswith(old_url):
                     self.name = self.name.replace(old_url, final_url)
             except:
-                LOGGER.exception(u'Could not replace URL in name of %s', self)
+                LOGGER.exception(u'Could not replace URL in name of %s #%s',
+                                 self._meta.model.__name__, self.id)
 
-            try:
-                self.save()
+            duplicate = False
 
-            except IntegrityError as e:
-                # LOGGER.exception(u'IntegrityError occured while saving %s',
-                #                  final_url)
+            with transaction.atomic():
+                # Without the atomic() block, saving the current article
+                # (beiing a duplicate) will trigger the IntegrityError,
+                # but will render the current SQL context unusable, unable
+                # to register duplicate, potentially leading to massive
+                # inconsistencies in the caller's context.
+                try:
+                    self.save()
 
-                # The following will legitimely crash on articles  missing
-                # their BaseItem. We have a repair script dedicated to this.
-                original = BaseItem.objects.get(Article___url=final_url)
+                except IntegrityError:
+                    duplicate = True
 
-                # Just to display the right "old" one in sentry errors and logs.
+            if duplicate:
+                params = {
+                    '%s___url' % self._meta.model.__name__: final_url
+                }
+                original = BaseItem.objects.get(**params)
+
+                # Just to display the right “old” one in logs.
                 self.url = old_url
 
                 LOGGER.info(u'%s #%s is a duplicate of #%s, '
