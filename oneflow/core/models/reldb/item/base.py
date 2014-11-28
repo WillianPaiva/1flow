@@ -355,7 +355,18 @@ class BaseItem(PolymorphicModel,
                 LOGGER.exception(u'Could not replace current item in '
                                  u'read %s by %s!', read, self)
 
-        LOGGER.info(u'Item %s replaced by %s everywhere %s.', duplicate, self,
+        for tweet in duplicate.tweets.all():
+            try:
+                tweet.entities.add(self)
+                tweet.entities.remove(duplicate)
+
+            except:
+                all_went_ok = False
+                LOGGER.exception(u'Could not replace current item in '
+                                 u'read %s by %s!', read, self)
+
+        LOGGER.info(u'Item #%s replaced by #%s everywhere %s.',
+                    duplicate.id, self.id,
                     u'successfully' if all_went_ok else u'with some error(s).')
 
         return all_went_ok
