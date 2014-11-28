@@ -232,8 +232,8 @@ class Article(BaseItem, UrlItem, ContentItem):
                 article.feeds.add(*feeds)
 
             except IntegrityError:
-                LOGGER.exception(u'Could not add article %s to feeds %s',
-                                 article, feeds)
+                LOGGER.exception(u'Could not add article %s to its feeds',
+                                 article)
 
             return article, created_retval
 
@@ -251,8 +251,8 @@ class Article(BaseItem, UrlItem, ContentItem):
             try:
                 article.feeds.add(*feeds)
             except:
-                LOGGER.exception(u'Could not add article %s to feeds %s',
-                                 article, feeds)
+                LOGGER.exception(u'Could not add article %s to its feeds',
+                                 article)
 
         return article, True
 
