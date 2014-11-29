@@ -40,6 +40,12 @@ from oneflow.base.utils.dateutils import (now, timedelta, benchmark)
 LOGGER = logging.getLogger(__name__)
 
 
+__all__ = [
+    'archive_articles',
+    'archive_documents',
+]
+
+
 def archive_article_one_internal(article, counts):
     """ Internal function.
 
@@ -73,7 +79,7 @@ def archive_article_one_internal(article, counts):
         article.delete()
 
 
-@task(queue='clean')
+@task(name='oneflow.core.tasks.archive_articles', queue='clean')
 def archive_articles(limit=None):
     """ Archive articles that pollute the production database. """
 
@@ -153,7 +159,7 @@ def archive_articles(limit=None):
         LOGGER.info(u'No article to archive.')
 
 
-@task(queue='clean')
+@task(name='oneflow.core.tasks.archive_documents', queue='clean')
 def archive_documents(limit=None, force=False):
     """ Archive all kind of documents that need archiving. """
 
