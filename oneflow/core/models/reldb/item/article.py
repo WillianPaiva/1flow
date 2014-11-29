@@ -26,7 +26,8 @@ from statsd import statsd
 
 from celery import chain as tasks_chain
 
-from django.db import models, IntegrityError
+from django.conf import settings
+from django.db import models, IntegrityError, transaction
 from django.db.models.signals import post_save, pre_save, pre_delete
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
@@ -47,6 +48,7 @@ from base import (
     BaseItemQuerySet,
     BaseItemManager,
     BaseItem,
+    baseitem_create_reads_task,
 )
 
 from abstract import (
@@ -293,6 +295,7 @@ class Article(BaseItem, UrlItem, ContentItem):
         if apply_now:
             try:
                 baseitem_absolutize_url_task.apply((self.id, ))
+                baseitem_create_reads_task.apply((self.id, ))
                 baseitem_fetch_content_task.apply((self.id, ))
                 baseitem_postprocess_original_data_task.apply((self.id, ))
 
@@ -305,6 +308,7 @@ class Article(BaseItem, UrlItem, ContentItem):
             # HEADS UP: both subtasks are immutable, we just
             # want the group to run *after* the absolutization.
 
+            baseitem_create_reads_task.si(self.id),
             baseitem_fetch_content_task.si(self.id),
             baseitem_postprocess_original_data_task.si(self.id),
         )

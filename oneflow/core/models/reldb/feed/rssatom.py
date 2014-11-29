@@ -601,13 +601,6 @@ class RssAtomFeed(BaseFeed):
                 date_published > self.latest_item_date_published:
             self.latest_item_date_published = date_published
 
-        # Even if the article wasn't created, we need to create reads.
-        # In the case of a mutualized article, it will be fetched only
-        # once, but all subscribers of all feeds must be connected to
-        # it to be able to read it.
-        for subscription in self.subscriptions.all():
-            subscription.create_read(new_article, verbose=created)
-
         # Don't forget the parenthesis else we return ``False`` everytime.
         return created or (None if mutualized else False)
 
