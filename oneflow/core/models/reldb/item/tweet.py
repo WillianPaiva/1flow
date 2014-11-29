@@ -328,6 +328,8 @@ class Tweet(BaseItem):
                             tweet_id, tweet.id,
                             u', '.join(unicode(f) for f in feeds))
 
+                tweet.create_reads(feeds=feeds)
+
             else:
                 # No statsd, because we didn't create any record in database.
                 LOGGER.info(u'Duplicate tweet “%s” #%s #%s in feed(s) %s.',
