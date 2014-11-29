@@ -39,7 +39,7 @@ from oneflow.base.utils import register_task_method
 from oneflow.base.utils.http import clean_url
 # from oneflow.base.utils.dateutils import now
 
-from ...common import REQUEST_BASE_HEADERS
+# from ...common import REQUEST_BASE_HEADERS
 
 from ..base import BaseItem, BaseItemQuerySet
 
@@ -257,8 +257,7 @@ class UrlItem(models.Model):
 
         if requests_response is None:
             try:
-                requests_response = requests.get(self.url,
-                                                 headers=REQUEST_BASE_HEADERS)
+                requests_response = requests.get(self.url)
 
             except requests.ConnectionError as e:
                 statsd.gauge('articles.counts.url_errors', 1, delta=True)
