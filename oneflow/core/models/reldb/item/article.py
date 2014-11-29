@@ -232,6 +232,8 @@ class Article(BaseItem, UrlItem, ContentItem):
                 LOGGER.info(u'Mutualized article “%s” (url: %s) in feed(s) %s.',
                             title, url, u', '.join(unicode(f) for f in feeds))
 
+                article.create_reads(feeds=feeds)
+
             else:
                 # No statsd, because we didn't create any record in database.
                 LOGGER.info(u'Duplicate article “%s” (url: %s) in feed(s) %s.',
