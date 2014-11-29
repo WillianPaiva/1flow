@@ -30,7 +30,7 @@ from constance import config
 from xml.sax import SAXParseException
 
 from django.conf import settings
-from django.db import models, IntegrityError
+from django.db import models  # , IntegrityError
 from django.db.models.signals import pre_save, post_save, pre_delete
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import URLValidator
@@ -249,26 +249,26 @@ def create_feeds_from_url(feed_url, creator=None, recurse=True):
         fp_feed = parsed_feed.feed
         website = WebSite.get_from_url(clean_url(
                                        fp_feed.get('link', feed_url)))
-        new_feed = RssAtomFeed(
-            name=fp_feed.get('title', u'Feed from {0}'.format(feed_url)),
-            is_good=True,
+
+        defaults = {
+            'name': fp_feed.get('title', u'Feed from {0}'.format(feed_url)),
+            'is_good': True,
             # Try the RSS description, then the Atom subtitle.
-            description_en=fp_feed.get(
+            'description_en': fp_feed.get(
                 'description',
                 fp_feed.get('subtitle', u'')),
-            url=feed_url,
-            user=creator,
-            website=website)
+            'website': website
+        }
 
-        try:
-            new_feed.save()
+        new_feed, created = RssAtomFeed.objects.get_or_create(
+            url=feed_url, defaults=defaults
+        )
 
-        except IntegrityError:
-            # It could have been created in the background.
-            new_feed = RssAtomFeed.objects.get(url=feed_url)
-            return [(new_feed, False)]
+        if created:
+            feed.user = creator
+            feed.save()
 
-        return [(new_feed, True)]
+        return [(new_feed, created)]
 
 
 def parse_feeds_urls(parsed_feed, skip_comments=True):
