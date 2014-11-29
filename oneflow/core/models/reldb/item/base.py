@@ -372,7 +372,7 @@ class BaseItem(PolymorphicModel,
 
         return all_went_ok
 
-    def create_reads(self):
+    def create_reads(self, feeds=None):
         """ Create an article reads for all of its feeds.
 
         .. note:: this method is run via a celery task.
@@ -388,7 +388,10 @@ class BaseItem(PolymorphicModel,
                            self._meta.model.__name__, self.id)
             return
 
-        for feed in self.feeds.all():
+        if feeds is None:
+            feeds = self.feeds.all()
+
+        for feed in feeds:
             for subscription in feed.subscriptions.all():
                 subscription.create_read(self)
 
