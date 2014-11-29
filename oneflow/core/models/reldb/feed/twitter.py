@@ -398,26 +398,34 @@ class TwitterFeed(BaseFeed):
 
         if 'text' in item:
             processed = True
+            tweet_id = item['id']
 
             # If the tweet flow is too high,
             # this should go into a celery task.
             tweet, created = Tweet.create_tweet(item, [self])
 
-            if not created:
-                # a duplicate tweet. This should not
-                # happen, and twitter doesn't like this.
+            if created is False:
+                # A pure duplicate tweet. This should not happen, even in
+                # rare conditions where users create and destroy search
+                # feeds that get the same tweets, because when deleting
+                # feeds, tweets are deleted.
+                #
+                # NOTE: if the tweet is mutualized with another feed,
+                # this is not an issue, and Twitter won't blame us
+                # because they had to send it more than once anyway.
+                LOGGER.critical(u'Pure duplicate tweet #%s found in feed #%s.',
+                                item['id'], self.id)
                 exit_loop = not backfilling
 
-            # Duplicate or created, we will update
-            # the counters, to not hit it again.
-            tweet_id = item['id']
-
+            # Duplicate, mutualized or created, we will
+            # update the counters, to not get this tweet
+            # again, at least in this feed.
             if backfilling:
 
                 oldest_id = self.oldest_id
 
                 if oldest_id is None or tweet_id < oldest_id:
-                    # Forward to latest tweet
+                    # Push back to oldest tweet
                     self.set_oldest_id(tweet_id)
             else:
 
