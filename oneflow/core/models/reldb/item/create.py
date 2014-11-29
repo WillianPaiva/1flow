@@ -61,7 +61,13 @@ def handle_special_urls(url, feeds, origin):
 
         return url
 
-    if url.startswith('https://twitter.com/') and '/status/' in url:
+    if u'//twitter.com/' in url and u'/status/' in url:
+
+        if u'/photo/' in url:
+            LOGGER.error(u'Implement Twitter photo status handling (from %s)',
+                         url)
+            raise NotImplementedError(u'Implement Twitter status photos…')
+
         return create_tweet_from_id(int(url.rsplit('/', 1)[-1]),
                                     feeds,
                                     origin)
