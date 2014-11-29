@@ -26,8 +26,8 @@ from celery import task
 from statsd import statsd
 # from constance import config
 
-# from django.conf import settings
-from django.db import models, IntegrityError
+from django.conf import settings
+from django.db import models, transaction, IntegrityError
 from django.db.models.signals import post_save, pre_save, pre_delete
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
@@ -62,7 +62,7 @@ __all__ = [
 ]
 
 
-def create_tweet_from_id(tweet_id, feeds=None):
+def create_tweet_from_id(tweet_id, feeds=None, origin=None):
     """ From a Tweet ID, create a 1flow tweet via the REST API.
 
 
@@ -261,76 +261,80 @@ class Tweet(BaseItem):
 
         title = TwitterAPI_item['text']
         tweet_id = TwitterAPI_item['id']
-        cur_tweet = None
-        new_tweet = None
 
-        new_tweet = cls(name=title, tweet_id=tweet_id)
+        defaults = {
+            'name': title,
+            'origin': kwargs.pop('origin', ORIGINS.TWITTER)
+        }
+
+        defaults.update(kwargs)
+
+        tweet, created = cls.get_or_create(tweet_id=tweet_id,
+                                           defaults=defaults)
+
+        if created:
+            LOGGER.info(u'Created tweet #%s in feed(s) %s.', tweet_id,
+                        u', '.join(unicode(f) for f in feeds))
+
+            if feeds:
+                try:
+                    with transaction.atomic():
+                        tweet.feeds.add(*feeds)
+
+                except IntegrityError:
+                    LOGGER.exception(u'Integrity error on created tweet #%s',
+                                     tweet_id)
+                    pass
+
+            tweet.add_original_data('twitter',
+                                    json.dumps(TwitterAPI_item),
+                                    launch_task=True)
+
+            return tweet, True
+
+        # —————————————————————————————————————————————————————— existing tweet
+
+        # Get a change to catch a duplicate if workers were fast.
+        if tweet.duplicate_of_id:
+            LOGGER.info(u'Swaping duplicate tweet #%s with master #%s on '
+                        u'the fly.', tweet.id, tweet.duplicate_of_id)
+
+            tweet = tweet.duplicate_of
+
+        created_retval = False
+
+        previous_feeds_count = tweet.feeds.count()
 
         try:
-            new_tweet.save()
+            with transaction.atomic():
+                tweet.feeds.add(*feeds)
 
         except IntegrityError:
-            cur_tweet = cls.objects.get(tweet_id=tweet_id)
+            # Race condition when backfill_if_needed() is run after
+            # reception of first item in a stream, and they both create
+            # the same tweet.
+            LOGGER.exception(u'Integrity error when adding feeds %s to '
+                             u'tweet #%s', feeds, tweet_id)
 
-        if cur_tweet:
-            created_retval = False
-
-            if len(feeds) == 1 and feeds[0] not in cur_tweet.feeds.all():
+        else:
+            if tweet.feeds.count() > previous_feeds_count:
                 # This tweet is already there, but has not yet been
                 # fetched for this feed. It's mutualized, and as such
                 # it is considered at partly new. At least, it's not
                 # as bad as being a true duplicate.
                 created_retval = None
 
-                LOGGER.info(u'Mutualized tweet “%s” (ID: %s) in feed(s) %s.',
-                            title, tweet_id,
+                LOGGER.info(u'Mutualized tweet #%s #%s in feed(s) %s.',
+                            tweet_id, tweet.id,
                             u', '.join(unicode(f) for f in feeds))
 
             else:
                 # No statsd, because we didn't create any record in database.
-                LOGGER.info(u'Duplicate tweet “%s” (ID: %s) in feed(s) %s.',
-                            title, tweet_id,
+                LOGGER.info(u'Duplicate tweet “%s” #%s #%s in feed(s) %s.',
+                            title, tweet_id, tweet.id,
                             u', '.join(unicode(f) for f in feeds))
 
-            try:
-                cur_tweet.feeds.add(*feeds)
-
-            except IntegrityError:
-                # Race condition when backfill_if_needed() is run after
-                # reception of first item in a stream, and they both create
-                # the same tweet. One of them really
-                pass
-
-            return cur_tweet, created_retval
-
-        if kwargs:
-            for key, value in kwargs.items():
-                setattr(new_tweet, key, value)
-
-        if 'origin' not in kwargs:
-            new_tweet.origin = ORIGINS.TWITTER
-
-        new_tweet.save()
-
-        LOGGER.info(u'Created tweet #%s in feed(s) %s.', new_tweet.tweet_id,
-                    u', '.join(unicode(f) for f in feeds))
-
-        # Tags & feeds are ManyToMany, they
-        # need the tweet to be saved before.
-
-        if feeds:
-            try:
-                new_tweet.feeds.add(*feeds)
-
-            except IntegrityError:
-                # Race condition: see some lines above.
-                pass
-
-        new_tweet.add_original_data('twitter',
-                                    json.dumps(TwitterAPI_item),
-                                    launch_task=True)
-
-        return new_tweet, True
+        return tweet, created_retval
 
     def fetch_entities(self, entities=None, commit=True):
         """ Fetch Tweet entities. """
