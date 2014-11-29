@@ -403,11 +403,7 @@ class TwitterFeed(BaseFeed):
             # this should go into a celery task.
             tweet, created = Tweet.create_tweet(item, [self])
 
-            if created:
-                for subscription in self.subscriptions.all():
-                    subscription.create_read(tweet,
-                                             verbose=created)
-            else:
+            if not created:
                 # a duplicate tweet. This should not
                 # happen, and twitter doesn't like this.
                 exit_loop = not backfilling

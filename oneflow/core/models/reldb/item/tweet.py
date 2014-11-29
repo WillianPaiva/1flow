@@ -44,6 +44,7 @@ from base import (
     BaseItemQuerySet,
     BaseItemManager,
     BaseItem,
+    baseitem_create_reads_task,
 )
 
 
@@ -383,10 +384,14 @@ class Tweet(BaseItem):
         fetch_task = globals()['tweet_fetch_entities_task']
 
         if apply_now:
+            baseitem_create_reads_task.apply((self.id, ))
             fetch_task.apply((self.id, ))
 
         else:
+
             fetch_task.delay(self.id)
+            baseitem_create_reads_task.si(self.id),
+
 
 # ———————————————————————————————————————————————————————————————— Celery Tasks
 
