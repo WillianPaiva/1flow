@@ -236,11 +236,12 @@ class Article(BaseItem, UrlItem, ContentItem):
                             title, url, u', '.join(unicode(f) for f in feeds))
 
             try:
-                article.feeds.add(*feeds)
+                with transaction.atomic():
+                    article.feeds.add(*feeds)
 
             except IntegrityError:
-                LOGGER.exception(u'Could not add article %s to its feeds',
-                                 article)
+                LOGGER.exception(u'Could not add feeds to article #%s',
+                                 article.id)
 
             return article, created_retval
 
@@ -254,15 +255,22 @@ class Article(BaseItem, UrlItem, ContentItem):
         # need the article to be saved before.
 
         if tags:
-            article.tags.add(*tags)
+            try:
+                with transaction.atomic():
+                    article.tags.add(*tags)
+
+            except IntegrityError:
+                LOGGER.exception(u'Could not add tags %s to article #%s',
+                                 tags, article.id)
 
         if feeds:
             try:
-                article.feeds.add(*feeds)
+                with transaction.atomic():
+                    article.feeds.add(*feeds)
 
             except:
-                LOGGER.exception(u'Could not add article %s to its feeds',
-                                 article)
+                LOGGER.exception(u'Could not add feeds to article #%s',
+                                 article.id)
 
         # Get a chance to catch the duplicate if workers were fast.
         # At the cost of another DB read, this will save some work
