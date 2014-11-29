@@ -30,7 +30,7 @@ from constance import config
 from xml.sax import SAXParseException
 
 from django.conf import settings
-from django.db import models  # , IntegrityError
+from django.db import models, transaction  # , IntegrityError
 from django.db.models.signals import pre_save, post_save, pre_delete
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import URLValidator
@@ -578,7 +578,10 @@ class RssAtomFeed(BaseFeed):
 
         if created:
             try:
-                new_article.add_original_data('feedparser', unicode(article))
+                with transaction.atomic():
+                    new_article.add_original_data('feedparser',
+                                                  unicode(article),
+                                                  launch_task=True)
 
             except:
                 # Avoid crashing on anything related to the archive database,
@@ -587,8 +590,8 @@ class RssAtomFeed(BaseFeed):
                 # having the reads created forces us to check everything
                 # afterwise, which is very expensive. Not having stats
                 # updated is not cool for graph-loving users ;-)
-                LOGGER.exception(u'Could not create article content '
-                                 u'in archive database.')
+                LOGGER.exception(u'Could not add article #%s original data.',
+                                 new_article)
 
         mutualized = created is None
 

@@ -58,7 +58,7 @@ from abstract import (
     baseitem_fetch_content_task,
 )
 
-from original_data import baseitem_postprocess_original_data_task
+# from original_data import baseitem_postprocess_original_data_task
 
 LOGGER = logging.getLogger(__name__)
 
@@ -297,7 +297,9 @@ class Article(BaseItem, UrlItem, ContentItem):
                 baseitem_absolutize_url_task.apply((self.id, ))
                 baseitem_create_reads_task.apply((self.id, ))
                 baseitem_fetch_content_task.apply((self.id, ))
-                baseitem_postprocess_original_data_task.apply((self.id, ))
+
+                # Done in RssAtomFeed now.
+                # baseitem_postprocess_original_data_task.apply((self.id, ))
 
             except:
                 LOGGER.exception(u'Applying Article.post_create_task(%s) '
@@ -310,7 +312,9 @@ class Article(BaseItem, UrlItem, ContentItem):
 
             baseitem_create_reads_task.si(self.id),
             baseitem_fetch_content_task.si(self.id),
-            baseitem_postprocess_original_data_task.si(self.id),
+
+            # Done in RssAtomFeed now.
+            # baseitem_postprocess_original_data_task.si(self.id),
         )
 
         # OLD NOTES: randomize the absolutization a little, to avoid
