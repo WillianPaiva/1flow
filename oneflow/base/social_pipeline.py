@@ -74,7 +74,7 @@ def get_social_avatar(**kwargs):
                 url = u'http://graph.facebook.com/{}/picture?type=large'.format(
                     response['id'])
 
-        elif isinstance(backend, google.GoogleOAuth2Backend):
+        elif isinstance(backend, google.GoogleOAuth2):
             url = response.get('picture', None)
 
         elif isinstance(backend, TwitterOAuth):
