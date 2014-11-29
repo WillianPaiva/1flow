@@ -60,6 +60,7 @@ __all__ = [
     'BaseItem',
 
     # 'baseitem_pre_save',
+    # Task methods will be added by register_task_method()
 ]
 
 

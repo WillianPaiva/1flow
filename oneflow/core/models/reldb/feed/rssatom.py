@@ -189,7 +189,7 @@ def create_feeds_from_url(feed_url, creator=None, recurse=True):
 
     else:
         # Get the right one for the user subscription.
-        if feed.duplicate_of:
+        if feed.duplicate_of_id:
             return [(feed.duplicate_of, False)]
 
         else:
