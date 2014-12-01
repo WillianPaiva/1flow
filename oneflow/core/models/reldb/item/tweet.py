@@ -355,34 +355,144 @@ class Tweet(BaseItem):
         #     u'user_mentions': []
         # },
 
+        if self.entities_fetched:
+            LOGGER.info(u'%s: entities already fetched.', self)
+            # return
+
         if entities is None:
             entities = self.original_data.twitter_hydrated['entities']
 
         all_went_ok = True
 
-        entities_urls = entities['urls']
+        for entities_name, fetch_entities_method in (
+            ('urls', self.fetch_entities_urls, ),
+            ('media', self.fetch_entities_media, ),
+            ('user_mentions', self.connect_mentions, ),
+        ):
+            entities_values = entities.get(entities_name, None)
 
-        if entities_urls:
-            from create import create_item_from_url
-
-            for entity_url in entities_urls:
-                try:
-                    item, created = create_item_from_url(
-                        url=entity_url['expanded_url'],
-                        feeds=self.feeds.all(),
-                        origin=ORIGINS.TWITTER
-                    )
-                except:
+            if entities_values:
+                if not fetch_entities_method(entities_values):
                     all_went_ok = False
-
-                else:
-                    self.entities.add(item)
 
         if all_went_ok:
             self.entities_fetched = True
 
             if commit:
                 self.save()
+
+    def fetch_entities_urls(self, entities_urls):
+        """ Fetch URLs entities, and add the created items to self.entities. """
+
+        from create import create_item_from_url
+
+        all_went_ok = True
+
+        update_original_data = False
+        new_entities_urls = []
+
+        for entity_url in entities_urls:
+            try:
+                url = entity_url['expanded_url']
+
+                item, created = create_item_from_url(
+                    url=url,
+                    feeds=self.feeds.all(),
+                    origin=ORIGINS.TWITTER
+                )
+
+                if item.url != url:
+                    # Our absolutizer has resolved the URL more than it was.
+                    entity_url['expanded_url'] = item.url
+                    entity_url['display_url'] = u'{0}/a/{1}'.format(
+                        settings.SITE_DOMAIN, item.id)
+                    update_original_data = True
+
+                new_entities_urls.append(entity_url)
+
+                try:
+                    with transaction.atomic():
+                        self.entities.add(item)
+                except:
+                    LOGGER.error(u'Could not add entity %s to tweet #%s',
+                                 item.id,)
+
+            except:
+                all_went_ok = False
+                LOGGER.exception(u'Could not fetch URL entity %s of '
+                                 u'tweet #%s', url, self.id)
+
+        if update_original_data:
+            tweet_original_data = self.original_data.twitter_hydrated
+            entities_orig = tweet_original_data['entities']
+            entities_orig['urls.orig.1flow'] = entities_orig['urls'][:]
+            entities_orig['urls'] = new_entities_urls
+            tweet_original_data['entities'] = entities_orig
+            self.original_data.twitter = json.dumps(tweet_original_data)
+
+            self.original_data.save()
+
+            LOGGER.info(u'%s #%s: updated original data because URLs changed.',
+                        self._meta.model.__name__, self.id)
+
+        return all_went_ok
+
+    def fetch_entities_media(self, media):
+        """ Fetch media entities. """
+        # {u'hashtags': [],
+        #  u'media': [
+        #       {
+        #           u'display_url': u'pic.twitter.com/eOIPsqpcfr',
+        #           u'expanded_url': u'http://twitter.com/ScPoLille/status/535408882081083392/photo/1',
+        #           u'id': 535408873046568961,
+        #           u'id_str': u'535408873046568961',
+        #           u'indices': [139, 140],
+        #           u'media_url': u'http://pbs.twimg.com/media/B24niIeIcAEle7X.jpg',
+        #           u'media_url_https': u'https://pbs.twimg.com/media/B24niIeIcAEle7X.jpg',
+        #           u'sizes': {u'large': {u'h': 768, u'resize': u'fit', u'w': 1024},
+        #            u'medium': {u'h': 450, u'resize': u'fit', u'w': 600},
+        #            u'small': {u'h': 255, u'resize': u'fit', u'w': 340},
+        #            u'thumb': {u'h': 150, u'resize': u'crop', u'w': 150}},
+        #           u'source_status_id': 535408882081083392,
+        #           u'source_status_id_str': u'535408882081083392',
+        #           u'type': u'photo',
+        #           u'url': u'http://t.co/eOIPsqpcfr'
+        #      }
+        #  ],
+        #  u'symbols': [],
+        #  u'urls': [],
+        # }
+
+        pass
+
+    def connect_mentions(self, user_mentions):
+        """ Connect mentions to the current tweet. """
+
+        #  u'user_mentions': [{u'id': 518750123,
+        #    u'id_str': u'518750123',
+        #    u'indices': [3, 13],
+        #    u'name': u'Sciences Po Lille',
+        #    u'screen_name': u'ScPoLille'},
+        #   {u'id': 311880926,
+        #    u'id_str': u'311880926',
+        #    u'indices': [119, 126],
+        #    u'name': u'Etalab',
+        #    u'screen_name': u'Etalab'}]
+
+        all_went_ok = True
+
+        for user_mention in user_mentions:
+            try:
+                author = Author.get_author_from_twitter_user(user_mention)
+
+                self.mentions.add(author)
+
+            except:
+                all_went_ok = False
+                LOGGER.exception(u'Could not connect user mention '
+                                 u'%s in tweet %s', user_mention, self)
+
+        return all_went_ok
 
     def post_create_task(self, apply_now=False):
         """ Method meant to be run from a celery task. """
