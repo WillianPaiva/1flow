@@ -39,7 +39,7 @@ from bs4 import BeautifulSoup
 from mongoengine import Document, signals
 
 from django.conf import settings
-from django.db import models
+from django.db import models, transaction
 from django.template import Context
 
 from djangojs.context_serializer import ContextSerializer
@@ -162,9 +162,10 @@ def register_task_method(klass, meth, module_globals,
               default_retry_delay=default_retry_delay)
         def task_func(object_pk, *args, **kwargs):
 
-            objekt = klass.objects.get(pk=object_pk)
+            with transaction.atomic():
+                objekt = klass.objects.get(pk=object_pk)
 
-            return getattr(objekt, method_name)(*args, **kwargs)
+                return getattr(objekt, method_name)(*args, **kwargs)
 
     else:
 
