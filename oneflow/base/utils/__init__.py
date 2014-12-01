@@ -163,10 +163,11 @@ def register_task_method(klass, meth, module_globals,
         def task_func(object_pk, *args, **kwargs):
 
             try:
-                with transaction.atomic():
-                    objekt = klass.objects.get(pk=object_pk)
+                # with transaction.atomic():
+                objekt = klass.objects.get(pk=object_pk)
 
-                    return getattr(objekt, method_name)(*args, **kwargs)
+                return getattr(objekt, method_name)(*args, **kwargs)
+
             except:
                 LOGGER.exception(u'exception while running %s on %s #%s',
                                  method_name, klass._meta.model.__name__,
