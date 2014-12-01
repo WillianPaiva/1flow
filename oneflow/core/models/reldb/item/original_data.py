@@ -168,6 +168,7 @@ def BaseItem_add_original_data_method(self, name, value, launch_task=False,
         setattr(od, name, value)
 
         if commit:
+            # with transaction.atomic():
             od.save()
 
         if launch_task:

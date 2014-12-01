@@ -30,7 +30,7 @@ from constance import config
 from xml.sax import SAXParseException
 
 from django.conf import settings
-from django.db import models, transaction  # , IntegrityError
+from django.db import models  # , IntegrityError
 from django.db.models.signals import pre_save, post_save, pre_delete
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import URLValidator
@@ -578,10 +578,9 @@ class RssAtomFeed(BaseFeed):
 
         if created:
             try:
-                with transaction.atomic():
-                    new_article.add_original_data('feedparser',
-                                                  unicode(article),
-                                                  launch_task=True)
+                new_article.add_original_data('feedparser',
+                                              unicode(article),
+                                              launch_task=True)
 
             except:
                 # Avoid crashing on anything related to the archive database,
