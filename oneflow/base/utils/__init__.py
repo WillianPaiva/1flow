@@ -162,20 +162,28 @@ def register_task_method(klass, meth, module_globals,
               default_retry_delay=default_retry_delay)
         def task_func(object_pk, *args, **kwargs):
 
-            with transaction.atomic():
-                objekt = klass.objects.get(pk=object_pk)
+            try:
+                with transaction.atomic():
+                    objekt = klass.objects.get(pk=object_pk)
 
-                return getattr(objekt, method_name)(*args, **kwargs)
-
+                    return getattr(objekt, method_name)(*args, **kwargs)
+            except:
+                LOGGER.exception(u'exception while running %s on %s #%s',
+                                 method_name, klass._meta.model.__name__,
+                                 object_pk)
     else:
 
         @task(name=task_name, queue=queue,
               default_retry_delay=default_retry_delay)
         def task_func(object_id, *args, **kwargs):
 
-            objekt = klass.objects.get(id=object_id)
+            try:
+                objekt = klass.objects.get(id=object_id)
 
-            return getattr(objekt, method_name)(*args, **kwargs)
+                return getattr(objekt, method_name)(*args, **kwargs)
+            except:
+                LOGGER.exception(u'exception while running %s on %s #%s',
+                                 method_name, klass.__name__, object_id)
 
     # Export the new task in the current module.
     module_globals[exported_name] = task_func
