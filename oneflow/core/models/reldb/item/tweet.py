@@ -269,8 +269,8 @@ class Tweet(BaseItem):
 
         defaults.update(kwargs)
 
-        tweet, created = cls.get_or_create(tweet_id=tweet_id,
-                                           defaults=defaults)
+        tweet, created = cls.objects.get_or_create(tweet_id=tweet_id,
+                                                   defaults=defaults)
 
         if created:
             LOGGER.info(u'Created tweet #%s in feed(s) %s.', tweet_id,
