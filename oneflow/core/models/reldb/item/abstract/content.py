@@ -221,7 +221,8 @@ class ContentItem(models.Model):
             return True
 
         if self.duplicate_of and not force:
-            LOGGER.warning(u'Article %s is a duplicate, will not fetch.', self)
+            LOGGER.warning(u'Not fetching content for duplicate %s #%s.',
+                           self._meta.model.__name__, self.id)
             return True
 
         return False
@@ -242,8 +243,9 @@ class ContentItem(models.Model):
             self.fetch_content_text(force=force, commit=commit)
 
         except StopProcessingException as e:
-            LOGGER.info(u'Stopping processing of article %s on behalf of '
-                        u'an internal caller: %s.', self, unicode(e))
+            LOGGER.info(u'Stopping processing of %s #%s on behalf of '
+                        u'an internal caller: %s.',
+                        self._meta.model.__name__, self.id, unicode(e))
 
             # HEADS UP: do NOT return if we want to activate reads… Because
             #           the first succeeding fetcher/parser WILL raise this
@@ -280,7 +282,8 @@ class ContentItem(models.Model):
             self.content_error = str(e)
             self.save()
 
-            LOGGER.exception(u'Extraction failed for article %s.', self)
+            LOGGER.exception(u'Extraction failed for %s #%s.',
+                             self._meta.model.__name__, self.id)
             return
 
         self.activate_reads(verbose=verbose)
@@ -400,12 +403,14 @@ class ContentItem(models.Model):
     def find_image_must_abort(self, force=False, commit=True):
 
         if self.image_url and not force:
-            LOGGER.info(u'Article %s image already found.', self)
+            LOGGER.info(u'%s #%s image already found.',
+                        self._meta.model.__name__, self.id)
             return True
 
         if self.content_type not in (CONTENT_TYPES.MARKDOWN, ):
-            LOGGER.warning(u'Article %s is not in Markdown format, '
-                           u'aborting image lookup.', self)
+            LOGGER.warning(u'%s #%s is not in Markdown format, '
+                           u'aborting image lookup.',
+                           self._meta.model.__name__, self.id)
             return True
 
     def find_image(self, force=False, commit=True):
@@ -447,7 +452,8 @@ class ContentItem(models.Model):
                     return self.image_url
 
         except Exception:
-            LOGGER.exception(u'Image extraction failed for article %s.', self)
+            LOGGER.exception(u'Image extraction failed for %s #%s.',
+                             self._meta.model.__name__, self.id)
 
         return None
 
@@ -470,7 +476,7 @@ class ContentItem(models.Model):
 
         try:
             # TODO: this should be coming from the website, not the feed.
-            return self.feed.has_option(CONTENT_FETCH_LIKELY_MULTIPAGE)
+            return self.feed.has_option(CONTENT_FETCH_LIKELY_MULTIPAGE)  # NOQA
 
         except:
             LOGGER.warning(u'likely_multipage_content() not Implemented…')
@@ -527,8 +533,8 @@ class ContentItem(models.Model):
                     content, encoding = self.prepare_content_text(url=self.url)
 
                 except:
-                    LOGGER.exception(u'Could not extract title of article %s',
-                                     self)
+                    LOGGER.exception(u'Could not extract title of %s #%s',
+                                     self._meta.model.__name__, self.id)
 
         old_title = self.name
 
@@ -537,11 +543,13 @@ class ContentItem(models.Model):
                 'title').contents[0].strip()
 
         except:
-            LOGGER.exception(u'Could not extract title of article %s', self)
+            LOGGER.exception(u'Could not extract title of %s #%s',
+                             self._meta.model.__name__, self.id)
 
         else:
-            LOGGER.info(u'Changed title of article #%s from “%s” to “%s”.',
-                        self.id, old_title, self.name)
+            LOGGER.info(u'Changed title of %s #%s from “%s” to “%s”.',
+                        self._meta.model.__name__, self.id,
+                        old_title, self.name)
 
             self.slug = slugify(self.name)
 
@@ -598,7 +606,8 @@ class ContentItem(models.Model):
 
         if not encoding:
             LOGGER.warning(u'Could not properly detect encoding for '
-                           u'article %s, using utf-8 as fallback.', self)
+                           u'%s #%s, using utf-8 as fallback.',
+                           self._meta.model.__name__, self.id)
             encoding = 'utf-8'
 
         if config.ARTICLE_FETCHING_DEBUG:
@@ -624,13 +633,21 @@ class ContentItem(models.Model):
             STRAINER_EXTRACTOR = strainer.Strainer(parser=parser,
                                                    add_score=True)
 
+            # Strainer is bogus, it logs everything on 'root'
+            # logger, we cannot disable it selectively. Doomed.
+            logging.disable(logging.WARNING)
+
             try:
                 content = STRAINER_EXTRACTOR.feed(content, encoding=encoding)
                 successfully_parsed = True
 
             except:
+                logging.disable(logging.NOTSET)
                 LOGGER.exception(u'Strainer extraction [parser=%s] '
-                                 u'failed for article %s', parser, self)
+                                 u'failed for %s #%s', parser,
+                                 self._meta.model.__name__, self.id)
+            else:
+                logging.disable(logging.NOTSET)
 
             del STRAINER_EXTRACTOR
             gc.collect()
@@ -639,6 +656,10 @@ class ContentItem(models.Model):
                 break
 
         if not successfully_parsed:
+
+            # Breadability logs too much, too.
+            logging.disable(logging.WARNING)
+
             try:
                 breadability_article = breadability.readable.Article(
                     content, url=self.url)
@@ -646,8 +667,11 @@ class ContentItem(models.Model):
                 successfully_parsed = True
 
             except:
+                logging.disable(logging.NOTSET)
                 LOGGER.exception(u'Breadability extraction failed for '
-                                 u'article %s', self)
+                                 u'%s #%s', self._meta.model.__name__, self.id)
+            else:
+                logging.disable(logging.NOTSET)
 
         if not successfully_parsed:
             newspaper_article = newspaper.Article(url=self.url)
@@ -692,7 +716,8 @@ class ContentItem(models.Model):
 
         if self.content_type in (None, CONTENT_TYPES.NONE):
 
-            LOGGER.info(u'Parsing text content for article %s…', self)
+            LOGGER.info(u'Parsing text content for %s #%s…',
+                        self._meta.model.__name__, self.id)
 
             if self.likely_multipage_content():
                 # If everything goes well, 'content' should be an utf-8
@@ -711,7 +736,8 @@ class ContentItem(models.Model):
                     if next_link:
                         self.pages_urls.append(next_link)
 
-                LOGGER.info(u'Fetched %s page(s) for article %s.', pages, self)
+                LOGGER.info(u'Fetched %s page(s) for %s #%s.', pages,
+                            self._meta.model.__name__, self.id)
 
             else:
                 # first: http://www.crummy.com/software/BeautifulSoup/bs4/doc/#non-pretty-printing # NOQA
@@ -759,7 +785,8 @@ class ContentItem(models.Model):
 
         self.convert_to_markdown(force=force, commit=commit)
 
-        LOGGER.info(u'Done parsing content for article %s.', self)
+        LOGGER.info(u'Done parsing content for %s #%s.',
+                    self._meta.model.__name__, self.id)
 
     def fetch_content_bookmark(self, force=False, commit=True):
 
@@ -814,7 +841,8 @@ class ContentItem(models.Model):
 
                     except:
                         LOGGER.exception(u'Could not extract description '
-                                         u'of imported bookmark %s', self)
+                                         u'of imported bookmark %s #%s',
+                                         self._meta.model.__name__, self.id)
 
                     else:
                         LOGGER.info(u'Successfully set description to “%s”',
@@ -829,8 +857,9 @@ class ContentItem(models.Model):
 
             # TODO: generate a snapshot of the website and store the image.
 
-                raise StopProcessingException(u'Done setting up bookmark '
-                                              u'content for article %s.', self)
+                raise StopProcessingException(
+                    u'Done setting up bookmark content for {0} #{1}.'.format(
+                        self._meta.model.__name__, self.id))
 
     # ———————————————————————————————————————————————————————— NOT SURE TO KEEP
 
@@ -864,11 +893,13 @@ class ContentItem(models.Model):
                 statsd.gauge('articles.counts.markdown', -1, delta=True)
 
         elif self.content_type != CONTENT_TYPES.HTML:
-            LOGGER.warning(u'Article %s cannot be converted to Markdown, '
-                           u'it is not currently HTML.', self)
+            LOGGER.warning(u'%s #%s cannot be converted to Markdown, '
+                           u'it is not currently HTML.',
+                           self._meta.model.__name__, self.id)
             return
 
-        LOGGER.info(u'Converting article %s to markdown…', self)
+        LOGGER.info(u'Converting %s #%s to markdown…',
+                    self._meta.model.__name__, self.id)
 
         md_converter = html2text.HTML2Text()
 
@@ -890,7 +921,7 @@ class ContentItem(models.Model):
             self.content_error = str(e)
             self.save()
 
-            LOGGER.exception(u'Markdown convert failed for article %s.', self)
+            LOGGER.exception(u'Markdown convert failed for item #%s.', self.id)
             return e
 
         self.content_type = CONTENT_TYPES.MARKDOWN

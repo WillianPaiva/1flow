@@ -39,7 +39,7 @@ from polymorphic import (
 )
 
 from oneflow.base.utils.dateutils import now, timedelta
-# from oneflow.base.utils import register_task_method
+from oneflow.base.utils import register_task_method
 
 from ..common import (
     DjangoUser as User,
@@ -60,6 +60,7 @@ __all__ = [
     'BaseItem',
 
     # 'baseitem_pre_save',
+    # Task methods will be added by register_task_method()
 ]
 
 
@@ -355,10 +356,44 @@ class BaseItem(PolymorphicModel,
                 LOGGER.exception(u'Could not replace current item in '
                                  u'read %s by %s!', read, self)
 
-        LOGGER.info(u'Item %s replaced by %s everywhere %s.', duplicate, self,
+        for tweet in duplicate.tweets.all():
+            try:
+                tweet.entities.add(self)
+                tweet.entities.remove(duplicate)
+
+            except:
+                all_went_ok = False
+                LOGGER.exception(u'Could not replace current item in '
+                                 u'read %s by %s!', read, self)
+
+        LOGGER.info(u'Item #%s replaced by #%s everywhere %s.',
+                    duplicate.id, self.id,
                     u'successfully' if all_went_ok else u'with some error(s).')
 
         return all_went_ok
+
+    def create_reads(self, feeds=None):
+        """ Create an article reads for all of its feeds.
+
+        .. note:: this method is run via a celery task.
+        """
+
+        # Even if the article wasn't created, we need to create reads.
+        # In the case of a mutualized article, it will be fetched only
+        # once, but all subscribers of all feeds must be connected to
+        # it to be able to read it.
+
+        if self.duplicate_of_id:
+            LOGGER.warning(u'Not creating reads for duplicate %s #%s',
+                           self._meta.model.__name__, self.id)
+            return
+
+        if feeds is None:
+            feeds = self.feeds.all()
+
+        for feed in feeds:
+            for subscription in feed.subscriptions.all():
+                subscription.create_read(self)
 
     def activate_reads(self, force=False, verbose=False, extended_check=False):
 
@@ -391,3 +426,10 @@ class BaseItem(PolymorphicModel,
             if verbose:
                 LOGGER.warning(u'Will not activate reads of bad article %s',
                                self)
+
+
+# ——————————————————————————————————————————————————————————————————————— Tasks
+
+
+register_task_method(BaseItem, BaseItem.create_reads,
+                     globals(), queue=u'create')

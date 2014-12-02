@@ -398,30 +398,34 @@ class TwitterFeed(BaseFeed):
 
         if 'text' in item:
             processed = True
+            tweet_id = item['id']
 
             # If the tweet flow is too high,
             # this should go into a celery task.
             tweet, created = Tweet.create_tweet(item, [self])
 
-            if created:
-                for subscription in self.subscriptions.all():
-                    subscription.create_read(tweet,
-                                             verbose=created)
-            else:
-                # a duplicate tweet. This should not
-                # happen, and twitter doesn't like this.
+            if created is False:
+                # A pure duplicate tweet. This should not happen, even in
+                # rare conditions where users create and destroy search
+                # feeds that get the same tweets, because when deleting
+                # feeds, tweets are deleted.
+                #
+                # NOTE: if the tweet is mutualized with another feed,
+                # this is not an issue, and Twitter won't blame us
+                # because they had to send it more than once anyway.
+                LOGGER.critical(u'Pure duplicate tweet #%s found in feed #%s.',
+                                item['id'], self.id)
                 exit_loop = not backfilling
 
-            # Duplicate or created, we will update
-            # the counters, to not hit it again.
-            tweet_id = item['id']
-
+            # Duplicate, mutualized or created, we will
+            # update the counters, to not get this tweet
+            # again, at least in this feed.
             if backfilling:
 
                 oldest_id = self.oldest_id
 
                 if oldest_id is None or tweet_id < oldest_id:
-                    # Forward to latest tweet
+                    # Push back to oldest tweet
                     self.set_oldest_id(tweet_id)
             else:
 
@@ -431,6 +435,8 @@ class TwitterFeed(BaseFeed):
                     # Forward to latest tweet
                     self.set_latest_id(tweet_id)
 
+            statsd.incr('api.twitter.items.processed')
+
         elif 'code' in item:
             if item['code'] == 88:
                 # {u'message': u'Rate limit exceeded', u'code': 88}
@@ -438,6 +444,8 @@ class TwitterFeed(BaseFeed):
                              u'backfilling' if backfilling else u'consuming',
                              item['message'])
                 exit_loop = True
+
+            statsd.incr('api.twitter.messages.rate_exceeded')
 
         elif 'warning' in item:
             percent = item['percent_full']
@@ -451,6 +459,8 @@ class TwitterFeed(BaseFeed):
             else:
                 LOGGER.warning(u'%s: stall warning sent (%s%% '
                                u'full)', self, percent)
+
+            statsd.incr('api.twitter.messages.stall_warning')
 
         elif 'delete' in item:
             try:
@@ -470,13 +480,19 @@ class TwitterFeed(BaseFeed):
             LOGGER.warning(u'%s: %s tweets missed',
                            item['limit'].get('track'))
 
+            statsd.incr('api.twitter.messages.tweets_missed')
+
         elif 'disconnect' in item:
             LOGGER.error(u'%s: disconnecting because %s',
                          self, item['disconnect'].get('reason'))
             exit_loop = True
 
+            statsd.incr('api.twitter.messages.disconnect')
+
         else:
             LOGGER.exception(u'%s: unhandled item: %s', self, item)
+
+            statsd.incr('api.twitter.items.unhandled')
 
         # LOGGER.debug(u'%s: returning %s, %s', self, processed, exit_loop)
 
@@ -694,6 +710,8 @@ class TwitterFeed(BaseFeed):
                                      u're-starting…', self,
                                      infinite_count, cur_processed)
 
+                    statsd.incr('api.twitter.items.exception')
+
                 all_processed += cur_processed
                 cur_processed = 0
 
@@ -728,6 +746,8 @@ class TwitterFeed(BaseFeed):
         """
 
         period_start_item = self.latest_id
+
+        statsd.incr('api.twitter.actions.consume')
 
         try:
             if self.is_timeline:
@@ -869,6 +889,8 @@ class TwitterFeed(BaseFeed):
 
         # can be None
         period_start_item = self.oldest_id
+
+        statsd.incr('api.twitter.actions.backfill')
 
         try:
             if self.is_timeline:

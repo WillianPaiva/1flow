@@ -598,14 +598,16 @@ def migrate_article(mongo_article):
     # article.url is already set at creation
     article.is_orphaned = mongo_article.orphaned
     article.url_absolute = mongo_article.url_absolute
-    article.url_error = mongo_article.url_error if mongo_article.url_error != u'' else None
+    article.url_error = mongo_article.url_error \
+        if mongo_article.url_error != u'' else None
 
     # ContentItem
     article.image_url = mongo_article.image_url
     article.excerpt = mongo_article.excerpt
     article.content = mongo_article.content
     article.content_type = mongo_article.content_type
-    article.content_error = mongo_article.content_error if mongo_article.content_error != u'' else None
+    article.content_error = mongo_article.content_error \
+        if mongo_article.content_error != u'' else None
 
     # Needed for ManyToManyField() to succeed.
     article.save()
@@ -773,58 +775,84 @@ def migrate_read(mongo_read):
     user = mongo_read.user.django
     item = get_article_from_mongo_article(mongo_read.article)
 
-    try:
-        read = Read.objects.get(user=user, item=item)
+    read, created = Read.objects.get_or_create(user=user, item=item)
 
-    except Read.DoesNotExist:
-        pass
-
-        read = Read(
-            user=user,
-            item=item,
-        )
-
-    else:
-        # Has the article been created by a feed refresh ?
-        # If so, data must be transfered, else we are going
-        # to create a duplicate.
-        if read.date_created <= mongo_read.date_created:
-            return read, False
-
+    # transfer history
     read.date_created = mongo_read.date_created
-    read.is_good = mongo_read.is_good
 
-    read.is_read = mongo_read.is_read
-    read.date_read = mongo_read.date_read
-    read.is_auto_read = mongo_read.is_auto_read
-    read.date_auto_read = mongo_read.date_auto_read
-    read.is_archived = mongo_read.is_archived
-    read.date_archived = mongo_read.date_archived
-    read.is_starred = mongo_read.is_starred
-    read.date_starred = mongo_read.date_starred
-    read.is_bookmarked = mongo_read.is_bookmarked
-    read.date_bookmarked = mongo_read.date_bookmarked
-    read.bookmark_type = mongo_read.bookmark_type
+    read.is_good = mongo_read.is_good or read.is_good
 
-    read.is_fact = mongo_read.is_fact
-    read.date_fact = mongo_read.date_fact
-    read.is_quote = mongo_read.is_quote
-    read.date_quote = mongo_read.date_quote
-    read.is_number = mongo_read.is_number
-    read.date_number = mongo_read.date_number
-    read.is_analysis = mongo_read.is_analysis
-    read.date_analysis = mongo_read.date_analysis
-    read.is_prospective = mongo_read.is_prospective
-    read.date_prospective = mongo_read.date_prospective
-    read.is_knowhow = mongo_read.is_knowhow
-    read.date_knowhow = mongo_read.date_knowhow
-    read.is_rules = mongo_read.is_rules
-    read.date_rules = mongo_read.date_rules
-    read.is_knowledge = mongo_read.is_knowledge
-    read.date_knowledge = mongo_read.date_knowledge
-    read.knowledge_type = mongo_read.knowledge_type
-    read.is_fun = mongo_read.is_fun
-    read.date_fun = mongo_read.date_fun
+    read.is_read = mongo_read.is_read or read.is_read
+
+    if mongo_read.is_read:
+        read.date_read = mongo_read.date_read
+
+    read.is_auto_read = mongo_read.is_auto_read or read.is_auto_read
+
+    if mongo_read.is_auto_read:
+        read.date_auto_read = mongo_read.date_auto_read
+
+    read.is_archived = mongo_read.is_archived or read.is_archived
+
+    if mongo_read.is_archived:
+        read.date_archived = mongo_read.date_archived
+
+    read.is_starred = mongo_read.is_starred or read.is_starred
+
+    if mongo_read.is_starred:
+        read.date_starred = mongo_read.date_starred
+
+    read.is_bookmarked = mongo_read.is_bookmarked or read.is_bookmarked
+
+    if mongo_read.is_bookmarked:
+        read.date_bookmarked = mongo_read.date_bookmarked
+        read.bookmark_type = mongo_read.bookmark_type
+
+    read.is_fact = mongo_read.is_fact or read.is_fact
+
+    if mongo_read.is_fact:
+        read.date_fact = mongo_read.date_fact
+
+    read.is_quote = mongo_read.is_quote or read.is_quote
+
+    if mongo_read.is_quote:
+        read.date_quote = mongo_read.date_quote
+
+    read.is_number = mongo_read.is_number or read.is_number
+
+    if mongo_read.is_number:
+        read.date_number = mongo_read.date_number
+
+    read.is_analysis = mongo_read.is_analysis or read.is_analysis
+
+    if mongo_read.is_analysis:
+        read.date_analysis = mongo_read.date_analysis
+
+    read.is_prospective = mongo_read.is_prospective or read.is_prospective
+
+    if mongo_read.is_prospective:
+        read.date_prospective = mongo_read.date_prospective
+
+    read.is_knowhow = mongo_read.is_knowhow or read.is_knowhow
+
+    if mongo_read.is_knowhow:
+        read.date_knowhow = mongo_read.date_knowhow
+
+    read.is_rules = mongo_read.is_rules or read.is_rules
+
+    if mongo_read.is_rules:
+        read.date_rules = mongo_read.date_rules
+
+    read.is_knowledge = mongo_read.is_knowledge or read.is_knowledge
+
+    if mongo_read.is_knowledge:
+        read.date_knowledge = mongo_read.date_knowledge
+        read.knowledge_type = mongo_read.knowledge_type
+
+    read.is_fun = mongo_read.is_fun or read.is_fun
+
+    if mongo_read.is_fun:
+        read.date_fun = mongo_read.date_fun
 
     read.rating = mongo_read.rating
 

@@ -26,8 +26,8 @@ from celery import task
 from statsd import statsd
 # from constance import config
 
-# from django.conf import settings
-from django.db import models, IntegrityError
+from django.conf import settings
+from django.db import models, transaction, IntegrityError
 from django.db.models.signals import post_save, pre_save, pre_delete
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
@@ -36,13 +36,15 @@ from oneflow.base.utils import register_task_method
 from oneflow.base.utils.http import clean_url
 from oneflow.base.utils.dateutils import now, datetime
 
-from ..common import ORIGINS
+from ..common import ORIGINS, CONTENT_TYPES
 from ..author import Author
+from ..website import SOCIAL_WEBSITES
 
 from base import (
     BaseItemQuerySet,
     BaseItemManager,
     BaseItem,
+    baseitem_create_reads_task,
 )
 
 
@@ -60,7 +62,7 @@ __all__ = [
 ]
 
 
-def create_tweet_from_id(tweet_id, feeds=None):
+def create_tweet_from_id(tweet_id, feeds=None, origin=None):
     """ From a Tweet ID, create a 1flow tweet via the REST API.
 
 
@@ -201,6 +203,53 @@ class Tweet(BaseItem):
 
         return True
 
+    # —————————————————————————————————————————— Article backward compatibility
+    #       Only for rendering, should vanish when we have dedicated templates.
+
+    @property
+    def url(self):
+        """ Be compatible with articles for rendering. """
+        try:
+            username = self.authors.get().username
+        except:
+            username = u'UNKNOWN'
+
+        return u'{0}/{1}/status/{2}'.format(
+            SOCIAL_WEBSITES[ORIGINS.TWITTER].url,
+            username,
+            self.tweet_id)
+
+    @property
+    def content_type(self):
+        """ Be compatible with articles for rendering. """
+
+        return CONTENT_TYPES.MARKDOWN
+
+    @property
+    def content(self):
+        """ Be compatible with articles for rendering. """
+
+        content = self.name[:]
+
+        json_tweet = self.original_data.twitter_hydrated
+        entities = json_tweet.get('entities', {})
+
+        for entity_url in entities.get('urls', []):
+
+            indices = entity_url['indices']
+            LOGGER.debug('replace %s', indices)
+
+            content = content[:indices[0]] + u'[{0}]({1})'.format(
+                entity_url['display_url'], entity_url['expanded_url']
+            ) + content[indices[1]:]
+
+            #
+            # TODO: indexes love when there are more than one…
+            #
+            break
+
+        return content
+
     # ————————————————————————————————————————————————————————————————— Methods
 
     @classmethod
@@ -212,76 +261,82 @@ class Tweet(BaseItem):
 
         title = TwitterAPI_item['text']
         tweet_id = TwitterAPI_item['id']
-        cur_tweet = None
-        new_tweet = None
 
-        new_tweet = cls(name=title, tweet_id=tweet_id)
+        defaults = {
+            'name': title,
+            'origin': kwargs.pop('origin', ORIGINS.TWITTER)
+        }
+
+        defaults.update(kwargs)
+
+        tweet, created = cls.objects.get_or_create(tweet_id=tweet_id,
+                                                   defaults=defaults)
+
+        if created:
+            LOGGER.info(u'Created tweet #%s in feed(s) %s.', tweet_id,
+                        u', '.join(unicode(f) for f in feeds))
+
+            if feeds:
+                try:
+                    with transaction.atomic():
+                        tweet.feeds.add(*feeds)
+
+                except IntegrityError:
+                    LOGGER.exception(u'Integrity error on created tweet #%s',
+                                     tweet_id)
+                    pass
+
+            tweet.add_original_data('twitter',
+                                    json.dumps(TwitterAPI_item),
+                                    launch_task=True)
+
+            return tweet, True
+
+        # —————————————————————————————————————————————————————— existing tweet
+
+        # Get a change to catch a duplicate if workers were fast.
+        if tweet.duplicate_of_id:
+            LOGGER.info(u'Swaping duplicate tweet #%s with master #%s on '
+                        u'the fly.', tweet.id, tweet.duplicate_of_id)
+
+            tweet = tweet.duplicate_of
+
+        created_retval = False
+
+        previous_feeds_count = tweet.feeds.count()
 
         try:
-            new_tweet.save()
+            with transaction.atomic():
+                tweet.feeds.add(*feeds)
 
         except IntegrityError:
-            cur_tweet = cls.objects.get(tweet_id=tweet_id)
+            # Race condition when backfill_if_needed() is run after
+            # reception of first item in a stream, and they both create
+            # the same tweet.
+            LOGGER.exception(u'Integrity error when adding feeds %s to '
+                             u'tweet #%s', feeds, tweet_id)
 
-        if cur_tweet:
-            created_retval = False
-
-            if len(feeds) == 1 and feeds[0] not in cur_tweet.feeds.all():
+        else:
+            if tweet.feeds.count() > previous_feeds_count:
                 # This tweet is already there, but has not yet been
                 # fetched for this feed. It's mutualized, and as such
                 # it is considered at partly new. At least, it's not
                 # as bad as being a true duplicate.
                 created_retval = None
 
-                LOGGER.info(u'Mutualized tweet “%s” (ID: %s) in feed(s) %s.',
-                            title, tweet_id,
+                LOGGER.info(u'Mutualized tweet #%s #%s in feed(s) %s.',
+                            tweet_id, tweet.id,
                             u', '.join(unicode(f) for f in feeds))
+
+                tweet.create_reads(feeds=feeds)
 
             else:
                 # No statsd, because we didn't create any record in database.
-                LOGGER.info(u'Duplicate tweet “%s” (ID: %s) in feed(s) %s.',
-                            title, tweet_id,
+                LOGGER.info(u'Duplicate tweet “%s” #%s #%s in feed(s) %s.',
+                            title, tweet_id, tweet.id,
                             u', '.join(unicode(f) for f in feeds))
 
-            try:
-                cur_tweet.feeds.add(*feeds)
-
-            except IntegrityError:
-                # Race condition when backfill_if_needed() is run after
-                # reception of first item in a stream, and they both create
-                # the same tweet. One of them really
-                pass
-
-            return cur_tweet, created_retval
-
-        if kwargs:
-            for key, value in kwargs.items():
-                setattr(new_tweet, key, value)
-
-        if 'origin' not in kwargs:
-            new_tweet.origin = ORIGINS.TWITTER
-
-        new_tweet.save()
-
-        LOGGER.info(u'Created tweet #%s in feed(s) %s.', new_tweet.tweet_id,
-                    u', '.join(unicode(f) for f in feeds))
-
-        # Tags & feeds are ManyToMany, they
-        # need the tweet to be saved before.
-
-        if feeds:
-            try:
-                new_tweet.feeds.add(*feeds)
-
-            except IntegrityError:
-                # Race condition: see some lines above.
-                pass
-
-        new_tweet.add_original_data('twitter',
-                                    json.dumps(TwitterAPI_item),
-                                    launch_task=True)
-
-        return new_tweet, True
+        return tweet, created_retval
 
     def fetch_entities(self, entities=None, commit=True):
         """ Fetch Tweet entities. """
@@ -300,28 +355,25 @@ class Tweet(BaseItem):
         #     u'user_mentions': []
         # },
 
+        if self.entities_fetched:
+            LOGGER.info(u'%s: entities already fetched.', self)
+            # return
+
         if entities is None:
             entities = self.original_data.twitter_hydrated['entities']
 
         all_went_ok = True
 
-        entities_urls = entities['urls']
+        for entities_name, fetch_entities_method in (
+            ('urls', self.fetch_entities_urls, ),
+            ('media', self.fetch_entities_media, ),
+            ('user_mentions', self.connect_mentions, ),
+        ):
+            entities_values = entities.get(entities_name, None)
 
-        if entities_urls:
-            from create import create_item_from_url
-
-            for entity_url in entities_urls:
-                try:
-                    item, created = create_item_from_url(
-                        url=entity_url['expanded_url'],
-                        feeds=self.feeds.all(),
-                        origin=ORIGINS.TWITTER
-                    )
-                except:
+            if entities_values:
+                if not fetch_entities_method(entities_values):
                     all_went_ok = False
-
-                else:
-                    self.entities.add(item)
 
         if all_went_ok:
             self.entities_fetched = True
@@ -329,16 +381,133 @@ class Tweet(BaseItem):
             if commit:
                 self.save()
 
+    def fetch_entities_urls(self, entities_urls):
+        """ Fetch URLs entities, and add the created items to self.entities. """
+
+        from create import create_item_from_url
+
+        all_went_ok = True
+
+        update_original_data = False
+        new_entities_urls = []
+
+        for entity_url in entities_urls:
+            try:
+                url = entity_url['expanded_url']
+
+                item, created = create_item_from_url(
+                    url=url,
+                    feeds=self.feeds.all(),
+                    origin=ORIGINS.TWITTER
+                )
+
+                if item.url != url:
+                    # Our absolutizer has resolved the URL more than it was.
+                    entity_url['expanded_url'] = item.url
+                    entity_url['display_url'] = u'{0}/a/{1}'.format(
+                        settings.SITE_DOMAIN, item.id)
+                    update_original_data = True
+
+                new_entities_urls.append(entity_url)
+
+                try:
+                    with transaction.atomic():
+                        self.entities.add(item)
+                except:
+                    LOGGER.error(u'Could not add entity %s to tweet #%s',
+                                 item.id,)
+
+            except:
+                all_went_ok = False
+                LOGGER.exception(u'Could not fetch URL entity %s of '
+                                 u'tweet #%s', url, self.id)
+
+        if update_original_data:
+            tweet_original_data = self.original_data.twitter_hydrated
+            entities_orig = tweet_original_data['entities']
+            entities_orig['urls.orig.1flow'] = entities_orig['urls'][:]
+            entities_orig['urls'] = new_entities_urls
+            tweet_original_data['entities'] = entities_orig
+            self.original_data.twitter = json.dumps(tweet_original_data)
+
+            self.original_data.save()
+
+            LOGGER.info(u'%s #%s: updated original data because URLs changed.',
+                        self._meta.model.__name__, self.id)
+
+        return all_went_ok
+
+    def fetch_entities_media(self, media):
+        """ Fetch media entities. """
+        # {u'hashtags': [],
+        #  u'media': [
+        #       {
+        #           u'display_url': u'pic.twitter.com/eOIPsqpcfr',
+        #           u'expanded_url': u'http://twitter.com/ScPoLille/status/535408882081083392/photo/1',
+        #           u'id': 535408873046568961,
+        #           u'id_str': u'535408873046568961',
+        #           u'indices': [139, 140],
+        #           u'media_url': u'http://pbs.twimg.com/media/B24niIeIcAEle7X.jpg',
+        #           u'media_url_https': u'https://pbs.twimg.com/media/B24niIeIcAEle7X.jpg',
+        #           u'sizes': {u'large': {u'h': 768, u'resize': u'fit', u'w': 1024},
+        #            u'medium': {u'h': 450, u'resize': u'fit', u'w': 600},
+        #            u'small': {u'h': 255, u'resize': u'fit', u'w': 340},
+        #            u'thumb': {u'h': 150, u'resize': u'crop', u'w': 150}},
+        #           u'source_status_id': 535408882081083392,
+        #           u'source_status_id_str': u'535408882081083392',
+        #           u'type': u'photo',
+        #           u'url': u'http://t.co/eOIPsqpcfr'
+        #      }
+        #  ],
+        #  u'symbols': [],
+        #  u'urls': [],
+        # }
+
+        pass
+
+    def connect_mentions(self, user_mentions):
+        """ Connect mentions to the current tweet. """
+
+        #  u'user_mentions': [{u'id': 518750123,
+        #    u'id_str': u'518750123',
+        #    u'indices': [3, 13],
+        #    u'name': u'Sciences Po Lille',
+        #    u'screen_name': u'ScPoLille'},
+        #   {u'id': 311880926,
+        #    u'id_str': u'311880926',
+        #    u'indices': [119, 126],
+        #    u'name': u'Etalab',
+        #    u'screen_name': u'Etalab'}]
+
+        all_went_ok = True
+
+        for user_mention in user_mentions:
+            try:
+                author = Author.get_author_from_twitter_user(user_mention)
+
+                self.mentions.add(author)
+
+            except:
+                all_went_ok = False
+                LOGGER.exception(u'Could not connect user mention '
+                                 u'%s in tweet %s', user_mention, self)
+
+        return all_went_ok
+
     def post_create_task(self, apply_now=False):
         """ Method meant to be run from a celery task. """
 
         fetch_task = globals()['tweet_fetch_entities_task']
 
         if apply_now:
+            baseitem_create_reads_task.apply((self.id, ))
             fetch_task.apply((self.id, ))
 
         else:
+
             fetch_task.delay(self.id)
+            baseitem_create_reads_task.si(self.id),
+
 
 # ———————————————————————————————————————————————————————————————— Celery Tasks
 

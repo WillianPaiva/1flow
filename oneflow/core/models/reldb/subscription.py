@@ -46,7 +46,7 @@ from tag import AbstractTaggedModel
 from folder import Folder
 from feed import BaseFeed, RssAtomFeed, MailFeed, TwitterFeed
 from read import Read
-from item import Article
+from item import BaseItem, Article
 
 LOGGER = logging.getLogger(__name__)
 
@@ -327,7 +327,13 @@ class Subscription(ModelDiffMixin, AbstractTaggedModel):
         or if it existed before.
         """
 
-        read, created = Read.objects.get_or_create(item=item,
+        # We force item.id, to be sure the item is reloaded from the DB.
+        # In many cases, the item has been fetched in the background, and
+        # the current one is not fresh enough, it will report
+        # `is_good` == False whereas in reality it's OK.
+        item = BaseItem.objects.get(id=item.id)
+
+        read, created = Read.objects.get_or_create(item_id=item.id,
                                                    user=self.user)
 
         # If another feed has already created the read, be sure the
@@ -404,7 +410,7 @@ class Subscription(ModelDiffMixin, AbstractTaggedModel):
 
                     except:
                         LOGGER.exception(u'Problem while activating reads '
-                                         u'of Article #%s in Subscription '
+                                         u'of item #%s in Subscription '
                                          u'#%s.check_reads(), continuing '
                                          u'check.', item.id, self.id)
 
@@ -415,12 +421,11 @@ class Subscription(ModelDiffMixin, AbstractTaggedModel):
         # We can order them by date and connect reads in the same order.
 
         if items is None:
-            on_items = self.feed.good_items.instance_of(
-                Article).order_by('Article___date_published')
+            on_items = self.feed.good_items.article().order_by(
+                'Article___date_published')
 
         else:
-            on_items = items.instance_of(
-                Article).order_by('Article___date_published')
+            on_items = items.article().order_by('Article___date_published')
 
         for item in on_items.filter(Article___date_published__lt=in_the_past):
 
@@ -444,6 +449,7 @@ class Subscription(ModelDiffMixin, AbstractTaggedModel):
 
         if items is None:
             on_items = self.feed.good_items.not_instance_of(Article)
+
         else:
             on_items = items.not_instance_of(Article)
 

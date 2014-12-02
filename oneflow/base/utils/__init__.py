@@ -39,7 +39,7 @@ from bs4 import BeautifulSoup
 from mongoengine import Document, signals
 
 from django.conf import settings
-from django.db import models
+from django.db import models, transaction
 from django.template import Context
 
 from djangojs.context_serializer import ContextSerializer
@@ -62,7 +62,7 @@ boolcast = {
 
 
 def full_version():
-    """ Return full version, with Git informations, if relevant.
+    u""" Return full version, with Git informations, if relevant.
 
     .. note:: *relevant* means “not on master branch”.
     """
@@ -108,21 +108,21 @@ def register_task_method(klass, meth, module_globals,
                          queue=None, default_retry_delay=None):
     """ A simple wrapper to register methods as celery tasks.
 
-        Necessary because celery tasks-as-methods don't work as expected,
-        and we don't want to create to create function tasks because it
-        makes no sense in our OO context.
+    Necessary because celery tasks-as-methods don't work as expected,
+    and we don't want to create to create function tasks because it
+    makes no sense in our OO context.
 
 
-        :param klass: a class where the :param:`meth` method belongs to.
-        :param meth: the method that will run as the task.
-        :param queue: the celery queue the method will run in.
-            Defaults to ``medium``.
+    :param klass: a class where the :param:`meth` method belongs to.
+    :param meth: the method that will run as the task.
+    :param queue: the celery queue the method will run in.
+        Defaults to ``medium``.
 
-        .. note:: we gave a try at :mod:`method_decorator` to implement
-            this as a method decorator, but it didn't work with decorator
-            arguments, it's much more complicated than it seems. Thus this
-            simpler function, that requires a little more typing in the
-            modules, but just works.
+    .. note:: we gave a try at :mod:`method_decorator` to implement
+        this as a method decorator, but it didn't work with decorator
+        arguments, it's much more complicated than it seems. Thus this
+        simpler function, that requires a little more typing in the
+        modules, but just works.
     """
     class_name  = klass.__name__
     method_name = meth.im_func.func_name
@@ -162,19 +162,29 @@ def register_task_method(klass, meth, module_globals,
               default_retry_delay=default_retry_delay)
         def task_func(object_pk, *args, **kwargs):
 
-            objekt = klass.objects.get(pk=object_pk)
+            try:
+                # with transaction.atomic():
+                objekt = klass.objects.get(pk=object_pk)
 
-            return getattr(objekt, method_name)(*args, **kwargs)
+                return getattr(objekt, method_name)(*args, **kwargs)
 
+            except:
+                LOGGER.exception(u'exception while running %s on %s #%s',
+                                 method_name, klass._meta.model.__name__,
+                                 object_pk)
     else:
 
         @task(name=task_name, queue=queue,
               default_retry_delay=default_retry_delay)
         def task_func(object_id, *args, **kwargs):
 
-            objekt = klass.objects.get(id=object_id)
+            try:
+                objekt = klass.objects.get(id=object_id)
 
-            return getattr(objekt, method_name)(*args, **kwargs)
+                return getattr(objekt, method_name)(*args, **kwargs)
+            except:
+                LOGGER.exception(u'exception while running %s on %s #%s',
+                                 method_name, klass.__name__, object_id)
 
     # Export the new task in the current module.
     module_globals[exported_name] = task_func
@@ -191,12 +201,13 @@ def register_task_method(klass, meth, module_globals,
 
 
 def connect_mongoengine_signals(module_globals):
-    """ Automatically iterate classes of a given module and connect handlers
-        to signals, given they follow the name pattern
-        ``signal_<signal_name>_handler()``.
+    """ Automatically connect handlers to signals.
 
-        See https://mongoengine-odm.readthedocs.org/en/latest/guide/signals.html#overview # NOQA
-        for a list of valid signal names.
+    Given they follow the name pattern
+    ``signal_<signal_name>_handler()``.
+
+    See https://mongoengine-odm.readthedocs.org/en/latest/guide/signals.html#overview # NOQA
+    for a list of valid signal names.
     """
 
     if blinker is None:
@@ -236,35 +247,36 @@ def connect_mongoengine_signals(module_globals):
 
 
 def request_context_celery(request, *args, **kwargs):
-    """ Create a standard Django :class:`Context`, and add it some useful
-        things from the current RequestContext, without all the fudge. Eg.::
+    """ Create a standard Django :class:`Context`, and add useful things.
 
-        - ``request.user`` becomes ``context['user']``
-        - ``request.session`` becomes ``context['session']``
-        - ``request.META`` becomes ``context['meta']`` (lowercase) and
-          gets cleaned from non-pickable values (see later).
-        - ``request.LANGUAGE_CODE`` becomes ``context['language_code']``
-          if it is available in the request, else it is set to ``None``.
+    From the current RequestContext, without all the fudge. Eg.::
 
-        With :param:`args` and :param:`kwargs`, you can pass anything you
-        want to be added to the context, these arguments will be passed
-        verbatim to the :class:`Context` constructor.
+    - ``request.user`` becomes ``context['user']``
+    - ``request.session`` becomes ``context['session']``
+    - ``request.META`` becomes ``context['meta']`` (lowercase) and
+      gets cleaned from non-pickable values (see later).
+    - ``request.LANGUAGE_CODE`` becomes ``context['language_code']``
+      if it is available in the request, else it is set to ``None``.
 
-        This Context instance is specialy forged for celery tasks,
-        and should not make them crash with :class:`PicklingError`.
-        In case it still does, you can mark ``HttpRequest.META`` keys to
-        be removed from the context via the ``CELERY_CONTEXT_EXPUNGE_META``
-        setting directive. Defaults keys purged are::
+    With :param:`args` and :param:`kwargs`, you can pass anything you
+    want to be added to the context, these arguments will be passed
+    verbatim to the :class:`Context` constructor.
 
-            ('wsgi.errors', 'wsgi.input', 'wsgi.file_wrapper',
-             'gunicorn.socket', )
+    This Context instance is specialy forged for celery tasks,
+    and should not make them crash with :class:`PicklingError`.
+    In case it still does, you can mark ``HttpRequest.META`` keys to
+    be removed from the context via the ``CELERY_CONTEXT_EXPUNGE_META``
+    setting directive. Defaults keys purged are::
 
-        You can specify non-existing keys, they will just be skipped.
+        ('wsgi.errors', 'wsgi.input', 'wsgi.file_wrapper',
+         'gunicorn.socket', )
 
-        .. note:: the default keys will *always* be purged. You do not need
-            to add them to ``CELERY_CONTEXT_EXPUNGE_META``. Said another way
-            there is currently no way to avoid expunging them, and this is
-            intentional.
+    You can specify non-existing keys, they will just be skipped.
+
+    .. note:: the default keys will *always* be purged. You do not need
+        to add them to ``CELERY_CONTEXT_EXPUNGE_META``. Said another way
+        there is currently no way to avoid expunging them, and this is
+        intentional.
 
     """
 

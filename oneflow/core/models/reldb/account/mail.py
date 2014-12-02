@@ -500,7 +500,7 @@ class MailAccount(BaseAccount):
                                          u'email with UID %s (%s)',
                                          self, msg_uid, data)
 
-                    yield self.email_prettify_raw_message(message)
+                    yield email_prettify_raw_message(message)
 
             else:
                 # Without the cache, we fetch in

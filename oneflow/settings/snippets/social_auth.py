@@ -33,10 +33,20 @@ SOCIAL_AUTH_SESSION_EXPIRATION = False
 MORE_AUTH_BACKENDS = tuple()
 
 for var_name, backend in (
-    ('SOCIAL_AUTH_TWITTER_KEY', 'social.backends.twitter.TwitterOAuth',),
-    ('SOCIAL_AUTH_GITHUB_KEY', 'social.backends.github.GithubOAuth2',),
-    ('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', 'social.backends.google.GoogleOAuth2',),
-    ('SOCIAL_AUTH_FACEBOOK_KEY', 'social.backends.facebook.FacebookOAuth2',),
+    ('SOCIAL_AUTH_TWITTER_KEY', 'social.backends.twitter.TwitterOAuth', ),
+    ('SOCIAL_AUTH_GITHUB_KEY', 'social.backends.github.GithubOAuth2', ),
+    ('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', 'social.backends.google.GoogleOAuth2', ),
+    ('SOCIAL_AUTH_LINKEDIN_KEY', 'social.backends.linkedin.LinkedinOAuth', ),
+    ('SOCIAL_AUTH_FACEBOOK_KEY', 'social.backends.facebook.FacebookOAuth2', ),
+
+    # Amazon MUST be HTTPS.
+    # ('SOCIAL_AUTH_AMAZON_KEY', 'social.backends.amazon.AmazonOAuth2', ),
+
+    # http://python-social-auth.readthedocs.org/en/latest/backends/docker.html
+    # http://python-social-auth.readthedocs.org/en/latest/backends/dropbox.html
+    # http://python-social-auth.readthedocs.org/en/latest/backends/livejournal.html
+    # http://python-social-auth.readthedocs.org/en/latest/backends/disqus.html
+    # http://python-social-auth.readthedocs.org/en/latest/backends/battlenet.html
 
     # ( , '# 'social.backends.google.GoogleOpenId',),
     # ( , '# 'social.backends.google.GoogleOAuth',),
@@ -215,6 +225,15 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = [
     ('verified', 'verified'),
 ]
 
+# SOCIAL_AUTH_LINKEDIN_EXTRA_DATA = [
+#     ('id', 'id'),
+#     ('firstName', 'first_name'),
+#     ('lastName', 'last_name'),
+#     ('emailAddress', 'email_address'),
+#     ('headline', 'headline'),
+#     ('industry', 'industry')
+# ]
+
 
 # ——————————————————————————————————————————————————————————————— Google Oauth2
 
@@ -239,4 +258,12 @@ SOCIAL_AUTH_FACEBOOK_SCOPE = [
     'user_friends',
     'user_birthday',
     'friends_location',
+]
+
+SOCIAL_AUTH_LINKEDIN_SCOPE = [
+    'r_network',
+    'r_fullprofile',
+    'r_basicprofile',
+    'r_emailaddress',
+    'r_contactinfo',
 ]

@@ -106,8 +106,8 @@ class AbstractDuplicateAwareModel(models.Model):
                            verbose_name, duplicate, self)
             return
 
-        LOGGER.info(u'Registering %s %s as duplicate of %s…',
-                    verbose_name, duplicate, self)
+        LOGGER.info(u'Registering %s #%s as duplicate of #%s now…',
+                    verbose_name, duplicate.id, self.id)
 
         # Register the duplication immediately, for other
         # background operations to use ourselves as value.
@@ -119,8 +119,8 @@ class AbstractDuplicateAwareModel(models.Model):
                      1, delta=True)
 
         if background:
-            LOGGER.info(u'Replacing %s %s by %s in the background…',
-                        self._meta.verbose_name, duplicate, self)
+            LOGGER.info(u'Replacing %s #%s by #%s in the background…',
+                        self._meta.verbose_name, duplicate.id, self.id)
 
             # NOTE: we don't directly transmit the model class
             # to ease with celery arguments serialization.
@@ -129,16 +129,16 @@ class AbstractDuplicateAwareModel(models.Model):
                 self.id, duplicate.id)
 
         else:
-            LOGGER.info(u'Replacing %s %s by %s in the foreground…',
-                        self._meta.verbose_name, duplicate, self)
+            LOGGER.info(u'Replacing %s #%s by #%s in the foreground…',
+                        self._meta.verbose_name, duplicate.id, self.id)
 
-            return abstract_replace_duplicate_task(self._meta.app_label,
-                                                   self._meta.object_name,
-                                                   self.id, duplicate.id)
+            return abstract_replace_duplicate_task.apply(
+                self._meta.app_label, self._meta.object_name,
+                self.id, duplicate.id)
 
     def abstract_replace_duplicate(self, duplicate, abstract_model,
                                    field_name, many_to_many=False):
-        """ Replace an instance of a model in concrete models of an abstract class.  # NOQA
+        """ Replace a model instance in concrete models of an abstract class.
 
         This method was first inplemented for tags, then refactored for
         languages.
@@ -151,9 +151,9 @@ class AbstractDuplicateAwareModel(models.Model):
         if many_to_many:
             def replace_duplicate_in_field(instance, field_name,
                                            self, duplicate):
-                field = getattr(instance, field_name)
-                field.remove(duplicate)
-                field.add(self)
+                related_manager = getattr(instance, field_name)
+                related_manager.remove(duplicate)
+                related_manager.add(self)
 
         else:
             def replace_duplicate_in_field(instance, field_name,
@@ -165,10 +165,10 @@ class AbstractDuplicateAwareModel(models.Model):
         sub_classes = abstract_model.__subclasses__()
         sub_classes_count = len(sub_classes)
 
-        LOGGER.info(u'Replacing duplicate %s %s by master %s '
+        LOGGER.info(u'Replacing duplicate %s #%s by master #%s '
                     u'in %s models (%s)…',
                     base_instance_name,
-                    duplicate, self,
+                    duplicate.id, self.id,
                     sub_classes_count,
                     u', '.join(m.__name__ for m in sub_classes))
 
@@ -185,9 +185,9 @@ class AbstractDuplicateAwareModel(models.Model):
             all_instances_count = all_instances.count()
             failed_instances_count = 0
 
-            LOGGER.info(u'Replacing %s %s by %s in %s %s instances…',
+            LOGGER.info(u'Replacing %s #%s by #%s in %s %s instances…',
                         base_instance_name,
-                        duplicate, self,
+                        duplicate.id, self.id,
                         all_instances_count, verbose_name)
 
             # For each concrete class, get each instance
@@ -199,26 +199,26 @@ class AbstractDuplicateAwareModel(models.Model):
 
                 except:
                     failed_instances_count += 1
-                    LOGGER.exception(u'Replacing %s %s by %s '
+                    LOGGER.exception(u'Replacing %s #%s by #%s '
                                      u'failed in %s %s',
                                      base_instance_name,
-                                     duplicate, self,
+                                     duplicate.id, self.id,
                                      verbose_name, instance)
 
             all_models_all_instances_count += all_instances_count
             all_models_all_failed_count += failed_instances_count
 
-            LOGGER.info(u'Replaced %s %s by %s in %s %s (%s failed).',
+            LOGGER.info(u'Replaced %s #%s by #%s in %s %s (%s failed).',
                         base_instance_name,
-                        duplicate, self,
+                        duplicate.id, self.id,
                         all_instances_count - failed_instances_count,
                         verbose_name_plural,
                         failed_instances_count)
 
-        LOGGER.info(u'Done replacing %s duplicate %s by %s in %s models: '
+        LOGGER.info(u'Done replacing %s duplicate #%s by #%s in %s models: '
                     u'%s instances processed, %s failed.',
                     base_instance_name,
-                    duplicate, self,
+                    duplicate.id, self.id,
                     sub_classes_count,
                     all_models_all_instances_count,
                     all_models_all_failed_count)

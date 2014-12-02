@@ -211,6 +211,7 @@ ConstanceAdmin.fieldsets = (
             'CHECK_DATABASE_MIGRATION_VACUUM_ENABLED',
             'CHECK_SUBSCRIPTIONS_DISABLED',
             'CHECK_DUPLICATES_DISABLED',
+            'CHECK_DUPLICATES_PURGE_AFTER_WEEKS',
             'CHECK_READS_DISABLED',
             'CHECK_USERS_DISABLED',
         ),

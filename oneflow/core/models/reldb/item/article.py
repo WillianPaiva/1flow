@@ -26,7 +26,8 @@ from statsd import statsd
 
 from celery import chain as tasks_chain
 
-from django.db import models, IntegrityError
+from django.conf import settings
+from django.db import models, IntegrityError, transaction
 from django.db.models.signals import post_save, pre_save, pre_delete
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
@@ -47,6 +48,7 @@ from base import (
     BaseItemQuerySet,
     BaseItemManager,
     BaseItem,
+    baseitem_create_reads_task,
 )
 
 from abstract import (
@@ -56,7 +58,7 @@ from abstract import (
     baseitem_fetch_content_task,
 )
 
-from original_data import baseitem_postprocess_original_data_task
+# from original_data import baseitem_postprocess_original_data_task
 
 LOGGER = logging.getLogger(__name__)
 
@@ -175,8 +177,7 @@ class Article(BaseItem, UrlItem, ContentItem):
             the same feed. If more than one feed given, only returns ``True``
             or ``False`` (mutualized state is not checked). """
 
-        cur_article = None
-        new_article = None
+        tags = kwargs.pop('tags', [])
 
         if url is None:
             # We have to build a reliable orphaned URL, because orphaned
@@ -187,33 +188,41 @@ class Article(BaseItem, UrlItem, ContentItem):
             # We have 860k+ items, out of 1k real facts… Doomed.
             url = ARTICLE_ORPHANED_BASE + generate_orphaned_hash(title, feeds)
 
-            try:
-                cur_article = cls.objects.get(url=url)
+            defaults = {
+                'name': title,
+                'is_orphaned': True,
 
-            except cls.DoesNotExist:
-                new_article = cls(name=title, url=url,
-                                  is_orphaned=True,
-                                  # Skip absolutization, it's useless.
-                                  url_absolute=True)
-                new_article.save()
+                # Skip absolutization, it's useless.
+                'url_absolute': True
+            }
 
-                # HEADS UP: no statsd here, it's handled by post_save().
+            defaults.update(kwargs)
+
+            article, created = cls.objects.get_or_create(url=url,
+                                                         defaults=defaults)
+
+            # HEADS UP: no statsd here, it's handled by post_save().
 
         else:
             url = clean_url(url)
 
-            new_article = cls(name=title, url=url)
+            defaults = {'name': title}
+            defaults.update(kwargs)
 
-            try:
-                new_article.save()
+            article, created = cls.objects.get_or_create(url=url,
+                                                         defaults=defaults)
 
-            except IntegrityError:
-                cur_article = cls.objects.get(url=url)
-
-        if cur_article:
+        if not created:
             created_retval = False
 
-            if len(feeds) == 1 and feeds[0] not in cur_article.feeds.all():
+            if article.duplicate_of_id:
+                LOGGER.info(u'Swaping duplicate %s #%s for master #%s on '
+                            u'the fly.', article._meta.model.__name__,
+                            article.id, article.duplicate_of_id)
+
+                article = article.duplicate_of
+
+            if len(feeds) == 1 and feeds[0] not in article.feeds.all():
                 # This article is already there, but has not yet been
                 # fetched for this feed. It's mutualized, and as such
                 # it is considered at partly new. At least, it's not
@@ -223,52 +232,64 @@ class Article(BaseItem, UrlItem, ContentItem):
                 LOGGER.info(u'Mutualized article “%s” (url: %s) in feed(s) %s.',
                             title, url, u', '.join(unicode(f) for f in feeds))
 
+                article.create_reads(feeds=feeds)
+
             else:
                 # No statsd, because we didn't create any record in database.
                 LOGGER.info(u'Duplicate article “%s” (url: %s) in feed(s) %s.',
                             title, url, u', '.join(unicode(f) for f in feeds))
 
             try:
-                cur_article.feeds.add(*feeds)
+                with transaction.atomic():
+                    article.feeds.add(*feeds)
 
             except IntegrityError:
-                LOGGER.exception(u'Could not add article %s to feeds %s',
-                                 cur_article, feeds)
+                LOGGER.exception(u'Could not add feeds to article #%s',
+                                 article.id)
 
-            return cur_article, created_retval
+            return article, created_retval
 
-        need_save = False
-
-        if kwargs:
-            need_save = True
-
-            for key, value in kwargs.items():
-                setattr(new_article, key, value)
-
-        if need_save:
-            # Need to save because we will reload just after.
-            new_article.save()
-
-        LOGGER.info(u'Created %sarticle %s in feed(s) %s.', u'orphaned '
-                    if new_article.is_orphaned else u'', new_article,
-                    u', '.join(unicode(f) for f in feeds))
+        LOGGER.info(u'Created %sarticle %s %s.', u'orphaned '
+                    if article.is_orphaned else u'', article,
+                    u'in feed(s) {0}'.format(
+                        u', '.join(unicode(f) for f in feeds))
+                    if feeds else u'without a feed')
 
         # Tags & feeds are ManyToMany, they
         # need the article to be saved before.
 
-        tags = kwargs.pop('tags', [])
-
         if tags:
-            new_article.tags.add(*tags)
+            try:
+                with transaction.atomic():
+                    article.tags.add(*tags)
+
+            except IntegrityError:
+                LOGGER.exception(u'Could not add tags %s to article #%s',
+                                 tags, article.id)
 
         if feeds:
             try:
-                new_article.feeds.add(*feeds)
-            except:
-                LOGGER.exception(u'Could not add article %s to feeds %s',
-                                 new_article, feeds)
+                with transaction.atomic():
+                    article.feeds.add(*feeds)
 
-        return new_article, True
+            except:
+                LOGGER.exception(u'Could not add feeds to article #%s',
+                                 article.id)
+
+        # Get a chance to catch the duplicate if workers were fast.
+        # At the cost of another DB read, this will save some work
+        # in repair scripts, and avoid some writes when creating reads.
+        article = cls.objects.get(id=article.id)
+
+        if article.duplicate_of_id:
+            if settings.DEBUG:
+                LOGGER.debug(u'Catched on-the-fly duplicate #%s, returning '
+                             u'master #%s instead.', article.id,
+                             article.duplicate_of_id)
+
+            return article.duplicate_of, False
+
+        return article, True
 
     def post_create_task(self, apply_now=False):
         """ Method meant to be run from a celery task. """
@@ -276,8 +297,11 @@ class Article(BaseItem, UrlItem, ContentItem):
         if apply_now:
             try:
                 baseitem_absolutize_url_task.apply((self.id, ))
+                baseitem_create_reads_task.apply((self.id, ))
                 baseitem_fetch_content_task.apply((self.id, ))
-                baseitem_postprocess_original_data_task.apply((self.id, ))
+
+                # Done in RssAtomFeed now.
+                # baseitem_postprocess_original_data_task.apply((self.id, ))
 
             except:
                 LOGGER.exception(u'Applying Article.post_create_task(%s) '
@@ -288,8 +312,11 @@ class Article(BaseItem, UrlItem, ContentItem):
             # HEADS UP: both subtasks are immutable, we just
             # want the group to run *after* the absolutization.
 
+            baseitem_create_reads_task.si(self.id),
             baseitem_fetch_content_task.si(self.id),
-            baseitem_postprocess_original_data_task.si(self.id),
+
+            # Done in RssAtomFeed now.
+            # baseitem_postprocess_original_data_task.si(self.id),
         )
 
         # OLD NOTES: randomize the absolutization a little, to avoid

@@ -30,6 +30,8 @@ from constance import config
 
 # from django.conf import settings
 from django.db import models, IntegrityError
+from django.db import transaction
+
 from django.utils.translation import ugettext_lazy as _
 # from django.utils.text import slugify
 
@@ -37,7 +39,7 @@ from oneflow.base.utils import register_task_method
 from oneflow.base.utils.http import clean_url
 # from oneflow.base.utils.dateutils import now
 
-from ...common import REQUEST_BASE_HEADERS
+# from ...common import REQUEST_BASE_HEADERS
 
 from ..base import BaseItem, BaseItemQuerySet
 
@@ -200,12 +202,13 @@ class UrlItem(models.Model):
             return True
 
         if self.url_absolute and not force:
-            LOGGER.info(u'URL of article %s is already absolute!', self)
+            LOGGER.info(u'URL of %s #%s is already absolute!',
+                        self._meta.model.__name__, self.id)
             return True
 
         if self.is_orphaned and not force:
-            LOGGER.warning(u'Item %s is orphaned, absolutization aborted.',
-                           self)
+            LOGGER.warning(u'%s #%s is orphaned, absolutization aborted.',
+                           self._meta.model.__name__, self.id)
             return True
 
         if self.url_error:
@@ -215,9 +218,10 @@ class UrlItem(models.Model):
                 if commit:
                     self.save()
             else:
-                LOGGER.warning(u'Item %s already has an URL error, '
+                LOGGER.warning(u'%s #%s already has an URL error, '
                                u'aborting absolutization (currently: %s).',
-                               self, self.url_error)
+                               self._meta.model.__name__, self.id,
+                               self.url_error)
                 return True
 
         return False
@@ -253,8 +257,7 @@ class UrlItem(models.Model):
 
         if requests_response is None:
             try:
-                requests_response = requests.get(self.url,
-                                                 headers=REQUEST_BASE_HEADERS)
+                requests_response = requests.get(self.url)
 
             except requests.ConnectionError as e:
                 statsd.gauge('articles.counts.url_errors', 1, delta=True)
@@ -277,7 +280,6 @@ class UrlItem(models.Model):
             )
 
             with statsd.pipeline() as spipe:
-                # spipe.gauge('articles.counts.orphaned', 1, delta=True)
                 spipe.gauge('articles.counts.url_errors', 1, delta=True)
 
                 if requests_response.status_code in (404, ):
@@ -308,6 +310,8 @@ class UrlItem(models.Model):
 
         final_url = clean_url(requests_response.url)
 
+        # LOGGER.info(u'\n\nFINAL: %s vs. ORIG: %s\n\n', final_url, self.url)
+
         if final_url != self.url:
 
             # Just for displaying purposes, see below.
@@ -325,30 +329,47 @@ class UrlItem(models.Model):
             self.url = final_url
 
             try:
-                self.save()
+                if self.name.endswith(old_url):
+                    self.name = self.name.replace(old_url, final_url)
+            except:
+                LOGGER.exception(u'Could not replace URL in name of %s #%s',
+                                 self._meta.model.__name__, self.id)
 
-            except IntegrityError as e:
-                # LOGGER.exception(u'IntegrityError occured while saving %s',
-                #                  final_url)
+            duplicate = False
 
-                # The following will legitimely crash on articles  missing
-                # their BaseItem. We have a repair script dedicated to this.
-                original = BaseItem.objects.get(Article___url=final_url)
+            with transaction.atomic():
+                # Without the atomic() block, saving the current article
+                # (beiing a duplicate) will trigger the IntegrityError,
+                # but will render the current SQL context unusable, unable
+                # to register duplicate, potentially leading to massive
+                # inconsistencies in the caller's context.
+                try:
+                    self.save()
 
-                # Just to display the right "old" one in sentry errors and logs.
+                except IntegrityError:
+                    duplicate = True
+
+            if duplicate:
+                params = {
+                    '%s___url' % self._meta.model.__name__: final_url
+                }
+                original = BaseItem.objects.get(**params)
+
+                # Just to display the right “old” one in logs.
                 self.url = old_url
 
-                LOGGER.info(u'Item %s is a duplicate of %s, '
-                            u'registering as such.', self, original)
+                LOGGER.info(u'%s #%s is a duplicate of #%s, '
+                            u'registering as such.',
+                            self._meta.model.__name__, self.id, original.id)
 
                 original.register_duplicate(self)
                 return False
 
             # Any other exception will raise. This is intentional.
             else:
-                LOGGER.info(u'Item %s (#%s) successfully absolutized URL '
-                            u'from %s to %s.', self.name, self.id,
-                            old_url, final_url)
+                LOGGER.info(u'URL of %s (#%s) successfully absolutized '
+                            u'from %s to %s.', self._meta.model.__name__,
+                            self.id, old_url, final_url)
 
         else:
             # Don't do the job twice.

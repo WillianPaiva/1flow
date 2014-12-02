@@ -30,7 +30,7 @@ from constance import config
 from xml.sax import SAXParseException
 
 from django.conf import settings
-from django.db import models, IntegrityError
+from django.db import models  # , IntegrityError
 from django.db.models.signals import pre_save, post_save, pre_delete
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import URLValidator
@@ -189,7 +189,7 @@ def create_feeds_from_url(feed_url, creator=None, recurse=True):
 
     else:
         # Get the right one for the user subscription.
-        if feed.duplicate_of:
+        if feed.duplicate_of_id:
             return [(feed.duplicate_of, False)]
 
         else:
@@ -249,26 +249,26 @@ def create_feeds_from_url(feed_url, creator=None, recurse=True):
         fp_feed = parsed_feed.feed
         website = WebSite.get_from_url(clean_url(
                                        fp_feed.get('link', feed_url)))
-        new_feed = RssAtomFeed(
-            name=fp_feed.get('title', u'Feed from {0}'.format(feed_url)),
-            is_good=True,
+
+        defaults = {
+            'name': fp_feed.get('title', u'Feed from {0}'.format(feed_url)),
+            'is_good': True,
             # Try the RSS description, then the Atom subtitle.
-            description_en=fp_feed.get(
+            'description_en': fp_feed.get(
                 'description',
                 fp_feed.get('subtitle', u'')),
-            url=feed_url,
-            user=creator,
-            website=website)
+            'website': website
+        }
 
-        try:
-            new_feed.save()
+        new_feed, created = RssAtomFeed.objects.get_or_create(
+            url=feed_url, defaults=defaults
+        )
 
-        except IntegrityError:
-            # It could have been created in the background.
-            new_feed = RssAtomFeed.objects.get(url=feed_url)
-            return [(new_feed, False)]
+        if created:
+            feed.user = creator
+            feed.save()
 
-        return [(new_feed, True)]
+        return [(new_feed, created)]
 
 
 def parse_feeds_urls(parsed_feed, skip_comments=True):
@@ -578,7 +578,9 @@ class RssAtomFeed(BaseFeed):
 
         if created:
             try:
-                new_article.add_original_data('feedparser', unicode(article))
+                new_article.add_original_data('feedparser',
+                                              unicode(article),
+                                              launch_task=True)
 
             except:
                 # Avoid crashing on anything related to the archive database,
@@ -587,8 +589,8 @@ class RssAtomFeed(BaseFeed):
                 # having the reads created forces us to check everything
                 # afterwise, which is very expensive. Not having stats
                 # updated is not cool for graph-loving users ;-)
-                LOGGER.exception(u'Could not create article content '
-                                 u'in archive database.')
+                LOGGER.exception(u'Could not add article #%s original data.',
+                                 new_article)
 
         mutualized = created is None
 
@@ -600,13 +602,6 @@ class RssAtomFeed(BaseFeed):
         if date_published is not None and \
                 date_published > self.latest_item_date_published:
             self.latest_item_date_published = date_published
-
-        # Even if the article wasn't created, we need to create reads.
-        # In the case of a mutualized article, it will be fetched only
-        # once, but all subscribers of all feeds must be connected to
-        # it to be able to read it.
-        for subscription in self.subscriptions.all():
-            subscription.create_read(new_article, verbose=created)
 
         # Don't forget the parenthesis else we return ``False`` everytime.
         return created or (None if mutualized else False)

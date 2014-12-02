@@ -50,6 +50,8 @@ from checks import *  # NOQA
 
 from reprocess import *  # NOQA
 
+from archive import *  # NOQA
+
 LOGGER = logging.getLogger(__name__)
 
 SYNCHRONIZE_STATSD_LOCK_NAME = 'synchronize_statsd_gauges'
