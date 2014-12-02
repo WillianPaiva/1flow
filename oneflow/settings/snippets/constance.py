@@ -513,6 +513,16 @@ CONSTANCE_CONFIG.update({
                                   u'no read left in the system. Default: '
                                   u'let it run (=enabled).')),
 
+    'CHECK_DUPLICATES_PURGE_AFTER_WEEKS': (
+        10, ugettext(u'Remove duplicates items after this period of time, '
+                     u'expressed in weeks. Accepted interval between 1 and '
+                     u'52. Purging too recent items will raise global '
+                     u' workers / database / network load; not purging '
+                     u'them enough will cause spikes in workers load and '
+                     u'periods during which no new item is created. This '
+                     u'is a tradeoff to choose, depending on your duplicates '
+                     u'number, and thus on what your server fetches.')),
+
     'CHECK_ORPHANED_DISABLED': (False, ugettext(u'Disable or not the '
                                   u'night orphaned check that will '
                                   u'ensure all orphaned articles are '

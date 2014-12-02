@@ -26,7 +26,7 @@ from constance import config
 from celery import task, chain as tasks_chain
 
 from django.conf import settings
-from django.db import IntegrityError
+from django.db import transaction, IntegrityError
 from django.db.models import Q
 from django.core.urlresolvers import reverse
 from django.core.mail import mail_managers
@@ -38,7 +38,8 @@ from oneflow.base.utils.dateutils import (now, timedelta,
 
 from ..models import (
     User,
-    Article, Read,
+    Article, BaseItem,
+    Read,
     ARTICLE_ORPHANED_BASE,
     generate_orphaned_hash,
     DUPLICATE_STATUS,
@@ -307,12 +308,18 @@ def global_duplicates_checker(limit=None, force=False):
     if limit is None:
         limit = 0
 
-    duplicates = Article.objects.duplicate()
+    duplicates = BaseItem.objects.duplicate()
 
-    total_dupes_count = duplicates.count()
-    total_reads_count = 0
-    processed_dupes   = 0
-    done_dupes_count  = 0
+    total_dupes_count  = duplicates.count()
+    total_reads_count  = 0
+    processed_dupes    = 0
+    done_dupes_count   = 0
+    purged_dupes_count = 0
+
+    purge_after_weeks_count = max(1, config.CHECK_DUPLICATES_PURGE_AFTER_WEEKS)
+    purge_after_weeks_count = min(52, purge_after_weeks_count)
+
+    purge_before_date = now() - timedelta(days=purge_after_weeks_count * 7)
 
     with benchmark(u"Check {0}/{1} duplicates".format(limit or u'all',
                    total_dupes_count)):
@@ -328,24 +335,75 @@ def global_duplicates_checker(limit=None, force=False):
                     reads_count        = reads.count()
                     total_reads_count += reads_count
 
-                    LOGGER.info(u'Duplicate article %s still has %s '
-                                u'reads, fixing…', duplicate, reads_count)
+                    LOGGER.info(u'Duplicate %s #%s still has %s reads, fixing…',
+                                duplicate._meta.model.__name__,
+                                duplicate.id, reads_count)
 
-                    duplicate.duplicate_of.replace_duplicate(duplicate)
+                    duplicate.duplicate_of.register_duplicate(duplicate)
 
-                    if limit and done_dupes_count >= limit:
-                        break
+                if duplicate.duplicate_status == DUPLICATE_STATUS.FINISHED:
+                    #
+                    # TODO: check we didn't get some race-conditions new
+                    #       dependancies between the moment the duplicate
+                    #       was marked duplicate and now.
+
+                    if duplicate.date_created < purge_before_date:
+                        try:
+                            with transaction.atomic():
+                                duplicate.delete()
+                        except:
+                            LOGGER.exception(u'Exception while deleting '
+                                             u'duplicate %s #%s',
+                                             duplicate._meta.model.__name__,
+                                             duplicate.id)
+
+                        purged_dupes_count += 1
+                        LOGGER.info(u'Purged duplicate %s #%s from database.',
+                                    duplicate._meta.model.__name__,
+                                    duplicate.id)
+
+                elif duplicate.duplicate_status in (
+                    DUPLICATE_STATUS.NOT_REPLACED,
+                        DUPLICATE_STATUS.FAILED):
+                    # Something went wrong, perhaps the
+                    # task was purged before beiing run.
+                    duplicate.duplicate_of.register_duplicate(duplicate)
+                    done_dupes_count += 1
+
+                elif duplicate.duplicate_status is None:
+                    # Something went very wrong. If the article is a known
+                    # duplicate, its status field should have been set to
+                    # at least NOT_REPLACED.
+                    duplicate.duplicate_of.register_duplicate(duplicate)
+                    done_dupes_count += 1
+
+                    LOGGER.error(u'Corrected duplicate %s #%s found with no '
+                                 u'status.', duplicate._meta.model.__name__,
+                                 duplicate.id)
+
+                if limit and processed_dupes >= limit:
+                    break
 
         finally:
             my_lock.release()
 
     LOGGER.info(u'global_duplicates_checker(): %s/%s duplicates processed '
-                u'(%.2f%%), %s corrected (%.2f%%), %s reads altered.',
+                u'(%.2f%%; limit: %s), %s corrected (%.2f%%), '
+                u'%s purged (%.2f%%); %s reads altered.',
+
                 processed_dupes, total_dupes_count,
                 processed_dupes * 100.0 / total_dupes_count,
+
+                limit or u'none',
+
                 done_dupes_count,
                 (done_dupes_count * 100.0 / processed_dupes)
                 if processed_dupes else 0.0,
+
+                purged_dupes_count,
+                (purged_dupes_count * 100.0 / processed_dupes)
+                if processed_dupes else 0.0,
+
                 total_reads_count)
 
 
