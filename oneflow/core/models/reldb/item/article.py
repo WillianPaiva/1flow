@@ -454,7 +454,7 @@ def article_pre_delete(instance, **kwargs):
         if article.is_orphaned:
             spipe.gauge('articles.counts.orphaned', -1, delta=True)
 
-        if article.duplicate_of:
+        if article.duplicate_of_id:
             spipe.gauge('articles.counts.duplicates', -1, delta=True)
 
         if article.url_error:
