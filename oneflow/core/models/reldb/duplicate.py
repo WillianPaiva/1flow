@@ -132,13 +132,13 @@ class AbstractDuplicateAwareModel(models.Model):
             LOGGER.info(u'Replacing %s #%s by #%s in the foreground…',
                         self._meta.verbose_name, duplicate.id, self.id)
 
-            return abstract_replace_duplicate_task(self._meta.app_label,
-                                                   self._meta.object_name,
-                                                   self.id, duplicate.id)
+            return abstract_replace_duplicate_task.apply(
+                self._meta.app_label, self._meta.object_name,
+                self.id, duplicate.id)
 
     def abstract_replace_duplicate(self, duplicate, abstract_model,
                                    field_name, many_to_many=False):
-        """ Replace an instance of a model in concrete models of an abstract class.  # NOQA
+        """ Replace a model instance in concrete models of an abstract class.
 
         This method was first inplemented for tags, then refactored for
         languages.
@@ -151,9 +151,9 @@ class AbstractDuplicateAwareModel(models.Model):
         if many_to_many:
             def replace_duplicate_in_field(instance, field_name,
                                            self, duplicate):
-                field = getattr(instance, field_name)
-                field.remove(duplicate)
-                field.add(self)
+                related_manager = getattr(instance, field_name)
+                related_manager.remove(duplicate)
+                related_manager.add(self)
 
         else:
             def replace_duplicate_in_field(instance, field_name,
