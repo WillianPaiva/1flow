@@ -132,9 +132,10 @@ class AbstractDuplicateAwareModel(models.Model):
             LOGGER.info(u'Replacing %s #%s by #%s in the foreground…',
                         self._meta.verbose_name, duplicate.id, self.id)
 
-            return abstract_replace_duplicate_task.apply(
+            return abstract_replace_duplicate_task.apply((
+                # HEADS UP: double parenthesis for .apply(args, kwargs, …)
                 self._meta.app_label, self._meta.object_name,
-                self.id, duplicate.id)
+                self.id, duplicate.id))
 
     def abstract_replace_duplicate(self, duplicate, abstract_model,
                                    field_name, many_to_many=False):
