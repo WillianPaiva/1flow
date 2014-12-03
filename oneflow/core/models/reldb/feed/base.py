@@ -63,7 +63,7 @@ from ..common import (
 from ..duplicate import AbstractDuplicateAwareModel
 from ..tag import AbstractTaggedModel
 from ..language import AbstractMultipleLanguagesModel
-from ..item.base import BaseItem
+from ..item import BaseItem, Article, Tweet
 # from ..tag import SimpleTag
 
 from common import throttle_fetch_interval
@@ -408,7 +408,7 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
     @property
     def recent_items(self):
         return self.good_items.filter(
-            Article___date_published__gt=today()
+            date_published__gt=today()
             - timedelta(
                 days=config.FEED_ADMIN_MEANINGFUL_DELTA))
 
@@ -425,8 +425,10 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
         #       and invert them in @BaseFeed.bad_items
         #
 
-        return self.items.filter(Article___url_absolute=True,
-                                 duplicate_of=None)
+        return self.items.filter(duplicate_of=None) \
+            & self.items.instance_of(Article).filter(
+                Article___url_absolute=True) \
+            | self.items.not_instance_of(Article)
 
     @property
     def bad_items(self):
