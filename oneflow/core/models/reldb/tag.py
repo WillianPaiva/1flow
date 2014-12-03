@@ -147,15 +147,19 @@ def tag_merge_duplicates_on_name_task(tag_name):
     """ Merge multiple tags of same name if they have the same language. """
 
     try:
-        tags = SimpleTag.objects.filter(name=tag_name)
+        tags = SimpleTag.objects.filter(name=tag_name).order_by('id')
 
     except:
         LOGGER.exception(u'Could not get tags with name %s', tag_name)
 
     tags_count = tags.count()
 
+    if tags_count == 0:
+        LOGGER.info(u'No tag by that name “%s”.', tag_name)
+        return
+
     if tags_count == 1:
-        LOGGER.info(u'Tags duplicates with name “%s” already merged.', tag_name)
+        LOGGER.info(u'Tags with name “%s” not needing merge.', tag_name)
         return
 
     languages = {}
@@ -167,17 +171,21 @@ def tag_merge_duplicates_on_name_task(tag_name):
 
             master.register_duplicate(tag, background=False)
 
+            # Reload the tag to get up-to-date fields.
             tag = SimpleTag.objects.get(id=tag.id)
 
             if tag.duplicate_status == DUPLICATE_STATUS.FINISHED:
                 try:
+                    tag_id = tag.id
+
                     with transaction.atomic():
                         tag.delete()
                 except:
                     LOGGER.exception(u'Failed to delete duplicate tag #%s',
                                      tag.id)
                 else:
-                    LOGGER.info(u'Deleted merged duplicate tag #%s', tag.id)
+                    LOGGER.info(u'Deleted merged duplicate tag #%s (%s)',
+                                tag_id, tag_name)
 
             else:
                 LOGGER.warning(u'Failed to replace duplicate tag #%s by #%s',
@@ -186,7 +194,8 @@ def tag_merge_duplicates_on_name_task(tag_name):
         else:
             languages[tag.language] = tag
 
-    LOGGER.info(u'Done merging %s duplicates of tag “%s”', tags_count, tag_name)
+    LOGGER.info(u'Done merging %s duplicates of tag “%s”.',
+                tags_count, tag_name)
 
 
 # ————————————————————————————————————————————————————————————————————— Signals
