@@ -195,7 +195,8 @@ class ContentItem(models.Model):
             return True
 
         if self.content_type in CONTENT_TYPES_FINAL and not force:
-            LOGGER.info(u'Article %s has already been fetched.', self)
+            LOGGER.info(u'%s #%s has already been fetched.',
+                        self._meta.model.__name__, self.id)
             return True
 
         if self.content_error:
@@ -207,17 +208,20 @@ class ContentItem(models.Model):
                     self.save()
 
             else:
-                LOGGER.warning(u'Article %s has a fetching error, aborting '
-                               u'(%s).', self, self.content_error)
+                LOGGER.warning(u'%s #%s has a fetching error, aborting '
+                               u'(%s).', self._meta.model.__name__,
+                               self.id, self.content_error)
                 return True
 
         if self.url_error:
-            LOGGER.warning(u'Article %s has an url error. Absolutize it to '
-                           u'clear: %s.', self, self.url_error)
+            LOGGER.warning(u'%s #%s has an url error. Absolutize it to '
+                           u'clear: %s.', self._meta.model.__name__,
+                           self.id, self.url_error)
             return True
 
         if self.is_orphaned and not force:
-            LOGGER.warning(u'Article %s is orphaned, cannot fetch.', self)
+            LOGGER.warning(u'%s #%s is orphaned, cannot fetch.',
+                           self._meta.model.__name__, self.id)
             return True
 
         if self.duplicate_of and not force:
@@ -257,7 +261,8 @@ class ContentItem(models.Model):
             self.content_error = str(e)
             self.save()
 
-            LOGGER.error(u'Extraction took too long for article %s.', self)
+            LOGGER.error(u'Extraction took too long for %s #%s.',
+                         self._meta.model.__name__, self.id)
             return
 
         except NotTextHtmlException as e:
@@ -273,7 +278,8 @@ class ContentItem(models.Model):
             self.content_error = str(e)
             self.save()
 
-            LOGGER.error(u'Connection failed while fetching article %s.', self)
+            LOGGER.error(u'Connection failed while fetching %s #%s.',
+                         self._meta.model.__name__, self.id)
             return
 
         except Exception as e:
@@ -886,7 +892,8 @@ class ContentItem(models.Model):
 
         if self.content_type == CONTENT_TYPES.MARKDOWN:
             if not force:
-                LOGGER.info(u'Article %s already converted to Markdown.', self)
+                LOGGER.info(u'%s #%s already converted to Markdown.',
+                            self._meta.model.__name__, self.id)
                 return
 
             else:
@@ -974,8 +981,8 @@ class ContentItem(models.Model):
         website = WebSite.get_from_url(self.url)
 
         if website is None:
-            LOGGER.warning(u'Article %s has no website??? Post-processing '
-                           u'aborted.', self)
+            LOGGER.warning(u'%s #%s has no website??? Post-processing '
+                           u'aborted.', self._meta.model.__name__, self.id)
             return
 
         website_url = website.url
