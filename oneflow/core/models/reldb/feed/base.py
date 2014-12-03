@@ -817,7 +817,9 @@ def basefeed_export_content_classmethod(cls, since, until=None, folder=None):
         dict is suitable to be converted to JSON.
     """
 
-    def export_feed(feed, exported_items, subscription=None):
+    from twitter import TwitterFeed
+
+    def export_one_feed(feed, exported_items, subscription=None):
 
         if subscription is None:
             if hasattr(feed, 'url'):
@@ -868,6 +870,46 @@ def basefeed_export_content_classmethod(cls, since, until=None, folder=None):
                 short_description=feed.short_description,
                 tags=[t.name for t in subscription.tags.all()],
                 articles=exported_items,
+            )
+
+    def export_one_item(item, related_to=None):
+
+        if isinstance(item, Tweet):
+            return OrderedDict(
+                id=unicode(item.id),
+                image_url=item.image_url if hasattr(item, '') else None,
+                content=item.name,
+                media=origin(item.origin),
+                date_published=item.date_published
+                or related_to.date_published,
+
+                authors=[(a.name or a.origin_name)
+                         for a in item.authors.all()],
+                date_updated=None,
+                language=item.language.dj_code
+                if item.language else None,
+                text_direction=item.text_direction,
+                tags=[t.name for t in item.tags.all()],
+            )
+        else:
+            return OrderedDict(
+                id=unicode(item.id),
+                title=item.name,
+                pages_url=[item.url],
+                image_url=item.image_url if hasattr(item, '') else None,
+                excerpt=item.excerpt,
+                content=item.content,
+                media=origin(item.origin),
+                content_type=content_type(item.content_type),
+                date_published=item.date_published,
+
+                authors=[(a.name or a.origin_name)
+                         for a in item.authors.all()],
+                date_updated=None,
+                language=item.language.dj_code
+                if item.language else None,
+                text_direction=item.text_direction,
+                tags=[t.name for t in item.tags.all()],
             )
 
     def origin(origin):
@@ -927,11 +969,11 @@ def basefeed_export_content_classmethod(cls, since, until=None, folder=None):
 
     if active_feeds_count:
         if folders:
-            LOGGER.info(u'Starting feeds/articles export procedure '
+            LOGGER.info(u'Starting feeds/items export procedure '
                         u'of %s folder(s) with %s active feeds…',
                         folders.count(), active_feeds_count)
         else:
-            LOGGER.info(u'Starting feeds/articles export procedure with %s '
+            LOGGER.info(u'Starting feeds/items export procedure on %s '
                         u'active feeds…', active_feeds_count)
     else:
         LOGGER.warning(u'Not running export procedure, we have '
@@ -940,19 +982,27 @@ def basefeed_export_content_classmethod(cls, since, until=None, folder=None):
 
     for feed in active_feeds:
 
-        new_items = feed.good_items
+        related_fields = ['language', 'author', 'tags', ]
+
+        if isinstance(feed, TwitterFeed):
+            new_items = feed.good_items.tweet()
+            related_fields.append('entities')
+
+        else:
+            new_items = feed.good_items
+
+        # LOGGER.debug(u'Feed export: selected %s new items in feed %s.',
+        #              new_items.count(), feed)
 
         if since:
             new_items = new_items.filter(
-                Article___date_published__gte=since)
+                date_published__gte=since)
 
         if until:
             new_items = new_items.filter(
-                Article___date_published__lt=until)
+                date_published__lt=until)
 
-        new_items.select_related(
-            'language', 'author', 'tags'
-        )
+        new_items.select_related(*related_fields)
 
         new_items_count = new_items.count()
 
@@ -961,26 +1011,13 @@ def basefeed_export_content_classmethod(cls, since, until=None, folder=None):
 
         exported_items = []
 
-        for article in new_items:
-            exported_items.append(OrderedDict(
-                id=unicode(article.id),
-                title=article.name,
-                pages_url=[article.url],
-                image_url=article.image_url if hasattr(article, '') else None,
-                excerpt=article.excerpt,
-                content=article.content,
-                media=origin(article.origin),
-                content_type=content_type(article.content_type),
-                date_published=article.date_published,
+        for item in new_items:
+            exported_items.append(export_one_item(item))
 
-                authors=[(a.name or a.origin_name)
-                         for a in article.authors.all()],
-                date_updated=None,
-                language=article.language.dj_code
-                if article.language else None,
-                text_direction=article.text_direction,
-                tags=[t.name for t in article.tags.all()],
-            ))
+            if hasattr(item, 'entities'):
+                for entity in item.entities.all():
+                    exported_items.append(export_one_item(entity,
+                                                          related_to=item))
 
         exported_items_count = len(exported_items)
         total_exported_items_count += exported_items_count
@@ -1011,22 +1048,22 @@ def basefeed_export_content_classmethod(cls, since, until=None, folder=None):
         if folder:
             subscription = feed.subscriptions.get(user=folder.user)
 
-            exported_feed = export_feed(feed, exported_items, subscription)
+            exported_feed = export_one_feed(feed, exported_items, subscription)
 
         else:
-            exported_feed = export_feed(feed, exported_items)
+            exported_feed = export_one_feed(feed, exported_items)
 
         if exported_website:
             exported_feed['website'] = exported_website
 
         exported_feeds.append(exported_feed)
 
-        LOGGER.info(u'%s articles exported in feed %s.',
+        LOGGER.info(u'%s items exported in feed %s.',
                     exported_items_count, feed)
 
     exported_feeds_count = len(exported_feeds)
 
-    LOGGER.info(u'%s feeds and %s total articles exported.',
+    LOGGER.info(u'%s feeds and %s total items exported.',
                 exported_feeds_count, total_exported_items_count)
 
     return exported_feeds
