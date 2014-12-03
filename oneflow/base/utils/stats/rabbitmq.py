@@ -74,10 +74,11 @@ if settings.BROKER_URL.lower().startswith('amqp://'):
         except PermissionError:
             pass
 
-        except:
-            LOGGER.exception(u'Could not connect to RabbitMQ API. '
-                             u'Is the web interface plugin enabled?'
-                             u'Do your user have the "management" permission?')
+        except Exception, e:
+            LOGGER.warning(u'Could not connect to RabbitMQ API. '
+                           u'Is the web interface plugin enabled?'
+                           u'Do your user have the "management" '
+                           u'permission? (was: %s)', e)
 
     rabbitmq_vhost  = rabbitmq_params[-1]
 
@@ -98,9 +99,9 @@ def rabbitmq_queues():
     try:
         queues = rabbitmq_client.get_queues(rabbitmq_vhost)
 
-    except:
-        LOGGER.exception(u'Could not connect to RabbitMQ API. '
-                         u'Is the web interface plugin enabled?')
+    except Exception, e:
+        LOGGER.warning(u'Could not connect to RabbitMQ API. '
+                       u'Is the web interface plugin enabled? (was: %s)', e)
         return {}
 
     return [
