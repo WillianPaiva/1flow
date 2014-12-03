@@ -186,7 +186,7 @@ def tag_merge_duplicates_on_name_task(tag_name):
         else:
             languages[tag.language] = tag
 
-    LOGGER.info(u'Done merging %s duplicates')
+    LOGGER.info(u'Done merging %s duplicates of tag “%s”', tags_count, tag_name)
 
 
 # ————————————————————————————————————————————————————————————————————— Signals
