@@ -22,8 +22,10 @@ import logging
 
 from statsd import statsd
 
+from celery import task
+
 # from django.conf import settings
-from django.db import models
+from django.db import models, transaction
 from django.db.models.signals import post_save, pre_save
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
@@ -31,6 +33,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
 from mptt.models import MPTTModel, TreeForeignKey
+
+from ..common import DUPLICATE_STATUS
 
 from duplicate import AbstractDuplicateAwareModel
 from language import AbstractLanguageAwareModel
@@ -103,7 +107,17 @@ class SimpleTag(MPTTModel,
         for tag_name in tags_names:
             tag_name = tag_name.lower()
 
-            tag, created = cls.objects.get_or_create(name=tag_name)
+            try:
+                tag, created = cls.objects.get_or_create(name=tag_name)
+
+            except cls.MultipleObjectsReturned:
+                # This a rare case, but happens, and
+                # prevent items from beiing created…
+                tag = cls.objects.filter(name=tag_name).first()
+
+                created = False
+
+                tag_merge_duplicates_on_name_task.delay(tag_name)
 
             if created and origin:
                 tag.origin = origin
@@ -123,6 +137,56 @@ class AbstractTaggedModel(models.Model):
     tags = models.ManyToManyField(
         SimpleTag, verbose_name=_(u'Tags'),
         blank=True, null=True)
+
+
+# ——————————————————————————————————————————————————————————————————————— tasks
+
+
+@task(name='Tag.merge_duplicates_on_name', queue='background')
+def tag_merge_duplicates_on_name_task(tag_name):
+    """ Merge multiple tags of same name if they have the same language. """
+
+    try:
+        tags = SimpleTag.objects.filter(name=tag_name)
+
+    except:
+        LOGGER.exception(u'Could not get tags with name %s', tag_name)
+
+    tags_count = tags.count()
+
+    if tags_count == 1:
+        LOGGER.info(u'Tags duplicates with name “%s” already merged.', tag_name)
+        return
+
+    languages = {}
+
+    for tag in tags:
+        if tag.language in languages:
+
+            master = languages[tag.language]
+
+            master.register_duplicate(tag, background=False)
+
+            tag = SimpleTag.objects.get(id=tag.id)
+
+            if tag.duplicate_status == DUPLICATE_STATUS.FINISHED:
+                try:
+                    with transaction.atomic():
+                        tag.delete()
+                except:
+                    LOGGER.exception(u'Failed to delete duplicate tag #%s',
+                                     tag.id)
+                else:
+                    LOGGER.info(u'Deleted merged duplicate tag #%s', tag.id)
+
+            else:
+                LOGGER.warning(u'Failed to replace duplicate tag #%s by #%s',
+                               tag.id, master.id)
+
+        else:
+            languages[tag.language] = tag
+
+    LOGGER.info(u'Done merging %s duplicates')
 
 
 # ————————————————————————————————————————————————————————————————————— Signals
