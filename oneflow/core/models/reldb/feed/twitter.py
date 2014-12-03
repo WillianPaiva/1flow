@@ -23,6 +23,7 @@ import logging
 
 from statsd import statsd
 from constance import config
+from celery.exceptions import SoftTimeLimitExceeded
 
 from django.conf import settings  # NOQA
 from django.db import models
@@ -697,6 +698,19 @@ class TwitterFeed(BaseFeed):
                 except KeyboardInterrupt:
                     LOGGER.warning(u'Interrupting stream consumption '
                                    u'at user request.')
+                    break
+
+                except SoftTimeLimitExceeded:
+                    # This should happen only on streaming APIs.
+                    LOGGER.info(u'Soft time limit exceeded in celery task, '
+                                u'terminating to let things flow.')
+
+                    if not backfilling:
+                        # relaunch immediately, to not loose any tweet.
+                        globals()['twitterfeed_consume_task'].delay(self.id)
+
+                    statsd.incr('api.twitter.status.time_limit_exceeded')
+
                     break
 
                 except Exception:
