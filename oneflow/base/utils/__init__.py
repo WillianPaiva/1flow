@@ -39,7 +39,7 @@ from bs4 import BeautifulSoup
 from mongoengine import Document, signals
 
 from django.conf import settings
-from django.db import models, transaction
+from django.db import models  # , transaction
 from django.template import Context
 
 from djangojs.context_serializer import ContextSerializer
@@ -167,6 +167,12 @@ def register_task_method(klass, meth, module_globals,
                 objekt = klass.objects.get(pk=object_pk)
 
                 return getattr(objekt, method_name)(*args, **kwargs)
+
+            except klass.DoesNotExist:
+                LOGGER.error(u'Object does not exist prior to running task '
+                             u'%s on %s #%s.', method_name,
+                             klass._meta.model.__name__,
+                             object_pk)
 
             except:
                 LOGGER.exception(u'exception while running %s on %s #%s',
