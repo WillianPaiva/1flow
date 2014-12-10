@@ -265,8 +265,8 @@ def create_feeds_from_url(feed_url, creator=None, recurse=True):
         )
 
         if created:
-            feed.user = creator
-            feed.save()
+            new_feed.user = creator
+            new_feed.save()
 
         return [(new_feed, created)]
 
