@@ -332,6 +332,10 @@ def production():
             # a more serious problem.
             'worker_articles': '300',
 
+            # Force Twitter permanent workers to
+            # release locks & free resources.
+            'worker_sync': '900',
+
             # 7 days: 604800
             # 4 days seems to be a good start.
             # If tasks last more than that, they should
