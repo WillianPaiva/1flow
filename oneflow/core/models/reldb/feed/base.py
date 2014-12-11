@@ -197,6 +197,10 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
     # This should be overriden by subclasses if needed.
     REFRESH_LOCK_INTERVAL = None
 
+    # By default, feeds continue to be fetched,
+    # even if no user is subscribed to them.
+    AUTO_CLOSE_WHEN_NO_SUBSCRIPTION_LEFT = False
+
     class Meta:
         app_label = 'core'
         translate = ('short_description', 'description', )

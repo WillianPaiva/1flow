@@ -108,6 +108,11 @@ class TwitterFeed(BaseFeed):
     # very-low-trafic timeline. Thus, we must simulate a non-expiring lock.
     REFRESH_LOCK_INTERVAL = 3600 * 24 * 31
 
+    # Twitter feeds are by nature user dependant.
+    # They will be closed if the user isn't
+    # subscribed to it anymore.
+    AUTO_CLOSE_WHEN_NO_SUBSCRIPTION_LEFT = True
+
     INPLACEEDIT_EXCLUDE = BaseFeed.INPLACEEDIT_EXCLUDE + ('uri', )
 
     objects = BaseFeedManager()

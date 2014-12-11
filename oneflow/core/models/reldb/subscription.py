@@ -539,7 +539,17 @@ def subscription_post_save(instance, **kwargs):
 def subscription_pre_delete(instance, **kwargs):
     """ Subscribe the mailfeed's owner if feed is beiing created. """
 
+    subscription = instance
+
     statsd.gauge('subscriptions.counts.total', -1, delta=True)
+
+    feed = subscription.feed
+
+    if feed.subscriptions.all().count() == 1 \
+            and feed.AUTO_CLOSE_WHEN_NO_SUBSCRIPTION_LEFT:
+        feed.close(u'No subscription left on this feed (last subscribed '
+                   u'user: {0})'.format(subscription.user.username))
+
 
 pre_save.connect(subscription_pre_save, sender=Subscription)
 post_save.connect(subscription_post_save, sender=Subscription)
