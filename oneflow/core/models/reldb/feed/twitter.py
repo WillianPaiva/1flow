@@ -108,6 +108,8 @@ class TwitterFeed(BaseFeed):
     # very-low-trafic timeline. Thus, we must simulate a non-expiring lock.
     REFRESH_LOCK_INTERVAL = 3600 * 24 * 31
 
+    INPLACEEDIT_EXCLUDE = BaseFeed.INPLACEEDIT_EXCLUDE + ('uri', )
+
     objects = BaseFeedManager()
 
     #
