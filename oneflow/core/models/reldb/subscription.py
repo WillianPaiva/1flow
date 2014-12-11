@@ -587,6 +587,12 @@ def subscribe_user_to_feed(user, feed, name=None,
     This will create all reads (user+article) on the fly (or in the background).
     """
 
+    if not feed.is_active:
+        feed.reopen()
+
+        LOGGER.info(u'Re-opened closed %s #%s because %s is subscribing to it.',
+                    feed._meta.model.__name__, feed.id, user.username)
+
     subscription, created = Subscription.objects.get_or_create(
         user=user, feed=feed)
 
