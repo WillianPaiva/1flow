@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-12-11 10:40+0100\n"
-"PO-Revision-Date: 2014-12-11 10:58+0009\n"
+"PO-Revision-Date: 2014-12-11 15:21+0009\n"
 "Last-Translator: Olivier Cortes <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -413,9 +413,8 @@ msgid "Content type"
 msgstr "Type de contenu"
 
 #: admin/article.py:44 admin/article.py:63 admin/article.py:82
-#, fuzzy
 msgid "None"
-msgstr "(aucun)"
+msgstr "aucun"
 
 #: admin/article.py:58 models/nonrel/tag.py:62
 #: models/reldb/feed/combinedrule.py:74 models/reldb/item/base.py:243
@@ -502,9 +501,8 @@ msgid "Latest"
 msgstr "Derniers"
 
 #: admin/feed.py:209
-#, fuzzy
 msgid "Created"
-msgstr "Créer"
+msgstr "Créé"
 
 #: admin/feed.py:221 admin/mongo.py:722
 msgid "Interval"
@@ -527,9 +525,8 @@ msgid "The feed is open"
 msgstr "Le flux est ouvert"
 
 #: admin/feed.py:266
-#, fuzzy
 msgid "Active?"
-msgstr "Actif"
+msgstr "Actif ?"
 
 #: admin/feed.py:294
 msgid "Mail feed"
@@ -605,43 +602,36 @@ msgid "Run?"
 msgstr "Actif ?"
 
 #: admin/subscription.py:82 models/reldb/read.py:160
-#, fuzzy
 msgid "Reads"
-msgstr "Lecture"
+msgstr "Lectures"
 
 #: admin/subscription.py:90
 msgid "Cache"
 msgstr "Cache"
 
 #: admin/subscription.py:97 models/reldb/feed/base.py:249
-#, fuzzy
 msgid "Feed items"
-msgstr "Éléments sélectionnés"
+msgstr "Éléments du flux"
 
 #: admin/subscription.py:105
-#, fuzzy
 msgid "Internal?"
-msgstr "Interne"
+msgstr "Interne ?"
 
 #: admin/userimport.py:60
-#, fuzzy
 msgid "Art. created"
-msgstr "date de création"
+msgstr "Art. créé"
 
 #: admin/userimport.py:73
-#, fuzzy
 msgid "Feeds created"
-msgstr "date de création"
+msgstr "Flux créés"
 
 #: admin/userimport.py:86
-#, fuzzy
 msgid "Failed"
-msgstr "échoué"
+msgstr "Échoué"
 
 #: admin/website.py:64
-#, fuzzy
 msgid "image"
-msgstr "URL de l'image"
+msgstr "image"
 
 #: admin/website.py:77
 msgid "Feeds"
@@ -779,14 +769,12 @@ msgid "You have to fill at least one of the two fields."
 msgstr "Vous devez remplir au moins un des deux champs."
 
 #: forms/subscription.py:188
-#, fuzzy
 msgid "Recently subscribed feeds"
-msgstr "Encore abonné(e)"
+msgstr "Flux récemment souscrits"
 
 #: models/common.py:41
-#, fuzzy
 msgid "No content"
-msgstr "contenu"
+msgstr "Aucun contenu"
 
 #: models/common.py:44
 msgid "HTML"
@@ -798,68 +786,63 @@ msgstr ""
 
 #: models/common.py:55
 msgid "Markdown"
-msgstr ""
+msgstr "Markdown"
 
 #: models/common.py:58
 msgid "MultiMarkdown"
-msgstr ""
+msgstr "MultiMarkdown"
 
 #: models/common.py:61 models/reldb/folder.py:134 models/reldb/website.py:120
 msgid "Image"
-msgstr ""
+msgstr "Image"
 
 #: models/common.py:62
 msgid "Video"
-msgstr ""
+msgstr "Vidéo"
 
 #: models/common.py:63
-#, fuzzy
 msgid "Bookmark"
-msgstr "bookmark"
+msgstr "Marque-page"
 
 #: models/common.py:82
 msgid "None or Unknown"
 msgstr "Aucun ou inconnu"
 
 #: models/common.py:83
-#, fuzzy
 msgid "Google Reader"
-msgstr "Import Google Reader"
+msgstr "Google Reader"
 
 #: models/common.py:84
 msgid "RSS/Atom"
-msgstr ""
+msgstr "RSS/Atom"
 
 #: models/common.py:85
-#, fuzzy
 msgid "User writing"
-msgstr "Import utilisateur"
+msgstr "Écrit utilisateur"
 
 #: models/common.py:86 templates/sources-list.html:49
 msgid "Twitter"
-msgstr ""
+msgstr "Twitter"
 
 #: models/common.py:87
-#, fuzzy
 msgid "Web import"
-msgstr "Import utilisateur"
+msgstr "Import web"
 
 #: models/common.py:88 templates/sources-list.html:38
 msgid "E-mail"
-msgstr ""
+msgstr "E-mail"
 
 #: models/common.py:89 templates/sources-list.html:61
 msgid "Facebook"
-msgstr ""
+msgstr "Facebook"
 
 #: models/common.py:90
 msgid "Google Plus"
-msgstr ""
+msgstr "Google Plus"
 
 #: models/common.py:91
-#, fuzzy
 msgid "1flow internal origin"
-msgstr "Traductions 1flow"
+msgstr "origine interne 1flow"
 
 #: models/common.py:99
 msgid "not yet replaced"
@@ -888,14 +871,14 @@ msgid "Items sent by {0}"
 msgstr "Éléments envoyés par {0}"
 
 #: models/common.py:130
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Received items of {0}"
-msgstr "Éléments importés de {0}"
+msgstr "Éléments reçus de {0}"
 
 #: models/common.py:132
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Items written by {0}"
-msgstr "Éléments envoyés par {0}"
+msgstr "Éléments écrits par {0}"
 
 #: models/common.py:211
 #, python-format
@@ -1746,9 +1729,9 @@ msgid "{0} (#{1}) from {2}"
 msgstr "{0} (#{1}) from {2}"
 
 #: models/nonrel/article.py:264
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Article #{0} from {1}"
-msgstr "Import #{0} de l'utilisateur {1}"
+msgstr "Article #{0} de {1}"
 
 #: models/nonrel/article.py:310 models/reldb/item/base.py:260
 #, python-brace-format
@@ -2750,9 +2733,8 @@ msgid "Authors"
 msgstr "Auteurs"
 
 #: models/reldb/author.py:63
-#, fuzzy
 msgid "Username (nick)"
-msgstr "Identifiant"
+msgstr "Nom d'utilisateur (pseudo)"
 
 #: models/reldb/author.py:66 models/reldb/website.py:83
 #: models/reldb/feed/rssatom.py:356
@@ -2800,18 +2782,16 @@ msgid "Creator"
 msgstr "Créateur"
 
 #: models/reldb/author.py:106
-#, fuzzy
 msgid "1flow accounts"
-msgstr "tous les comptes"
+msgstr "comptes 1flow"
 
 #: models/reldb/author.py:107
 msgid "1flow accounts linked to this author"
 msgstr "Compte 1flow local lié à cet auteur "
 
 #: models/reldb/author.py:111
-#, fuzzy
 msgid "Other identities"
-msgstr "Identificateur de dossier :"
+msgstr "Autres identités"
 
 #: models/reldb/author.py:112
 msgid "Other authors elsewhere that are really the same person."
@@ -2822,9 +2802,8 @@ msgid "This element is a duplicate of another, which is referenced here."
 msgstr "Cet élément est un duplicata d'un autre, qui est référencé ici."
 
 #: models/reldb/duplicate.py:65
-#, fuzzy
 msgid "duplicate status"
-msgstr "Duplicata de"
+msgstr "État de duplication"
 
 #: models/reldb/duplicate.py:68
 msgid ""
@@ -2834,18 +2813,18 @@ msgstr ""
 
 #: models/reldb/folder.py:130 models/reldb/subscription.py:166
 #: models/reldb/account/base.py:152 models/reldb/feed/base.py:253
-#, fuzzy
 msgid "Date created"
-msgstr "date de création"
+msgstr "Date de création"
 
 #: models/reldb/folder.py:136
 msgid ""
 "A custom image for the folder. Takes precedence over image_url if both are "
 "filled."
 msgstr ""
+"Une image personnalisée pour le dossier. L'image locale a priorité sur l'URL"
+" si les deux sont renseignées."
 
 #: models/reldb/folder.py:140 models/reldb/website.py:128
-#, fuzzy
 msgid "Image URL"
 msgstr "URL de l'image"
 
@@ -2853,6 +2832,8 @@ msgstr "URL de l'image"
 msgid ""
 "A full URL of an online image, if you prefer hosting it outside of 1flow."
 msgstr ""
+"Une URL complète d'image en ligne, si vous préférez l'héberger en dehors de "
+"1flow."
 
 #: models/reldb/folder.py:172
 #, fuzzy, python-brace-format
@@ -2931,9 +2912,8 @@ msgid "date created"
 msgstr "date de création"
 
 #: models/reldb/language.py:56
-#, fuzzy
 msgid "Language code"
-msgstr "Langue"
+msgstr "Code de langue"
 
 #: models/reldb/language.py:58
 msgid "This is the IETF code."
@@ -2963,19 +2943,17 @@ msgid "{0} (#{1}): {2}, {3}"
 msgstr "{0} (#{1}) from {2}"
 
 #: models/reldb/preferences.py:58
-#, fuzzy
 msgid "Preferences set"
-msgstr "Préférences"
+msgstr "Ensemble de préférences"
 
 #: models/reldb/preferences.py:59
-#, fuzzy
 msgid "Preferences sets"
-msgstr "Préférences"
+msgstr "Ensembles de préférences"
 
 #: models/reldb/preferences.py:65
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Preferences for user {0}"
-msgstr "Préférences"
+msgstr "Préférences de l'utilisateur {0}"
 
 #: models/reldb/read.py:73
 msgid "Custom (user defined)"
@@ -2987,38 +2965,32 @@ msgid "Read"
 msgstr "Lecture"
 
 #: models/reldb/read.py:185
-#, fuzzy
 msgid "is read?"
-msgstr "lus"
+msgstr "lu ?"
 
 #: models/reldb/read.py:192
 msgid "is automatically read?"
 msgstr "est lu automatiquement ?"
 
 #: models/reldb/read.py:199
-#, fuzzy
 msgid "is archived?"
-msgstr "archivé"
+msgstr "archivé ?"
 
 #: models/reldb/read.py:209
-#, fuzzy
 msgid "is starred?"
-msgstr "favoris"
+msgstr "favori ?"
 
 #: models/reldb/read.py:217
-#, fuzzy
 msgid "is bookmarked?"
-msgstr "bookmark"
+msgstr "à lire plus tard ?"
 
 #: models/reldb/read.py:223
-#, fuzzy
 msgid "Bookmark type"
-msgstr "bookmark-empty"
+msgstr "Type de marque-page"
 
 #: models/reldb/subscription.py:139
-#, fuzzy
 msgid "Subscription"
-msgstr "Abonnements"
+msgstr "Abonnement"
 
 #: models/reldb/subscription.py:170
 msgid ""
@@ -3166,34 +3138,30 @@ msgid "Short description"
 msgstr "Description courte"
 
 #: models/reldb/website.py:135 models/reldb/feed/base.py:310
-#, fuzzy
 msgid ""
 "Public short description of the feed, for auto-completer listing. Markdown "
 "text."
 msgstr ""
-"Description publique du flux en langue française. Apparaîtra dans le "
-"sélecteur. En Markdown."
+"Description publique courte du flux, pour le compléteur automatique. En "
+"Markdown."
 
 #: models/reldb/website.py:140 models/reldb/feed/base.py:315
 msgid "Description"
 msgstr "Description"
 
 #: models/reldb/website.py:141 models/reldb/feed/base.py:316
-#, fuzzy
 msgid "Public description of the feed. Markdown text."
 msgstr ""
 "Description publique du flux en langue française. Apparaîtra dans le "
 "sélecteur. En Markdown."
 
 #: models/reldb/account/base.py:117
-#, fuzzy
 msgid "Base account"
-msgstr "Compte e-mail"
+msgstr "Compte de base"
 
 #: models/reldb/account/base.py:118
-#, fuzzy
 msgid "Base accounts"
-msgstr "tous les comptes"
+msgstr "Comptes de base"
 
 #: models/reldb/account/base.py:140 templates/mailaccount/list-create.html:57
 #: templates/twitteraccount/list-create.html:57
@@ -3213,9 +3181,8 @@ msgid "usable"
 msgstr ""
 
 #: models/reldb/account/base.py:165
-#, fuzzy
 msgid "Is account connectivity good or not?"
-msgstr "Connectivité du compte non testée"
+msgstr "La connectivité est-elle vérifiée ?"
 
 #: models/reldb/account/base.py:168 models/reldb/feed/base.py:264
 msgid "active"
@@ -3226,14 +3193,13 @@ msgid "Is account enabled for fetching?"
 msgstr ""
 
 #: models/reldb/account/base.py:176
-#, fuzzy
 msgid "User notes for this account."
-msgstr "Ensemble des tags de l'utilisateur pour cette lecture."
+msgstr "Notes de l'utilisateur concernant ce compte"
 
 #: models/reldb/account/base.py:195
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "BaseAccount {0} ({1}) of {2}"
-msgstr "{0} (#{1}) from {2}"
+msgstr "Compte de base {0} ({1}) de {2}"
 
 #: models/reldb/account/common.py:251
 msgid "Drafts"
@@ -3383,27 +3349,23 @@ msgstr "Mot de passe"
 
 #: models/reldb/account/twitter.py:104
 #: templates/twitterfeed/list-create.html:58
-#, fuzzy
 msgid "Twitter account"
-msgstr "Compte e-mail"
+msgstr "Compte Twitter"
 
 #: models/reldb/account/twitter.py:105 models/reldb/feed/twitter.py:119
 #: templates/twitteraccount/list-create.html:4
 #: templates/twitteraccount/list-create.html:45
-#, fuzzy
 msgid "Twitter accounts"
-msgstr "Associer des comptes"
+msgstr "Comptes Twitter"
 
 #: models/reldb/account/twitter.py:113
-#, fuzzy
 msgid "Social account"
-msgstr "Compte e-mail"
+msgstr "Compte social"
 
 #: models/reldb/account/twitter.py:117
 #: templates/twitteraccount/list-create.html:58
-#, fuzzy
 msgid "Fetch owned lists"
-msgstr "Listes de veille"
+msgstr "Récupérer les listes créées"
 
 #: models/reldb/account/twitter.py:119 models/reldb/account/twitter.py:127
 msgid ""
@@ -3413,24 +3375,20 @@ msgstr ""
 
 #: models/reldb/account/twitter.py:125
 #: templates/twitteraccount/list-create.html:59
-#, fuzzy
 msgid "Fetch subscribed lists"
-msgstr "Encore abonné(e)"
+msgstr "Récupérer les listes abonnées"
 
 #: models/reldb/account/twitter.py:135 models/reldb/feed/twitter.py:134
-#, fuzzy
 msgid "Timeline"
-msgstr "lignes"
+msgstr "Timeline"
 
 #: models/reldb/account/twitter.py:136
-#, fuzzy
 msgid "Account timeline"
-msgstr "Nom du compte"
+msgstr "Timeline du compte"
 
 #: models/reldb/account/twitter.py:200
-#, fuzzy
 msgid "Twitter streams"
-msgstr "Flux fermés"
+msgstr "Flux Twitter"
 
 #: models/reldb/account/twitter.py:338
 #, python-brace-format
@@ -3443,9 +3401,9 @@ msgid "Subscribed you to @{0}'s Twitter timeline."
 msgstr ""
 
 #: models/reldb/account/twitter.py:396
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{0} list of {1}"
-msgstr "{0} : {1}"
+msgstr "Liste {0} de {1}"
 
 #: models/reldb/account/twitter.py:506
 #, python-brace-format
@@ -3463,9 +3421,9 @@ msgid "Twitter account successfully tested (quota remaining: {0})."
 msgstr "Compte pleinement fonctionnel, testé il y a {ago}."
 
 #: models/reldb/account/twitter.py:740
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Twitter account #{0}"
-msgstr "compte {0}"
+msgstr "Compte Twitter #{0}"
 
 #: models/reldb/feed/base.py:203
 msgid "Base feed"
@@ -3484,9 +3442,9 @@ msgid "Is the feed refreshed or dead?"
 msgstr ""
 
 #: models/reldb/feed/base.py:464
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "BaseFeed {0} (#{1})"
-msgstr "{0} (#{1})"
+msgstr "Flux de base {0} (#{1})"
 
 #: models/reldb/feed/base.py:509
 msgid "NO REASON GIVEN"
@@ -3503,9 +3461,8 @@ msgid "Restricted"
 msgstr "Restreint"
 
 #: models/reldb/feed/combined.py:44
-#, fuzzy
 msgid "Can other 1flow users subscribe to this feed?"
-msgstr "Notes internes au personnel de 1flow, à propos de ce flux."
+msgstr "Les autres utilisateurs 1flow peuvent-ils s'abonner à ce flux ?"
 
 #: models/reldb/feed/combinedrule.py:68
 msgid "Title or tags"
@@ -3943,9 +3900,8 @@ msgid "RSS/Atom feed"
 msgstr "Flux RSS/Atom"
 
 #: models/reldb/feed/rssatom.py:342 templates/sources-list.html:27
-#, fuzzy
 msgid "RSS/Atom feeds"
-msgstr "pas de flux"
+msgstr "Flux RSS/Atom"
 
 #: models/reldb/feed/rssatom.py:380
 #, fuzzy, python-brace-format
@@ -3958,9 +3914,8 @@ msgstr "Flux Twitter"
 
 #: models/reldb/feed/twitter.py:101 templates/twitterfeed/list-create.html:4
 #: templates/twitterfeed/list-create.html:43
-#, fuzzy
 msgid "Twitter feeds"
-msgstr "Flux de base"
+msgstr "Flux Twitter"
 
 #: models/reldb/feed/twitter.py:128
 msgid "Twitter URI"
@@ -3979,9 +3934,8 @@ msgid ""
 msgstr ""
 
 #: models/reldb/feed/twitter.py:141
-#, fuzzy
 msgid "Backfill this feed"
-msgstr "Retour aux flux d'e-mails"
+msgstr "Revenir en arrière sur ce flux"
 
 #: models/reldb/feed/twitter.py:143
 #, python-brace-format
@@ -4004,7 +3958,7 @@ msgstr ""
 
 #: models/reldb/feed/twitter.py:159 templates/twitterfeed/list-create.html:60
 msgid "Track terms"
-msgstr ""
+msgstr "Recherche de termes"
 
 #: models/reldb/feed/twitter.py:161
 msgid ""
@@ -4013,9 +3967,8 @@ msgid ""
 msgstr ""
 
 #: models/reldb/feed/twitter.py:167 templates/twitterfeed/list-create.html:61
-#, fuzzy
 msgid "Track locations"
-msgstr "réglementation"
+msgstr "Recherche de coordonnées"
 
 #: models/reldb/feed/twitter.py:169
 msgid ""
@@ -4040,29 +3993,25 @@ msgid "Field"
 msgstr "Champ"
 
 #: models/reldb/feed/twitterrule.py:93
-#, fuzzy
 msgid "E-twitter field on which the match type is performed."
-msgstr "En-tête de l'e-mail sur lequel la correspondance est appliquée"
+msgstr "Champ du tweet sur lequel la correspondance est effectuée"
 
 #: models/reldb/feed/twitterrule.py:100
-#, fuzzy
 msgid "Operation applied on the field to compare with match value."
-msgstr "Opération utilisée pour comparer votre valeur à celle de l'en-tête."
+msgstr "Opération utilisée pour comparer votre valeur à celle du champ"
 
 #: models/reldb/feed/twitterrule.py:135
-#, fuzzy
 msgid "Other field"
-msgstr "En-tête personnalisé"
+msgstr "Autre champ"
 
 #: models/reldb/feed/twitterrule.py:137
-#, fuzzy
 msgid "Specify here if you chose “Other field” in previous field."
-msgstr "Spécifiez ici si vous avez précédemment choisi « autre en-tête »."
+msgstr "Spécifiez ici si vous avez précédemment choisi « autre champ »."
 
 #: models/reldb/feed/twitterrule.py:221
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Rule #{0}: {2} for TwitterFeed {1}"
-msgstr "Règle #{2} : {3}, appliquée à {0} pour flux de mail {1}"
+msgstr "Règle #{0} : {2} pour flux Twitter {1}"
 
 #: models/reldb/feed/twitterrule.py:284
 #, fuzzy, python-brace-format
@@ -4075,29 +4024,24 @@ msgstr ""
 "Ça ne serait pas juste une faute de frappe ?"
 
 #: models/reldb/item/article.py:145
-#, fuzzy
 msgid "Articles"
-msgstr "Article"
+msgstr "Articles"
 
 #: models/reldb/item/base.py:169
-#, fuzzy
 msgid "Base item"
-msgstr "Flux de base"
+msgstr "Élément de base"
 
 #: models/reldb/item/base.py:170
-#, fuzzy
 msgid "Base items"
-msgstr "Flux de base"
+msgstr "Éléments de base"
 
 #: models/reldb/item/base.py:195
-#, fuzzy
 msgid "Date updated"
-msgstr "Date d'ajout"
+msgstr "Date de mise à jour"
 
 #: models/reldb/item/base.py:196
-#, fuzzy
 msgid "When the article was updated."
-msgstr "Date à laquelle le flux a été ajouté dans la base 1flow."
+msgstr "Date à laquelle l'article a été mis à jour."
 
 #: models/reldb/item/base.py:201
 msgid "When the item was put online."
@@ -4116,14 +4060,13 @@ msgid ""
 msgstr ""
 
 #: models/reldb/item/base.py:250
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{0} (#{1}){2}"
-msgstr "{0} (#{1})"
+msgstr "{0} (#{1}){2}"
 
 #: models/reldb/item/original_data.py:92 models/reldb/item/original_data.py:93
-#, fuzzy
 msgid "Original data"
-msgstr "Type d'origine"
+msgstr "Données d'origine"
 
 #: models/reldb/item/tweet.py:146
 msgid "Tweet"
@@ -4142,43 +4085,37 @@ msgid "deleted from timeline"
 msgstr "supprimé de la timeline"
 
 #: models/reldb/item/tweet.py:164
-#, fuzzy
 msgid "Entities fetched?"
-msgstr "flux de commentaires"
+msgstr "Entités récupérées ?"
 
 #: models/reldb/item/tweet.py:172
 msgid "Entities"
 msgstr "Entités"
 
 #: models/reldb/item/tweet.py:178
-#, fuzzy
 msgid "mentions"
-msgstr "Actions"
+msgstr "mentions"
 
 #: models/reldb/item/tweet.py:195
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "{0} ({1}, {2})"
-msgstr "{0}+{1} (#{2})"
+msgstr "{0} ({1}, {2})"
 
 #: models/reldb/item/abstract/content.py:128
-#, fuzzy
 msgid "Content item"
-msgstr "Type de contenu"
+msgstr "Élément avec du contenu"
 
 #: models/reldb/item/abstract/content.py:129
-#, fuzzy
 msgid "Content items"
-msgstr "Type de contenu"
+msgstr "Éléments avec du contenu"
 
 #: models/reldb/item/abstract/content.py:147
-#, fuzzy
 msgid "Type of article content (HTML, Markdown…)"
 msgstr "Type de contenu d'article (texte, image…)"
 
 #: models/reldb/item/abstract/content.py:152
-#, fuzzy
 msgid "Error when fetching content."
-msgstr "Erreur pendant la récupération du contenu"
+msgstr "Erreur pendant la récupération du contenu."
 
 #: models/reldb/item/abstract/multipages.py:73
 msgid "Multi-page URLs item"
@@ -4189,39 +4126,32 @@ msgid "Multi-page URLs items"
 msgstr ""
 
 #: models/reldb/item/abstract/multipages.py:76
-#, fuzzy
 msgid "Pages URLs"
-msgstr "URL de l'image"
+msgstr "URLs des pages"
 
 #: models/reldb/item/abstract/url.py:66
-#, fuzzy
 msgid "URL"
-msgstr "URLs"
+msgstr "URL"
 
 #: models/reldb/item/abstract/url.py:70
-#, fuzzy
 msgid "Real URL"
-msgstr "Saississez une URL"
+msgstr "URL réelle"
 
 #: models/reldb/item/abstract/url.py:146
-#, fuzzy
 msgid "URL item"
-msgstr "aucun élément"
+msgstr "Élément à URL"
 
 #: models/reldb/item/abstract/url.py:147
-#, fuzzy
 msgid "URL items"
-msgstr "Pas d'éléments"
+msgstr "Éléments à URL"
 
 #: models/reldb/item/abstract/url.py:155
-#, fuzzy
 msgid "Comments feed URL"
-msgstr "flux de commentaires"
+msgstr "URL de flux de commentaires"
 
 #: models/reldb/sync/common.py:32
-#, fuzzy
 msgid "Not Broadcasted"
-msgstr "Diffuser"
+msgstr "Non diffusé"
 
 #: models/reldb/sync/common.py:34
 msgid "Use global broadcast setting"
@@ -4356,9 +4286,8 @@ msgid ""
 msgstr ""
 
 #: models/reldb/sync/model.py:104
-#, fuzzy
 msgid "Nodes permissions"
-msgstr "Permission"
+msgstr "Permissions du nœud"
 
 #: models/reldb/sync/model.py:105
 msgid ""
@@ -4377,9 +4306,8 @@ msgid "Sync nodes"
 msgstr "Nœuds de synchronisation"
 
 #: models/reldb/sync/node.py:73 templates/syncnode/list-create.html:85
-#, fuzzy
 msgid "Node name"
-msgstr "Nom du flux"
+msgstr "Nom du nœud"
 
 #: models/reldb/sync/node.py:77
 #, fuzzy
@@ -4392,9 +4320,8 @@ msgid "Node unique identifier"
 msgstr "Identificateur de dossier :"
 
 #: models/reldb/sync/node.py:90 templates/syncnode/list-create.html:87
-#, fuzzy
 msgid "Last seen"
-msgstr "Les 7 derniers jours"
+msgstr "Vu en dernier"
 
 #: models/reldb/sync/node.py:94
 msgid "Active"
@@ -4520,24 +4447,20 @@ msgid "Counters for user {0})"
 msgstr "Import #{0} de l'utilisateur {1}"
 
 #: models/reldb/user/feeds.py:51
-#, fuzzy
 msgid "User feed"
-msgstr "Flux de base"
+msgstr "Flux utilisateur"
 
 #: models/reldb/user/feeds.py:52
-#, fuzzy
 msgid "Users feeds"
-msgstr "Flux de base"
+msgstr "Flux utilisateur"
 
 #: models/reldb/user/feeds.py:61
-#, fuzzy
 msgid "Web import feed"
-msgstr "Aucun élément importé"
+msgstr "Flux d'éléments importés"
 
 #: models/reldb/user/feeds.py:66
-#, fuzzy
 msgid "Sent items feed"
-msgstr "flux de commentaires"
+msgstr "Flux d'éléments envoyés"
 
 #: models/reldb/user/feeds.py:71
 msgid "Received items feed"
@@ -4548,9 +4471,8 @@ msgid "Written items feed"
 msgstr "Flux d'éléments écrits"
 
 #: models/reldb/user/feeds.py:81 models/reldb/user/subscriptions.py:81
-#, fuzzy
 msgid "User blogs"
-msgstr "Imports utilisateur"
+msgstr "Blogs de l'utilisateur"
 
 #: models/reldb/user/feeds.py:86
 #, python-brace-format
@@ -4560,32 +4482,28 @@ msgstr ""
 #: models/reldb/user/subscriptions.py:51
 #, fuzzy
 msgid "User subscriptions"
-msgstr "pas d'abonnement"
+msgstr "Abonnements utilisateur"
 
 #: models/reldb/user/subscriptions.py:52
 #, fuzzy
 msgid "Users subscriptions"
-msgstr "pas d'abonnement"
+msgstr "Abonnements utilisateurs"
 
 #: models/reldb/user/subscriptions.py:61
-#, fuzzy
 msgid "Web import subscription"
-msgstr "Modifier l'abonnement"
+msgstr "Abonnement aux éléments importés"
 
 #: models/reldb/user/subscriptions.py:66
-#, fuzzy
 msgid "Sent items subscription"
-msgstr "Modifier l'abonnement"
+msgstr "Abonnement aux éléments envoyés"
 
 #: models/reldb/user/subscriptions.py:71
-#, fuzzy
 msgid "Received items subscription"
-msgstr "Modifier l'abonnement"
+msgstr "Abonnement aux éléments reçus"
 
 #: models/reldb/user/subscriptions.py:77
-#, fuzzy
 msgid "Written items subscription"
-msgstr "Modifier l'abonnement"
+msgstr "Abonnement aux éléments écrits"
 
 #: models/reldb/user/subscriptions.py:87
 #, fuzzy, python-brace-format
@@ -5021,14 +4939,12 @@ msgid "General"
 msgstr "Général"
 
 #: templates/read-endless.html:46
-#, fuzzy
 msgid "Nothing to read here. Buy a book?"
 msgstr "Rien à lire. Achetez-vous un livre ;-)"
 
 #: templates/read-endless.html:51 templates/read-endless.html.py:55
-#, fuzzy
 msgid "or display all read items?"
-msgstr "Autoriser l'affichage de tous les articles"
+msgstr "ou afficher tous les éléments lus ?"
 
 #: templates/signin_error.html:3 templates/signin_error.html.py:8
 msgid "Error Signin in."
@@ -5753,29 +5669,24 @@ msgid "Contact"
 msgstr "Contact"
 
 #: templates/snippets/history/history-entry-actions.html:8
-#, fuzzy
 msgid "Retry this import"
-msgstr "Import utilisateur"
+msgstr "Ré-essayer cet import"
 
 #: templates/snippets/history/userimport-articles.html:3
-#, fuzzy
 msgid "In your database"
 msgstr "Présent dans vos données"
 
 #: templates/snippets/history/userimport-articles.html:12
-#, fuzzy
 msgid "Not in your database"
-msgstr "Présent dans vos données"
+msgstr "Pas dans vos données"
 
 #: templates/snippets/history/userimport-feeds.html:4
-#, fuzzy
 msgid "Subscribed to"
-msgstr "Abonné(e) !"
+msgstr "Abonné(e)"
 
 #: templates/snippets/history/userimport-feeds.html:21
-#, fuzzy
 msgid "Not subscribed to"
-msgstr "Plus abonné(e)"
+msgstr "Pas abonné(e)"
 
 #: templates/snippets/home/extrajs-footer.js.html:27
 msgid "Returning to source selector…"
@@ -6940,15 +6851,13 @@ msgstr "Aucun compte e-mail fonctionnel. Vérifiez vos paramètres SVP."
 
 #: templates/sources-list/mail.html:11 templates/sources-list/mail.html:38
 #: templates/sources-list/mail.html:48
-#, fuzzy
 msgid "Manage your e-mail accounts"
-msgstr "Retour aux comptes e-mail"
+msgstr "Gérer vos comptes e-mail"
 
 #: templates/sources-list/mail.html:13 templates/sources-list/mail.html:40
 #: templates/sources-list/mail.html:50
-#, fuzzy
 msgid "Manage e-mail accounts"
-msgstr "Comptes e-mail"
+msgstr "Gérer les comptes e-mail"
 
 #: templates/sources-list/mail.html:17
 msgid ""
@@ -6957,9 +6866,8 @@ msgstr ""
 "Aucun compte disponible. Merci d'en ajouter un pour créer des flux d'e-mail."
 
 #: templates/sources-list/mail.html:22 templates/sources-list/mail.html:24
-#, fuzzy
 msgid "Create an e-mail account"
-msgstr "Créez votre compte"
+msgstr "Créez un compte e-mail"
 
 #: templates/sources-list/mail.html:33
 msgid ""
@@ -6970,12 +6878,10 @@ msgstr ""
 " paramètres."
 
 #: templates/sources-list/mail.html:63
-#, fuzzy
 msgid "Manage your e-mail streams"
-msgstr "Gérer les flux d'e-mails"
+msgstr "Gérez vos flux d'e-mail"
 
 #: templates/sources-list/mail.html:65
-#, fuzzy
 msgid "Manage e-mail streams"
 msgstr "Gérer les flux d'e-mails"
 
@@ -6984,17 +6890,20 @@ msgid ""
 "Create your first e-mail stream, from rules applied on any of your e-mail "
 "accounts."
 msgstr ""
+"Créez votre premier flux d'e-mails, à partir de règles appliquées à "
+"n'importe lequel de vos comptes e-mails."
 
 #: templates/sources-list/mail.html:77 templates/sources-list/mail.html:79
-#, fuzzy
 msgid "Create an e-mail stream"
-msgstr "Gérer les flux d'e-mails"
+msgstr "Créer un flux d'e-mails"
 
 #: templates/sources-list/mail.html:84 templates/sources-list/twitter.html:81
 msgid ""
 "Note: You will be able to share this stream with other 1flow users, or keep "
 "it completely private if you wish."
 msgstr ""
+"Note : vous pourrez partager ce flux avec les autres utilisateurs de 1flow, "
+"ou le garder complètement privé si vous préférez."
 
 #: templates/sources-list/rssatom.html:7
 msgid "Add one or more RSS/Atom feed to 1flow via their web URL."
@@ -7009,63 +6918,66 @@ msgid ""
 "Subscribe to any feed already present in our database, or shared by other "
 "users of 1flow databases across the world."
 msgstr ""
+"Abonnez-vous à n'importe quel flux déjà présent dans notre base de données, "
+"ou partagé par les autres utilisateurs des 1flow autour du monde."
 
 #: templates/sources-list/twitter.html:6
 msgid "No working Twitter account. Please check your parameters."
-msgstr ""
+msgstr "Pas de compte Twitter fonctionnel. Merci de vérifier vos paramètres."
 
 #: templates/sources-list/twitter.html:11
 #: templates/sources-list/twitter.html:35
 #: templates/sources-list/twitter.html:45
-#, fuzzy
 msgid "Manage your Twitter accounts"
-msgstr "Créez votre compte"
+msgstr "Gérer vos comptes Twitter"
 
 #: templates/sources-list/twitter.html:13
 #: templates/sources-list/twitter.html:37
 #: templates/sources-list/twitter.html:47
-#, fuzzy
 msgid "Manage Twitter accounts"
-msgstr "Comptes e-mail"
+msgstr "Gestion des compte Twitter"
 
 #: templates/sources-list/twitter.html:17
 msgid ""
 "No Twitter account available. Please associate at least one Twitter account "
 "with 1flow to create Twitter feeds."
 msgstr ""
+"Pas de compte Twitter disponible. Merci d'associer au moins un compte "
+"Twitter avec 1flow pour créer des flux Twitter."
 
 #: templates/sources-list/twitter.html:21
 #: templates/twitteraccount/form.html:10
-#, fuzzy
 msgid " Associate a twitter account"
-msgstr "Associer d'autres comptes"
+msgstr "Associer un compte Twitter"
 
 #: templates/sources-list/twitter.html:30
 msgid ""
 "At least one of your Twitter accounts does not work properly. Please check "
 "your parameters."
 msgstr ""
+"Au moins un de vos comptes Twitter ne fonctionne pas correctement. Merci de "
+"vérifier vos paramètres."
 
 #: templates/sources-list/twitter.html:60
-#, fuzzy
 msgid "Manage your Twitter streams"
-msgstr "Gérer les flux d'e-mails"
+msgstr "Gérez vos flux Twitter"
 
 #: templates/sources-list/twitter.html:62
-#, fuzzy
 msgid "Manage Twitter streams"
-msgstr "Gérer les flux d'e-mails"
+msgstr "Gérer les flux Twitter"
 
 #: templates/sources-list/twitter.html:69
 msgid ""
 "Create your first Twitter stream, from rules applied on any of your Twitter "
 "accounts."
 msgstr ""
+"Créez votre premier flux Twitter, à partir de règles appliquées à n'importe "
+"lequel de vos comptes Twitter."
 
 #: templates/sources-list/twitter.html:74
 #: templates/sources-list/twitter.html:76
 msgid "Create a Twitter stream"
-msgstr ""
+msgstr "Créer un flux Twitter"
 
 #: templates/status/celery.html:2
 #, fuzzy
@@ -7086,11 +6998,11 @@ msgstr "MongoDB"
 
 #: templates/status/index.html:14
 msgid "Celery"
-msgstr ""
+msgstr "Celery"
 
 #: templates/status/index.html:20
 msgid "RabbitMQ"
-msgstr ""
+msgstr "RabbitMQ"
 
 #: templates/status/index.html:26
 msgid "Redis"
@@ -7184,14 +7096,12 @@ msgid ""
 msgstr "Base de données <strong>%(dbname)s</strong>"
 
 #: templates/status/postgresql.html:9
-#, fuzzy
 msgid "port:"
-msgstr "import"
+msgstr "port :"
 
 #: templates/status/postgresql.html:10
-#, fuzzy
 msgid "username:"
-msgstr "Identifiant"
+msgstr "Identifiant :"
 
 #: templates/status/postgresql.html:24
 #, fuzzy, python-format
@@ -7203,14 +7113,12 @@ msgstr ""
 "données)</span>"
 
 #: templates/status/postgresql.html:25
-#, fuzzy
 msgid "relations"
-msgstr "réglementation"
+msgstr "relations"
 
 #: templates/status/postgresql.html:26
-#, fuzzy
 msgid "total tuples"
-msgstr "objets totaux"
+msgstr "tuples totaux"
 
 #: templates/status/postgresql.html:54
 #, python-format
@@ -7232,9 +7140,8 @@ msgid "RabbitMQ queues"
 msgstr "Files d'attente RabbitMQ"
 
 #: templates/status/rabbitmq.html:8
-#, fuzzy
 msgid "Items"
-msgstr "Pas d'éléments"
+msgstr "Éléments"
 
 #: templates/status/rabbitmq.html:9
 msgid "Consumers"
@@ -7329,14 +7236,12 @@ msgid "URI"
 msgstr "URI"
 
 #: templates/syncnode/list-create.html:90
-#, fuzzy
 msgid "Remote token"
-msgstr "Nom du flux"
+msgstr "Jeton distant"
 
 #: templates/syncnode/list-create.html:91
-#, fuzzy
 msgid "Broadcast?"
-msgstr "Diffuser"
+msgstr "Diffuser ?"
 
 #: templates/syncnode/list-create.html:120
 #, fuzzy
@@ -7363,7 +7268,7 @@ msgid ""
 msgstr ""
 
 #: templates/twitteraccount/list-create.html:19
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "\n"
 "\t\t \t\t    %(counter)s twitter account\n"
@@ -7374,25 +7279,23 @@ msgid_plural ""
 "\t\t \t\t"
 msgstr[0] ""
 "\n"
-"%(counter)s compte e-mail"
+"%(counter)s compte Twitter"
 msgstr[1] ""
 "\n"
-"%(counter)s comptes e-mail"
+"%(counter)s comptes Twitter"
 
 #: templates/twitteraccount/list-create.html:32
-#, fuzzy
 msgid "Switch to twitter feeds"
-msgstr "Basculer vers les flux de mails"
+msgstr "Basculer vers les flux Twitter"
 
 #: templates/twitteraccount/list-create.html:81
-#, fuzzy
 msgid ""
 "\n"
 "\t\t    No twitter account yet.\n"
 "\t\t"
 msgstr ""
 "\n"
-"Pas encore de compte e-mail."
+"Pas encore de compte Twitter."
 
 #: templates/twitteraccount/list-create.html:96
 msgid ""
@@ -7401,17 +7304,15 @@ msgid ""
 msgstr ""
 
 #: templates/twitterfeed/breadcrumbs.html:2
-#, fuzzy
 msgid "Back to Twitter accounts"
-msgstr "Retour aux comptes e-mail"
+msgstr "Retour aux comptes Twitter"
 
 #: templates/twitterfeed/form.html:9
-#, fuzzy
 msgid "Please fill parameters for a new Twitter-based feed"
-msgstr "Merci de saisir les paramètres pour un nouveau flux d'e-mails"
+msgstr "Merci de saisir les paramètres pour un nouveau flux Twitter"
 
 #: templates/twitterfeed/list-create.html:19
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "\n"
 "\t\t \t\t    %(counter)s twitter feed\n"
@@ -7422,39 +7323,36 @@ msgid_plural ""
 "\t\t \t\t"
 msgstr[0] ""
 "\n"
-"%(counter)s flux d'e-mail"
+"%(counter)s flux Twitter"
 msgstr[1] ""
 "\n"
-"%(counter)s flux d'e-mail"
+"%(counter)s flux Twitter"
 
 #: templates/twitterfeed/list-create.html:32
-#, fuzzy
 msgid "Switch to twitter accounts"
-msgstr "Basculer vers les comptes e-mail"
+msgstr "Basculer vers les comptes Twitter"
 
 #: templates/twitterfeed/list-create.html:59
 msgid "Backfilled?"
 msgstr "Recherche arrière ?"
 
 #: templates/twitterfeed/list-create.html:71
-#, fuzzy
 msgctxt "plural"
 msgid "All"
-msgstr "Tout"
+msgstr "Tous"
 
 #: templates/twitterfeed/list-create.html:82
 msgid "(immutable)"
 msgstr "(non-modifiable)"
 
 #: templates/twitterfeed/list-create.html:132
-#, fuzzy
 msgid ""
 "\n"
 "\t\t\t    No twitter feed yet.\n"
 "\t\t\t"
 msgstr ""
 "\n"
-"Pas encore de flux d'e-mails."
+"Pas encore de flux Twitter."
 
 #: templates/twitterfeed/list-create.html:147
 #, fuzzy
@@ -7472,14 +7370,13 @@ msgstr ""
 "flux."
 
 #: templates/twitterfeedrule/breadcrumbs.html:4
-#, fuzzy
 msgid "Back to Twitter feeds"
-msgstr "Retour aux flux d'e-mails"
+msgstr "Retour aux flux Twitter"
 
 #: templates/twitterfeedrule/form.html:9
-#, fuzzy
 msgid "Please fill parameters for a new twitter feed rule"
-msgstr "Merci de saisir les paramètres pour un nouveau flux d'e-mails"
+msgstr ""
+"Merci de saisir les paramètres pour une nouvelle règle de flux Twitter"
 
 #: templates/twitterfeedrule/list-create.html:157
 msgid ""
@@ -7832,14 +7729,13 @@ msgid "Could not retry import: <code>{0}</code>."
 msgstr ""
 
 #: views/history.py:95
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Import #{0} successfully relaunched."
-msgstr "Abonnement <em>{0}</em> résilié avec succès."
+msgstr "Import #{0} relancé avec succès."
 
 #: views/preferences.py:86
-#, fuzzy
 msgid "Preferences updated."
-msgstr "Préférences"
+msgstr "Préférences mises à jour."
 
 #: views/read.py:259
 #, python-format
