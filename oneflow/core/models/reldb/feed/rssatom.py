@@ -346,6 +346,8 @@ class RssAtomFeed(BaseFeed):
     # wastes resources.
     REFRESH_LOCK_INTERVAL = 2700
 
+    INPLACEEDIT_EXCLUDE = BaseFeed.INPLACEEDIT_EXCLUDE + ('url', )
+
     objects = BaseFeedManager()
 
     url = models.URLField(unique=True, max_length=512,
