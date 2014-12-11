@@ -417,6 +417,15 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
                 days=config.FEED_ADMIN_MEANINGFUL_DELTA))
 
     @property
+    def native_items(self):
+        """ Return items whose model is related to the feed model.
+
+        This method is meant to be overriden by polymorphic inherited models.
+        """
+
+        return self.items.all()
+
+    @property
     def good_items(self):
         """ Subscriptions should always use :attr:`good_items` to give
             to users only useful content for them, whereas :class:`Feed`

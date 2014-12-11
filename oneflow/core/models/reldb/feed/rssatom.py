@@ -381,6 +381,21 @@ class RssAtomFeed(BaseFeed):
 
         return _(u'RssAtomFeed {0} (#{1})').format(self.name, self.id)
 
+    # —————————————————————————————————————————————————————————————— Properties
+
+    @property
+    def native_items(self):
+        """ Return all our items.
+
+        An RSS/Atom feed can hold any type of elements (web articles,
+        media files, etc). Besides its web nature when we think about it
+        at first, we encountered a lot of different types of RSS/Atom feeds,
+        and we cannot restrict native items to ``article()``: in some feeds
+        this would return no items, while the feed is full of other things.
+        """
+
+        return self.items.all()
+
     # —————————————————————————————————————————————————————————— Internal utils
 
     def throttling_method(self, new_articles, mutualized, duplicates):

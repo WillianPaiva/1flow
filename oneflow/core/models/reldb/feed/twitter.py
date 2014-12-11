@@ -226,6 +226,12 @@ class TwitterFeed(BaseFeed):
     # —————————————————————————————————————————————————————————————— Properties
 
     @property
+    def native_items(self):
+        """ Return our tweets only. """
+
+        return self.items.tweet()
+
+    @property
     def is_list(self):
         """ Return True if the current feed is a twitter list. """
 
