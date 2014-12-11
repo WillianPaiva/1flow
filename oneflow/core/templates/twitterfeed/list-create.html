@@ -57,6 +57,8 @@
 
 			<th class="col-sm-2">{% trans "Twitter account" %}</th>
 			<th class="col-sm-2">{% trans "Backfilled?" %}</th>
+			<th class="col-sm-2">{% trans "Track terms" %}</th>
+			<th class="col-sm-2">{% trans "Track locations" %}</th>
 
 			<th class="col-sm-2">{% trans "Default action" %}</th>
 			<th class="col-sm-2">{% trans "Default finish" %}</th>
@@ -65,6 +67,9 @@
 		  </tr>
 		</thead>
 		<tbody>
+
+		{% captureas all_plural %}{% trans "All" context "plural" %}{% endcaptureas %}
+
 		{% for twitterfeed in twitterfeed_list %}
 			<tr>
 				<td>{% inplace_edit 'twitterfeed.name' %}</td>
@@ -77,14 +82,16 @@
 					<small class="muted">{% trans "(immutable)" %}</small></td>
 
 				{% else %}
-					<td>{% inplace_edit 'twitterfeed.account' edit_empty_value=_('All') %}</td>
+					<td>{% inplace_edit 'twitterfeed.account' edit_empty_value=all_plural %}</td>
 				{% endif %}
 
 				<td>{% inplace_edit 'twitterfeed.is_backfilled' %}</td>
 
 				{% if twitterfeed.is_timeline or twitterfeed.is_list %}
-					<td><span class="muted">{% trans "not applicable" %}</span></td>
-					<td><span class="muted">{% trans "not applicable" %}</span></td>
+					<td><small class="muted">{% trans "not applicable" %}</small></td>
+					<td><small class="muted">{% trans "not applicable" %}</small></td>
+					<td><small class="muted">{% trans "not applicable" %}</small></td>
+					<td><small class="muted">{% trans "not applicable" %}</small></td>
 
 					<td>—</td>
 
@@ -93,6 +100,9 @@
 
 
 				{% else %}
+					<td>{% inplace_edit 'twitterfeed.track_terms' %}</td>
+					<td>{% inplace_edit 'twitterfeed.track_locations' %}</td>
+
 					<td>{% inplace_edit 'twitterfeed.match_action' %}</td>
 					<td>{% inplace_edit 'twitterfeed.finish_action' %}</td>
 
