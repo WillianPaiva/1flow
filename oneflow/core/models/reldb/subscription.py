@@ -570,7 +570,7 @@ def any_feed_with_user_post_save(instance, **kwargs):
     source selector.
     """
 
-    LOGGER.debug(u'feed_with_user_post_save() %s', instance)
+    # LOGGER.debug(u'feed_with_user_post_save() %s', instance)
 
     if kwargs.get('created', False):
         feed = instance
@@ -581,7 +581,8 @@ def any_feed_with_user_post_save(instance, **kwargs):
                                    background=True)
 
 
-# NOT for RSS/Atom, this is handled in forms/views
+# NOT for RSS/Atom, this is handled in forms/views and these feeds are
+# not directly created / manager by users like other kinds of feeds.
 # post_save.connect(any_feed_with_user_post_save, sender=RssAtomFeed)
 
 post_save.connect(any_feed_with_user_post_save, sender=MailFeed)
