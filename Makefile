@@ -38,7 +38,10 @@ runweb: clean
 	honcho -f Procfile.development start web
 
 runworkers:
-	honcho -f Procfile.development start flower beat worker mongo --quiet flower,beat,shell
+	honcho -f Procfile.development start flower beat worker permanent mongo --quiet flower,beat,shell
+
+runpermanent:
+	honcho -f Procfile.development start flower beat worker permanent --quiet flower,beat,shell,worker
 
 	#,worker_high,worker_medium,worker_low,worker_fetch,worker_background,worker_swarm,worker_clean
 
@@ -47,9 +50,10 @@ runshell:
 
 loglevel?=warning
 autoscale?=1,1
+processtype=gevent
 
 worker:
-	./manage.py celery worker -P gevent --without-mingle --without-gossip --without-heartbeat --loglevel=$(loglevel) --autoscale=$(autoscale) --queues=$(queues)
+	./manage.py celery worker -P $(processtype) --without-mingle --without-gossip --without-heartbeat --loglevel=$(loglevel) --autoscale=$(autoscale) --queues=$(queues)
 
 clean:
 	ps ax | grep manage.py | grep -v grep | grep -v shell_plus | awk '{print $$1}' | xargs kill -9 || true
