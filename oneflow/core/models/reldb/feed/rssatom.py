@@ -265,8 +265,8 @@ def create_feeds_from_url(feed_url, creator=None, recurse=True):
         )
 
         if created:
-            feed.user = creator
-            feed.save()
+            new_feed.user = creator
+            new_feed.save()
 
         return [(new_feed, created)]
 
@@ -346,6 +346,8 @@ class RssAtomFeed(BaseFeed):
     # wastes resources.
     REFRESH_LOCK_INTERVAL = 2700
 
+    INPLACEEDIT_EXCLUDE = BaseFeed.INPLACEEDIT_EXCLUDE + ('url', )
+
     objects = BaseFeedManager()
 
     url = models.URLField(unique=True, max_length=512,
@@ -378,6 +380,21 @@ class RssAtomFeed(BaseFeed):
         """ Hello, pep257. I love you so. """
 
         return _(u'RssAtomFeed {0} (#{1})').format(self.name, self.id)
+
+    # —————————————————————————————————————————————————————————————— Properties
+
+    @property
+    def native_items(self):
+        """ Return all our items.
+
+        An RSS/Atom feed can hold any type of elements (web articles,
+        media files, etc). Besides its web nature when we think about it
+        at first, we encountered a lot of different types of RSS/Atom feeds,
+        and we cannot restrict native items to ``article()``: in some feeds
+        this would return no items, while the feed is full of other things.
+        """
+
+        return self.items.all()
 
     # —————————————————————————————————————————————————————————— Internal utils
 

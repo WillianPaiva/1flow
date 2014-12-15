@@ -308,6 +308,7 @@ def global_duplicates_checker(limit=None, force=False):
     if limit is None:
         limit = 0
 
+    start_time = pytime.time()
     duplicates = BaseItem.objects.duplicate()
 
     total_dupes_count  = duplicates.count()
@@ -320,6 +321,9 @@ def global_duplicates_checker(limit=None, force=False):
     purge_after_weeks_count = min(52, purge_after_weeks_count)
 
     purge_before_date = now() - timedelta(days=purge_after_weeks_count * 7)
+
+    LOGGER.info(u'Done counting (took %s of pure SQL joy), starting procedure.',
+                naturaldelta(pytime.time() - start_time))
 
     with benchmark(u"Check {0}/{1} duplicates".format(limit or u'all',
                    total_dupes_count)):
@@ -339,7 +343,9 @@ def global_duplicates_checker(limit=None, force=False):
                                 duplicate._meta.model.__name__,
                                 duplicate.id, reads_count)
 
-                    duplicate.duplicate_of.register_duplicate(duplicate)
+                    duplicate.duplicate_of.register_duplicate(
+                        duplicate, force=duplicate.duplicate_status
+                        == DUPLICATE_STATUS.FINISHED)
 
                 if duplicate.duplicate_status == DUPLICATE_STATUS.FINISHED:
                     #

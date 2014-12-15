@@ -23,6 +23,7 @@ import logging
 
 from statsd import statsd
 from constance import config
+from celery.exceptions import SoftTimeLimitExceeded
 
 from django.conf import settings  # NOQA
 from django.db import models
@@ -106,6 +107,13 @@ class TwitterFeed(BaseFeed):
     # the lock is released while consume() task blocks on user stream of
     # very-low-trafic timeline. Thus, we must simulate a non-expiring lock.
     REFRESH_LOCK_INTERVAL = 3600 * 24 * 31
+
+    # Twitter feeds are by nature user dependant.
+    # They will be closed if the user isn't
+    # subscribed to it anymore.
+    AUTO_CLOSE_WHEN_NO_SUBSCRIPTION_LEFT = True
+
+    INPLACEEDIT_EXCLUDE = BaseFeed.INPLACEEDIT_EXCLUDE + ('uri', )
 
     objects = BaseFeedManager()
 
@@ -216,6 +224,12 @@ class TwitterFeed(BaseFeed):
     # ——————————————————————————————————————————————————————————— Class methods
 
     # —————————————————————————————————————————————————————————————— Properties
+
+    @property
+    def native_items(self):
+        """ Return our tweets only. """
+
+        return self.items.tweet()
 
     @property
     def is_list(self):
@@ -357,6 +371,26 @@ class TwitterFeed(BaseFeed):
                 LOGGER.info(u'%s: good period %s-%s recorded, %s total.',
                             self, period_start_item, period_end_item,
                             self.good_periods_count)
+
+    def can_continue_consuming(self):
+        """ Return True if the current feed is still in good conditions.
+
+        It will return ``False`` if for example the feed was deleted
+        or closed since last check.
+        """
+
+        try:
+            myself = self._meta.model.objects.get(id=self.id)
+
+        except self._meta.model.DoesNotExist:
+            LOGGER.warning(u'%s %s was deleted while running.')
+            return False
+
+        if not myself.is_active:
+            LOGGER.warning(u'%s %s was closed while running.')
+            return False
+
+        return True
 
     # ———————————————————————————————————————————————————— BaseFeed connections
 
@@ -697,6 +731,29 @@ class TwitterFeed(BaseFeed):
                 except KeyboardInterrupt:
                     LOGGER.warning(u'Interrupting stream consumption '
                                    u'at user request.')
+                    break
+
+                except SoftTimeLimitExceeded:
+                    # This should happen only on streaming APIs.
+                    LOGGER.info(u'%s: time limit reached, terminating '
+                                u'to let things flow.', self)
+
+                    if self.can_continue_consuming():
+                        if not backfilling:
+
+                            # update last fetch date for global refresh task
+                            # not to relaunch us again while we already do it.
+                            self.update_last_fetch()
+                            self.save()
+
+                            # relaunch immediately if a worker is available,
+                            # to not loose any tweet in case of a prolix feed.
+                            globals()['twitterfeed_consume_task'].delay(self.id)
+
+                    else:
+                        LOGGER.warning(u'%s: not active anymore, exiting.',
+                                       self)
+
                     break
 
                 except Exception:

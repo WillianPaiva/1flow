@@ -121,7 +121,7 @@ class BaseAccount(PolymorphicModel, DiffMixin):
     usable_start_task_name   = None
     reset_unusable_task_name = None
 
-    INPLACEEDIT_FORM_EXCLUDE = ('options', )
+    INPLACEEDIT_EXCLUDE = ('options', )
 
     # ———————————————————————————————————————————————————————————————— Managers
 
