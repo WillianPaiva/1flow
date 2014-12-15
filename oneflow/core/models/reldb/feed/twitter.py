@@ -372,6 +372,26 @@ class TwitterFeed(BaseFeed):
                             self, period_start_item, period_end_item,
                             self.good_periods_count)
 
+    def can_continue_consuming(self):
+        """ Return True if the current feed is still in good conditions.
+
+        It will return ``False`` if for example the feed was deleted
+        or closed since last check.
+        """
+
+        try:
+            myself = self._meta.model.objects.get(id=self.id)
+
+        except self._meta.model.DoesNotExist:
+            LOGGER.warning(u'%s %s was deleted while running.')
+            return False
+
+        if not myself.is_active:
+            LOGGER.warning(u'%s %s was closed while running.')
+            return False
+
+        return True
+
     # ———————————————————————————————————————————————————— BaseFeed connections
 
     def refresh_must_abort_internal(self):
@@ -715,14 +735,18 @@ class TwitterFeed(BaseFeed):
 
                 except SoftTimeLimitExceeded:
                     # This should happen only on streaming APIs.
-                    LOGGER.info(u'Soft time limit exceeded in celery task, '
-                                u'terminating to let things flow.')
+                    LOGGER.info(u'%s: time limit reached, terminating '
+                                u'to let things flow.', self)
 
-                    if not backfilling:
-                        # relaunch immediately, to not loose any tweet.
-                        globals()['twitterfeed_consume_task'].delay(self.id)
+                    if self.can_continue_consuming():
+                        if not backfilling:
+                            # relaunch immediately, to not loose any tweet
+                            # in the case of a prolix twitter feed.
+                            globals()['twitterfeed_consume_task'].delay(self.id)
 
-                    statsd.incr('api.twitter.status.time_limit_exceeded')
+                    else:
+                        LOGGER.warning(u'%s: not active anymore, exiting.',
+                                       self)
 
                     break
 
