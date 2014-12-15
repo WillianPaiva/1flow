@@ -289,6 +289,103 @@ class UserImport(HistoryEntry):
                     read.save()
 
         return True
+
+    def guess_and_import_wallabag(self):
+        """ Try to import a JSON export file from wallabag. """
+
+        try:
+            wallabag_json = json.loads(self.urls)
+
+        except:
+            return False
+
+        try:
+            first_object = wallabag_json[0]
+
+        except:
+            return False
+
+        for attr_name in (
+            "0", "1", "2", "3", "4", "5", "6",
+            "content", "id", "is_fav", "is_read",
+            "title", "url", "user_id",
+        ):
+            if attr_name not in first_object:
+                return False
+
+        message_user(self.user,
+                     _(u'Wallabag JSON export format detected.'),
+                     constants.INFO)
+
+        for wallabag_object in wallabag_json:
+
+            url = wallabag_object['url']
+
+            if self.validate_url(url):
+                article = self.import_from_one_url(
+                    url,
+                    origin=ORIGINS.WALLABAG
+                )
+
+                if article is None:
+                    # article was not created, we
+                    # already have it in the database.
+                    article = Article.objects.get(url=url)
+
+                # Now comes the wallabag-specific part of the import,
+                # eg. get back user meta-data as much as possible in 1flow.
+
+                article_needs_save = False
+                article_needs_convert = False
+
+                title = wallabag_object.get('title', None)
+
+                if title:
+                    article.name       = title
+                    article_needs_save = True
+
+                content = wallabag_object['content']
+
+                if content:
+                    article.content       = content
+                    article.content_type  = CONTENT_TYPES.HTML
+                    article_needs_save    = True
+                    article_needs_convert = True
+
+                if article_needs_save:
+                    article.save()
+
+                if article_needs_convert:
+                    article.convert_to_markdown()
+
+                read = article.reads.get(
+                    subscriptions=self.user.user_subscriptions.imported_items)
+
+                # About parsing dates:
+                # http://stackoverflow.com/q/127803/654755
+                # http://stackoverflow.com/a/18150817/654755
+
+                read_needs_save = False
+
+                if wallabag_object.get('is_fav', False):
+                    read.is_starred = True
+                    read_needs_save = True
+
+                    # This information is not in wallabag.
+                    read.date_starred = now()
+
+                if wallabag_object.get('is_read', False):
+                    read.is_read = True
+                    read_needs_save = True
+
+                    # This information is not in wallabag.
+                    read.date_read = now()
+
+                if read_needs_save:
+                    read.save()
+
+        return True
+
     # ———————————————————————————————————————————————— 1flow internal importers
 
     def import_from_one_url(self, url, origin=None):
