@@ -88,7 +88,11 @@ ORIGINS = NamedTupleChoices(
     ('EMAIL_FEED', 6, _(u'E-mail')),
     ('FACEBOOK', 7, _(u'Facebook')),
     ('GOOGLEPLUS', 8, _(u'Google Plus')),
-    ('INTERNAL', 99, _(u'1flow internal origin'))
+
+    ('INTERNAL', 99, _(u'1flow internal origin')),
+
+    ('READABILITY', 200, _(u'Readability import')),
+    ('WALLABAG', 201, _(u'Wallabag import')),
 )
 
 DUPLICATE_STATUS = NamedTupleChoices(
