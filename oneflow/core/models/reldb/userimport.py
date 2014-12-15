@@ -43,6 +43,8 @@ from oneflow.base.utils.dateutils import now, timedelta, naturaldelta
 
 from history import HistoryEntry
 
+from ..common import ORIGINS, CONTENT_TYPES
+
 from . import (
     Article, Read,
     create_item_from_url,
@@ -128,9 +130,9 @@ class UserImport(HistoryEntry):
         starts with ``guess_and_import_``.
         """
 
-        for attr_name, attr_value in self.__dict__.items():
+        for attr_name in dir(self):
             if attr_name.startswith('guess_and_import_'):
-                yield attr_value
+                yield getattr(self, attr_name)
 
     def validate_url(self, url):
         """ Validate an URL. """
@@ -188,7 +190,7 @@ class UserImport(HistoryEntry):
         """ Guess if our content is a readability file, then import it. """
 
         try:
-            readability_json = json.loads(self.cleaned_data['urls'])
+            readability_json = json.loads(self.urls)
 
         except:
             return False
@@ -215,7 +217,10 @@ class UserImport(HistoryEntry):
             url = readability_object['article__url']
 
             if self.validate_url(url):
-                article = self.import_from_one_url(url)
+                article = self.import_from_one_url(
+                    url,
+                    origin=ORIGINS.READABILITY
+                )
 
                 if article is None:
                     # article was not created, we
@@ -283,9 +288,10 @@ class UserImport(HistoryEntry):
                 if read_needs_save:
                     read.save()
 
+        return True
     # ———————————————————————————————————————————————— 1flow internal importers
 
-    def import_from_one_url(self, url):
+    def import_from_one_url(self, url, origin=None):
         """ Guess if an URL is a feed or an article and import it. """
 
         # —————————————————————————————————————— Try to create an RSS/Atom Feed
@@ -347,7 +353,10 @@ class UserImport(HistoryEntry):
 
         try:
             article, created = create_item_from_url(
-                url, feeds=[self.user.user_feeds.imported_items])
+                url,
+                feeds=[self.user.user_feeds.imported_items],
+                origin=origin
+            )
 
             # create_item_from_url() will run subscription.create_read()
             # for all feeds, thus the read is assumed to be ready now.
