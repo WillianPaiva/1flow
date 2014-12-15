@@ -39,7 +39,7 @@ from bs4 import BeautifulSoup
 from mongoengine import Document, signals
 
 from django.conf import settings
-from django.db import models  # , transaction
+from django.db import models, DatabaseError, InterfaceError  # , transaction
 from django.template import Context
 
 from djangojs.context_serializer import ContextSerializer
@@ -173,6 +173,13 @@ def register_task_method(klass, meth, module_globals,
                              u'%s on %s #%s.', method_name,
                              klass._meta.model.__name__,
                              object_pk)
+
+            except (InterfaceError, DatabaseError), exc:
+                LOGGER.exception(u'Database interface error while running '
+                                 u'%s on %s #%s; relaunching.',
+                                 method_name, klass._meta.model.__name__,
+                                 object_pk)
+                module_globals[exported_name].retry(exc=exc)
 
             except:
                 LOGGER.exception(u'exception while running %s on %s #%s',
