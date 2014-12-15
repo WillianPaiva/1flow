@@ -181,6 +181,10 @@ def register_task_method(klass, meth, module_globals,
                                  object_pk)
                 module_globals[exported_name].retry(exc=exc)
 
+            except SystemExit:
+                # Stop flooding sentry with that.
+                pass
+
             except:
                 LOGGER.exception(u'exception while running %s on %s #%s',
                                  method_name, klass._meta.model.__name__,
