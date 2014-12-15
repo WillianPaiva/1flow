@@ -740,8 +740,14 @@ class TwitterFeed(BaseFeed):
 
                     if self.can_continue_consuming():
                         if not backfilling:
-                            # relaunch immediately, to not loose any tweet
-                            # in the case of a prolix twitter feed.
+
+                            # update last fetch date for global refresh task
+                            # not to relaunch us again while we already do it.
+                            self.update_last_fetch()
+                            self.save()
+
+                            # relaunch immediately if a worker is available,
+                            # to not loose any tweet in case of a prolix feed.
                             globals()['twitterfeed_consume_task'].delay(self.id)
 
                     else:
