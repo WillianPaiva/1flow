@@ -253,7 +253,11 @@ def production():
             ),
             'worker_sync': (
                 'Inter-node synchronization worker',
-                'sync,permanent'
+                'sync'
+            ),
+            'worker_permanent': (
+                'Inter-node synchronization worker',
+                'permanent'
             ),
             'worker_net': (
                 'Network-related worker',
@@ -295,6 +299,7 @@ def production():
         },
 
         'worker_pool': {
+            'worker_permanent': 'prefork',
             '__all__': 'gevent',
         },
 
@@ -334,7 +339,7 @@ def production():
 
             # Force Twitter permanent workers to
             # release locks & free resources.
-            'worker_sync': '900',
+            'worker_permanent': '300',
 
             # 7 days: 604800
             # 4 days seems to be a good start.
