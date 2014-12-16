@@ -31,6 +31,7 @@ from transmeta import TransMeta
 from json_field import JSONField
 
 # from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
@@ -823,7 +824,8 @@ pre_save.connect(basefeed_pre_save, sender=BaseFeed)
 # ————————————————————————————————————————————————————————— Export class method
 
 
-def basefeed_export_content_classmethod(cls, since, until=None, folder=None):
+def basefeed_export_content_classmethod(cls, since, until=None,
+                                        folder=None, user=None):
     """ Pull articles & feeds since :param:`param` and return them in a dict.
 
         if a feed has no new article, it's not represented at all. The returned
@@ -832,58 +834,57 @@ def basefeed_export_content_classmethod(cls, since, until=None, folder=None):
 
     from twitter import TwitterFeed
 
-    def export_one_feed(feed, exported_items, subscription=None):
+    def export_folder(folder):
+
+        return {
+            'name': folder.name,
+            'slug': folder.slug,
+            'id': folder.id,
+        }
+
+    def export_one_feed(feed, exported_items, subscription=None, user=None):
+
+        exported_feed = {
+            'id': unicode(feed.id),
+            'name': feed.name,
+            'url': feed.url if hasattr(feed, 'url') else feed.uri,
+            'short_description': feed.short_description,
+            'articles': exported_items,
+        }
+
+        if user is not None:
+            try:
+                exported_feed['folders'] = [
+                    export_folder(f) for f in feed.subscriptions.get(
+                        user=user).folders.all()
+                ]
+
+            except ObjectDoesNotExist:
+                # This user is not subscribed to this feed. A sweet corner
+                # case, created by the fact that the CECA, for which I
+                # developed the export feature, has only one user, subscribed
+                # to all feeds. But not other 1flow instances.
+                pass
 
         if subscription is None:
-            if hasattr(feed, 'url'):
-                return OrderedDict(
-                    id=unicode(feed.id),
-                    name=feed.name,
-                    url=feed.url,
-                    thumbnail_url=feed.thumbnail.url
-                    if feed.thumbnail else feed.thumbnail_url,
-                    short_description=feed.short_description,
-                    tags=[t.name for t in feed.tags.all()],
-                    articles=exported_items,
-                )
-            else:
-                return OrderedDict(
-                    id=unicode(feed.id),
-                    name=feed.name,
-                    url=feed.uri,
-                    thumbnail_url=feed.thumbnail.url
-                    if feed.thumbnail else feed.thumbnail_url,
-                    short_description=feed.short_description,
-                    tags=[t.name for t in feed.tags.all()],
-                    articles=exported_items,
-                )
+            exported_feed.update({
+                'thumbnail_url': feed.thumbnail.url
+                if feed.thumbnail else feed.thumbnail_url,
 
-        if hasattr(feed, 'url'):
-            return OrderedDict(
-                id=unicode(feed.id),
-                name=subscription.name,
-                url=feed.url,
-                thumbnail_url=subscription.thumbnail.url
+                'tags': [t.name for t in feed.tags.all()],
+            })
+
+        else:
+            exported_feed.update({
+                'thumbnail_url': subscription.thumbnail.url
                 if subscription.thumbnail else subscription.thumbnail_url
                 if subscription.thumbnail_url else feed.thumbnail.url
                 if feed.thumbnail else feed.thumbnail_url,
-                short_description=feed.short_description,
-                tags=[t.name for t in subscription.tags.all()],
-                articles=exported_items,
-            )
 
-        else:
-            # Twitter feed ?
-            return OrderedDict(
-                id=unicode(feed.id),
-                name=subscription.name,
-                url=feed.uri,
-                thumbnail_url=subscription.thumbnail.url
-                if subscription.thumbnail else subscription.thumbnail_url,
-                short_description=feed.short_description,
-                tags=[t.name for t in subscription.tags.all()],
-                articles=exported_items,
-            )
+                'tags': [t.name for t in subscription.tags.all()]
+            })
+
+        return exported_feed
 
     def export_one_item(item, related_to=None):
 
@@ -956,6 +957,10 @@ def basefeed_export_content_classmethod(cls, since, until=None, folder=None):
 
         if content_type == CONTENT_TYPES.BOOKMARK:
             return u'bookmark'
+
+    if folder is not None and folder.is_root:
+        user = folder.user
+        folder = None
 
     if folder is None:
         active_feeds = BaseFeed.objects.filter(is_active=True,
@@ -1061,10 +1066,12 @@ def basefeed_export_content_classmethod(cls, since, until=None, folder=None):
         if folder:
             subscription = feed.subscriptions.get(user=folder.user)
 
-            exported_feed = export_one_feed(feed, exported_items, subscription)
+            exported_feed = export_one_feed(feed, exported_items,
+                                            subscription=subscription)
 
         else:
-            exported_feed = export_one_feed(feed, exported_items)
+            exported_feed = export_one_feed(feed, exported_items,
+                                            user=user)
 
         if exported_website:
             exported_feed['website'] = exported_website
