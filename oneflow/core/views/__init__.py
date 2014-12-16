@@ -45,7 +45,10 @@ from ..forms import WebPagesImportForm
 
 from ..models.common import READ_STATUS_DATA
 
+from oneflow.base.models import Configuration
+
 from ..models import (
+    User,
     Article, Read,
     BaseFeed, Subscription,
     HelpContent,
@@ -415,7 +418,16 @@ def export_content(request, **kwargs):
         folder = get_object_or_404(Folder, slug=folder_slug)
 
     else:
-        folder = None
+        try:
+            default_user_config = Configuration.objects.get(
+                name='export_feeds_default_user')
+
+        except Configuration.DoesNotExist:
+            folder = None
+
+        else:
+            folder = User.objects.get(
+                username=default_user_config.value).root_folder
 
     if format == 'json':
 
