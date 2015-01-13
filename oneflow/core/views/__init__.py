@@ -489,6 +489,9 @@ from twitterfeedrule import (  # NOQA
    TwitterFeedRuleDeleteView,
 )
 
+from staff import StaffFeedListCreateView, StaffWebSiteListCreateView  # NOQA
+
+
 # —————————————————————————————————————————————————————————————— Smaller things
 
 

@@ -1,0 +1,24 @@
+
+	<form class='form btn-group' method="get"
+			style="display: inline-block; margin-left: 3em">
+		<div class="input-group">
+	      <div class="input-group-addon">{% core_icon "filter" False %}</div>
+		<input type="text" accesskey="f" name='filter'
+			value="{{ filter }}" class="form-control input-sm"
+			placeholder="{% trans "Filter…" %}" />
+	      <!--<div class="input-group-addon">.00</div>-->
+	    </div>
+
+	</form>
+
+	<div class="btn-group" style="margin-left: 25px;">
+		<a href="?filter=not:dupe"
+			class="btn btn-default btn-xs">{% core_icon "thumbs-up" False %}</a>
+		<a href="?filter=is:dupe"
+			class="btn btn-default btn-xs">{% core_icon "copy" False %}</a>
+	</div>
+
+	<div class="btn-group">
+		<a href="?"
+			class="btn btn-default btn-xs">{% core_icon "remove" False %}</a>
+	</div>

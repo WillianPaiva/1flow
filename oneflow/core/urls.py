@@ -400,6 +400,18 @@ urlpatterns = patterns(
             views.TwitterFeedRuleDeleteView.as_view())),
         name='twitterfeedrule_delete'),
 
+    # ————————————————————————————————————————————————————— Staff sources admin
+
+    url(_(ur'^staff/feed/?$'),
+        staff_member_required(never_cache(
+            views.StaffFeedListCreateView.as_view())),
+        name='staff_feed_list_create'),
+
+    url(_(ur'^staff/website/?$'),
+        staff_member_required(never_cache(
+            views.StaffWebSiteListCreateView.as_view())),
+        name='staff_website_list_create'),
+
     # ——————————————————————————————————————————————————————————  Google Reader
 
     url(_(ur'^grimport/(?:(?P<user_id>\d+)/)?$'),

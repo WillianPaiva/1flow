@@ -19,3 +19,27 @@
     class="btn btn-lg btn-primary btn-block centered popover-top">
     {% core_icon 'RssAtomFeed' %}{% trans "Subscribe to a 1flow stream" %}</a>
 </div>
+
+{% if user.is_staff_or_superuser_and_enabled %}
+
+    <hr class="spacer20"></hr>
+    <h2>{% trans "Admin stuff" %}</h2>
+
+    <div><a
+        href="{% url 'staff_feed_list_create' %}"
+        data-tooltip="tooltip"
+        title="{% trans "Manage all feeds" %}"
+        class="btn btn-lg btn-primary btn-block centered popover-top">
+        {% core_icon 'StaffList' %}{% trans "Manage all feeds" %}</a>
+    </div>
+    <hr class="spacer20"></hr>
+
+    <div><a
+        href="{% url 'staff_website_list_create' %}"
+        data-tooltip="tooltip"
+        title="{% trans "Manage all websites" %}"
+        class="btn btn-lg btn-primary btn-block centered popover-top">
+        {% core_icon 'globe' %}{% trans "Manage websites" %}</a>
+    </div>
+
+{% endif %}
