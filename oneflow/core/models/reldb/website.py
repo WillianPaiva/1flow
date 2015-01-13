@@ -84,6 +84,8 @@ class WebSite(six.with_metaclass(WebSiteMeta, MPTTModel,
         verbose_name_plural = _(u'Web sites')
         translate = ('short_description', 'description', )
 
+    INPLACEEDIT_EXCLUDE = ['mail_warned', ]
+
     # class MPTTMeta:
     #     order_insertion_by = ['url']
 
