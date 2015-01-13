@@ -762,6 +762,14 @@ def mail_is_usable_to_icon(mailthing):
 
 
 @register.simple_tag
+def core_feed_type(basefeed):
+    """ Return an icon, given the type of the feed. """
+
+    return u"<i class='icon icon-{0} icon-fixed-width'></i>".format(
+        CORE_CLASSES_ICONS[basefeed._meta.model.__name__])
+
+
+@register.simple_tag
 def mailfeed_rules_count(mailaccount):
     """ Return a count of rules applicable to a given account. """
 
