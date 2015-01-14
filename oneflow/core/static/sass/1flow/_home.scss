@@ -375,6 +375,33 @@ header {
 
 // ————————————————————————————————————————————————————————— Endless pagination
 
+.pagination {
+    // this overrides the twitter pagination CSS.
+    text-align: center !important;
+    display: block !important;
+    font-size: 150% !important;
+
+    .pagination_info {
+        padding: 2px 6px;
+        font-size: 80%;
+        color: $grayLighter;
+    }
+
+    .endless_page_current {
+        padding: 2px 4px 2px 7px;
+        background-color: $red-blood;
+        color: white;
+        @include border-radius(5px);
+    }
+
+    .endless_page_link,
+    .endless_separator,
+    .endless_page_current {
+        margin-right: 1em;
+    }
+}
+
+
 .endless_container {
 
     text-align: center;
