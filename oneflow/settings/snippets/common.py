@@ -591,7 +591,7 @@ INPLACEEDIT_EDIT_TOOLTIP_TEXT = ugettext_lazy(u'Click to edit')
 
 # ———————————————————————————————————————————————————— django-endlesspagination
 
-ENDLESS_PAGINATION_PER_PAGE = 100
+ENDLESS_PAGINATION_PER_PAGE = 25 if DEBUG else 50
 
 # This is done directly in the templates.
 # ENDLESS_PAGINATION_LOADING  = ugettext_lazy(u'loading more entries…')

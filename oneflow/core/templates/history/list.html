@@ -43,7 +43,9 @@
 			{% trans "History" %}</span>
 		</h1>
 
-		<div class="spacer50"></div>
+		{% paginate historyentry_list %}
+
+		{% include "widgets/pagination.html" %}
 
 		<table class="table" id="historyentry-table">
 		<thead>
@@ -74,6 +76,9 @@
 		{% endfor %}
 		</tbody>
 		</table>
+
+		{% include "widgets/pagination.html" %}
+
 	{% else %}
 
 		<h2>
