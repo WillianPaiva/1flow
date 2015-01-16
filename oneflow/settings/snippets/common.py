@@ -402,7 +402,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'async_messages.middleware.AsyncMiddleware',
-
+    'simple_history.middleware.HistoryRequestMiddleware',
     'social.apps.django_app.middleware.SocialAuthExceptionMiddleware',
 
     # account's MW must come after 'auth', else they crash.
@@ -532,8 +532,9 @@ INSTALLED_APPS = [
     # 'infinite_pagination',
 
     'mathfilters',
-
     'widget_tweaks',
+    'simple_history',
+
     'oneflow.base',
     'oneflow.profiles',
     'oneflow.core',
