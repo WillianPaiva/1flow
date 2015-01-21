@@ -20,6 +20,9 @@
   var mac = CodeMirror.keyMap["default"] == CodeMirror.keyMap.macDefault;
   var ctrl = mac ? "Cmd-" : "Ctrl-";
 
+  map["Shift-F11"] = "toggleFullScreen";
+  // console.log('fullscreen mapped');
+
   // This is not exactly Sublime's algorithm. I couldn't make heads or tails of that.
   function findPosSubword(doc, start, dir) {
     if (dir < 0 && start.ch == 0) return doc.clipPos(Pos(start.line - 1));

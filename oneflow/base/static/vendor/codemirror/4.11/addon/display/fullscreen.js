@@ -11,6 +11,8 @@
 })(function(CodeMirror) {
   "use strict";
 
+  // console.log('fullscreen loaded');
+
   CodeMirror.defineOption("fullScreen", false, function(cm, val, old) {
     if (old == CodeMirror.Init) old = false;
     if (!old == !val) return;
@@ -37,5 +39,14 @@
     wrap.style.width = info.width; wrap.style.height = info.height;
     window.scrollTo(info.scrollLeft, info.scrollTop);
     cm.refresh();
+  }
+
+  function toggleFullScreen(cm) {
+    // console.log('fullscreen is:' + !cm.getOption("fullScreen"));
+    cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+  }
+
+  function exitFullScreenIfEnabled(cm) {
+    if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
   }
 });
