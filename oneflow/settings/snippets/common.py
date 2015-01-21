@@ -692,6 +692,20 @@ AUTHENTICATION_BACKENDS = (
 )
 
 
+CODEMIRROR_PATH = 'vendor/codemirror/4.11'
+CODEMIRROR_MODE = 'python'
+CODEMIRROR_THEME = 'monokai'
+CODEMIRROR_CONFIG = {
+    'lineNumbers': True,
+    'extraKeys': '''{
+        "F11": function(cm) {
+          cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+        },
+        "Esc": function(cm) {
+          if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+        }
+      }''',
+}
 # —————————————————————————————————————————————————————————————— 1flow settings
 
 
