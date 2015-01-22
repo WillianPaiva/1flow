@@ -13,117 +13,30 @@
       <a class="navbar-brand" href="{% url 'home' %}">
         <span class="{% reverse_active 'home,source_selector' %}">
           1flow
-          <!--
-            <span class="hidden-inline-xs">
-              <span class="badge badge-warning">BETA</span>
-            </span>
-            <span class="visible-inline-xs">
-              <span class="badge badge-warning">β</span>
-            </span>
-          -->
         </span>
       </a>
     </div>
 
-    <div class="collapse navbar-collapse" id="navbar-collapsible-content">
+    <div class="collapse navbar-collapse"
+        id="navbar-collapsible-content">
 
-      {% if user.is_authenticated %}
-        <ul class="nav navbar-nav navbar-right">
-
-          {# nowrap is necessary, else the username gets to next line on Safari+iPad@portrait #}
-          <li class="dropdown nowrap">
-            <a class="dropdown-toggle {% reverse_active 'profile' %} {% reverse_active 'preferences' %} {% reverse_active 'historyentry_list' %} "
-                data-toggle="dropdown" href="#">
-
-                <span class="avatar-frame">
-                  {% if user.avatar %}
-                    <img src="{{ user.avatar.url }}" />
-                  {% elif user.avatar_url %}
-                    <img src="{{ user.avatar_url }}" />
-                  {% else %}
-                    <i class="icon-user"></i>
-                  {% endif %}
-                </span>
-
-              <span>
-                {{ user.username }}
-                <b class="caret"></b>
-              </span>
-            </a>
-            <ul class="dropdown-menu">
-              <li class=" {% reverse_active 'preferences' %}">
-                <a href="{% url 'preferences' %}">{% trans 'Preferences' %}</a>
-              </li>
-              <li class=" {% reverse_active 'profile' %}">
-                <a href="{% url 'profile' %}">{% trans 'Account' %}</a>
-              </li>
-              <li class=" {% reverse_active 'historyentry_list' %}">
-                <a href="{% url 'historyentry_list' %}">{% trans 'History' %}</a>
-              </li>
-
-            {% if user.is_superuser and preferences.staff.super_powers_enabled %}
-
-              <li class="divider"></li>
-              <li><a href="/admin/constance/config/"
-                    target="_blank">{% trans 'Constance config.' %}</a></li>
-              <li><a href="/admin/" target="_blank">{% trans 'Django admin.' %}</a></li>
-              <li><a href="/translate/" target="_blank">{% trans '1flow translations' %}</a></li>
-            {% endif %}
-
-              <li class="divider"></li>
-              {# django-user account NEEDS a POST form. <li><a href="{% url 'signout' %}">{% trans 'Sign Out' %}</a></li> #}
-              <li><form id="signout-from-menu-form" method="POST" class="form"
-                  action="{% url "signout" %}">
-                {% csrf_token %}</form><a href="#"
-                  onclick="$('#signout-from-menu-form').submit()">{% trans 'Sign Out' %}</a></li>
-            </ul>
-          </li>
-        </ul>
-
-      {% else %}
-        <ul class="nav navbar-nav navbar-right">
-          <li><a href="{% url 'signin' %}">{% trans 'Sign in' %}</a></li>
-        </ul>
-
-      {% endif %}
+      {% include "snippets/navbar/usermenu.html" %}
 
       <ul class="nav navbar-nav">
 
         {% if user.is_authenticated and wizards.welcome_beta_shown %}
 
           <li class="nowrap hidden-xs">
-                <a href="{% url 'sources_list' %}" class="">
+            <a href="{% url 'sources_list' %}" class="">
               {% trans 'Sources' %}
             </a>
           </li>
 
           <li class="nowrap">
-            {% if preferences.home.read_shows == 1 %}
-                <a href="{% url 'read' %}"
-
-            {% elif preferences.home.read_shows == 2 %}
-                <a href="{% url 'source_selector' %}"
-
-            {% elif preferences.home.read_shows == 3 %}
-                <a href="{% url 'read_later' %}"
-
-            {% elif preferences.home.read_shows == 4 %}
-                <a href="{% url 'read_all_feed' feed=user.user_subscriptions.imported_items.id %}"
-
-            {% elif preferences.home.read_shows == 5 %}
-                <a href="{% url 'read_starred' %}"
-
-            {% else %}
-                {# Just in case there is a problem. #}
-                <a href="{% url 'source_selector' %}"
-            {% endif %}
-
-                class="{% view_name_active "read_with_endless_pagination" %}">
-              {% trans 'Read' %}
-            </a>
+            {% include "snippets/navbar/read-link.html" %}
           </li>
 
-          <!--
+          {% comment %}
           <li class="nowrap hidden-xs">
                 <a href="{% url 'read' %}" class="">
               {% trans 'Write' %}
@@ -134,102 +47,15 @@
               {% trans 'Collaborate' %}
             </a>
           </li>
-          -->
+          {% endcomment %}
 
-          {% if user.is_superuser %}
-
-          <li>
-              <form class="navbar-form navbar-left form-inline" role="search"
-                {% search_action %}>
-                <div id="navbar-search-form-group"
-                    class="form-group popover-bottom" data-toggle="tooltip"
-                    title="{% trans "Press Shift-Alf-F to focus" %}">
-
-                    <input class="form-control search" name="search"
-                        placeholder="{% search_label %}"
-                        accesskey="f" value="{% firstof search '' %}"
-                        />{% if search %}<span
-                          id="clear-search-form"><a
-                          href="?search="><i
-                          class="icon icon-remove"></i></a></span>{% endif %}
-                </div>
-              </form>
-          </li>
-
-          {% endif %}
+          {% include "snippets/navbar/search.html" %}
 
         </ul>
 
         <ul class="nav navbar-nav navbar-right">
 
-          {#  NOT hide, even if not super_powers_enabled, we need to know about maintenance mode. #}
-          {% if user.is_staff or user.is_superuser %}
-
-            {% if debug %}
-              <li style="opacity: 0.25"><a href="#" onclick="javascript:$('.navbar').first().addClass('hide');"><i class="icon icon-eye-close"></i></a></li>
-
-            {% endif %}
-
-            {% if MAINTENANCE_MODE %}
-              <li>
-                <a href="#" disabled="disabled">
-                  <span class="badge badge-warning badge-beta"><i
-                      class="icon-cogs"></i> {% trans "Maintenance" %}</span>
-                </a>
-              </li>
-
-            {% endif %}
-
-            {% if preferences.staff.super_powers_enabled %}
-
-              <li id="system-informations" class="hidden-inline-block-xs"><a href="#"
-                data-toggle="popover" data-placement="bottom"
-                data-title="{{ FULL_VERSION }}" data-html="true"
-                data-content="
-                  <div class='spacer10'></div>
-                  <div class='row'>
-                    <div class='col-xs-12'>
-                    <a class='btn btn-info btn-block centered' href='{% url 'admin_status' %}'>{% core_icon 'SystemStatistics' %}&nbsp;{% trans "System statistics" %}</a>
-                    </div>
-                  </div>
-                  <div class='spacer20'></div>
-                  <div class='row'>
-                    <div class='col-xs-12'>
-                    <a class='btn btn-info btn-block centered' href='{% url 'syncnode_list_create' %}'>{% core_icon 'SyncNode' %}&nbsp;{% trans "Sync network" %}</a>
-                    </div>
-                  </div>
-                  <div class='spacer10'></div>
-              "
-                ><i class="icon icon-info"></i></a></li>
-
-                <script type="text/javascript">
-                $(document).ready(function(){
-                    try {
-                      $("#system-informations").popover();
-                    } catch (err) {
-                      console.debug("Is bootstrap JS loaded/initialized: "
-                                    + err);
-                    }
-                });
-                </script>
-
-              <li>
-                <a href="{% url 'preference_toggle' base='staff' sub='super_powers_enabled' %}">
-
-
-            {% else %}
-
-              <li style="opacity: 0.1">
-                <a href="{% url 'preference_toggle' base='staff' sub='super_powers_enabled' %}">
-
-
-            {% endif %}{# superpowers #}
-
-                  <i class="icon-bolt"></i>
-                </a>
-              </li>
-
-          {% endif %}{# superuser #}
+        {% include "snippets/navbar/staff-items.html" %}
 
           <li class="nowrap">
             <a href="{% url 'help' %}"
@@ -237,12 +63,6 @@
               {% trans 'Features' %}
             </a>
           </li>
-
-        {% else %}
-          <!--
-            <li><a href="#">{% trans 'About' %}</a></li>
-            <li><a href="#">{% trans 'Contact' %}</a></li>
-          -->
 
         {% endif %}
       </ul>
