@@ -696,15 +696,16 @@ CODEMIRROR_PATH = 'vendor/codemirror/4.11'
 CODEMIRROR_MODE = 'python'
 CODEMIRROR_THEME = 'monokai'
 CODEMIRROR_CONFIG = {
+    'tabSize': 4,
+    'indentWithTabs': False,
     'lineNumbers': True,
-    'extraKeys': '''{
-        "F11": function(cm) {
-          cm.setOption("fullScreen", !cm.getOption("fullScreen"));
-        },
-        "Esc": function(cm) {
-          if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
-        }
-      }''',
+    'rulers': [72, 80],
+
+    # These are directly in our custom sublime keymap (in static/vendor/…)
+    # 'extraKeys': {
+    #     "F9": "toggleFullScreen",
+    #     "Esc": "exitFullScreenIfEnabled",
+    # }
 }
 # —————————————————————————————————————————————————————————————— 1flow settings
 
