@@ -33,40 +33,6 @@
 
   {% if preferences.staff.super_powers_enabled %}
 
-    <li id="system-informations" class="hidden-inline-block-xs">
-      <a href="#"
-        data-toggle="popover" data-placement="bottom"
-        data-title="{{ FULL_VERSION }}" data-html="true"
-        data-content="
-          <div class='spacer10'></div>
-          <div class='row'>
-            <div class='col-xs-12'>
-            <a class='btn btn-info btn-block centered' href='{% url 'admin_status' %}'>{% core_icon 'SystemStatistics' %}&nbsp;{% trans "System statistics" %}</a>
-            </div>
-          </div>
-          <div class='spacer20'></div>
-          <div class='row'>
-            <div class='col-xs-12'>
-            <a class='btn btn-info btn-block centered' href='{% url 'syncnode_list_create' %}'>{% core_icon 'SyncNode' %}&nbsp;{% trans "Sync network" %}</a>
-            </div>
-          </div>
-          <div class='spacer10'></div>
-      "
-        ><i class="icon icon-info"></i>
-      </a>
-    </li>
-
-    <script type="text/javascript">
-    $(document).ready(function(){
-        try {
-          $("#system-informations").popover();
-
-        } catch (err) {
-          console.debug("Is bootstrap JS loaded/initialized: " + err);
-        }
-    });
-    </script>
-
     <li>
       <a href="{% url 'preference_toggle' base='staff' sub='super_powers_enabled' %}">
 
@@ -80,5 +46,11 @@
         <i class="icon-bolt"></i>
       </a>
     </li>
+
+  {% if preferences.staff.super_powers_enabled %}
+
+    {% include "snippets/navbar/staff-config-menu.html" %}
+
+  {% endif %}{# super powers enabled #}
 
 {% endif %}{# superuser / statt #}

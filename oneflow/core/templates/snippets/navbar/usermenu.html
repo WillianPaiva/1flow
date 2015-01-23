@@ -4,7 +4,7 @@
 
     {# nowrap is necessary, else the username gets to next line on Safari+iPad@portrait #}
     <li class="dropdown nowrap">
-      <a class="dropdown-toggle {% reverse_active 'profile' %} {% reverse_active 'preferences' %} {% reverse_active 'historyentry_list' %} "
+      <a class="dropdown-toggle {% reverse_active 'profile,preferences,historyentry_list' %} "
           data-toggle="dropdown" href="#">
 
           <span class="avatar-frame">
@@ -23,24 +23,15 @@
         </span>
       </a>
       <ul class="dropdown-menu">
-        <li class=" {% reverse_active 'preferences' %}">
+        <li class="{% reverse_active 'preferences' %}">
           <a href="{% url 'preferences' %}">{% trans 'Preferences' %}</a>
         </li>
-        <li class=" {% reverse_active 'profile' %}">
+        <li class="{% reverse_active 'profile' %}">
           <a href="{% url 'profile' %}">{% trans 'Account' %}</a>
         </li>
-        <li class=" {% reverse_active 'historyentry_list' %}">
+        <li class="{% reverse_active 'historyentry_list' %}">
           <a href="{% url 'historyentry_list' %}">{% trans 'History' %}</a>
         </li>
-
-      {% if user.is_superuser and preferences.staff.super_powers_enabled %}
-
-        <li class="divider"></li>
-        <li><a href="/admin/constance/config/"
-              target="_blank">{% trans 'Constance config.' %}</a></li>
-        <li><a href="/admin/" target="_blank">{% trans 'Django admin.' %}</a></li>
-        <li><a href="/translate/" target="_blank">{% trans '1flow translations' %}</a></li>
-      {% endif %}
 
         <li class="divider"></li>
         {# django-user account NEEDS a POST form. <li><a href="{% url 'signout' %}">{% trans 'Sign Out' %}</a></li> #}
