@@ -707,6 +707,30 @@ CODEMIRROR_CONFIG = {
     #     "Esc": "exitFullScreenIfEnabled",
     # }
 }
+CODEMIRROR_ADDONS_JS = (
+    # 'mode/overlay',
+    'edit/trailingspace',
+    'edit/matchbrackets',
+
+    'search/search',
+    'search/matchesonscrollbar',
+    'search/match-highlighter',
+
+    'hint/anyword-hint',
+
+    'fold/foldcode',
+    'fold/foldgutter',
+
+    'display/fullscreen',
+    'display/rulers',
+)
+
+CODEMIRROR_ADDONS_CSS = (
+    'display/fullscreen',
+)
+CODEMIRROR_KEYMAP = 'sublime'
+
+
 # —————————————————————————————————————————————————————————————— 1flow settings
 
 
