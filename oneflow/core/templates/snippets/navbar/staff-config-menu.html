@@ -35,7 +35,6 @@
       <a href="{% url 'processorchain_list_create' %}">
       {% core_icon 'random' %}&nbsp;{% trans "Processor chains" %}</a>
     </li>
-    {% endcomment %}
 
     <li class="{% reverse_active 'processor_list_create' %}">
       <a href="{% url 'processor_list_create' %}">
@@ -43,6 +42,7 @@
     </li>
 
     <li class="divider"></li>
+    {% endcomment %}
 
     <li>
       <a href='{% url 'admin_status' %}'>
