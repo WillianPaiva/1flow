@@ -22,22 +22,12 @@
 					{{ counter }} mail feeds
 		 		{% endblocktrans %}
 		 	</div>
-			<div class="btn-group" style="margin-left: 50px;">
-				<button id="form-collapser" class="btn btn-primary">{% trans "Add new" %}</button>
-			</div>
+
+			{% include "snippets/toolbars/add-new.html" %}
 		</div>
 
 		<h1>
-			<a href="{% url 'mailaccount_list_create' %}"
-					title="{% trans "Switch to mail accounts" %}"
-					data-toggle="tooltip"
-					class="popover-top">
-				{% core_icon 'MailAccount' %}
-			</a>
-
-			<span class="very-muted">&nbsp;&nbsp;
-			<i class="icon icon-angle-right"></i>
-			&nbsp;&nbsp;</span>
+			{% include "mailfeed/breadcrumbs.html" %}
 
 			<span>{% core_icon 'MailFeed' %}&nbsp;
 			{% trans "Mail feeds" %}</span>

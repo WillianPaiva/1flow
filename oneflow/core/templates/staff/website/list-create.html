@@ -41,9 +41,10 @@
 
 		  <tr>
 			<th class="col-sm-1">{% trans "Img." %}</th>
-			{% sort_th _("Name") 'name' '' 'col-sm-3' %}
+			{% sort_th _("Name") 'name' '' 'col-sm-2' %}
 			{% sort_th _("URI") 'url' '' 'col-sm-3' %}
 			<th class="col-sm-3">{% trans "Short description" %}</th>
+			{% sort_th _("Processing chain") 'processing_chain' '' 'col-sm-1' %}
 			{% sort_th _("Fetch limit") 'fetch_limit_nr' '' 'col-sm-1' %}
 			<th class="col-sm-1 right">{% trans "Actions" %}</th>
 		  </tr>
@@ -63,16 +64,21 @@
 
 					{% endif %}
 				</td>
-				<td>{% inplace_edit 'website.name' %}</td>
+				<td>
+					{% inplace_edit 'website.name' %}
+
+					<span data-toggle="tooltip" title="{{ website.id }}">
+						{% core_icon 'barcode' %}
+					</span>
+				</td>
 				<td><a href="{{ website.url }}">{{ website.url }}</a></td>
 				<td>{% inplace_edit 'website.short_description' %}</td>
+				<td>{% inplace_edit 'website.processing_chain' %}</td>
 				<td>{% inplace_edit 'website.fetch_limit_nr' %}</td>
 
 				<td class="right">
-					{% comment %}
-					{% url 'website_delete' website.pk as delete_url %}
+					{% url 'staff_website_delete' website.pk as delete_url %}
 					{% include "widgets/delete-form-button.html" %}
-					{% endcomment %}
 				</td>
 			</tr>
 		{% endfor %}
