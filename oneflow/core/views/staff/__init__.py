@@ -19,6 +19,6 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
-from feed import StaffFeedListCreateView  # NOQA
+from feed import *  # NOQA
 
-from website import StaffWebSiteListCreateView  # NOQA
+from website import *  # NOQA

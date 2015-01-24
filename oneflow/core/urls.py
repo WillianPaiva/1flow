@@ -412,6 +412,11 @@ urlpatterns = patterns(
             views.StaffWebSiteListCreateView.as_view())),
         name='staff_website_list_create'),
 
+    url(_(ur'^staff/website/(?P<pk>\d+)/delete/?$'),
+        staff_member_required(never_cache(
+            views.StaffWebSiteDeleteView.as_view())),
+        name='staff_website_delete'),
+
     # ——————————————————————————————————————————————————————————  Google Reader
 
     url(_(ur'^grimport/(?:(?P<user_id>\d+)/)?$'),

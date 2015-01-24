@@ -102,3 +102,15 @@ class StaffWebSiteListCreateView(mixins.ListCreateViewMixin,
             return qs.none()
 
         return qs
+
+
+class StaffWebSiteDeleteView(mixins.OwnerQuerySetMixin,
+                             generic.DeleteView):
+
+    """ Delete a website. """
+
+    model = models.WebSite
+    # form_class = forms.ProcessorForm
+    # template_name = 'processor/list-create.html'
+    success_url = reverse_lazy('staff_website_list_create')
+    superuser_gets_full_queryset = True
