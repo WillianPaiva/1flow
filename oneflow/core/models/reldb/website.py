@@ -26,7 +26,7 @@ from constance import config
 from transmeta import TransMeta
 from json_field import JSONField
 
-from django.db import models
+from django.db import models, ProgrammingError
 from django.db.models.signals import post_save, pre_save, pre_delete
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
@@ -231,8 +231,12 @@ pre_delete.connect(website_pre_delete, sender=WebSite)
 # ————————————————————————————————————————————————————————————— Exported things
 
 
-# Having these objects handy doesn't costs and avoids a DB lookup
-# when creating a bunch of authors.
-SOCIAL_WEBSITES = {
-    ORIGINS.TWITTER: WebSite.get_from_url('https://twitter.com/'),
-}
+try:
+    # Having these objects handy doesn't costs and avoids a DB lookup
+    # when creating a bunch of authors.
+    SOCIAL_WEBSITES = {
+        ORIGINS.TWITTER: WebSite.get_from_url('https://twitter.com/'),
+    }
+except ProgrammingError:
+    # WebSite schema changed and we are running a South/Django migration…
+    pass
