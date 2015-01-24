@@ -27,7 +27,7 @@ from transmeta import TransMeta
 from json_field import JSONField
 
 from django.db import models
-from django.db.models.signals import post_save, pre_save  # , pre_delete
+from django.db.models.signals import post_save, pre_save, pre_delete
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
 
@@ -218,8 +218,14 @@ def website_post_save(instance, **kwargs):
         statsd.gauge('websites.counts.total', 1, delta=True)
 
 
+def website_pre_delete(instance, **kwargs):
+
+    statsd.gauge('websites.counts.total', -1, delta=True)
+
+
 pre_save.connect(website_pre_save, sender=WebSite)
 post_save.connect(website_post_save, sender=WebSite)
+pre_delete.connect(website_pre_delete, sender=WebSite)
 
 
 # ————————————————————————————————————————————————————————————— Exported things
