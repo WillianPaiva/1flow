@@ -497,9 +497,7 @@ from staff import StaffFeedListCreateView, StaffWebSiteListCreateView  # NOQA
 
 from folder import manage_folder, delete_folder  # NOQA
 
-from mongo_feed import add_feed  # NOQA
-
-from feed import feed_closed_toggle  # NOQA
+from feed import add_feed, feed_closed_toggle  # NOQA
 
 from subscription import (  # NOQA
     edit_subscription,
