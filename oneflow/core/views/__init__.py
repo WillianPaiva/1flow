@@ -41,7 +41,7 @@ from sparks.django.utils import HttpResponseTemporaryServerError
 from oneflow.base.utils.dateutils import now
 from oneflow.base.utils.decorators import token_protected
 
-from ..forms import WebPagesImportForm
+from oneflow.core import forms
 
 from ..models.common import READ_STATUS_DATA
 
@@ -262,7 +262,8 @@ def toggle(request, klass, oid, key):
 def import_web_url(request, url):
     """ Import an URL from the web (can be anything). """
 
-    form = WebPagesImportForm({'urls': url, 'status': IMPORT_STATUS.MANUAL})
+    form = forms.WebPagesImportForm({'urls': url,
+                                     'status': IMPORT_STATUS.MANUAL})
 
     article = None
 
@@ -339,7 +340,7 @@ def import_web_pages(request):
         return HttpResponseBadRequest('This request needs Ajax')
 
     if request.POST:
-        form = WebPagesImportForm(request.POST)
+        form = forms.WebPagesImportForm(request.POST)
 
         if form.is_valid():
             imp_ = form.save(request.user)
@@ -352,7 +353,7 @@ def import_web_pages(request):
                       {'created': imp_.lines})
 
     else:
-        form = WebPagesImportForm()
+        form = forms.WebPagesImportForm()
 
     return render(request, 'snippets/selector/import-web-pages.html',
                   {'form': form})
@@ -489,7 +490,11 @@ from twitterfeedrule import (  # NOQA
    TwitterFeedRuleDeleteView,
 )
 
-from staff import StaffFeedListCreateView, StaffWebSiteListCreateView  # NOQA
+from staff import (  # NOQA
+    StaffFeedListCreateView,
+    StaffWebSiteListCreateView,
+    StaffWebSiteDeleteView,
+)
 
 
 # —————————————————————————————————————————————————————————————— Smaller things
