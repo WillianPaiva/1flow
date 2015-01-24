@@ -41,11 +41,14 @@ from sparks.django.utils import HttpResponseTemporaryServerError
 from oneflow.base.utils.dateutils import now
 from oneflow.base.utils.decorators import token_protected
 
-from ..forms import WebPagesImportForm
+from oneflow.core import forms
 
 from ..models.common import READ_STATUS_DATA
 
+from oneflow.base.models import Configuration
+
 from ..models import (
+    User,
     Article, Read,
     BaseFeed, Subscription,
     HelpContent,
@@ -259,7 +262,8 @@ def toggle(request, klass, oid, key):
 def import_web_url(request, url):
     """ Import an URL from the web (can be anything). """
 
-    form = WebPagesImportForm({'urls': url, 'status': IMPORT_STATUS.MANUAL})
+    form = forms.WebPagesImportForm({'urls': url,
+                                     'status': IMPORT_STATUS.MANUAL})
 
     article = None
 
@@ -336,7 +340,7 @@ def import_web_pages(request):
         return HttpResponseBadRequest('This request needs Ajax')
 
     if request.POST:
-        form = WebPagesImportForm(request.POST)
+        form = forms.WebPagesImportForm(request.POST)
 
         if form.is_valid():
             imp_ = form.save(request.user)
@@ -349,7 +353,7 @@ def import_web_pages(request):
                       {'created': imp_.lines})
 
     else:
-        form = WebPagesImportForm()
+        form = forms.WebPagesImportForm()
 
     return render(request, 'snippets/selector/import-web-pages.html',
                   {'form': form})
@@ -415,7 +419,16 @@ def export_content(request, **kwargs):
         folder = get_object_or_404(Folder, slug=folder_slug)
 
     else:
-        folder = None
+        try:
+            default_user_config = Configuration.objects.get(
+                name='export_feeds_default_user')
+
+        except Configuration.DoesNotExist:
+            folder = None
+
+        else:
+            folder = User.objects.get(
+                username=default_user_config.value).root_folder
 
     if format == 'json':
 
@@ -442,6 +455,71 @@ def export_content(request, **kwargs):
 
     else:
         return HttpResponseBadRequest(u'Unknown format “%s”' % format)
+
+
+def edit_field(request, klass, oid, form_class):
+    """ Edit any object field, with minimal permissions checking, via Ajax.
+
+    For permission to succeed, request.user must be staff or the owner
+    of the object.
+    """
+
+    if not request.is_ajax():
+        return HttpResponseBadRequest('This request needs Ajax')
+
+    try:
+        obj_class = globals()[klass]
+
+    except KeyError:
+        LOGGER.exception(u'KeyError on “%s” in edit! Model not imported?',
+                         klass)
+        return HttpResponseTemporaryServerError()
+
+    obj = get_object_or_404(obj_class, id=oid)
+
+    if obj.user != request.user \
+            and not request.user.is_staff_or_superuser_and_enabled:
+        return HttpResponseForbidden(u'Not owner nor superuser/staff')
+
+    try:
+        instance_name = obj.name
+
+    except:
+        instance_name = unicode(obj)
+
+    form_klass = getattr(forms, form_class)
+
+    if request.POST:
+        form = form_klass(request.POST, instance=obj)
+
+        if form.is_valid():
+            obj = form.save(request.user)
+
+        return render(request,
+                      'snippets/edit_field/result.html',
+                      {
+                          'instance_name': instance_name,
+                          'form': form,
+                          'obj': obj,
+                          'field_name': [f for f in form][0].name,
+                          'form_class': form_class,
+                          'klass': klass,
+                      })
+
+    else:
+        form = form_klass(instance=obj)
+
+    return render(request,
+                  'snippets/edit_field/modal.html',
+                  {
+                      'instance_name': instance_name,
+                      'form': form,
+                      'obj': obj,
+                      'field_name': [f for f in form][0].name,
+                      'form_class': form_class,
+                      'klass': klass,
+                  })
+
 
 # ——————————————————————————————————————————————————————————————— Views imports
 
@@ -477,14 +555,19 @@ from twitterfeedrule import (  # NOQA
    TwitterFeedRuleDeleteView,
 )
 
+from staff import (  # NOQA
+    StaffFeedListCreateView,
+    StaffWebSiteListCreateView,
+    StaffWebSiteDeleteView,
+)
+
+
 # —————————————————————————————————————————————————————————————— Smaller things
 
 
 from folder import manage_folder, delete_folder  # NOQA
 
-from mongo_feed import add_feed  # NOQA
-
-from feed import feed_closed_toggle  # NOQA
+from feed import add_feed, feed_closed_toggle  # NOQA
 
 from subscription import (  # NOQA
     edit_subscription,

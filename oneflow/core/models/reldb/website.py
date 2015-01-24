@@ -26,8 +26,8 @@ from constance import config
 from transmeta import TransMeta
 from json_field import JSONField
 
-from django.db import models
-from django.db.models.signals import post_save, pre_save  # , pre_delete
+from django.db import models, ProgrammingError
+from django.db.models.signals import post_save, pre_save, pre_delete
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
 
@@ -83,6 +83,8 @@ class WebSite(six.with_metaclass(WebSiteMeta, MPTTModel,
         verbose_name = _(u'Web site')
         verbose_name_plural = _(u'Web sites')
         translate = ('short_description', 'description', )
+
+    INPLACEEDIT_EXCLUDE = ['mail_warned', ]
 
     # class MPTTMeta:
     #     order_insertion_by = ['url']
@@ -216,15 +218,25 @@ def website_post_save(instance, **kwargs):
         statsd.gauge('websites.counts.total', 1, delta=True)
 
 
+def website_pre_delete(instance, **kwargs):
+
+    statsd.gauge('websites.counts.total', -1, delta=True)
+
+
 pre_save.connect(website_pre_save, sender=WebSite)
 post_save.connect(website_post_save, sender=WebSite)
+pre_delete.connect(website_pre_delete, sender=WebSite)
 
 
 # ————————————————————————————————————————————————————————————— Exported things
 
 
-# Having these objects handy doesn't costs and avoids a DB lookup
-# when creating a bunch of authors.
-SOCIAL_WEBSITES = {
-    ORIGINS.TWITTER: WebSite.get_from_url('https://twitter.com/'),
-}
+try:
+    # Having these objects handy doesn't costs and avoids a DB lookup
+    # when creating a bunch of authors.
+    SOCIAL_WEBSITES = {
+        ORIGINS.TWITTER: WebSite.get_from_url('https://twitter.com/'),
+    }
+except ProgrammingError:
+    # WebSite schema changed and we are running a South/Django migration…
+    pass

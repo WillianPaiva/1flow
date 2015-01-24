@@ -46,7 +46,11 @@ class MailAccountListCreateView(mixins.ListCreateViewMixin,
     def form_valid(self, form):
         """ Give the MailAccount to its owner on the fly. """
 
-        form.instance.user = self.request.user
+        if form.instance.user is None:
+            # Don't override the creator if we are
+            # a staff user updating the object.
+            form.instance.user = self.request.user
+
         return super(MailAccountListCreateView, self).form_valid(form)
 
 

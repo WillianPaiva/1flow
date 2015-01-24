@@ -1,0 +1,24 @@
+	<form class='form btn-group' method="get"
+			style="display: inline-block; margin-left: 3em">
+		<div class="input-group">
+			<div class="input-group-addon">
+				{% core_icon "filter" False %}
+			</div>
+			<input type="text"
+				accesskey="f" name='filter'
+				value="{{ filter }} "
+				data-toggle="tooltip"
+
+				{% if help_text %}
+					title="{{ help_text }}"
+
+				{% else %}
+					title="{% trans "You can use keywords (see memento at end of list). Any other word will filter on names or descriptions. You can combine filters, like “ not:dupe is:active a_name ”." %}"
+
+				{% endif %}
+
+				class="form-control input-sm popover-bottom"
+				placeholder="{% trans "Filter…" %}" />
+	      	{# <div class="input-group-addon">{% core_icon "filter" False %}</div> #}
+	    </div>
+	</form>

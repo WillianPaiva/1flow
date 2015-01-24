@@ -1,0 +1,14 @@
+<div id="edit-field-modal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 class="modal-title">{% blocktrans %}
+                    Edit <strong>{{ field_name }}</strong> of <em>{{ instance_name }}</em>
+                {% endblocktrans %}</h3>
+            </div>
+
+            {% include "snippets/edit_field/form.html" with in_modal=True %}
+        </div>
+    </div>
+</div>

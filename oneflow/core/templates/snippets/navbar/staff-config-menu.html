@@ -1,0 +1,81 @@
+<li class="dropdown nowrap">
+  <a class="dropdown-toggle {% reverse_active 'staff_feed_list_create,staff_website_list_create' %}"
+      data-toggle="dropdown" href="#">
+    <span>
+      {% trans "Management" %}
+      <b class="caret"></b>
+    </span>
+  </a>
+
+  <ul class="dropdown-menu">
+
+    <li>
+      <a href="#" disabled>
+        {% core_icon 'info-sign' %}&nbsp;{{ FULL_VERSION }}
+      </a>
+    </li>
+
+    <li class="divider"></li>
+
+    <li class="{% reverse_active 'staff_feed_list_create' %}">
+      <a href="{% url 'staff_feed_list_create' %}">
+        {% core_icon 'StaffList' %}&nbsp;{% trans "Feeds" %}
+      </a>
+    </li>
+
+    <li class="{% reverse_active 'staff_website_list_create' %}">
+      <a href="{% url 'staff_website_list_create' %}">
+      {% core_icon 'globe' %}&nbsp;{% trans "Web sites" %}</a>
+    </li>
+
+    <li class="divider"></li>
+
+    {% comment %}
+    <li class="{% reverse_active 'processorchain_list_create' %}">
+      <a href="{% url 'processorchain_list_create' %}">
+      {% core_icon 'random' %}&nbsp;{% trans "Processor chains" %}</a>
+    </li>
+    {% endcomment %}
+
+    <li class="{% reverse_active 'processor_list_create' %}">
+      <a href="{% url 'processor_list_create' %}">
+      {% core_icon 'puzzle-piece' %}&nbsp;{% trans "Processors" %}</a>
+    </li>
+
+    <li class="divider"></li>
+
+    <li>
+      <a href='{% url 'admin_status' %}'>
+        {% core_icon 'SystemStatistics' %}&nbsp;{% trans "System statistics" %}
+      </a>
+    </li>
+
+    <li>
+      <a href='{% url 'syncnode_list_create' %}'>
+        {% core_icon 'SyncNode' %}&nbsp;{% trans "Synchronization network" %}
+      </a>
+
+    </li>
+
+    <li class="divider"></li>
+
+    <li>
+      <a href="/admin/constance/config/">
+        {% core_icon 'cog' %}&nbsp;{% trans 'Live configuration' %}
+      </a>
+    </li>
+
+    <li>
+      <a href="/admin/">
+        {% core_icon 'dashboard' %}&nbsp;{% trans 'Django administration' %}
+      </a>
+    </li>
+
+    <li>
+      <a href="/translate/">
+        {% core_icon 'flag' %}&nbsp;{% trans '1flow translations' %}
+      </a>
+    </li>
+
+  </ul>
+</li>

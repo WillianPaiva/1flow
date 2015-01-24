@@ -304,6 +304,17 @@ class BaseItem(PolymorphicModel,
 
     # ————————————————————————————————————————————————————————————————— Methods
 
+    def reset(self, force=False, commit=True):
+        """ See :meth:`Article.reset`() for explanations. """
+
+        if not force:
+            LOGGER.warning(u'Cannot reset base fields '
+                           u'without `force` argument.')
+            return
+
+        # On base items, this methods does nothing (yet).
+        return
+
     def update_tags(self, tags, initial=False):
 
         if initial:

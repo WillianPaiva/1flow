@@ -1,0 +1,40 @@
+
+	<form class='form btn-group' method="get"
+			style="display: inline-block; margin-left: 3em">
+		<div class="input-group">
+	      <div class="input-group-addon">{% core_icon "filter" False %}</div>
+		<input type="text" accesskey="f" name='filter'
+			value="{% if filter %}{{ filter }}{% endif %}" class="form-control input-sm"
+			placeholder="{% trans "Filter…" %}" />
+	      <!--<div class="input-group-addon">.00</div>-->
+	    </div>
+
+	</form>
+
+	<div class="btn-group" style="margin-left: 25px;">
+	<a href="?filter=type:rss"
+		class="btn btn-default btn-xs">{% core_icon "RssAtomFeed" False %}</a>
+	<a href="?filter=type:twitter"
+		class="btn btn-default btn-xs">{% core_icon "TwitterFeed" False %}</a>
+	<a href="?filter=type:mail"
+		class="btn btn-default btn-xs">{% core_icon "MailFeed" False %}</a>
+
+		{% comment %}
+			<button id="form-collapser" class="btn btn-primary">{% trans "Add new" False %}</button>
+
+		{% endcomment %}
+	</div>
+
+	<div class="btn-group">
+	<a href="?filter=is:closed"
+		class="btn btn-default btn-xs">{% core_icon "off" False %}</a>
+	<a href="?filter=is:open"
+		class="btn btn-default btn-xs">{% core_icon "refresh" False %}</a>
+	<a href="?filter="
+		class="btn btn-default btn-xs">{% core_icon "remove" False %}</a>
+
+		{% comment %}
+			<button id="form-collapser" class="btn btn-primary">{% trans "Add new" %}</button>
+
+		{% endcomment %}
+	</div>

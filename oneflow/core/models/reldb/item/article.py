@@ -32,6 +32,8 @@ from django.db.models.signals import post_save, pre_save, pre_delete
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
 
+from simple_history.models import HistoricalRecords
+
 from oneflow.base.utils import register_task_method
 from oneflow.base.utils.http import clean_url
 from oneflow.base.utils.dateutils import now, datetime, benchmark
@@ -146,6 +148,16 @@ class Article(BaseItem, UrlItem, ContentItem):
 
     objects = BaseItemManager()
 
+    # Django simple history.
+    history = HistoricalRecords()
+    version_description = models.CharField(
+        max_length=128, null=True, blank=True,
+        verbose_name=_(u'Version description'),
+        help_text=_(u'Set by content processors or author to know with which '
+                    u'processor chain this version was produced. Can be a '
+                    u'code or a processor chain ID/slug to help querying.')
+    )
+
     publishers = models.ManyToManyField(
         User, null=True, blank=True, related_name='publications')
 
@@ -169,6 +181,29 @@ class Article(BaseItem, UrlItem, ContentItem):
         return True
 
     # ————————————————————————————————————————————————————————————————— Methods
+
+    def reset(self, force=False, commit=True):
+        """ clear the article content & content type.
+
+        This method exists for testing / debugging purposes.
+        """
+
+        if settings.DEBUG:
+            force = True
+
+        if not force:
+            LOGGER.warning(u'Cannot reset article without `force` argument.')
+            return
+
+        for klass in (BaseItem, UrlItem, ContentItem):
+            try:
+                klass.reset(self, force=force, commit=False)
+
+            except:
+                pass
+
+        if commit:
+            self.save()
 
     @classmethod
     def create_article(cls, title, url, feeds, **kwargs):

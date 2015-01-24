@@ -1,0 +1,117 @@
+{% extends 'home.html' %}
+{% load sorting_tags %}
+{% load endless %}
+
+{% block title %}{% trans "Manage websites" %}{% endblock title %}
+{% block body_id %}websites{% endblock body_id %}
+
+{% block application_content %}
+
+{% inplace_static %}
+
+<div class="spacer50"></div>
+
+<div class="row">
+	<div>
+	{% if website_list %}
+
+		 <div class="pull-right">
+		 	<div class="btn-group very-muted">
+		 		{% blocktrans count counter=website_list|length %}
+		 		    {{ counter }} web site
+		 		{% plural %}
+					{{ counter }} web sites
+		 		{% endblocktrans %}
+		 	</div>
+
+		 	{% include "staff/website/toolbar.html" %}
+		</div>
+
+		<h1>
+			<span>{% core_icon 'WebSite' %}&nbsp;
+			{% trans "Web sites" %}</span>
+		</h1>
+
+		{% paginate website_list %}
+
+		{% include "widgets/pagination.html" %}
+
+		<table class="table table-hover">
+		<thead>
+
+		  <tr>
+			<th class="col-sm-1">{% trans "Img." %}</th>
+			{% sort_th _("Name") 'name' '' 'col-sm-2' %}
+			{% sort_th _("URI") 'url' '' 'col-sm-3' %}
+			<th class="col-sm-3">{% trans "Short description" %}</th>
+			{% sort_th _("Processing chain") 'processing_chain' '' 'col-sm-1' %}
+			{% sort_th _("Fetch limit") 'fetch_limit_nr' '' 'col-sm-1' %}
+			<th class="col-sm-1 right">{% trans "Actions" %}</th>
+		  </tr>
+		</thead>
+		<tbody>
+
+		{% captureas all_plural %}{% trans "All" context "plural" %}{% endcaptureas %}
+
+		{% for website in website_list %}
+			<tr>
+				<td>
+					{% if website.image %}
+						<img src="website.image.url" />
+
+					{% elif website.image_url %}
+						<img src="website.image_url" />
+
+					{% endif %}
+				</td>
+				<td>
+					{% inplace_edit 'website.name' %}
+
+					<span data-toggle="tooltip" title="{{ website.id }}">
+						{% core_icon 'barcode' %}
+					</span>
+				</td>
+				<td><a href="{{ website.url }}">{{ website.url }}</a></td>
+				<td>{% inplace_edit 'website.short_description' %}</td>
+				<td>{% inplace_edit 'website.processing_chain' %}</td>
+				<td>{% inplace_edit 'website.fetch_limit_nr' %}</td>
+
+				<td class="right">
+					{% url 'staff_website_delete' website.pk as delete_url %}
+					{% include "widgets/delete-form-button.html" %}
+				</td>
+			</tr>
+		{% endfor %}
+
+		</tbody>
+		</table>
+
+		{% include "widgets/pagination.html" %}
+
+	{% else %}
+
+		<div class="pull-right">
+		 	{% include "staff/website/toolbar.html" %}
+		</div>
+
+		<h2>
+			<span>
+			{% core_icon 'BaseFeed' %}&nbsp;{% if filter %}{% blocktrans %}
+			    No website matching filter query.
+			{% endblocktrans %}{% else %}{% blocktrans %}
+			    No website.
+			{% endblocktrans %}{% endif %}</span>
+		</h2>
+
+	{% endif %}
+
+	</div>
+</div>
+{% endblock application_content %}
+
+{% block extrajs_footer %}
+    {{ block.super }}
+
+	{% include "snippets/mail-collapse-js-glue.html" with focus_name='id_name' object_list=website_list %}
+
+{% endblock extrajs_footer %}

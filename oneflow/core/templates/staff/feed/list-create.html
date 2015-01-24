@@ -1,0 +1,118 @@
+{% extends 'home.html' %}
+{% load sorting_tags %}
+
+{% block title %}{% trans "Manage feeds" %}{% endblock title %}
+{% block body_id %}feeds{% endblock body_id %}
+
+{% block application_content %}
+
+{% inplace_static %}
+
+<div class="spacer50"></div>
+
+<div class="row">
+	<div>
+	{% if basefeed_list %}
+
+		 <div class="pull-right">
+		 	<div class="btn-group very-muted">
+		 		{% blocktrans count counter=basefeed_list|length %}
+		 		    {{ counter }} feed
+		 		{% plural %}
+					{{ counter }} feeds
+		 		{% endblocktrans %}
+		 	</div>
+
+		 	{% include "staff/feed/toolbar.html" %}
+
+		</div>
+
+		<h1>
+			<span>{% core_icon 'BaseFeed' %}&nbsp;
+			{% trans "Feeds" %}</span>
+		</h1>
+
+		{% paginate basefeed_list %}
+
+		{% include "widgets/pagination.html" %}
+
+		<table class="table table-hover">
+		<thead>
+
+		  <tr>
+			{% sort_th _("Feed name") 'name' '' 'col-sm-5' %}
+			{% sort_th _("Open") 'is_active' '' 'col-sm-1' %}
+			{% sort_th _("Restricted") 'is_restricted' '' 'col-sm-1' %}
+			<th class="col-sm-1">{% trans "Type" %}</th>
+			{% sort_th _("Refresh interval") 'fetch_interval' '' 'col-sm-1' %}
+			<th class="col-sm-1 right">{% trans "good items" %}</th>
+			<th class="col-sm-1 right">{% trans "recent" %}</th>
+			<th class="col-sm-1 right">{% trans "total" %}</th>
+			<th class="col-sm-1 right">{% trans "Actions" %}</th>
+		  </tr>
+		</thead>
+		<tbody>
+
+		{% captureas all_plural %}{% trans "All" context "plural" %}{% endcaptureas %}
+
+		{% for basefeed in basefeed_list %}
+			<tr>
+				<td>
+					<span class="pull-right">
+						<a href="# {#{% url 'staff_items_list_create' basefeed.pk %}#}"
+						class="btn btn-primary btn-xs">
+							{% core_icon 'BaseItem' %}
+						</a>
+					</span>
+
+					{% inplace_edit 'basefeed.name' %}
+				</td>
+				<td>{{ basefeed.is_active }}</td>
+				<td>{{ basefeed.is_restricted }}</td>
+				<td>{% core_feed_type basefeed %}</td>
+				<td>{{ basefeed.fetch_interval|naturaldelta }}</td>
+
+				<td class="right">{{ basefeed.good_items.count }}</td>
+				<td class="right">{{ basefeed.recent_items_count }}</td>
+				<td class="right">{{ basefeed.items.count }}</td>
+
+				<td class="right">
+					{% comment %}
+					{% url 'basefeed_delete' basefeed.pk as delete_url %}
+					{% include "widgets/delete-form-button.html" %}
+					{% endcomment %}
+				</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+		</table>
+
+		{% include "widgets/pagination.html" %}
+
+	{% else %}
+
+		<div class="pull-right">
+		 	{% include "staff/feed/toolbar.html" %}
+		</div>
+
+		<h2>
+			<span>
+			{% core_icon 'BaseFeed' %}&nbsp;{% if filter %}{% blocktrans %}
+			    No feed matching filter query.
+			{% endblocktrans %}{% else %}{% blocktrans %}
+			    No feed.
+			{% endblocktrans %}{% endif %}</span>
+		</h2>
+
+	{% endif %}
+
+	</div>
+</div>
+{% endblock application_content %}
+
+{% block extrajs_footer %}
+    {{ block.super }}
+
+	{% include "snippets/mail-collapse-js-glue.html" with focus_name='id_name' object_list=basefeed_list %}
+
+{% endblock extrajs_footer %}

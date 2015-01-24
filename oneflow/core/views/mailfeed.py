@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+u"""
 Copyright 2013-2014 Olivier Cortès <oc@1flow.io>.
 
 This file is part of the 1flow project.
@@ -46,7 +46,11 @@ class MailFeedListCreateView(mixins.ListCreateViewMixin,
     def form_valid(self, form):
         """ Give the MailFeed to its owner on the fly. """
 
-        form.instance.user = self.request.user
+        if form.instance.user is None:
+            # Don't override the creator if we are
+            # a staff user updating the object.
+            form.instance.user = self.request.user
+
         return super(MailFeedListCreateView, self).form_valid(form)
 
 

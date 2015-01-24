@@ -195,6 +195,26 @@ class UrlItem(models.Model):
 
         return True
 
+    # ————————————————————————————————————————————————————————————————— Methods
+
+    def reset(self, force=False, commit=True):
+        """ See :meth:`Article.reset`() for explanations. """
+
+        if not force:
+            LOGGER.warning(u'Cannot reset URL without `force` argument.')
+            return
+
+        # DO NOT reset url, else we can just trash the article.
+        # self.url = None
+
+        self.comments_feed_url = None
+        self.url_absolute = False
+        self.url_error = None
+        self.is_orphaned = False
+
+        if commit:
+            self.save()
+
     def absolutize_url_must_abort(self, force=False, commit=True):
 
         if config.ARTICLE_ABSOLUTIZING_DISABLED:

@@ -36,6 +36,7 @@ def oneflow_version(request):
 
 def django_settings(request):
     """ Inject Django settings in the context. """
+
     return {
         u'settings': settings,
     }

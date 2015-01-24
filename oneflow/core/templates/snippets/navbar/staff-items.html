@@ -1,0 +1,56 @@
+
+{% comment %}
+
+  NEVER hide the beginning of the block,
+  even if not super_powers_enabled. We need
+  to know about maintenance mode, and switch
+  between enable/disable as staff member.
+
+{% endcomment %}
+
+{% if user.is_staff or user.is_superuser %}
+
+  {% if debug %}
+
+    <li style="opacity: 0.25">
+      <a href="#" onclick="javascript:$('.navbar').first().addClass('hide');">
+        <i class="icon icon-eye-close"></i>
+      </a>
+    </li>
+
+  {% endif %}
+
+  {% if MAINTENANCE_MODE %}
+
+    <li>
+      <a href="#" disabled="disabled">
+        <span class="badge badge-warning badge-beta"><i
+            class="icon-cogs"></i> {% trans "Maintenance" %}</span>
+      </a>
+    </li>
+
+  {% endif %}
+
+  {% if preferences.staff.super_powers_enabled %}
+
+    <li>
+      <a href="{% url 'preference_toggle' base='staff' sub='super_powers_enabled' %}">
+
+  {% else %}
+
+    <li style="opacity: 0.1">
+      <a href="{% url 'preference_toggle' base='staff' sub='super_powers_enabled' %}">
+
+  {% endif %}{# super powers enabled #}
+
+        <i class="icon-bolt"></i>
+      </a>
+    </li>
+
+  {% if preferences.staff.super_powers_enabled %}
+
+    {% include "snippets/navbar/staff-config-menu.html" %}
+
+  {% endif %}{# super powers enabled #}
+
+{% endif %}{# superuser / statt #}

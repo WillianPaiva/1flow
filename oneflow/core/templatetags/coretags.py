@@ -154,6 +154,9 @@ random_colors = [
 @register.filter
 def naturaldelta(the_datetime):
 
+    if isinstance(the_datetime, int):
+        return onef_naturaldelta(the_datetime)
+
     return onef_naturaldelta(now() - the_datetime)
 
 
@@ -672,11 +675,18 @@ def read_status_css_styles():
 
 
 @register.simple_tag
-def core_icon(klass_name):
-    """ Centralize all model icons and render them. """
+def core_icon(klass_name, fixed_width=True):
+    """ Centralize all model icons and render them.
 
-    return u"<i class='icon icon-{0} icon-fixed-width'></i>".format(
-        CORE_CLASSES_ICONS[klass_name])
+        if :param:`klass_name` is not found in core icons translation
+        table, it will be passed as is to the icon entity, allowing to
+        save some typing and factorize font-awesome rendering across the
+        templates.
+    """
+
+    return u"<i class='icon icon-{0} {1}'></i>".format(
+        CORE_CLASSES_ICONS.get(klass_name, klass_name),
+        u'icon-fixed-width' if fixed_width else u'')
 
 
 @register.filter
@@ -749,6 +759,14 @@ def mail_is_usable_to_icon(mailthing):
                                    _(u'Account connectivity not yet tested. '
                                      u'Please wait a few seconds and reload '
                                      u'the current page.'))
+
+
+@register.simple_tag
+def core_feed_type(basefeed):
+    """ Return an icon, given the type of the feed. """
+
+    return u"<i class='icon icon-{0} icon-fixed-width'></i>".format(
+        CORE_CLASSES_ICONS[basefeed._meta.model.__name__])
 
 
 @register.simple_tag

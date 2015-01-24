@@ -81,10 +81,11 @@ class MailFeedRuleListCreateView(MailFeedRuleCommonViewsMixin,
                      self).get_context_data(**kwargs)
 
     def form_valid(self, form):
-        """ Give the MailFeedRule to its owner on the fly. """
+        """ Link the MailFeedRule to its mail feed on the fly. """
 
-        form.instance.mailfeed = get_object_or_404(
-            models.MailFeed, id=self.kwargs.get('mailfeed_id'))
+        if form.instance.mailfeed is None:
+            form.instance.mailfeed = get_object_or_404(
+                models.MailFeed, id=self.kwargs.get('mailfeed_id'))
 
         return super(MailFeedRuleListCreateView, self).form_valid(form)
 

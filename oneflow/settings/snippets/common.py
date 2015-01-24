@@ -402,7 +402,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'async_messages.middleware.AsyncMiddleware',
-
+    'simple_history.middleware.HistoryRequestMiddleware',
     'social.apps.django_app.middleware.SocialAuthExceptionMiddleware',
 
     # account's MW must come after 'auth', else they crash.
@@ -532,8 +532,9 @@ INSTALLED_APPS = [
     # 'infinite_pagination',
 
     'mathfilters',
-
     'widget_tweaks',
+    'simple_history',
+
     'oneflow.base',
     'oneflow.profiles',
     'oneflow.core',
@@ -591,7 +592,7 @@ INPLACEEDIT_EDIT_TOOLTIP_TEXT = ugettext_lazy(u'Click to edit')
 
 # ———————————————————————————————————————————————————— django-endlesspagination
 
-ENDLESS_PAGINATION_PER_PAGE = 100
+ENDLESS_PAGINATION_PER_PAGE = 25 if DEBUG else 50
 
 # This is done directly in the templates.
 # ENDLESS_PAGINATION_LOADING  = ugettext_lazy(u'loading more entries…')
@@ -689,6 +690,45 @@ AUTHENTICATION_BACKENDS = (
     # 'social.backends.open_id.OpenIdAuth',
     'django.contrib.auth.backends.ModelBackend',
 )
+
+
+CODEMIRROR_PATH = 'vendor/codemirror/4.11'
+CODEMIRROR_MODE = 'python'
+CODEMIRROR_THEME = 'monokai'
+CODEMIRROR_CONFIG = {
+    'tabSize': 4,
+    'indentWithTabs': False,
+    'lineNumbers': True,
+    'rulers': [72, 80],
+
+    # These are directly in our custom sublime keymap (in static/vendor/…)
+    # 'extraKeys': {
+    #     "F9": "toggleFullScreen",
+    #     "Esc": "exitFullScreenIfEnabled",
+    # }
+}
+CODEMIRROR_ADDONS_JS = (
+    # 'mode/overlay',
+    'edit/trailingspace',
+    'edit/matchbrackets',
+
+    'search/search',
+    'search/matchesonscrollbar',
+    'search/match-highlighter',
+
+    'hint/anyword-hint',
+
+    'fold/foldcode',
+    'fold/foldgutter',
+
+    'display/fullscreen',
+    'display/rulers',
+)
+
+CODEMIRROR_ADDONS_CSS = (
+    'display/fullscreen',
+)
+CODEMIRROR_KEYMAP = 'sublime'
 
 
 # —————————————————————————————————————————————————————————————— 1flow settings

@@ -305,6 +305,9 @@ urlpatterns = patterns(
     url(_(ur'^(?P<klass>\w+)/(?P<oid>\w+)/toggle/(?P<key>\w+.\w+)/?$'),
         login_required(never_cache(views.toggle)), name='toggle'),
 
+    url(_(ur'^edit/(?P<klass>\w+)/(?P<oid>\w+)/(?P<form_class>\w+)/?$'),
+        login_required(never_cache(views.edit_field)), name='edit_field'),
+
     url(_(ur'^help/$'), login_required(views.help), name='help'),
 
     url(_(ur'^signin_error/$'), never_cache(TemplateView.as_view(
@@ -399,6 +402,23 @@ urlpatterns = patterns(
         login_required(never_cache(
             views.TwitterFeedRuleDeleteView.as_view())),
         name='twitterfeedrule_delete'),
+
+    # ————————————————————————————————————————————————————— Staff sources admin
+
+    url(_(ur'^staff/feed/?$'),
+        staff_member_required(never_cache(
+            views.StaffFeedListCreateView.as_view())),
+        name='staff_feed_list_create'),
+
+    url(_(ur'^staff/website/?$'),
+        staff_member_required(never_cache(
+            views.StaffWebSiteListCreateView.as_view())),
+        name='staff_website_list_create'),
+
+    url(_(ur'^staff/website/(?P<pk>\d+)/delete/?$'),
+        staff_member_required(never_cache(
+            views.StaffWebSiteDeleteView.as_view())),
+        name='staff_website_delete'),
 
     # ——————————————————————————————————————————————————————————  Google Reader
 

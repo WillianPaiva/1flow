@@ -181,6 +181,12 @@ class Folder(MPTTModel, DiffMixin):
     # —————————————————————————————————————————————————————————————— Properties
 
     @property
+    def is_root(self):
+        """ Return True if current folder is a root for a user. """
+
+        return self.name == u'__root__' and self.parent is None
+
+    @property
     def has_content(self):
 
         # PERF: it's faster to test for children than query for subscriptions.

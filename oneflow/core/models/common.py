@@ -154,6 +154,11 @@ from exceptions import (  # NOQA
 
 CORE_CLASSES_ICONS = {
 
+    'WebSite': 'globe',
+
+    'BaseFeed': 'rss',
+    'BaseItem': 'file-text',
+
     'RssAtomCreate': 'rss-sign',
     'RssAtomFeed': 'rss',
 
@@ -177,6 +182,8 @@ CORE_CLASSES_ICONS = {
     'SyncNode': 'sitemap',
     'HistoryEntry': 'book',
     'SystemStatistics': 'tasks',
+
+    'StaffList': 'list',
 }
 
 

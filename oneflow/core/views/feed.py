@@ -26,10 +26,11 @@ from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import render
 
-from ..models.reldb import (
+from oneflow.base.utils.http import split_url
+
+from ..models import (
     BaseFeed,
     Subscription,
-    WebSite,
     FeedIsHtmlPageException,
     create_feeds_from_url,
     subscribe_user_to_feed,
@@ -45,9 +46,7 @@ def add_feed(request, feed_url, subscribe=True):
     members who use a different URL.
     """
 
-    raise NotImplementedError('REVIEW for RELDB.')
-
-    user = request.user.mongo
+    user = request.user
     feeds = []
     feed = subscription = None
     feed_exc = sub_exc = None
@@ -58,7 +57,7 @@ def add_feed(request, feed_url, subscribe=True):
     try:
         if not feed_url.startswith(u'http'):
             if request.META.get('HTTP_REFERER', None):
-                proto, host_and_port, remaining = WebSite.split_url(
+                proto, host_and_port, remaining = split_url(
                     request.META['HTTP_REFERER'])
 
                 feed_url = u'{0}://{1}{2}{3}'.format(
@@ -106,8 +105,8 @@ def add_feed(request, feed_url, subscribe=True):
 
             except Subscription.DoesNotExist:
                 try:
-                    subscription = subscribe_user_to_feed(
-                        user, feed, background=True)
+                    subscription = subscribe_user_to_feed(user, feed,
+                                                          background=True)
 
                 except Exception as sub_exc:
                     LOGGER.exception(u'Failed to subscribe user %s to feed %s',
@@ -117,7 +116,7 @@ def add_feed(request, feed_url, subscribe=True):
                     # A user subscribing to a feed from the web implicitely
                     # tells us that this feed is still running. Even if for
                     # some reason we closed it in the past, it seems OK now.
-                    if feed.closed:
+                    if not feed.is_active:
                         feed.reopen()
 
             else:

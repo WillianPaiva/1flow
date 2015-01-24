@@ -188,6 +188,23 @@ class ContentItem(models.Model):
 
     # ————————————————————————————————————————————————————————————————— Methods
 
+    def reset(self, force=False, commit=True):
+        """ See :meth:`Article.reset`() for explanations. """
+
+        if not force:
+            LOGGER.warning(u'Cannot reset content without `force` argument.')
+            return
+
+        self.image_url = None
+        self.excerpt = None
+        self.content = None
+        self.content_type = None
+        self.content_error = None
+        self.word_count = None
+
+        if commit:
+            self.save()
+
     def fetch_content_must_abort(self, force=False, commit=True):
 
         if config.ARTICLE_FETCHING_DISABLED:
