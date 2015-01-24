@@ -182,6 +182,29 @@ class Article(BaseItem, UrlItem, ContentItem):
 
     # ————————————————————————————————————————————————————————————————— Methods
 
+    def reset(self, force=False, commit=True):
+        """ clear the article content & content type.
+
+        This method exists for testing / debugging purposes.
+        """
+
+        if settings.DEBUG:
+            force = True
+
+        if not force:
+            LOGGER.warning(u'Cannot reset article without `force` argument.')
+            return
+
+        for klass in (BaseItem, UrlItem, ContentItem):
+            try:
+                klass.reset(self, force=force, commit=False)
+
+            except:
+                pass
+
+        if commit:
+            self.save()
+
     @classmethod
     def create_article(cls, title, url, feeds, **kwargs):
         """ Returns ``True`` if article created, ``False`` if a pure duplicate
