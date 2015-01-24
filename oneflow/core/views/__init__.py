@@ -456,6 +456,71 @@ def export_content(request, **kwargs):
     else:
         return HttpResponseBadRequest(u'Unknown format “%s”' % format)
 
+
+def edit_field(request, klass, oid, form_class):
+    """ Edit any object field, with minimal permissions checking, via Ajax.
+
+    For permission to succeed, request.user must be staff or the owner
+    of the object.
+    """
+
+    if not request.is_ajax():
+        return HttpResponseBadRequest('This request needs Ajax')
+
+    try:
+        obj_class = globals()[klass]
+
+    except KeyError:
+        LOGGER.exception(u'KeyError on “%s” in edit! Model not imported?',
+                         klass)
+        return HttpResponseTemporaryServerError()
+
+    obj = get_object_or_404(obj_class, id=oid)
+
+    if obj.user != request.user \
+            and not request.user.is_staff_or_superuser_and_enabled:
+        return HttpResponseForbidden(u'Not owner nor superuser/staff')
+
+    try:
+        instance_name = obj.name
+
+    except:
+        instance_name = unicode(obj)
+
+    form_klass = getattr(forms, form_class)
+
+    if request.POST:
+        form = form_klass(request.POST, instance=obj)
+
+        if form.is_valid():
+            obj = form.save(request.user)
+
+        return render(request,
+                      'snippets/edit_field/result.html',
+                      {
+                          'instance_name': instance_name,
+                          'form': form,
+                          'obj': obj,
+                          'field_name': [f for f in form][0].name,
+                          'form_class': form_class,
+                          'klass': klass,
+                      })
+
+    else:
+        form = form_klass(instance=obj)
+
+    return render(request,
+                  'snippets/edit_field/modal.html',
+                  {
+                      'instance_name': instance_name,
+                      'form': form,
+                      'obj': obj,
+                      'field_name': [f for f in form][0].name,
+                      'form_class': form_class,
+                      'klass': klass,
+                  })
+
+
 # ——————————————————————————————————————————————————————————————— Views imports
 
 from history import (  # NOQA

@@ -1,0 +1,45 @@
+{% comment %}
+    This snippet is meant to be included from:
+        - the edit_field modal.
+        - any standalone pages.
+{% endcomment %}
+
+{{ form.media }}
+
+<form method="POST" action="{% url 'edit_field' klass=klass oid=obj.id form_class=form_class %}"
+    data-async data-target="#edit-field-modal"
+    class="form form-horizontal">
+    {% csrf_token %}
+
+    {% if in_modal %}
+        <div class="modal-body">
+            <div class="spacer25"></div>
+    {% endif %}
+
+    {# NOTE: there will always be only ONE field #}
+    {% for field in form %}
+        {% with hide_help_text=1 %}
+            {% include "widgets/forms/field-only-input.html" with field=field|attr:"rows:6" %}
+        {% endwith %}
+    {% endfor %}
+
+    {% if in_modal %}
+        </div>
+        <div class="modal-footer">
+
+    {% else %}
+        <div class="form-actions">
+
+    {% endif %}
+
+        <div class="pull-left">
+            <a href="#" class="btn btn-default" data-dismiss="modal">{% trans "Cancel" %}</a>
+        </div>
+
+        <button type="submit" class="btn btn-primary">{% trans "Save" %}</a>
+
+    {% if in_modal %}
+        </div>
+    {% endif %}
+
+</form>

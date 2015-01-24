@@ -305,6 +305,9 @@ urlpatterns = patterns(
     url(_(ur'^(?P<klass>\w+)/(?P<oid>\w+)/toggle/(?P<key>\w+.\w+)/?$'),
         login_required(never_cache(views.toggle)), name='toggle'),
 
+    url(_(ur'^edit/(?P<klass>\w+)/(?P<oid>\w+)/(?P<form_class>\w+)/?$'),
+        login_required(never_cache(views.edit_field)), name='edit_field'),
+
     url(_(ur'^help/$'), login_required(views.help), name='help'),
 
     url(_(ur'^signin_error/$'), never_cache(TemplateView.as_view(

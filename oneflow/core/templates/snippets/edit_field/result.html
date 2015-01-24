@@ -1,0 +1,30 @@
+<script type="text/javascript">
+
+    {% if form.errors %}
+
+        notify({text: "{% spaceless %}
+            {% blocktrans with errors=form.errors %}
+                Save {{ field_name }} of {{ instance_name }} failed: {{ errors }}
+            {% endblocktrans %}
+            {% endspaceless %}",
+            icon: false,
+            sticker: false,
+            hide: false
+        });
+
+    {% else %}
+
+        $("#edit-field-modal").modal('hide');
+
+        notify({text: "{% spaceless %}
+            {% blocktrans with count=created %}
+                Successfully saved {{ field_name }} of {{ instance_name }}.
+            {% endblocktrans %}
+        {% endspaceless %}",
+            type: "success",
+            icon: false
+        });
+
+    {% endif %}
+
+</script>
