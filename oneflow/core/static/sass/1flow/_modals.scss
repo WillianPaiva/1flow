@@ -3,7 +3,8 @@
 .manage-subscription.modal,
 #add-subscription.modal,
 #share-read.modal,
-#import-web-pages.modal {
+#import-web-pages.modal,
+#edit-field-modal.modal {
 
     form {
         margin-bottom: 0;
@@ -83,6 +84,38 @@
 
         textarea {
             font-size: 80%;
+        }
+    }
+
+    #edit-field-modal {
+        .modal-dialog {
+            min-width: 75%;
+        }
+
+        .form-group {
+            margin-bottom: 0;
+        }
+
+        .modal-body {
+            padding-bottom: 0;
+        }
+
+        .modal-footer {
+            margin-top: 0;
+        }
+
+        .help-block {
+            padding-top: 10px;
+            padding-right: 15px;
+        }
+
+        .CodeMirror {
+            // make room for edition, until fullscreen mode works.
+            min-height: 500px;
+
+            // overlap the spacer25, only when the
+            // only widget is a CodeMirror one.
+            margin-top: -25px;
         }
     }
 }
