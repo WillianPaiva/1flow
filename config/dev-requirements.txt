@@ -8,14 +8,15 @@
 -e git+https://github.com/calebsmith/django-template-debug.git@master#egg=django_template_debug-dev
 -e git+https://github.com/platypus-creation/django-rosetta-grappelli.git@master#egg=django_rosetta_grappelli-dev
 coverage==3.7.1
-django-nose==1.2
+django-nose==1.3
 django-haystack-panel==0.2.1
-django-debug-toolbar==1.2
-flake8==2.0
+django-debug-toolbar==1.2.2
+flake8==2.3.0
 guppy==0.1.10
-ipython==2.3
-line-profiler==1.0b3
-paramiko==1.13.0
-pip-tools==0.3.4
-sqlparse==0.1.9
-Werkzeug==0.9.4
+ipython==2.3.1
+line-profiler==1.0
+paramiko==1.15.2
+pip-tools==0.3.5
+sqlparse==0.1.14
+Werkzeug==0.9.6
+pygraphviz==1.2
