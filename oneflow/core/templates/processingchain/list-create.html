@@ -1,0 +1,147 @@
+{% extends 'home.html' %}
+{% load sorting_tags %}
+
+{% block title %}{% trans "Processing chains" %}{% endblock title %}
+{% block body_id %}processing-chains{% endblock body_id %}
+
+{% block application_content %}
+
+{% inplace_static %}
+
+<div class="spacer50"></div>
+
+<div class="row">
+	<div>
+	{% if processingchain_list %}
+
+		 <div class="actions pull-right">
+		 	<div class="btn-group very-muted">
+		 		{% blocktrans count counter=processingchain_list|length %}
+		 		    {{ counter }} chain
+		 		{% plural %}
+					{{ counter }} chains
+		 		{% endblocktrans %}
+		 	</div>
+
+		 	{% include "processingchain/toolbar.html" %}
+		</div>
+
+		<h1>
+			{% include "processingchain/breadcrumbs.html" %}
+
+			<span>
+			{% core_icon 'ProcessingChain' %}&nbsp;
+			{% trans "Processing chains" %}</span>
+		</h1>
+
+		<div class="spacer25"></div>
+
+		{% paginate processingchain_list %}
+
+		{% include "widgets/pagination.html" %}
+
+		<table class="table table-hover">
+		<thead>
+
+		  {% include "processingchain/form.html" %}
+
+		  <tr>
+			{% sort_th _("Name") 'name' '' 'col-sm-3' %}
+			{% sort_th _("Slug") 'slug' '' 'col-sm-3' %}
+			{% sort_th _("Categories") 'categories' '' 'col-sm-1' %}
+			{% sort_th _("Active?") 'is_active' '' 'col-sm-1 centered' %}
+			<th class="col-sm-1 centered">{% trans "Used by" %}</th>
+			{# <th class="col-sm-1 centered">{% trans "Descriptions" %}</th> #}
+			<th class="col-sm-1 right">{% trans "Actions" %}</th>
+		  </tr>
+		</thead>
+		<tbody>
+		{% for previous, processingchain, next in processingchain_list|prevcurnext %}
+			<tr>
+				<td>
+					{% inplace_edit 'processingchain.name' %}
+
+					<span class="pull-right very-muted">
+						<span class="popover-top" data-toggle="tooltip"
+								title="{% blocktrans with user=processingchain.user.username %}created by {{ user }}{% endblocktrans %}">
+							{% core_icon 'user' %}
+						</span>
+						<span class="popover-top" data-toggle="tooltip"
+								title="{{ processingchain.id }}">
+							{% core_icon 'info-sign' %}
+						</span>
+					</span>
+				 </td>
+				<td>{% inplace_edit 'processingchain.slug' %}</td>
+				<td>{% inplace_edit 'processingchain.categories' %}</td>
+				<td class="centered">{% inplace_edit 'processingchain.is_active' %}</td>
+				<td class="centered">
+					{% if processingchain.websites.exists %}
+
+						<small class="muted">
+
+						{% spaceless %}
+						{% for website in processingchain.websites_using_subset %}{{ website.name }}{% if not forloop.last %}, {% endif %}{% endfor %}{% if processingchain.websites.count > 1 %}… {% endif %}
+						{% endspaceless %}
+
+						</small>
+
+					{% else %}
+
+						<span class="very-muted">{% trans "Nothing yet" %}</span>
+					{% endif %}
+        		</td>
+
+				{# <td class="centered"> — </td> #}
+
+				<td class="right">
+					{% comment %}
+
+					{% url 'processingchain_group' mailfeed.pk processingchain.pk as group_url %}
+					{% include "widgets/group-buttons.html" with obj=processingchain is_first=forloop.first is_last=forloop.last previous=previous next=next items_count=processingchain_list|length %}
+
+					{% url 'processingchain_position' mailfeed.pk processingchain.pk as position_url %}
+					{% include "widgets/position-buttons.html" with obj=processingchain position_first=forloop.first position_last=forloop.last %}
+					{% endcomment %}
+
+					{% url 'processingchain_delete' processingchain.pk as delete_url %}
+					{% include "widgets/delete-form-button.html" %}
+					</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+		</table>
+	{% else %}
+
+		<h2>
+			{% include "processingchain/breadcrumbs.html" %}
+
+			<span>
+			{% core_icon 'ProcessingChain' %}&nbsp;
+			{% trans "No processing chain yet" %}</span>
+		</h2>
+
+		<div class="spacer50"></div>
+
+		<table class="table">
+			<tbody>
+				{% include "processingchain/form.html" with create_first=1 %}
+			</tbody>
+		</table>
+	{% endif %}
+
+		<div class="spacer50"></div>
+		<hr />
+
+		{% include "processingchain/help.html" %}
+
+	</div>
+</div>
+{% endblock application_content %}
+
+{% block extrajs_footer %}
+    {{ block.super }}
+
+	{% include "snippets/mail-collapse-js-glue.html" with focus_name='id_account' object_list=processingchain_list %}
+
+{% endblock extrajs_footer %}

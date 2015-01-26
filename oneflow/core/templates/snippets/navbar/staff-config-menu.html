@@ -30,12 +30,10 @@
 
     <li class="divider"></li>
 
-    {% comment %}
-    <li class="{% reverse_active 'processorchain_list_create' %}">
-      <a href="{% url 'processorchain_list_create' %}">
-      {% core_icon 'random' %}&nbsp;{% trans "Processor chains" %}</a>
+    <li class="{% reverse_active 'processingchain_list_create' %}">
+      <a href="{% url 'processingchain_list_create' %}">
+      {% core_icon 'random' %}&nbsp;{% trans "Processing chains" %}</a>
     </li>
-    {% endcomment %}
 
     <li class="{% reverse_active 'processor_list_create' %}">
       <a href="{% url 'processor_list_create' %}">
