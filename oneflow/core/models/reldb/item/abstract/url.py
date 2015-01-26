@@ -40,6 +40,7 @@ from oneflow.base.utils.http import clean_url
 # from oneflow.base.utils.dateutils import now
 
 # from ...common import REQUEST_BASE_HEADERS
+from ...website import WebSite
 
 from ..base import BaseItem, BaseItemQuerySet
 
@@ -172,6 +173,12 @@ class UrlItem(models.Model):
                     u'unfetchable for some reason.'))
 
     # —————————————————————————————————————————————————————————————— Properties
+
+    @property
+    def website(self):
+        """ Return the website corresponding to our URL. """
+
+        return WebSite.get_from_url(self.url)
 
     @property
     def is_good(self):
