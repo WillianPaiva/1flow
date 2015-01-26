@@ -81,7 +81,7 @@
 						<small class="muted">
 
 						{% spaceless %}
-						{% for website in processingchain.websites_using_subset %}{{ website.name }}{% if not forloop.last %}, {% endif %}{% endfor %}{% if processingchain.websites.count > 1 %}… {% endif %}
+						{% for website in processingchain.websites_using_subset %}{{ website.name }}{% if not forloop.last %}, {% endif %}{% endfor %}{% if processingchain.websites.count > 3 %}… {% endif %}
 						{% endspaceless %}
 
 						</small>
