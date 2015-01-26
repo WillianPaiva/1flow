@@ -181,7 +181,7 @@ CORE_CLASSES_ICONS = {
     'Profile': 'user',
     'SyncNode': 'sitemap',
     'HistoryEntry': 'book',
-    'SystemStatistics': 'tasks',
+    'SystemStatus': 'tasks',
 
     'StaffList': 'list',
 }
