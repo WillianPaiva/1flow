@@ -202,6 +202,17 @@
       });
     </script>
 
+    {% if user.is_staff_or_superuser_and_enabled %}
+
+      <div class="spacer50"></div>
+
+      <div><pre style="font-size: 80%">
+a = Article.objects.get(id={{ article.id }})
+r = Read.objects.get(id={{ read.id }})
+</pre></div>
+
+    {% endif %}
+
   </div><!-- #article-meta-right-data -->
 </div>
 {% endspaceless %}
