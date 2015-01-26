@@ -44,6 +44,8 @@ from ..common import (
     ARTICLE_ORPHANED_BASE,
 )
 
+from ..processor import get_default_processing_chain_for
+
 from common import generate_orphaned_hash
 
 from base import (
@@ -150,6 +152,7 @@ class Article(BaseItem, UrlItem, ContentItem):
 
     # Django simple history.
     history = HistoricalRecords()
+
     version_description = models.CharField(
         max_length=128, null=True, blank=True,
         verbose_name=_(u'Version description'),
@@ -181,6 +184,21 @@ class Article(BaseItem, UrlItem, ContentItem):
         return True
 
     # ————————————————————————————————————————————————————————————————— Methods
+
+    def get_processing_chain(self):
+        """ Return a processor chain suitable for current article.
+
+        If our website has one, it will be returned.
+        Else, the default processor chain for articles will be returned.
+        """
+
+        website = self.website
+
+        if website.processing_chain is None:
+            return get_default_processing_chain_for(self._meta.model)
+
+        else:
+            return website.processing_chain
 
     def reset(self, force=False, commit=True):
         """ clear the article content & content type.

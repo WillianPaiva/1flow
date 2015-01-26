@@ -39,6 +39,8 @@ from oneflow.base.utils.http import split_url
 
 from ..common import ORIGINS
 
+from processor import ProcessingChain
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -148,6 +150,10 @@ class WebSite(six.with_metaclass(WebSiteMeta, MPTTModel,
         null=True, blank=True,
         verbose_name=_(u'Description'),
         help_text=_(u'Public description of the feed. Markdown text.'))
+
+    processing_chain = models.ForeignKey(ProcessingChain,
+                                         null=True, blank=True,
+                                         related_name='websites')
 
     # ————————————————————————————————————————————————————————— Python & Django
 
