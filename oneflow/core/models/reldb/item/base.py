@@ -31,6 +31,7 @@ from humanize.i18n import django_language
 from django.db import models, IntegrityError
 from django.utils.translation import ugettext_lazy as _
 # from django.utils.text import slugify
+from django.contrib.contenttypes import generic
 
 from polymorphic import (
     PolymorphicQuerySet,
@@ -50,7 +51,7 @@ from ..language import AbstractLanguageAwareModel
 from ..duplicate import AbstractDuplicateAwareModel
 from ..tag import AbstractTaggedModel
 from ..author import Author
-from ..processor import run_processing_chains
+from ..processor import ProcessingError, run_processing_chains
 # from ..source import Source
 
 
@@ -216,6 +217,11 @@ class BaseItem(PolymorphicModel,
                                                (u'rtl', _(u'Right-to-Left'))),
                                       default=u'ltr', max_length=3,
                                       db_index=True)
+
+    processing_errors = generic.GenericRelation(
+        ProcessingError,
+        content_type_field='instance_type',
+        object_id_field='instance_id')
 
     # ———————————————————————————————————————————————————————————————— Contents
     #
