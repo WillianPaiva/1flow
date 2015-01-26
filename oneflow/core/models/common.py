@@ -156,6 +156,10 @@ CORE_CLASSES_ICONS = {
 
     'WebSite': 'globe',
 
+    'Processor': 'cog',
+    'ProcessingChain': 'random',
+    'ChainedItem': 'cogs',
+
     'BaseFeed': 'rss',
     'BaseItem': 'file-text',
 
