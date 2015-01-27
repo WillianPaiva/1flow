@@ -30,6 +30,7 @@ from celery.exceptions import SoftTimeLimitExceeded
 
 # from simple_history.models import HistoricalRecords
 
+from django.conf import settings
 from django.db import models, transaction
 from django.db.models.signals import pre_save  # , post_save, pre_delete
 from django.utils.translation import ugettext_lazy as _
@@ -200,8 +201,11 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
     def accepts(self, instance, **kwargs):
         """ Return True if any of my items accepts instance. """
 
-        LOGGER.info(u'%s [accepts]: testing %s %s', self,
-                    instance._meta.verbose_name, instance.id)
+        verbose = kwargs.get('verbose', True)
+
+        if verbose and settings.DEBUG:
+            LOGGER.debug(u'%s [accepts]: testing %s %s…', self,
+                         instance._meta.verbose_name, instance.id)
 
         # See run() for implementation informations.
         for item in self.chained_items.filter(
@@ -210,18 +214,22 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
             processor = item.item
 
             if not processor.is_active:
-                LOGGER.info(u'%s [accepts]: skipped inactive %s at pos. %s.',
-                            self, processor, item.position)
+                if verbose:
+                    LOGGER.warning(u'%s [accepts]: skipped inactive %s at '
+                                   u'pos. %s.', self, processor, item.position)
                 continue
 
             if processor.accepts(instance, **kwargs):
-                LOGGER.info(u'%s [accepts]: accepted %s %s by processor %s.',
-                            self, instance._meta.verbose_name, instance.id,
-                            processor)
+                if verbose and settings.DEBUG:
+                    LOGGER.debug(u'%s [accepts]: accepted %s %s by '
+                                 u'processor %s at pos. %s.', self,
+                                 instance._meta.verbose_name, instance.id,
+                                 processor, item.position)
                 return True
 
-        LOGGER.info(u'%s [accepts]: no processor accepted %s %s.',
-                    self, instance._meta.verbose_name, instance.id)
+        if verbose and settings.DEBUG:
+            LOGGER.debug(u'%s [accepts]: NO processor accepted %s %s.',
+                         self, instance._meta.verbose_name, instance.id)
 
         return False
 
@@ -240,8 +248,11 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
         case. for now, simplicity is the rule.
         """
 
-        LOGGER.info(u'%s [process]: processing %s %s', self,
-                    instance._meta.verbose_name, instance.id)
+        verbose = kwargs.get('verbose', True)
+
+        if verbose and settings.DEBUG:
+            LOGGER.debug(u'%s [process]: processing %s %s…', self,
+                         instance._meta.verbose_name, instance.id)
 
         # See run() for implementation informations.
         for item in self.chained_items.filter(
@@ -250,14 +261,16 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
             processor = item.item
 
             if not processor.is_active:
-                LOGGER.info(u'%s [process]: skipped inactive %s at pos. %s.',
-                            self, processor, item.position)
+                if verbose:
+                    LOGGER.warning(u'%s [process]: skipped inactive %s at '
+                                   u'pos. %s.', self, processor, item.position)
                 continue
 
             processor.process(instance, **kwargs)
 
-        LOGGER.info(u'%s [process]: processed %s %s.', self,
-                    instance._meta.verbose_name, instance.id)
+        if verbose:
+            LOGGER.info(u'%s [process]: ran %s %s through our processors.',
+                        self, instance._meta.verbose_name, instance.id)
 
     def run(self, instance, verbose=True, force=False, commit=True):
         """ Run the processing chain on a given instance.
@@ -278,8 +291,9 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
             except:
                 LOGGER.exception(u'Could not save processing error!')
 
-        LOGGER.info(u'%s [run]: processing %s %s', self,
-                    instance._meta.verbose_name, instance.id)
+        if verbose and settings.DEBUG:
+            LOGGER.debug(u'%s [run]: processing %s %s…', self,
+                         instance._meta.verbose_name, instance.id)
 
         for item in self.chained_items.filter(
                 is_active=True).order_by('position'):
@@ -298,14 +312,16 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
             # status of processors and chains between the global level
             # and the position-chained level.
             if not processor.is_active:
-                LOGGER.info(u'%s [run]: skipped inactive %s at pos. %s.',
-                            self, processor, item.position)
+                if verbose:
+                    LOGGER.warning(u'%s [run]: skipped inactive %s at '
+                                   u'pos. %s.', self, processor, item.position)
                 continue
 
-            LOGGER.info(u'%s [run]: running %s at pos. %s, verbose=%s, '
-                        u'force=%s, commit=%s.',
-                        self, processor, item.position,
-                        verbose, force, commit)
+            if verbose and settings.DEBUG:
+                LOGGER.debug(u'%s [run]: running %s at pos. %s, verbose=%s, '
+                             u'force=%s, commit=%s.',
+                             self, processor, item.position,
+                             verbose, force, commit)
 
             try:
                 with transaction.atomic():
@@ -338,8 +354,9 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
                 save_error(instance, item, e)
                 break
 
-        LOGGER.info(u'%s [run]: processed %s %s.', self,
-                    instance._meta.verbose_name, instance.id)
+        if verbose:
+            LOGGER.info(u'%s [run]: processed %s %s.', self,
+                        instance._meta.verbose_name, instance.id)
 
     def to_json(self):
         """ Return a JSON representation of the current chain.
