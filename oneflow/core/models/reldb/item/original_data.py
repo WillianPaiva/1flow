@@ -100,12 +100,14 @@ class OriginalData(models.Model):
     feedparser    = models.TextField(null=True, blank=True)
     raw_email     = models.TextField(null=True, blank=True)
     twitter       = models.TextField(null=True, blank=True)
+    # webimport     = models.TextField(null=True, blank=True)
 
     # These are set to True to avoid endless re-processing.
     google_reader_processed = models.BooleanField(default=False)
     feedparser_processed    = models.BooleanField(default=False)
     raw_email_processed     = models.BooleanField(default=False)
     twitter_processed       = models.BooleanField(default=False)
+    # webimport_processed     = models.BooleanField(default=False)
 
     def __unicode__(self):
         return u'Original data for {0}'.format(self.item)
@@ -143,6 +145,13 @@ class OriginalData(models.Model):
         """ Hydrate via JSON. """
 
         return json.loads(self.twitter)
+
+    @property
+    def webimport_hydrated(self):
+        """ Hydrate via direct return. """
+
+        return None
+        return self.webimport
 
 # ———————————————————————————————————————————————————————————— External methods
 
