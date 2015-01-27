@@ -36,7 +36,7 @@ from constance import config
 from markdown_deux import markdown as mk2_markdown
 
 # from celery import chain as tasks_chain
-from celery.exceptions import SoftTimeLimitExceeded
+# from celery.exceptions import SoftTimeLimitExceeded
 
 # from humanize.time import naturaldelta
 # from humanize.i18n import django_language
@@ -64,8 +64,8 @@ from ...common import (
     REQUEST_BASE_HEADERS,
 )
 from ...website import WebSite
-
 from ..base import BaseItem, BaseItemQuerySet
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -218,7 +218,6 @@ class ContentItem(models.Model):
 
         if self.content_error:
             if force:
-                statsd.gauge('articles.counts.content_errors', -1, delta=True)
                 self.content_error = None
 
                 if commit:
@@ -258,29 +257,9 @@ class ContentItem(models.Model):
         #
 
         try:
-            # The first that matches will stop the chain.
-            self.fetch_content_bookmark(force=force, commit=commit)
-
-            self.fetch_content_text(force=force, commit=commit)
-
-        except StopProcessingException as e:
-            LOGGER.info(u'Stopping processing of %s #%s on behalf of '
-                        u'an internal caller: %s.',
-                        self._meta.model.__name__, self.id, unicode(e))
-
-            # HEADS UP: do NOT return if we want to activate reads… Because
-            #           the first succeeding fetcher/parser WILL raise this
-            #           exception to avoid running other content parsers.
-            # return
-
-        except SoftTimeLimitExceeded as e:
-            statsd.gauge('articles.counts.content_errors', 1, delta=True)
-            self.content_error = str(e)
-            self.save()
-
-            LOGGER.error(u'Extraction took too long for %s #%s.',
-                         self._meta.model.__name__, self.id)
-            return
+            self.run_processing_chain(verbose=verbose,
+                                      force=force,
+                                      commit=commit)
 
         except NotTextHtmlException as e:
             statsd.gauge('articles.counts.content_errors', 1, delta=True)

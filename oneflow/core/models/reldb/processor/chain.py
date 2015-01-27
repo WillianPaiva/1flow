@@ -62,6 +62,16 @@ __all__ = [
 # ————————————————————————————————————————————————————————————— Class & related
 
 
+class ProcessingChainManager(models.Manager):
+
+    """ Simple manager with natural keys support. """
+
+    def get_by_natural_key(self, slug):
+        """ Get by slug. """
+
+        return self.get(slug=slug)
+
+
 class ProcessingChainMeta(MPTTModelBase, TransMeta):
 
     """ This one follows the BaseFeedMeta idea. """
@@ -90,6 +100,8 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
         verbose_name = _(u'Processing chain')
         verbose_name_plural = _(u'Processing chains')
         translate = ('short_description', 'description', )
+
+    objects = ProcessingChainManager()
 
     name = models.CharField(
         max_length=128,
@@ -162,6 +174,11 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
         """ I'm __unicode__, pep257. """
 
         return u'Chain {0} ({1})'.format(self.name, self.id)
+
+    def natural_key(self):
+        """ Helps (de-)serialization. """
+
+        return (self.slug, )
 
     # ————————————————————————————————————————————————————————————— Pproperties
 

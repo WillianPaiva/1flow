@@ -1,0 +1,526 @@
+[
+{
+  "pk": 1, 
+  "model": "core.processorcategory", 
+  "fields": {
+    "short_description_en": "", 
+    "name_fr": "processeurs souches de 1flow", 
+    "maintainer": [
+      "karmak23"
+    ], 
+    "short_description_nt": "Tous les processeurs et chaines de traitement livr\u00e9s avec 1flow ont cette cat\u00e9gorie", 
+    "parent": null, 
+    "rght": 2, 
+    "description_nt": "", 
+    "tree_id": 1, 
+    "is_active": true, 
+    "description_en": "This category rassembles all processors and chains released with each version of 1flow.\r\n\r\nPlease don't alter them, and don't put any of yours in this category, or they could be overwritten during a version upgrade.", 
+    "slug": "1flow-stock", 
+    "lft": 1, 
+    "user": [
+      "karmak23"
+    ], 
+    "description_fr": "Les processeurs et chaines de traitement qui sont publi\u00e9s avec chaque version de 1flow sont rassembl\u00e9s dans cette cat\u00e9gorie.\r\n\r\nMerci de ne pas les modifier, et de ne pas mettre les votres dans cette cat\u00e9gorie, car ils pourraient \u00eatre \u00e9cras\u00e9s lors d'un changement de version.", 
+    "short_description_fr": "All processors and chains released with 1flow have this category", 
+    "name_en": "1flow stock processors", 
+    "level": 0, 
+    "source_address": "", 
+    "name_nt": ""
+  }
+},
+{
+  "pk": 1, 
+  "model": "core.processor", 
+  "fields": {
+    "rght": 2, 
+    "maintainer": null, 
+    "duplicate_of": null, 
+    "needs_parameters": false, 
+    "lft": 1, 
+    "description_fr": "", 
+    "requirements": "", 
+    "short_description_nt": "", 
+    "accept_code": "\r\n# We use the same conditions as the requests HTML content extractor.\r\nreturn get_processor_by_slug(\r\n    '1fs-article-parse-accept-conditions').accepts(\r\n        instance, force=force, verbose=verbose, commit=commit)\r\n", 
+    "description_nt": "", 
+    "languages": [], 
+    "tree_id": 1, 
+    "short_description_fr": "", 
+    "source_address": "", 
+    "parent": null, 
+    "is_active": false, 
+    "description_en": "This is a 1flow legacy default basic processor.", 
+    "user": [
+      "karmak23"
+    ], 
+    "slug": "1fs-legacy-simple-html-download", 
+    "categories": [
+      1
+    ], 
+    "short_description_en": "", 
+    "name": "Legacy simple HTML download", 
+    "level": 0, 
+    "duplicate_status": null, 
+    "process_code": ""
+  }
+},
+{
+  "pk": 2, 
+  "model": "core.processor", 
+  "fields": {
+    "rght": 2, 
+    "maintainer": null, 
+    "duplicate_of": null, 
+    "needs_parameters": false, 
+    "lft": 1, 
+    "description_fr": "", 
+    "requirements": "", 
+    "short_description_nt": "", 
+    "accept_code": "\r\n# We use the same conditions as the requests HTML content extractor.\r\nif not get_processor_by_slug(\r\n    '1fs-article-parse-accept-conditions').accepts(\r\n        instance, force=force, verbose=verbose, commit=commit):\r\n\treturn False\r\n\r\nslashes_parts = [p for p in instance.url.split(u'/') if p != u'']\r\n\r\nparts_nr = len(slashes_parts)\r\n\r\nif parts_nr > 5:\r\n    # For sure, this is not a bookmark.\r\n    return False\r\n\r\nif parts_nr == 2:\r\n    # This is a simple website link. For sure, a bookmark.\r\n    # eg. we got ['http', 'www.mysite.com']\r\n    return True\r\n", 
+    "description_nt": "", 
+    "languages": [], 
+    "tree_id": 2, 
+    "short_description_fr": "", 
+    "source_address": "", 
+    "parent": null, 
+    "is_active": true, 
+    "description_en": "This is 1flow historical bookmark extractor.", 
+    "user": [
+      "karmak23"
+    ], 
+    "slug": "1fs-legacy-simple-bookmark-extractor", 
+    "categories": [
+      1
+    ], 
+    "short_description_en": "", 
+    "name": "Legacy simple bookmark extractor", 
+    "level": 0, 
+    "duplicate_status": null, 
+    "process_code": "\r\nif instance.fetch_content_must_abort(force=force, commit=commit):\r\n    # raise InstanceNotProcessedException\u00a0?\r\n    return False\r\n\r\n# If we are here, accepts() already returned True, this IS a bookmark.\r\nif force or instance.content_type in (None, CONTENT_TYPES.NONE):\r\n\r\n    instance.content_type = CONTENT_TYPES.BOOKMARK\r\n\r\n    slashes_parts = [p for p in instance.url.split(u'/') if p != u'']\r\n\r\n    domain_dotted = slashes_parts[1]\r\n    domain_dashed = domain_dotted.replace(u'.', u'-')\r\n\r\n    #\r\n    # TODO: generate a snapshot of the website and store the image.\r\n    #       stop using this external non-libre image provider.\r\n\r\n    instance.image_url = (u'http://images.screenshots.com/'\r\n                      u'{0}/{1}-small.jpg').format(\r\n        domain_dotted, domain_dashed)\r\n\r\n    instance.content = (u'http://images.screenshots.com/'\r\n                    u'{0}/{1}-large.jpg').format(\r\n        domain_dotted, domain_dashed)\r\n\r\n    content = instance.extract_and_set_title(commit=False)\r\n\r\n    #\r\n    # We use fetched content to get a proper \r\n    # website description of the page, if any.\r\n    #\r\n    if content is not None:\r\n        try:\r\n            soup = BeautifulSoup(content)\r\n\r\n            for meta in soup.find_all('meta'):\r\n                if meta.attrs.get('name', 'none').lower() \\\r\n                        == 'description':\r\n                    instance.excerpt = meta.attrs['content']\r\n\r\n        except:\r\n            LOGGER.exception(u'Could not extract description '\r\n                             u'of imported bookmark %s #%s',\r\n                             instance._meta.verbose_name, instance.id)\r\n\r\n        else:\r\n            LOGGER.info(u'Successfully set description to \u201c%s\u201d',\r\n                        instance.excerpt)\r\n\r\n    if commit:\r\n        instance.save()\r\n\r\n    #\r\n    # TODO: fetch something like http://www.siteencyclopedia.com/{parts[1]}/\r\n    #       and put it in the excerpt.\r\n\r\n    # HEADS UP: next processor will find the article with a CONTENT_TYPE_FINAL\r\n    #           and will not process it. Except that in the case of force=True\r\n    #           and a multiple-processors chain, this is override the behaviour\r\n    #           and fetch a content while the instance IS a bookmark. Thus we\r\n    #           must always raise a StopException to be sure the chain will \r\n    #           stop, whatever `force` is.\r\n\r\n    raise models.StopProcessingException(\r\n        u'Done setting up bookmark content for {0} #{1}.'.format(\r\n            instance._meta.verbose_name, instance.id))\r\n\r\n"
+  }
+},
+{
+  "pk": 3, 
+  "model": "core.processor", 
+  "fields": {
+    "rght": 2, 
+    "maintainer": null, 
+    "duplicate_of": null, 
+    "needs_parameters": false, 
+    "lft": 1, 
+    "description_fr": "", 
+    "requirements": "", 
+    "short_description_nt": "", 
+    "accept_code": "\r\n# We use the same conditions as the requests HTML content extractor.\r\nreturn get_processor_by_slug(\r\n    '1fs-article-parse-accept-conditions').accepts(\r\n        instance, force=force, verbose=verbose, commit=commit)", 
+    "description_nt": "", 
+    "languages": [], 
+    "tree_id": 3, 
+    "short_description_fr": "", 
+    "source_address": "", 
+    "parent": null, 
+    "is_active": true, 
+    "description_en": "This processor just calls instance.fetch_content_text(). It's a transition processor that will be split in 3 when the process chain runs flawlessly.", 
+    "user": [
+      "karmak23"
+    ], 
+    "slug": "1fs-legacy-multi-parser-content-extractor", 
+    "categories": [
+      1
+    ], 
+    "short_description_en": "Soup-strainer + newspaper + breadability (1flow legacy)", 
+    "name": "Legacy multi-parser content extractor", 
+    "level": 0, 
+    "duplicate_status": null, 
+    "process_code": "\r\n# This runs the \"old\" 1flow content extractor\r\ninstance.fetch_content_text(force=force, commit=commit)"
+  }
+},
+{
+  "pk": 4, 
+  "model": "core.processor", 
+  "fields": {
+    "rght": 2, 
+    "maintainer": null, 
+    "duplicate_of": null, 
+    "needs_parameters": false, 
+    "lft": 1, 
+    "description_fr": "", 
+    "requirements": "", 
+    "short_description_nt": "", 
+    "accept_code": "\r\n# TODO: remove this call when all conditions\r\n# are mutualized/refactored in this processor. \r\nif instance.fetch_content_must_abort(force=force, commit=commit):\r\n    return False\r\n\r\nif config.ARTICLE_FETCHING_DISABLED:\r\n    LOGGER.warning(u'Content fetching disabled in dynamic configuration.')\r\n\treturn False\r\n\r\n#if instance.has_error and not force:\r\n#\treturn False\r\n\r\n\r\nreturn (\r\n    # we work on articles\r\n    isinstance(instance, models.Article)\r\n\r\n    # TODO: don't we work on any Content* model?\r\n\r\n    # that have an absolute URL to avoid fetching copies\r\n    and instance.url_absolute\r\n\r\n    and not instance.is_orphaned\r\n  \r\n    # and which are not already converted (or conversion is forced again)\r\n    and (\r\n    \tforce \r\n    \tor instance.content_type not in models.CONTENT_TYPES_FINAL\r\n    )\r\n)\r\n", 
+    "description_nt": "", 
+    "languages": [], 
+    "tree_id": 4, 
+    "short_description_fr": "", 
+    "source_address": "", 
+    "parent": null, 
+    "is_active": false, 
+    "description_en": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "slug": "1fs-article-parse-accept-conditions", 
+    "categories": [
+      1
+    ], 
+    "short_description_en": "Accept-only processor for mutualized accept code", 
+    "name": "base accept conditions for article content parsers", 
+    "level": 0, 
+    "duplicate_status": null, 
+    "process_code": "\r\n# Do not process anything.\r\n\r\nreturn True"
+  }
+},
+{
+  "pk": 9, 
+  "model": "core.processor", 
+  "fields": {
+    "rght": 2, 
+    "maintainer": null, 
+    "duplicate_of": null, 
+    "needs_parameters": false, 
+    "lft": 1, 
+    "description_fr": "", 
+    "requirements": "require::", 
+    "short_description_nt": "", 
+    "accept_code": "\r\n# We use the same conditions as the requests HTML content extractor.\r\nreturn get_processor_by_slug(\r\n    '1fs-article-parse-accept-conditions').accepts(\r\n        instance, force=force, verbose=verbose, commit=commit)", 
+    "description_nt": "", 
+    "languages": [], 
+    "tree_id": 5, 
+    "short_description_fr": "", 
+    "source_address": "", 
+    "parent": null, 
+    "is_active": true, 
+    "description_en": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "slug": "1fs-newspaper-full-processor", 
+    "categories": [
+      1
+    ], 
+    "short_description_en": "", 
+    "name": "NewsPaper \u2014 full processor", 
+    "level": 0, 
+    "duplicate_status": null, 
+    "process_code": "\r\n# LOGGER.info(u'Parsing %s', instance)\r\n\r\nimport logging\r\nimport newspaper\r\n\r\nlogging.disable(logging.WARNING)\r\n\r\ntry:\r\n    article = newspaper.Article(instance.url)\r\n    article.download()\r\n    article.parse()\r\n\r\nfinally:\r\n    logging.disable(logging.NOTSET)\r\n\r\n# LOGGER.info(u'Parsed %s', instance.url)\r\n\r\ntext = article.text.strip()\r\n\r\nif text != u'':\r\n  instance.content = text\r\n  instance.content_type = models.CONTENT_TYPES.MARKDOWN\r\n  \r\n  if commit:\r\n    instance.save()"
+  }
+},
+{
+  "pk": 10, 
+  "model": "core.processor", 
+  "fields": {
+    "rght": 4, 
+    "maintainer": null, 
+    "duplicate_of": null, 
+    "needs_parameters": false, 
+    "lft": 1, 
+    "description_fr": "", 
+    "requirements": "newspaper==0.0.8\r\n", 
+    "short_description_nt": "", 
+    "accept_code": "return False", 
+    "description_nt": "", 
+    "languages": [], 
+    "tree_id": 6, 
+    "short_description_fr": "", 
+    "source_address": "", 
+    "parent": null, 
+    "is_active": false, 
+    "description_en": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "slug": "1fs-newspaper-common", 
+    "categories": [
+      1
+    ], 
+    "short_description_en": "", 
+    "name": "NewsPaper (common)", 
+    "level": 0, 
+    "duplicate_status": null, 
+    "process_code": "return True"
+  }
+},
+{
+  "pk": 11, 
+  "model": "core.processor", 
+  "fields": {
+    "rght": 3, 
+    "maintainer": null, 
+    "duplicate_of": null, 
+    "needs_parameters": false, 
+    "lft": 2, 
+    "description_fr": "", 
+    "requirements": "", 
+    "short_description_nt": "", 
+    "accept_code": "", 
+    "description_nt": "", 
+    "languages": [], 
+    "tree_id": 6, 
+    "short_description_fr": "", 
+    "source_address": "", 
+    "parent": 10, 
+    "is_active": true, 
+    "description_en": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "slug": "1fs-newspaper-title-extractor", 
+    "categories": [
+      1
+    ], 
+    "short_description_en": "", 
+    "name": "Newspaper \u2014 title extractor", 
+    "level": 1, 
+    "duplicate_status": null, 
+    "process_code": ""
+  }
+},
+{
+  "pk": 12, 
+  "model": "core.processor", 
+  "fields": {
+    "rght": 2, 
+    "maintainer": null, 
+    "duplicate_of": null, 
+    "needs_parameters": false, 
+    "lft": 1, 
+    "description_fr": "", 
+    "requirements": "", 
+    "short_description_nt": "", 
+    "accept_code": "", 
+    "description_nt": "", 
+    "languages": [], 
+    "tree_id": 7, 
+    "short_description_fr": "", 
+    "source_address": "", 
+    "parent": null, 
+    "is_active": false, 
+    "description_en": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "slug": "1fs-safe-title-extraction-possible", 
+    "categories": [
+      1
+    ], 
+    "short_description_en": "", 
+    "name": "can title be safely extracted?", 
+    "level": 0, 
+    "duplicate_status": null, 
+    "process_code": ""
+  }
+},
+{
+  "pk": 1, 
+  "model": "core.processingchain", 
+  "fields": {
+    "short_description_en": "The historical 1flow processing chain, just ported as a dynamic chain.", 
+    "applies_on": [
+      [
+        "core", 
+        "article"
+      ]
+    ], 
+    "duplicate_of": null, 
+    "parent": null, 
+    "rght": 2, 
+    "description_nt": "", 
+    "short_description_nt": "", 
+    "is_active": true, 
+    "tree_id": 1, 
+    "description_en": "", 
+    "languages": [], 
+    "lft": 1, 
+    "user": [
+      "karmak23"
+    ], 
+    "description_fr": "", 
+    "short_description_fr": "", 
+    "level": 0, 
+    "duplicate_status": null, 
+    "slug": "1fs-legacy-article-parsers", 
+    "categories": [
+      1
+    ], 
+    "name": "1flow legacy article parsers"
+  }
+},
+{
+  "pk": 2, 
+  "model": "core.processingchain", 
+  "fields": {
+    "short_description_en": "Articles default parsing chain", 
+    "applies_on": [
+      [
+        "core", 
+        "article"
+      ]
+    ], 
+    "duplicate_of": null, 
+    "parent": null, 
+    "rght": 2, 
+    "description_nt": "", 
+    "short_description_nt": "", 
+    "is_active": true, 
+    "tree_id": 2, 
+    "description_en": "", 
+    "languages": [], 
+    "lft": 1, 
+    "user": [
+      "karmak23"
+    ], 
+    "description_fr": "", 
+    "short_description_fr": "", 
+    "level": 0, 
+    "duplicate_status": null, 
+    "slug": "1fs-article-default", 
+    "categories": [
+      1
+    ], 
+    "name": "articles default"
+  }
+},
+{
+  "pk": 3, 
+  "model": "core.processingchain", 
+  "fields": {
+    "short_description_en": "", 
+    "applies_on": [
+      [
+        "core", 
+        "article"
+      ]
+    ], 
+    "duplicate_of": null, 
+    "parent": null, 
+    "rght": 2, 
+    "description_nt": "", 
+    "short_description_nt": "", 
+    "is_active": true, 
+    "tree_id": 3, 
+    "description_en": "", 
+    "languages": [], 
+    "lft": 1, 
+    "user": [
+      "karmak23"
+    ], 
+    "description_fr": "", 
+    "short_description_fr": "", 
+    "level": 0, 
+    "duplicate_status": null, 
+    "slug": "1fs-pure-newspaper", 
+    "categories": [
+      1
+    ], 
+    "name": "pure newspaper test chain"
+  }
+},
+{
+  "pk": 3, 
+  "model": "core.chaineditem", 
+  "fields": {
+    "chain": [
+      "1fs-legacy-article-parsers"
+    ], 
+    "parameters": "", 
+    "notes_fr": "", 
+    "is_active": true, 
+    "check_error": "", 
+    "item_type": [
+      "core", 
+      "processor"
+    ], 
+    "is_valid": true, 
+    "notes_nt": "", 
+    "item_id": 2, 
+    "position": 0, 
+    "notes_en": ""
+  }
+},
+{
+  "pk": 4, 
+  "model": "core.chaineditem", 
+  "fields": {
+    "chain": [
+      "1fs-legacy-article-parsers"
+    ], 
+    "parameters": "", 
+    "notes_fr": "", 
+    "is_active": true, 
+    "check_error": "", 
+    "item_type": [
+      "core", 
+      "processor"
+    ], 
+    "is_valid": true, 
+    "notes_nt": "", 
+    "item_id": 1, 
+    "position": 1, 
+    "notes_en": ""
+  }
+},
+{
+  "pk": 5, 
+  "model": "core.chaineditem", 
+  "fields": {
+    "chain": [
+      "1fs-legacy-article-parsers"
+    ], 
+    "parameters": "", 
+    "notes_fr": "", 
+    "is_active": true, 
+    "check_error": "", 
+    "item_type": [
+      "core", 
+      "processor"
+    ], 
+    "is_valid": true, 
+    "notes_nt": "", 
+    "item_id": 3, 
+    "position": 2, 
+    "notes_en": ""
+  }
+},
+{
+  "pk": 2, 
+  "model": "core.chaineditem", 
+  "fields": {
+    "chain": [
+      "1fs-article-default"
+    ], 
+    "parameters": "", 
+    "notes_fr": "", 
+    "is_active": true, 
+    "check_error": "", 
+    "item_type": [
+      "core", 
+      "processingchain"
+    ], 
+    "is_valid": true, 
+    "notes_nt": "", 
+    "item_id": 1, 
+    "position": 0, 
+    "notes_en": ""
+  }
+},
+{
+  "pk": 6, 
+  "model": "core.chaineditem", 
+  "fields": {
+    "chain": [
+      "1fs-pure-newspaper"
+    ], 
+    "parameters": "", 
+    "notes_fr": "", 
+    "is_active": true, 
+    "check_error": "", 
+    "item_type": [
+      "core", 
+      "processor"
+    ], 
+    "is_valid": true, 
+    "notes_nt": "", 
+    "item_id": 9, 
+    "position": 0, 
+    "notes_en": ""
+  }
+}
+]

@@ -63,7 +63,7 @@ class Command(BaseCommand):
                                              u'1flow-stock').split(',')
 
         fixture_filename = new_fixture_filename(
-            u'core', custom_suffix=u'processors-pack:{0}+{1}'.format(
+            u'core', custom_suffix=u'processors-pack__{0}__{1}'.format(
                 u','.join(limiting_usernames),
                 u','.join(limiting_categories),
             )
@@ -102,14 +102,16 @@ class Command(BaseCommand):
 
         app_list['core.ChainedItem'] = \
             ChainedItem.objects.filter(
-                chain__in=app_list['core.ProcessChain'])
+                chain__in=app_list['core.ProcessChain']).order_by(
+                    'chain', 'position')
 
         total_count += app_list['core.ChainedItem'].count()
 
         # ——————————————————————————————————————————————————————— Serialization
 
         data = serializers.serialize('json',
-                                     sort_dependencies(app_list.items()))
+                                     sort_dependencies(app_list.items()),
+                                     indent=2, use_natural_keys=True)
 
         with open(fixture_filename, 'w') as f:
             f.write(data)

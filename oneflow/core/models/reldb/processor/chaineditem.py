@@ -45,10 +45,21 @@ LOGGER = logging.getLogger(__name__)
 
 __all__ = [
     'ChainedItem',
+    'ChainedItemManager',
 ]
 
 
 # ————————————————————————————————————————————————————————————— Class & related
+
+
+class ChainedItemManager(models.Manager):
+
+    """ Simple manager with natural keys support. """
+
+    def get_by_natural_key(self, chain, position):
+        """ Get by chain & position. """
+
+        return self.get(chain=chain, position=position)
 
 
 class ChainedItem(models.Model):
@@ -68,6 +79,8 @@ class ChainedItem(models.Model):
         verbose_name = _(u'Chained item')
         verbose_name_plural = _(u'Chained items')
         translate = ('notes', )
+
+    objects = ChainedItemManager()
 
     chain = models.ForeignKey(ProcessingChain, related_name='chained_items')
 
@@ -133,6 +146,11 @@ class ChainedItem(models.Model):
                 self.item.slug,
                 self.id)
         )
+
+    def natural_key(self):
+        """ This is needed for serialization. """
+
+        return (self.chain, self.position)
 
     # ——————————————————————————————————————————————————————————— Class methods
 
