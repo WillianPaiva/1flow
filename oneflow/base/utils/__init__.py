@@ -39,6 +39,7 @@ from bs4 import BeautifulSoup
 from mongoengine import Document, signals
 
 from django.conf import settings
+from django import db
 from django.db import models, DatabaseError, InterfaceError  # , transaction
 from django.template import Context
 
@@ -168,17 +169,25 @@ def register_task_method(klass, meth, module_globals,
 
                 return getattr(objekt, method_name)(*args, **kwargs)
 
-            except klass.DoesNotExist:
-                LOGGER.error(u'Object does not exist prior to running task '
-                             u'%s on %s #%s.', method_name,
-                             klass._meta.model.__name__,
-                             object_pk)
+            except klass.DoesNotExist, exc:
+                # The transaction was not commited, the task went too fast.
+                LOGGER.warning(u'Instance does not exist prior to running '
+                               u'task %s on %s #%s; Retrying.', method_name,
+                               klass._meta.model.__name__,
+                               object_pk)
+
+                module_globals[exported_name].retry(exc=exc)
 
             except (InterfaceError, DatabaseError), exc:
-                LOGGER.exception(u'Database interface error while running '
-                                 u'%s on %s #%s; relaunching.',
-                                 method_name, klass._meta.model.__name__,
-                                 object_pk)
+                # Why closing the connection ?
+                # http://blog.tryolabs.com/2014/02/12/long-time-running-process-and-django-orm/  # NOQA
+
+                LOGGER.warning(u'Database error while running %s on %s #%s; '
+                               u'closing connection and retrying the task.',
+                               method_name, klass._meta.model.__name__,
+                               object_pk)
+
+                db.connection.close()
                 module_globals[exported_name].retry(exc=exc)
 
             except SystemExit:

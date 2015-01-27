@@ -156,6 +156,10 @@ CORE_CLASSES_ICONS = {
 
     'WebSite': 'globe',
 
+    'Processor': 'cog',
+    'ProcessingChain': 'random',
+    'ChainedItem': 'cogs',
+
     'BaseFeed': 'rss',
     'BaseItem': 'file-text',
 
@@ -181,7 +185,7 @@ CORE_CLASSES_ICONS = {
     'Profile': 'user',
     'SyncNode': 'sitemap',
     'HistoryEntry': 'book',
-    'SystemStatistics': 'tasks',
+    'SystemStatus': 'tasks',
 
     'StaffList': 'list',
 }

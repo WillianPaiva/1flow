@@ -1,0 +1,22 @@
+    {% if user.is_staff_or_superuser_and_enabled %}
+
+      <div class="spacer50"></div>
+
+      <ul>
+      	<li><span class="muted">good: </span> {{ article.is_good }}</li>
+      	<li><span class="muted">absolute: </span> {{ article.url_absolute }}</li>
+      	<li><span class="muted">content_type: </span> {{ article.content_type }}</li>
+      	<li><span class="muted">orphaned: </span> {{ article.is_orphaned }}</li>
+      	<li><span class="muted">Reads: </span> {{article.reads.count }}</li>
+      	<li><span class="muted">history:</span> {{ article.history.count }}</li>
+      	<li><span class="muted">errors:</span> {{ article.processing_errors.count }}</li>
+      </ul>
+
+      <div><pre style="font-size: 80%">
+a = Article.objects.get(id={{ article.id }})
+r = Read.objects.get(id={{ read.id }})
+</pre></div>
+
+
+
+    {% endif %}

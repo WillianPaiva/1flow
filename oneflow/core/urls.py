@@ -403,6 +403,28 @@ urlpatterns = patterns(
             views.TwitterFeedRuleDeleteView.as_view())),
         name='twitterfeedrule_delete'),
 
+    # —————————————————————————————————————————————————————————————— Processors
+
+    url(_(ur'^processor/?$'),
+        login_required(never_cache(
+            views.ProcessorListCreateView.as_view())),
+        name='processor_list_create'),
+
+    url(_(ur'^processor/(?P<pk>\d+)/delete/?$'),
+        login_required(never_cache(
+            views.ProcessorDeleteView.as_view())),
+        name='processor_delete'),
+
+    url(_(ur'^processingchain/?$'),
+        login_required(never_cache(
+            views.ProcessingChainListCreateView.as_view())),
+        name='processingchain_list_create'),
+
+    url(_(ur'^processingchain/(?P<pk>\d+)/delete/?$'),
+        login_required(never_cache(
+            views.ProcessingChainDeleteView.as_view())),
+        name='processingchain_delete'),
+
     # ————————————————————————————————————————————————————— Staff sources admin
 
     url(_(ur'^staff/feed/?$'),

@@ -1,0 +1,161 @@
+{% extends 'home.html' %}
+{% load sorting_tags %}
+
+{% block title %}{% trans "Processors" %}{% endblock title %}
+{% block body_id %}processors{% endblock body_id %}
+
+{% block application_content %}
+
+{% inplace_static %}
+
+<div class="spacer50"></div>
+
+<div class="row">
+	<div>
+	{% if processor_list %}
+
+		 <div class="actions pull-right">
+		 	<div class="btn-group very-muted">
+		 		{% blocktrans count counter=processor_list|length %}
+		 		    {{ counter }} processor
+		 		{% plural %}
+					{{ counter }} processors
+		 		{% endblocktrans %}
+		 	</div>
+
+		 	{% include "processor/toolbar.html" %}
+		</div>
+
+		<h1>
+			{% include "processor/breadcrumbs.html" %}
+
+			<span>
+			{% core_icon 'Processor' %}&nbsp;
+			{% trans "Processors" %}</span>
+		</h1>
+
+		<div class="spacer25"></div>
+
+		{% paginate processor_list %}
+
+		{% include "widgets/pagination.html" %}
+
+		<table class="table table-hover">
+		<thead>
+
+		  {% include "processor/form.html" %}
+
+		  <tr>
+			{% sort_th _("Name") 'name' '' 'col-sm-3' %}
+			{% sort_th _("Slug") 'slug' '' 'col-sm-3' %}
+			{% sort_th _("Categories") 'categories' '' 'col-sm-1' %}
+			{% sort_th _("Active?") 'is_active' '' 'col-sm-1 centered' %}
+			{% sort_th _("Parameters?") 'needs_parameters' '' 'col-sm-1 centered' %}
+			<th class="col-sm-1 centered">{% trans "Code" %}</th>
+			<th class="col-sm-1 right">{% trans "Actions" %}</th>
+		  </tr>
+		</thead>
+		<tbody>
+		{% for previous, processor, next in processor_list|prevcurnext %}
+			<tr>
+				<td>
+					{% inplace_edit 'processor.name' %}
+
+					<span class="pull-right very-muted">
+						<span class="popover-top" data-toggle="tooltip"
+								title="{% blocktrans with user=processor.user.username %}created by {{ user }}{% endblocktrans %}">
+							{% core_icon 'user' %}
+						</span>
+						<span class="popover-top" data-toggle="tooltip"
+								title="{{ processor.id }}">
+							{% core_icon 'info-sign' %}
+						</span>
+					</span>
+				 </td>
+				<td>{% inplace_edit 'processor.slug' %}</td>
+				<td>{% inplace_edit 'processor.categories' %}</td>
+				<td class="centered">{% inplace_edit 'processor.is_active' %}</td>
+				<td class="centered">{% inplace_edit 'processor.needs_parameters' %}</td>
+				<td class="centered">
+				<div class="btn-group">
+
+					<a id="edit-requirements-processor-{{ processor.id }}"
+        				href="{% url 'edit_field' klass='Processor' oid=processor.id form_class='ProcessorEditRequirementsForm' %}"
+        				data-toggle="modal" data-target="#"
+        				data-tooltip="tooltip"
+        				title="{% trans "Edit processor requirements" %}"
+        				class="btn btn-xs btn-default centered popover-top">
+        			{% core_icon 'list' %}
+        			</a>
+
+					<a id="edit-accept-code-processor-{{ processor.id }}"
+        				href="{% url 'edit_field' klass='Processor' oid=processor.id form_class='ProcessorEditAcceptCodeForm' %}"
+        				data-toggle="modal" data-target="#"
+        				data-tooltip="tooltip"
+        				title="{% trans "Edit processor accept code" %}"
+        				class="btn btn-xs btn-success centered popover-top">
+        			{% core_icon 'filter' %}
+        			</a>
+
+					<a id="edit-process-code-processor-{{ processor.id }}"
+        				href="{% url 'edit_field' klass='Processor' oid=processor.id form_class='ProcessorEditProcessCodeForm' %}"
+        				data-toggle="modal" data-target="#"
+        				data-tooltip="tooltip"
+        				title="{% trans "Edit processor process code" %}"
+        				class="btn btn-xs btn-primary centered popover-top">
+        			{% core_icon 'wrench' %}
+        			</a>
+
+    			</div>
+        		</td>
+
+				<td class="right">
+					{% comment %}
+
+					{% url 'processor_group' mailfeed.pk processor.pk as group_url %}
+					{% include "widgets/group-buttons.html" with obj=processor is_first=forloop.first is_last=forloop.last previous=previous next=next items_count=processor_list|length %}
+
+					{% url 'processor_position' mailfeed.pk processor.pk as position_url %}
+					{% include "widgets/position-buttons.html" with obj=processor position_first=forloop.first position_last=forloop.last %}
+					{% endcomment %}
+
+					{% url 'processor_delete' processor.pk as delete_url %}
+					{% include "widgets/delete-form-button.html" %}
+					</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+		</table>
+	{% else %}
+
+		<h2>
+			{% include "processor/breadcrumbs.html" %}
+
+			<span>
+			{% core_icon 'Processor' %}&nbsp;
+			{% trans "No processor yet" %}</span>
+		</h2>
+
+		<div class="spacer50"></div>
+
+		<table class="table">
+			<tbody>
+				{% include "processor/form.html" with create_first=1 %}
+			</tbody>
+		</table>
+	{% endif %}
+
+		<div class="spacer50"></div>
+
+		{% include "processor/help.html" %}
+
+	</div>
+</div>
+{% endblock application_content %}
+
+{% block extrajs_footer %}
+    {{ block.super }}
+
+	{% include "snippets/mail-collapse-js-glue.html" with focus_name='id_account' object_list=processor_list %}
+
+{% endblock extrajs_footer %}

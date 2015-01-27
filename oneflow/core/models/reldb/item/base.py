@@ -31,6 +31,7 @@ from humanize.i18n import django_language
 from django.db import models, IntegrityError
 from django.utils.translation import ugettext_lazy as _
 # from django.utils.text import slugify
+from django.contrib.contenttypes import generic
 
 from polymorphic import (
     PolymorphicQuerySet,
@@ -50,6 +51,7 @@ from ..language import AbstractLanguageAwareModel
 from ..duplicate import AbstractDuplicateAwareModel
 from ..tag import AbstractTaggedModel
 from ..author import Author
+from ..processor import ProcessingError, run_processing_chains
 # from ..source import Source
 
 
@@ -216,6 +218,11 @@ class BaseItem(PolymorphicModel,
                                       default=u'ltr', max_length=3,
                                       db_index=True)
 
+    processing_errors = generic.GenericRelation(
+        ProcessingError,
+        content_type_field='instance_type',
+        object_id_field='instance_id')
+
     # ———————————————————————————————————————————————————————————————— Contents
     #
     # Articles have an excerpt and a content.
@@ -303,6 +310,29 @@ class BaseItem(PolymorphicModel,
         return True
 
     # ————————————————————————————————————————————————————————————————— Methods
+
+    def get_processing_chain(self):
+        """ Return no processor chain.
+
+        BaseItem is too generic and too empty to have a processor chain ?
+
+        This method should be overriden by inheriting classes.
+        """
+
+        return None
+
+    def run_processing_chain(self, verbose=True, force=False, commit=True):
+        """ Run processors for the content item. """
+
+        processor_chain = self.get_processing_chain()
+
+        if processor_chain is None:
+            run_processing_chains(self, verbose=verbose,
+                                  force=force, commit=commit)
+
+        else:
+            processor_chain.run(self, verbose=verbose,
+                                force=force, commit=commit)
 
     def reset(self, force=False, commit=True):
         """ See :meth:`Article.reset`() for explanations. """

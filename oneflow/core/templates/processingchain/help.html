@@ -1,0 +1,23 @@
+
+<div class="muted">
+
+{% blocktrans %}
+<p>See <a href='https://github.com/1flow/1flow/wiki/Processors'>the official
+documentation</a> if you need any information or help about processing chains.</p>
+{% endblocktrans %}
+
+<div class="spacer15"></div>
+
+{% include "snippets/forms/filter/help-isnot.html" %}
+
+{% blocktrans %}
+<h4>Available filters</h4>
+
+<ul>
+	<li><code>dupe</code> or <code>duplicate</code>: filters only duplicate processing chains.</li>
+	<li><code>active</code>: selects active processing chains. Note: “is:active” returns the same as “not:inactive”.</li>
+	<li><code>inactive</code>: selects inactive processing chains. Idem: “is:inactive” returns the same as “not:active”.</li>
+</ul>
+{% endblocktrans %}
+
+</div>

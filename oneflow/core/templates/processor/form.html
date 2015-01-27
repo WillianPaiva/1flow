@@ -1,0 +1,49 @@
+
+<form id="processorform"
+	action="{% url 'processor_list_create' %}"
+	method="post" role="form"
+	>
+	{% csrf_token %}
+
+	<tr class="{% if not form.errors %}collapse{% endif %} collapsible">
+        <td colspan="{{ form.fields|length|add:3 }}">
+            <h3>
+            {% if create_first %}
+                {% trans "Please create your first one:" context "male" %}
+
+            {% else %}
+                {% trans "Please fill parameters for a new processor" %}
+
+            {% endif %}
+            </h3>
+        </td>
+    </tr>
+    <tr class="{% if not form.errors %}collapse{% endif %} collapsible">
+
+        {% for field in form %}
+        	<td {% if field.name == 'is_restricted' %}colspan="2"{% endif %}>
+
+            {% include "widgets/forms/field-generic.html" with field=field field_label_css_class='col-sm-12' field_input_css_class='col-sm-12' %}
+
+            {% if forloop.last %}
+
+            	</td>
+            	<td {% if not create_first %}colspan="2"{% endif %}>
+
+                <div class="spacer5"></div>
+                <div class="spacer40"></div>
+			    	<input class="btn btn-primary" type="submit"
+			    		value="{% trans "Save" %}" />
+
+            {% endif %}
+
+        	</td>
+
+        {% endfor %}
+
+	</tr>
+    <tr class="{% if not form.errors %}collapse{% endif %} collapsible">
+        <td colspan="{{ form.fields|length|add:3 }}">&nbsp;</td>
+    </tr>
+
+</form>

@@ -248,7 +248,7 @@ class ContentItem(models.Model):
 
         return False
 
-    def fetch_content(self, force=False, verbose=False, commit=True):
+    def fetch_content(self, verbose=True, force=False, commit=True):
 
         if self.fetch_content_must_abort(force=force, commit=commit):
             return

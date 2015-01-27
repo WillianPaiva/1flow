@@ -54,6 +54,21 @@ from twitterfeedrule import (  # NOQA
     TwitterFeedRuleGroupForm,
 )
 
+# ——————————————————————————————————————————————————————————————————— Processor
+
+from processor import (  # NOQA
+    ProcessorForm,
+    ProcessorEditRequirementsForm,
+    ProcessorEditAcceptCodeForm,
+    ProcessorEditProcessCodeForm,
+)
+
+from processingchain import (  # NOQA
+    ProcessingChainForm,
+    # ProcessingChainEditRequirementsForm,
+)
+
+
 # ———————————————————————————————————————————————————————————————————————— Sync
 
 from sync import SyncNodeForm  # NOQA

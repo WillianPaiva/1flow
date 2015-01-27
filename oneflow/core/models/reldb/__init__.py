@@ -59,6 +59,8 @@ from history import HistoryEntry  # NOQA
 
 from userimport import *  # NOQA
 
+from processor import *  # NOQA
+
 # ————————————————————————————————————————————————————————————————— 1flow index
 
 from sync import SyncNode, NodePermissions, ModelSyncLayer  # NOQA

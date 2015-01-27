@@ -39,6 +39,8 @@ from oneflow.base.utils.http import split_url
 
 from ..common import ORIGINS
 
+from processor import ProcessingChain
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -84,7 +86,14 @@ class WebSite(six.with_metaclass(WebSiteMeta, MPTTModel,
         verbose_name_plural = _(u'Web sites')
         translate = ('short_description', 'description', )
 
-    INPLACEEDIT_EXCLUDE = ['mail_warned', ]
+    # HEADS UP: we exclude the URL from inplace_edit form, else the
+    # Django URLField will always add a trailing slash to domain-only
+    # websites while we remove them. This is probably a bug in our heads
+    # (we shouldn't remove the trailing slash on domain-only URLs ?),
+    # but we want it to work this way for now.
+    #
+    # For 'mail_warned', it's the traditional JSONField + inplace error.
+    INPLACEEDIT_EXCLUDE = ['url', 'mail_warned', ]
 
     # class MPTTMeta:
     #     order_insertion_by = ['url']
@@ -141,6 +150,10 @@ class WebSite(six.with_metaclass(WebSiteMeta, MPTTModel,
         null=True, blank=True,
         verbose_name=_(u'Description'),
         help_text=_(u'Public description of the feed. Markdown text.'))
+
+    processing_chain = models.ForeignKey(ProcessingChain,
+                                         null=True, blank=True,
+                                         related_name='websites')
 
     # ————————————————————————————————————————————————————————— Python & Django
 

@@ -32,6 +32,8 @@
 			{% trans "Web sites" %}</span>
 		</h1>
 
+		<div class="spacer25"></div>
+
 		{% paginate website_list %}
 
 		{% include "widgets/pagination.html" %}
@@ -44,10 +46,7 @@
 			{% sort_th _("Name") 'name' '' 'col-sm-2' %}
 			{% sort_th _("URI") 'url' '' 'col-sm-3' %}
 			<th class="col-sm-3">{% trans "Short description" %}</th>
-			{% comment %}
-
 			{% sort_th _("Processing chain") 'processing_chain' '' 'col-sm-1' %}
-			{% endcomment %}
 			{% sort_th _("Fetch limit") 'fetch_limit_nr' '' 'col-sm-1' %}
 			<th class="col-sm-1 right">{% trans "Actions" %}</th>
 		  </tr>
@@ -70,17 +69,15 @@
 				<td>
 					{% inplace_edit 'website.name' %}
 
-					<span class="pull-right popover-left very-muted"
-						data-toggle="tooltip"
-						title="{{ website.id }}">
+					<span class="pull-right very-muted"
+							data-toggle="tooltip"
+							title="{{ website.id }}">
 						{% core_icon 'info-sign' %}
 					</span>
 				</td>
 				<td><a href="{{ website.url }}">{{ website.url }}</a></td>
 				<td>{% inplace_edit 'website.short_description' %}</td>
-				{% comment %}
 				<td>{% inplace_edit 'website.processing_chain' %}</td>
-				{% endcomment %}
 				<td>{% inplace_edit 'website.fetch_limit_nr' %}</td>
 
 				<td class="right">

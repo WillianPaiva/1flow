@@ -555,6 +555,13 @@ from twitterfeedrule import (  # NOQA
    TwitterFeedRuleDeleteView,
 )
 
+from processor import ProcessorListCreateView, ProcessorDeleteView  # NOQA
+
+from processingchain import (  # NOQA
+    ProcessingChainListCreateView,
+    ProcessingChainDeleteView,
+)
+
 from staff import (  # NOQA
     StaffFeedListCreateView,
     StaffWebSiteListCreateView,
