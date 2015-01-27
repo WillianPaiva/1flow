@@ -305,7 +305,11 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
                              instance._meta.verbose_name, instance.id,
                              processor)
 
-                save_error(instance, processor, e)
+                # NOTE: we record the chained item, not the processor itself,
+                # else we don't know in which chain the processing failed.
+                # Only the processor is not sufficient, because we don't know
+                # what happened before it in the chain.
+                save_error(instance, item, e)
                 break
 
             except Exception as e:
@@ -313,7 +317,8 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
                                  self, instance._meta.verbose_name,
                                  instance.id, processor)
 
-                save_error(instance, processor, e)
+                # See previous comment about same call to save_error().
+                save_error(instance, item, e)
                 break
 
         LOGGER.info(u'%s [run]: processed %s %s.', self,
