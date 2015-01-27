@@ -185,14 +185,14 @@ CELERYBEAT_SCHEDULE = {
         }
     },
 
-    'refresh-all-mongo-feeds': {
-        'task': 'oneflow.core.tasks.refresh_all_mongo_feeds',
-        'schedule': crontab(minute='*'),
-        'options': {
-            'expire': 50,
-            'queue': 'refresh',
-        }
-    },
+    # 'refresh-all-mongo-feeds': {
+    #     'task': 'oneflow.core.tasks.refresh_all_mongo_feeds',
+    #     'schedule': crontab(minute='*'),
+    #     'options': {
+    #         'expire': 50,
+    #         'queue': 'refresh',
+    #     }
+    # },
 
     'refresh-all-mailaccounts': {
         'task': 'oneflow.core.tasks.refresh_all_mailaccounts',
