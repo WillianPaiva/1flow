@@ -377,9 +377,17 @@ def production():
         'worker_longtasks': [
             'worker-04.1flow.io',
         ],
-        'worker_mongo': [
-            'worker-04.1flow.io',
-        ],
+
+        #
+        # 2015-01-27: I ran:
+        #   fab prod R:worker_mongo stop
+        #   fab prod R:worker_mongo remove
+        #
+        # And commented the following lines.
+        #
+        # 'worker_mongo': [
+        #     'worker-04.1flow.io',
+        # ],
     })
     env.env_was_set = True
 
