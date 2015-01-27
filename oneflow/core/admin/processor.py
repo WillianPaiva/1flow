@@ -72,12 +72,11 @@ class ProcessorAdmin(admin.ModelAdmin):
         'id', 'name', 'slug',
         'is_active', 'parent',
         'short_description_en',
-        'processor_type', 'needs_parameters',
+        'needs_parameters',
         'user',
     )
     list_display_links = ('id', 'image', 'name', 'slug', )
-    list_filter = ('is_active', 'processor_type',
-                   'needs_parameters', 'user', )
+    list_filter = ('is_active', 'needs_parameters', 'user', )
     ordering = ('name', )
     change_list_template = "admin/change_list_filter_sidebar.html"
     change_list_filter_template = "admin/filter_listing.html"
