@@ -34,6 +34,7 @@ from django.db import models
 from django.db.models.signals import pre_save  # , post_save, pre_delete
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
+from django.contrib.contenttypes import generic
 
 from mptt.models import MPTTModelBase, MPTTModel, TreeForeignKey
 from sparks.django.models.mixins import DiffMixin
@@ -190,6 +191,12 @@ class Processor(six.with_metaclass(ProcessorMeta, MPTTModel,
         verbose_name=_(u'Processing source code'),
         help_text=_(u'See https://github.com/1flow/1flow/wiki/Processors '
                     u'for details.'))
+
+    chainings = generic.GenericRelation(
+        # Using the model class would imply an import loop.
+        'ChainedItem',
+        content_type_field='item_type',
+        object_id_field='item_id')
 
     # ————————————————————————————————————————————————————————— Python & Django
 
