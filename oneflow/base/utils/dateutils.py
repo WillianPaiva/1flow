@@ -24,6 +24,9 @@
 
 import logging
 
+import dateutil.parser
+import dateutil.tz
+
 from email.utils import (
     mktime_tz as email_utils_mktime_tz,
     parsedate_tz as email_utils_parsedate_tz,
@@ -39,6 +42,15 @@ from django.utils.timezone import (is_aware, is_naive,  # NOQA
                                    now as dj_now)
 
 LOGGER = logging.getLogger(__name__)
+
+
+__all__ = ('today', 'timedelta', 'naturaltime', 'naturaldelta',
+           'now', 'ftstamp', 'tzcombine', 'combine', 'time', 'datetime',
+           'is_aware', 'is_naive',
+           'until_tomorrow_delta', 'stats_datetime', 'benchmark',
+           'pytime', 'pydatetime', 'email_date_to_datetime_tz',
+           'twitter_datestring_to_datetime_utc',
+           'dateutilDateHandler', 'datetime_from_feedparser_entry', )
 
 # ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••• Local aliases
 
@@ -149,9 +161,74 @@ def twitter_datestring_to_datetime_utc(twitter_datestring):
 
     return dt - timedelta(seconds=time_tuple[-1])
 
-__all__ = ('today', 'timedelta', 'naturaltime', 'naturaldelta',
-           'now', 'ftstamp', 'tzcombine', 'combine', 'time', 'datetime',
-           'is_aware', 'is_naive',
-           'until_tomorrow_delta', 'stats_datetime', 'benchmark',
-           'pytime', 'pydatetime', 'email_date_to_datetime_tz',
-           'twitter_datestring_to_datetime_utc', )
+
+def dateutilDateHandler(aDateString):
+    """ Custom date handler.
+
+    See issue https://code.google.com/p/feedparser/issues/detail?id=404
+    """
+
+    default_datetime = now()
+
+    try:
+        return dateutil.parser.parse(aDateString).utctimetuple()
+
+    except:
+        pass
+
+    try:
+        return dateutil.parser.parse(aDateString, ignoretz=True).utctimetuple()
+
+    except:
+        pass
+
+    try:
+        return dateutil.parser.parse(aDateString,
+                                     default=default_datetime).utctimetuple()
+
+    except:
+        LOGGER.exception(u'Could not parse date string “%s” with '
+                         u'custom dateutil parser.', aDateString)
+        # If dateutil fails and raises an exception, this produces
+        # http://dev.1flow.net/1flow/1flow/group/30087/
+        # and the whole chain crashes, whereas
+        # https://pythonhosted.org/feedparser/date-parsing.html#registering-a-third-party-date-handler  # NOQA
+        # states any exception is silently ignored.
+        # Obviously it's not the case.
+        return None
+
+
+def datetime_from_feedparser_entry(feedparser_article):
+    """ Return a datetime, if possible, from a feedparser entry.
+
+    If not possible, return None.
+
+    If the datetime is naive, it will be converted
+    to an UTC timezone-aware datetime.
+    """
+
+    the_datetime = None
+
+    if feedparser_article.published_parsed:
+        try:
+            the_datetime = datetime(*feedparser_article.published_parsed[:6])
+
+        except:
+            pass
+
+    if the_datetime is None and feedparser_article.published:
+        try:
+            the_datetime = datetime(
+                *dateutilDateHandler(feedparser_article.published)[:6])
+        except:
+            pass
+
+    if the_datetime is not None:
+        # This is probably a half-false assumption, but have currently no
+        # simple way to get the timezone from the feedparser entry. Anyway,
+        # we *need* an offset aware for later comparisons. BTW, in most
+        # cases, feedparser already did a good job before reaching here.
+        if is_naive(the_datetime):
+            the_datetime = make_aware(the_datetime, utc)
+
+    return the_datetime

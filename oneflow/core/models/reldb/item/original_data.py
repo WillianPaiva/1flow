@@ -30,7 +30,10 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from oneflow.base.utils import register_task_method
-from oneflow.base.utils.dateutils import twitter_datestring_to_datetime_utc
+from oneflow.base.utils.dateutils import (
+    twitter_datestring_to_datetime_utc,
+    datetime_from_feedparser_entry,
+)
 
 from ..common import ORIGINS, CONTENT_TYPES
 from ..account.common import email_prettify_raw_message
@@ -308,6 +311,10 @@ def BaseItem_postprocess_feedparser_data_method(self, force=False,
     fpod = self.original_data.feedparser_hydrated
 
     if fpod:
+
+        if self.date_published is None:
+            self.date_published = datetime_from_feedparser_entry(fpod)
+
         if self.tags == [] and 'tags' in fpod:
             tags = list(
                 Tag.get_tags_set((

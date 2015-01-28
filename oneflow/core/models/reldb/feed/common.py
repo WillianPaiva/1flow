@@ -19,8 +19,6 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 """
 
 import logging
-import dateutil.parser
-import dateutil.tz
 
 from constance import config
 
@@ -30,7 +28,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from sparks.django.utils import NamedTupleChoices
 
-from oneflow.base.utils.dateutils import now
 
 LOGGER = logging.getLogger(__name__)
 
@@ -193,42 +190,6 @@ TWITTER_RULES_OPERATION_DEFAULT = RULES_OPERATIONS.ANY
 TWITTER_GROUP_OPERATION_DEFAULT = RULES_OPERATIONS.ANY
 
 # ——————————————————————————————————————————————————————————————————— Functions
-
-
-def dateutilDateHandler(aDateString):
-    """ Custom date handler.
-
-    See issue https://code.google.com/p/feedparser/issues/detail?id=404
-    """
-
-    default_datetime = now()
-
-    try:
-        return dateutil.parser.parse(aDateString).utctimetuple()
-
-    except:
-        pass
-
-    try:
-        return dateutil.parser.parse(aDateString, ignoretz=True).utctimetuple()
-
-    except:
-        pass
-
-    try:
-        return dateutil.parser.parse(aDateString,
-                                     default=default_datetime).utctimetuple()
-
-    except:
-        LOGGER.exception(u'Could not parse date string “%s” with '
-                         u'custom dateutil parser.', aDateString)
-        # If dateutil fails and raises an exception, this produces
-        # http://dev.1flow.net/1flow/1flow/group/30087/
-        # and the whole chain crashes, whereas
-        # https://pythonhosted.org/feedparser/date-parsing.html#registering-a-third-party-date-handler  # NOQA
-        # states any exception is silently ignored.
-        # Obviously it's not the case.
-        return None
 
 
 def throttle_fetch_interval(interval, news, mutualized,

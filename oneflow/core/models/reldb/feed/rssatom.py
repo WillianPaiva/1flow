@@ -37,7 +37,10 @@ from django.core.validators import URLValidator
 
 from oneflow.base.utils import HttpResponseLogProcessor
 from oneflow.base.utils.http import clean_url
-from oneflow.base.utils.dateutils import datetime, is_naive, make_aware, utc
+from oneflow.base.utils.dateutils import (
+    dateutilDateHandler,
+    datetime_from_feedparser_entry,
+)
 
 from ..common import (
     FeedIsHtmlPageException,
@@ -53,7 +56,7 @@ from ..website import WebSite
 from ..item import Article
 from ..tag import SimpleTag
 
-from common import throttle_fetch_interval, dateutilDateHandler
+from common import throttle_fetch_interval
 
 from base import (
     BaseFeedQuerySet,
@@ -538,19 +541,8 @@ class RssAtomFeed(BaseFeed):
         else:
             content = feedparser_content
 
-        try:
-            date_published = datetime(*article.published_parsed[:6])
-
-        except:
-            date_published = None
-
-        else:
-            # This is probably a false assumption, but have currently no
-            # simple way to get the timezone of the feed. Anyway, we *need*
-            # an offset aware for later comparisons. BTW, in most cases,
-            # feedparser already did a good job before reaching here.
-            if is_naive(date_published):
-                date_published = make_aware(date_published, utc)
+        # This will set the date to None in case of a problem.
+        date_published = datetime_from_feedparser_entry(article)
 
         try:
             tags = list(SimpleTag.get_tags_set((
