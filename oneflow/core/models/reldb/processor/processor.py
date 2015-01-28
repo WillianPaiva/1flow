@@ -302,6 +302,8 @@ data.result = processor_function({2})
             But it's a start.
             """
 
+            raise NotImplementedError('BOOOOO')
+
             if u'import' in code:
                 raise ProcessorSecurityException('%s: ', self)
 
@@ -320,14 +322,22 @@ data.result = processor_function({2})
         # if config.PROCESSOR_DYNAMIC_SECURITY_CHECK:
         #     self.security_check('accept')
 
-        LOGGER.info(u'%s: testing acceptance of %s %s', self,
-                    instance._meta.verbose_name, instance.id)
+        verbose = kwargs.get('verbose', True)
+
+        if verbose and settings.DEBUG:
+            LOGGER.debug(u'%s: testing acceptance of %s %s…', self,
+                         instance._meta.verbose_name, instance.id)
 
         result = self._internal_exec(self.accept_code,
                                      instance, **kwargs)
 
-        LOGGER.info(u'%s: accepts %s %s = %s', self,
-                    instance._meta.verbose_name, instance.id, result)
+        if verbose:
+            if result:
+                LOGGER.info(u'%s: ACCEPTED %s %s.', self,
+                            instance._meta.verbose_name, instance.id)
+            else:
+                LOGGER.info(u'%s: REJECTED %s %s.', self,
+                            instance._meta.verbose_name, instance.id)
 
         return result
 
@@ -350,22 +360,22 @@ data.result = processor_function({2})
         #             kwargs.get('commit', True))
 
         if accepted:
-
-            if verbose:
-                LOGGER.info(u'%s: processing accepted %s %s…',
-                            self, instance._meta.verbose_name, instance.id)
+            if verbose and settings.DEBUG:
+                LOGGER.debug(u'%s: processing accepted %s %s…',
+                             self, instance._meta.verbose_name, instance.id)
 
             result = self._internal_exec(self.process_code,
                                          instance, **kwargs)
 
             if verbose:
-                LOGGER.info(u'%s: processed %s #%s.', self,
+                LOGGER.info(u'%s: processed %s %s.', self,
                             instance._meta.verbose_name, instance.id)
 
             return result
 
-        LOGGER.warning(u'%s: not processed %s %s (was not accepted).', self,
-                       instance._meta.verbose_name, instance.id)
+        if verbose:
+            LOGGER.warning(u'%s: not processed %s %s (was rejected).',
+                           self, instance._meta.verbose_name, instance.id)
 
         raise InstanceNotAcceptedException
 
