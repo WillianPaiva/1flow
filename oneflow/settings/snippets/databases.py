@@ -27,8 +27,21 @@ DATABASES = {
     'default': dj_database_url.config(),
 }
 
+__conn_max_age = os.environ.get('DATABASE_CONN_MAX_AGE', None)
+if __conn_max_age is not None:
+
+    if __conn_max_age.isdigit():
+        __conn_max_age = int(__conn_max_age)
+
+    else:
+        raise RuntimeError('Bad value for DATABASE_CONN_MAX_AGE, '
+                           u'should be an integer >= 0 or the variable '
+                           u'should be completely unset.')
+
+# No need anymore for 'autocommit':
+# https://docs.djangoproject.com/fr/1.7/ref/databases/#autocommit-mode
 DATABASES['default']['OPTIONS'] = {
-    'autocommit': True,
+    'CONN_MAX_AGE': __conn_max_age,
 }
 
 # DABASE_NAME = DATABASES['default']['NAME']
