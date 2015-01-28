@@ -38,7 +38,7 @@ runweb: clean
 	honcho -f Procfile.development start web
 
 runworkers:
-	honcho -f Procfile.development start flower beat worker permanent mongo --quiet flower,beat,shell,permanent,mongo
+	honcho -f Procfile.development start flower beat worker permanent --quiet flower,beat,shell,permanent
 
 runpermanent:
 	honcho -f Procfile.development start flower beat worker permanent --quiet flower,beat,shell,worker
