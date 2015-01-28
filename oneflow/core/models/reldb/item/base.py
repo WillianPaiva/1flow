@@ -324,15 +324,15 @@ class BaseItem(PolymorphicModel,
     def run_processing_chain(self, verbose=True, force=False, commit=True):
         """ Run processors for the content item. """
 
-        processor_chain = self.get_processing_chain()
+        processing_chain = self.get_processing_chain()
 
-        if processor_chain is None:
+        if processing_chain is None:
             run_processing_chains(self, verbose=verbose,
                                   force=force, commit=commit)
 
         else:
-            processor_chain.run(self, verbose=verbose,
-                                force=force, commit=commit)
+            processing_chain.run(self, verbose=verbose,
+                                 force=force, commit=commit)
 
     def reset(self, force=False, commit=True):
         """ See :meth:`Article.reset`() for explanations. """
