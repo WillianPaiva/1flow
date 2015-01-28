@@ -266,7 +266,11 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
                                    u'pos. %s.', self, processor, item.position)
                 continue
 
-            processor.process(instance, **kwargs)
+            try:
+                processor.process(instance, **kwargs)
+
+            except InstanceNotAcceptedException:
+                continue
 
         if verbose:
             LOGGER.info(u'%s [process]: ran %s %s through our processors.',

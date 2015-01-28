@@ -675,6 +675,17 @@ def read_status_css_styles():
 
 
 @register.simple_tag
+def core_label(text, label_type=None, item_type=None):
+    """ Return a bootstrap label, changing the HTML item type if needed. """
+
+    return u"<{0} class='label label-{1}'>{2}</{0}>".format(
+        u'span' if item_type is None else item_type,
+        u'default' if label_type is None else label_type,
+        text
+    )
+
+
+@register.simple_tag
 def core_icon(klass_name, fixed_width=True):
     """ Centralize all model icons and render them.
 
