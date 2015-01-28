@@ -1,24 +1,24 @@
 # -*- coding: utf-8 -*-
-""" Global timezone aware functions.
+u""" Global timezone aware functions.
 
-    ____________________________________________________________________
+____________________________________________________________________
 
-    Copyright 2012-2014 Olivier Cortès <oc@1flow.io>
+Copyright 2012-2014 Olivier Cortès <oc@1flow.io>
 
-    This file is part of the 1flow project.
+This file is part of the 1flow project.
 
-    1flow is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation, either version 3 of
-    the License, or (at your option) any later version.
+1flow is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
 
-    1flow is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
+1flow is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU Affero General Public
-    License along with 1flow.  If not, see http://www.gnu.org/licenses/
+You should have received a copy of the GNU Affero General Public
+License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
@@ -67,11 +67,14 @@ timedelta = pydatetime.timedelta
 
 
 def naturaltime(*args, **kwargs):
+    """ Wrap `humanize.naturaltime` into django_language(). """
+
     with django_language():
         return humanize_time.naturaltime(*args, **kwargs)
 
 
 def naturaldelta(*args, **kwargs):
+    """ Wrap `humanize.naturaldelta` into django_language(). """
 
     with django_language():
         return humanize_time.naturaldelta(*args, **kwargs)
@@ -101,7 +104,10 @@ combine  = dt_combine
 
 
 def until_tomorrow_delta(time_of_tomorrow=None):
-    """ This should probably go to ``oneflow.base.something``. """
+    """ Get a delta of time until next day.
+
+    .. note:: This should probably go to ``oneflow.base.something``.
+    """
 
     tomorrow = today() + timedelta(days=1)
 
@@ -112,28 +118,39 @@ def until_tomorrow_delta(time_of_tomorrow=None):
 
 
 def stats_datetime():
+    """ Generate a string from now, suitable for benchmark() calls. """
 
     return pytime.strftime('%Y-%m-%d %H:%M')
 
 
 class benchmark(object):
-    """http://dabeaz.blogspot.fr/2010/02/context-manager-for-timing-benchmarks.html """ # NOQA
+
+    """ Simple benchmark context-manager class.
+
+    http://dabeaz.blogspot.fr/2010/02/context-manager-for-timing-benchmarks.html  # NOQA
+    """
 
     def __init__(self, name=None):
+        """ Oh my, pep257, this is an init method. """
+
         self.name = name or u'Generic benchmark'
 
     def __enter__(self):
+        """ Start the timer. """
+
         self.start   = pytime.time()
         self.dtstart = stats_datetime()
 
     def __exit__(self, ty, val, tb):
+        """ Stop the timer and display a logging message with elapsed time. """
+
         LOGGER.info("%s started %s, ran in %s.", self.name, self.dtstart,
                     naturaldelta(pytime.time() - self.start))
         return False
 
 
 def email_date_to_datetime_tz(email_date):
-    """ Return a datetime with TZ from an email “Date:” field.
+    u""" Return a datetime with TZ from an email “Date:” field.
 
     Cf. http://stackoverflow.com/a/8339750/654755
 
@@ -154,6 +171,7 @@ def email_date_to_datetime_tz(email_date):
 
 
 def twitter_datestring_to_datetime_utc(twitter_datestring):
+    """ Return a datetime from a twitter date string. """
 
     time_tuple = email_utils_parsedate_tz(twitter_datestring.strip())
 
