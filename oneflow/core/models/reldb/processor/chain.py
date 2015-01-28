@@ -423,6 +423,6 @@ def get_default_processing_chain_for(model):
     # We need to forge the slug to be more elaborate than just "default",
     # because there will be a lot of "default" processing chains, given
     # the models. As the slug is unique, we must have a way to find them.
-    default_slug = u'1flow-stock-{0}-default'.format(model._meta.model_name)
+    default_slug = u'1fs-{0}-default'.format(model._meta.model_name)
 
     return ProcessingChain.for_model(model).get(slug=default_slug)
