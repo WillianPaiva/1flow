@@ -265,7 +265,16 @@ class Article(BaseItem, UrlItem, ContentItem):
             article, created = cls.objects.get_or_create(url=url,
                                                          defaults=defaults)
 
-        if not created:
+        if created:
+            created_retval = True
+
+            LOGGER.info(u'Created %sarticle %s %s.', u'orphaned '
+                        if article.is_orphaned else u'', article,
+                        u'in feed(s) {0}'.format(
+                            u', '.join(unicode(f) for f in feeds))
+                        if feeds else u'without a feed')
+
+        else:
             created_retval = False
 
             if article.duplicate_of_id:
@@ -292,21 +301,18 @@ class Article(BaseItem, UrlItem, ContentItem):
                 LOGGER.info(u'Duplicate article “%s” (url: %s) in feed(s) %s.',
                             title, url, u', '.join(unicode(f) for f in feeds))
 
-            try:
-                with transaction.atomic():
-                    article.feeds.add(*feeds)
+            # Special case where a mutualized article arrives from RSS
+            # (with date/author) while it was already here from Twitter
+            # (no date/author). Post-processing of original data will
+            # handle the authors, but at lest we update the date now for
+            # users to have sorted articles until original data is
+            # post-processed (this can take time, given the server load).
+            if article.date_published is None:
+                date_published = kwargs.get('date_published', None)
 
-            except IntegrityError:
-                LOGGER.exception(u'Could not add feeds to article #%s',
-                                 article.id)
-
-            return article, created_retval
-
-        LOGGER.info(u'Created %sarticle %s %s.', u'orphaned '
-                    if article.is_orphaned else u'', article,
-                    u'in feed(s) {0}'.format(
-                        u', '.join(unicode(f) for f in feeds))
-                    if feeds else u'without a feed')
+                if date_published is not None:
+                    article.date_published = date_published
+                    article.save()
 
         # Tags & feeds are ManyToMany, they
         # need the article to be saved before.
@@ -342,7 +348,7 @@ class Article(BaseItem, UrlItem, ContentItem):
 
             return article.duplicate_of, False
 
-        return article, True
+        return article, created_retval
 
     def post_create_task(self, apply_now=False):
         """ Method meant to be run from a celery task. """

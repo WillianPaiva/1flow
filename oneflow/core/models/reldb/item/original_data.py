@@ -269,6 +269,8 @@ def BaseItem_postprocess_guess_original_data_method(self, force=False,
 
     need_save = False
 
+    old_origin = self.origin
+
     try:
         original_data = self.original_data
 
@@ -294,8 +296,13 @@ def BaseItem_postprocess_guess_original_data_method(self, force=False,
         if commit:
             self.save()
 
-        LOGGER.warning(u'Found origin type %s for item %s which had '
-                       u'none before.', self.origin, self)
+        if old_origin is None:
+            LOGGER.warning(u'Found origin type %s for item %s which had '
+                           u'none before.', self.origin, self)
+
+        else:
+            LOGGER.warning(u'Switched origin from %s to %s for item %s.',
+                           old_origin, self.origin, self)
 
         raise OriginalDataReprocessException()
 
@@ -423,8 +430,19 @@ def BaseItem_postprocess_twitter_data_method(self, force=True, commit=True):
     """ Post-process the original tweet to make our tweet richer. """
 
     if not isinstance(self, Tweet):
-        LOGGER.warning(u'Not postprocessing twitter original data of '
-                       u'non-tweet %s #%s.', self._meta.model.__name__, self.id)
+
+        # In case a double origin is found (eg. Twitter then RSS), this
+        # call will raise OriginalDataReprocessException(), and the
+        # feedparser data will be processed. See
+        # RssAtomFeed.create_article_from_feedparser() for details.
+        self.postprocess_guess_original_data()
+
+        # In case the OriginalDataReprocessException() is not raised, we
+        # have to stop here. We are a web article coming from a Tweet, we
+        # have no original data anyway, nothing to process.
+        LOGGER.warning(u'Not post-processing twitter original data of '
+                       u'non-tweet %s #%s.',
+                       self._meta.model.__name__, self.id)
         raise OriginalDataIncompatibleException
 
     if self.original_data.twitter_processed and not force:

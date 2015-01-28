@@ -585,27 +585,47 @@ class RssAtomFeed(BaseFeed):
             LOGGER.exception(u'Article creation failed in feed %s.', self)
             return False
 
-        if created:
-            try:
-                new_article.add_original_data('feedparser',
-                                              unicode(article),
-                                              launch_task=True)
-
-            except:
-                # Avoid crashing on anything related to the archive database,
-                # else reads are not created and statistics are not updated.
-                # Not having the archive data is not that important. Not
-                # having the reads created forces us to check everything
-                # afterwise, which is very expensive. Not having stats
-                # updated is not cool for graph-loving users ;-)
-                LOGGER.exception(u'Could not add article #%s original data.',
-                                 new_article)
-
         mutualized = created is None
 
         if created or mutualized:
             self.recent_items_count += 1
             self.all_items_count += 1
+
+            # We add the original data on mutualized article too, because
+            # we found some edge cases where same articles come from twitter
+            # and RSS (first, twitter; then RSS). RSS has more info (date,
+            # author), but not adding the original data makes us miss these
+            # data and the article quality is low.
+            if created or (mutualized
+                           and new_article.origin != ORIGINS.FEEDPARSER):
+                try:
+                    new_article.add_original_data('feedparser',
+                                                  unicode(article),
+                                                  launch_task=True)
+
+                except:
+                    # Avoid crashing on anything related to the original
+                    # data, else reads are not created and statistics are
+                    # not updated.
+                    # Not having the original data is important, but no
+                    # more than reads. Not having the reads created forces
+                    # us to check everything afterwise, which is very
+                    # expensive.
+                    LOGGER.exception(u'Could not add article #%s original '
+                                     u'data.', new_article)
+
+                else:
+                    # Only if mutualized. In case of an article coming from
+                    # twitter then RSS, the origin will be twitter, and the
+                    # Twitter post-parser will redirect automatically to the
+                    # RSS one now that we just added the feedparser original
+                    # data.
+                    #
+                    # In case of a non-mutualized article (simple creation),
+                    # the standard article post-create task will already do
+                    # what's needed.
+                    if mutualized:
+                        new_article.postprocess_original_data()
 
         # Update the "latest date" kind-of-cache.
         if date_published is not None and \
