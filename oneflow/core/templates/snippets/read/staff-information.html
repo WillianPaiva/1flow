@@ -2,15 +2,105 @@
 
       <div class="spacer50"></div>
 
-      <ul>
-      	<li><span class="muted">good: </span> {{ article.is_good }}</li>
-      	<li><span class="muted">absolute: </span> {{ article.url_absolute }}</li>
-      	<li><span class="muted">content_type: </span> {{ article.content_type }}</li>
-      	<li><span class="muted">orphaned: </span> {{ article.is_orphaned }}</li>
+      <ul class="list-unstyled">
+      	<li>
+          {% if article.is_good %}
+            {% core_label _('good') 'success' %}
+
+          {% else %}
+            {% core_label _('bad') 'danger' %}
+
+          {% endif %}
+        </li>
+        <li class="spacer5"></li>
+      	<li>
+          {% if article.url_absolute %}
+            {% core_label _('absolute') 'success' %}
+
+          {% else %}
+            {% if article.url_error %}
+              <span class="muted">URL error: </span> <em>{{ article.url_error }}</em>
+
+            {% else %}
+              {% core_label _('unresolved yet') 'info' %}
+
+            {% endif %}
+
+          {% endif %}
+        </li>
+
+        {% if article.is_orphaned %}
+          <li>
+            {% core_label _('orphaned') 'danger' %}
+          </li>
+        {% endif %}
+
+        <li class="spacer5"></li>
+
+        <li>
+          {% if article.content_type %}
+              <span class="muted">content_type: </span>
+              {% if article.content_type in CONTENT_TYPES_FINAL %}
+                {% core_label article.content_type 'success' %}
+
+              {% else %}
+                {% core_label article.content_type 'warning' %}
+
+              {% endif %}
+
+          {% else %}
+            {% if article.content_error %}
+              <span class="muted">content error: </span> <em>{{ article.content_error }}</em>
+
+            {% else %}
+              {% core_label _('not fetched yet') 'info' %}
+
+            {% endif %}
+
+          {% endif %}
+        </li>
+
+        <li class="spacer5"></li>
+
+        <li>
+          {% if article.website.processing_chain %}
+            <span class="muted">processor: </span>
+              {{ article.website.processing_chain }}
+
+          {% else %}
+            <span class="very-muted">default processor</span>
+
+          {% endif %}
+        </li>
+
+        <li class="spacer5"></li>
+
       	<li><span class="muted">Reads: </span> {{article.reads.count }}</li>
       	<li><span class="muted">history:</span> {{ article.history.count }}</li>
-      	<li><span class="muted">errors:</span> {{ article.processing_errors.count }}</li>
+
+        {% if article.processing_errors.exists %}
+        <li><span class="muted">errors:</span> {{ article.processing_errors.count }}
+          <ul>
+            {% for error in article.processing_errors.all %}
+              <li>{{ error.processor }}: <code>{{ error.exception }}</code></li>
+            {% endfor %}
+          </ul>
+        </li>
+        {% endif %}
+
+        {% if article.processing_errors.exists %}
+        <li><span class="muted">errors:</span> {{ article.processing_errors.count }}
+          <ul>
+            {% for error in article.processing_errors.all %}
+              <li>{{ error.processor }}: <code>{{ error.exception }}</code></li>
+            {% endfor %}
+          </ul>
+        </li>
+        {% endif %}
+
       </ul>
+
+      <div class="spacer10"></div>
 
       <div><pre style="font-size: 80%">
 a = Article.objects.get(id={{ article.id }})
