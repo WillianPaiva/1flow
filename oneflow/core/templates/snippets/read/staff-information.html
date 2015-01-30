@@ -64,7 +64,7 @@
 
         <li>
           {% if article.website.processing_chain %}
-            <span class="muted">processor: </span>
+            <span class="muted">processing: </span>
               {{ article.website.processing_chain }}
 
           {% else %}
@@ -75,7 +75,7 @@
 
         <li class="spacer5"></li>
 
-      	<li><span class="muted">Reads: </span> {{article.reads.count }}</li>
+      	<li><span class="muted">reads: </span> {{article.reads.count }}</li>
       	<li><span class="muted">history:</span> {{ article.history.count }}</li>
 
         {% if article.processing_errors.exists %}
