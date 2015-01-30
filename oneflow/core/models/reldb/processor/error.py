@@ -99,11 +99,11 @@ class ProcessingError(models.Model):
     def __unicode__(self):
         """ I'm __unicode__, pep257. """
 
-        return (
-            u'Processing error {0} on {1} by {2}'.format(
-                self.id,
-                self.instance,
-                self.processor)
+        return u'{0} on {1} with {2} ({3})'.format(
+            self.exception,
+            self.instance,
+            self.processor,
+            self.id,
         )
 
     # ——————————————————————————————————————————————————————————— Class methods

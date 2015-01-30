@@ -92,6 +92,7 @@ class BaseItemQuerySet(PolymorphicQuerySet):
         return self.exclude(duplicate_of_id=None)
 
     def created_previous_hour(self):
+        """ Return items created between 61 and 120 minutes inclusive. """
 
         one_hour_delta = timedelta(seconds=3600)
         one_hour_before = now() - one_hour_delta
@@ -101,6 +102,7 @@ class BaseItemQuerySet(PolymorphicQuerySet):
                            date_created__gte=two_hours_before)
 
     def created_previous_day(self):
+        """ Return items created between 25 and 48 hours inclusive. """
 
         one_day_delta = timedelta(days=1)
         one_day_before = now() - one_day_delta
@@ -110,6 +112,7 @@ class BaseItemQuerySet(PolymorphicQuerySet):
                            date_created__gte=two_days_before)
 
     def created_previous_week(self):
+        """ Return items created between 8 and 14 days inclusive. """
 
         one_week_delta = timedelta(days=7)
         one_week_before = now() - one_week_delta
@@ -118,7 +121,34 @@ class BaseItemQuerySet(PolymorphicQuerySet):
         return self.filter(date_created__lte=one_week_before,
                            date_created__gte=two_weeks_before)
 
+    def created_previous_month(self):
+        """ Return items created between 32 and 62 days inclusive. """
+
+        one_month_delta = timedelta(days=31)
+        one_month_before = now() - one_month_delta
+        two_months_before = one_month_before - one_month_delta
+
+        return self.filter(date_created__lte=one_month_before,
+                           date_created__gte=two_months_before)
+
+    def older_than_one_day(self):
+        """ Return items created more than 24 hours ago. """
+
+        one_day_delta = timedelta(days=1)
+        one_day_before = now() - one_day_delta
+
+        return self.filter(date_created__lte=one_day_before)
+
+    def older_than_one_week(self):
+        """ Return items created more than 7 days ago. """
+
+        one_week_delta = timedelta(days=7)
+        one_week_before = now() - one_week_delta
+
+        return self.filter(date_created__lte=one_week_before)
+
     def older_than_two_weeks(self):
+        """ Return items created more than 14 days ago. """
 
         two_week_delta = timedelta(days=14)
         two_weeks_before = now() - two_week_delta
@@ -126,6 +156,7 @@ class BaseItemQuerySet(PolymorphicQuerySet):
         return self.filter(date_created__lte=two_weeks_before)
 
     def older_than_one_month(self):
+        """ Return items created more than 31 days ago. """
 
         one_month_delta = timedelta(days=31)
         one_month_before = now() - one_month_delta
@@ -133,6 +164,10 @@ class BaseItemQuerySet(PolymorphicQuerySet):
         return self.filter(date_created__lte=one_month_before)
 
     def older_than_delta(self, custom_timedelta):
+        """ Return items created more than :param:`delta` ago. 
+
+        :param delta: a python :class:`~datetime.timedelta` object.
+        """
 
         custom_delta_before = now() - custom_timedelta
 
@@ -342,7 +377,11 @@ class BaseItem(PolymorphicModel,
                            u'without `force` argument.')
             return
 
-        # On base items, this methods does nothing (yet).
+        if self.processing_errors.exists():
+            count = self.processing_errors.count()
+            self.processing_errors.clear()
+            LOGGER.info(u'Cleared %s processing errors…', count)
+
         return
 
     def update_tags(self, tags, initial=False):

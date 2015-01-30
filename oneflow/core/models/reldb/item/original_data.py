@@ -30,7 +30,10 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from oneflow.base.utils import register_task_method
-from oneflow.base.utils.dateutils import twitter_datestring_to_datetime_utc
+from oneflow.base.utils.dateutils import (
+    twitter_datestring_to_datetime_utc,
+    datetime_from_feedparser_entry,
+)
 
 from ..common import ORIGINS, CONTENT_TYPES
 from ..account.common import email_prettify_raw_message
@@ -266,6 +269,8 @@ def BaseItem_postprocess_guess_original_data_method(self, force=False,
 
     need_save = False
 
+    old_origin = self.origin
+
     try:
         original_data = self.original_data
 
@@ -291,8 +296,13 @@ def BaseItem_postprocess_guess_original_data_method(self, force=False,
         if commit:
             self.save()
 
-        LOGGER.warning(u'Found origin type %s for item %s which had '
-                       u'none before.', self.origin, self)
+        if old_origin is None:
+            LOGGER.warning(u'Found origin type %s for item %s which had '
+                           u'none before.', self.origin, self)
+
+        else:
+            LOGGER.warning(u'Switched origin from %s to %s for item %s.',
+                           old_origin, self.origin, self)
 
         raise OriginalDataReprocessException()
 
@@ -308,6 +318,10 @@ def BaseItem_postprocess_feedparser_data_method(self, force=False,
     fpod = self.original_data.feedparser_hydrated
 
     if fpod:
+
+        if self.date_published is None:
+            self.date_published = datetime_from_feedparser_entry(fpod)
+
         if self.tags == [] and 'tags' in fpod:
             tags = list(
                 Tag.get_tags_set((
@@ -416,8 +430,19 @@ def BaseItem_postprocess_twitter_data_method(self, force=True, commit=True):
     """ Post-process the original tweet to make our tweet richer. """
 
     if not isinstance(self, Tweet):
-        LOGGER.warning(u'Not postprocessing twitter original data of '
-                       u'non-tweet %s #%s.', self._meta.model.__name__, self.id)
+
+        # In case a double origin is found (eg. Twitter then RSS), this
+        # call will raise OriginalDataReprocessException(), and the
+        # feedparser data will be processed. See
+        # RssAtomFeed.create_article_from_feedparser() for details.
+        self.postprocess_guess_original_data()
+
+        # In case the OriginalDataReprocessException() is not raised, we
+        # have to stop here. We are a web article coming from a Tweet, we
+        # have no original data anyway, nothing to process.
+        LOGGER.warning(u'Not post-processing twitter original data of '
+                       u'non-tweet %s #%s.',
+                       self._meta.model.__name__, self.id)
         raise OriginalDataIncompatibleException
 
     if self.original_data.twitter_processed and not force:

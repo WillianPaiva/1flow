@@ -174,7 +174,7 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
     def __unicode__(self):
         """ I'm __unicode__, pep257. """
 
-        return u'Chain {0} ({1})'.format(self.name, self.id)
+        return u'{0} ({1})'.format(self.name, self.id)
 
     def natural_key(self):
         """ Helps (de-)serialization. """
@@ -299,8 +299,12 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
             LOGGER.debug(u'%s [run]: processing %s %s…', self,
                          instance._meta.verbose_name, instance.id)
 
-        for item in self.chained_items.filter(
-                is_active=True).order_by('position'):
+        all_went_ok = False
+
+        processors = self.chained_items.filter(
+            is_active=True).order_by('position')
+
+        for item in processors:
 
             #
             # HEADS UP: "item" can hold a processor or another chain.
@@ -347,6 +351,7 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
                 # Only the processor is not sufficient, because we don't know
                 # what happened before it in the chain.
                 save_error(instance, item, e)
+                all_went_ok = True
                 break
 
             except Exception as e:
@@ -356,7 +361,19 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
 
                 # See previous comment about same call to save_error().
                 save_error(instance, item, e)
+                all_went_ok = True
                 break
+
+        if all_went_ok:
+            previous_errors = instance.processing_errors.filter(
+                    processor__in=processors)
+
+            if previous_errors.exists():                
+                previous_errors.delete()
+
+                if verbose:
+                    LOGGER.info(u'%s: cleared now-obsolete previous '
+                                u'errors.', self, count)
 
         if verbose:
             LOGGER.info(u'%s [run]: processed %s %s.', self,

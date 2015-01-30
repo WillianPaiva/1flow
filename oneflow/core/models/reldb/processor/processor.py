@@ -203,7 +203,7 @@ class Processor(six.with_metaclass(ProcessorMeta, MPTTModel,
     def __unicode__(self):
         """ I'm __unicode__, pep257. """
 
-        return u'Processor #{1} ({0})'.format(self.name, self.id)
+        return u'{0} ({1})'.format(self.name, self.id)
 
     # ——————————————————————————————————————————————————————————— Class methods
 

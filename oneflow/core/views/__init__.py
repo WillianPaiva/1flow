@@ -47,12 +47,15 @@ from ..models.common import READ_STATUS_DATA
 
 from oneflow.base.models import Configuration
 
-from ..models import (
+from ..models import (  # NOQA
     User,
     Article, Read,
     BaseFeed, Subscription,
     HelpContent,
     Folder,
+
+    # Imported for `edit_field`
+    Processor,
     IMPORT_STATUS,
     CONTENT_TYPES_FINAL,
 )
