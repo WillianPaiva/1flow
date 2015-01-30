@@ -377,7 +377,11 @@ class BaseItem(PolymorphicModel,
                            u'without `force` argument.')
             return
 
-        # On base items, this methods does nothing (yet).
+        if self.processing_errors.exists():
+            count = self.processing_errors.count()
+            self.processing_errors.clear()
+            LOGGER.info(u'Cleared %s processing errors…', count)
+
         return
 
     def update_tags(self, tags, initial=False):
