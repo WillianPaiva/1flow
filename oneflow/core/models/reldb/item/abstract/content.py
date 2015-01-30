@@ -111,8 +111,23 @@ def BaseItemQuerySet_parsed_method(self):
     return self.filter(content_type__in=CONTENT_TYPES_FINAL)
 
 
+def BaseItemQuerySet_content_error_method(self):
+    """ Return items that have a content errors. 
+
+    This means items that have either:
+
+    - their :attr:`content_error` field set.
+    - any :attr:`processing_error` related to `content` category.
+    """
+
+    return self.filter(
+        ~models.Q(content_error=None)
+        |models.Q(processing_errors__item__categories__slug=u'content')
+    )
+
 BaseItemQuerySet.empty = BaseItemQuerySet_empty_method
 BaseItemQuerySet.parsed = BaseItemQuerySet_parsed_method
+BaseItemQuerySet.content_error = BaseItemQuerySet_content_error_method
 
 
 # ——————————————————————————————————————————————————————————————————————— Model
