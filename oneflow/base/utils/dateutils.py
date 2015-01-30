@@ -227,14 +227,13 @@ def datetime_from_feedparser_entry(feedparser_article):
 
     the_datetime = None
 
-    if feedparser_article.published_parsed:
-        try:
-            the_datetime = datetime(*feedparser_article.published_parsed[:6])
+    try:
+        the_datetime = datetime(*feedparser_article.published_parsed[:6])
 
-        except:
-            pass
+    except:
+        pass
 
-    if the_datetime is None and feedparser_article.published:
+    if the_datetime is None:
         try:
             the_datetime = datetime(
                 *dateutilDateHandler(feedparser_article.published)[:6])
