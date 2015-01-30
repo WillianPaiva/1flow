@@ -118,6 +118,32 @@ class BaseItemQuerySet(PolymorphicQuerySet):
         return self.filter(date_created__lte=one_week_before,
                            date_created__gte=two_weeks_before)
 
+    def created_previous_month(self):
+        """ Return items created between 32 and 62 days inclusive. """
+
+        one_month_delta = timedelta(days=31)
+        one_month_before = now() - one_month_delta
+        two_months_before = one_month_before - one_month_delta
+
+        return self.filter(date_created__lte=one_month_before,
+                           date_created__gte=two_months_before)
+
+    def older_than_one_day(self):
+        """ Return items created more than 24 hours ago. """
+
+        one_day_delta = timedelta(days=1)
+        one_day_before = now() - one_day_delta
+
+        return self.filter(date_created__lte=one_day_before)
+
+    def older_than_one_week(self):
+        """ Return items created more than 7 days ago. """
+
+        one_week_delta = timedelta(days=7)
+        one_week_before = now() - one_week_delta
+
+        return self.filter(date_created__lte=one_week_before)
+
     def older_than_two_weeks(self):
 
         two_week_delta = timedelta(days=14)
