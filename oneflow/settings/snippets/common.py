@@ -170,6 +170,7 @@ PIPELINE_CSS = {
         'source_filenames': (
             'vendor/bootstrap/3.0.3/less/bootstrap.less',
             'vendor/scrollbars/scrollbars.css',
+            'vendor/bootstrap-remote-data/css/jquery.loadmask.css',
         ),
         'output_filename': 'css/bootstrap.css',
     },
@@ -275,6 +276,9 @@ PIPELINE_JS = {
     #
     'vendor-local': {
         'source_filenames': (
+            'vendor/bootstrap-remote-data/js/bootstrap-remote-tabs.min.js',
+            'vendor/bootstrap-remote-data/js/jquery.loadmask.js',
+
             'vendor/scrollbars/scrollbars.js',
             'vendor/showdown/showdown.js',
             'vendor/showdown/extensions/twitter.js',
