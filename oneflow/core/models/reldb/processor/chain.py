@@ -46,7 +46,10 @@ from ..language import Language
 from ..common import DjangoUser as User  # ORIGINS,
 
 from category import ProcessorCategory
-from exceptions import InstanceNotAcceptedException
+from exceptions import (
+    InstanceNotAcceptedException,
+    StopProcessingException,
+)
 from error import ProcessingError
 
 
@@ -352,6 +355,13 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
                 # what happened before it in the chain.
                 save_error(instance, item, e)
                 all_went_ok = True
+                break
+
+            except StopProcessingException:
+                LOGGER.info(u'%s [run]: stopping processing %s %s after %s '
+                            u'upon explicit stop request by processor.',
+                            self, instance._meta.verbose_name,
+                            instance.id, processor)
                 break
 
             except Exception as e:
