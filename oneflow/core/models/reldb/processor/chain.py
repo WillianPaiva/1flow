@@ -366,14 +366,16 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
 
         if all_went_ok:
             previous_errors = instance.processing_errors.filter(
-                    processor__in=processors)
+                processor__in=processors)
 
-            if previous_errors.exists():                
+            if previous_errors.exists():
+                errors_count = previous_errors.count()
+
                 previous_errors.delete()
 
                 if verbose:
                     LOGGER.info(u'%s: cleared now-obsolete previous '
-                                u'errors.', self, count)
+                                u'errors.', self, errors_count)
 
         if verbose:
             LOGGER.info(u'%s [run]: processed %s %s.', self,
