@@ -30,7 +30,7 @@ from postgres import (  # NOQA
 
 from celeries import celery_status  # NOQA
 
-from storage import disk_partitions, disk_usage, memory  # NOQA
+from storage import disk_partitions, disk_usage, memory, partitions_status  # NOQA
 
 from rabbitmq import rabbitmq_queues  # NOQA
 

@@ -133,3 +133,12 @@ def memory():
             memory['used_pct'] - 100.0)
 
     return memory
+
+
+def partitions_status():
+    """ The wrap-all-in-one function for templates rendering. """
+
+    return {
+        part: disk_usage(part.mountpoint)
+        for part in disk_partitions()
+    }
