@@ -1,11 +1,13 @@
 
+<div class="spacer25"></div>
+
 <div class="row">
 	<div class="col-md-5">
-		{% include "status/mongodb-database.html" with dbstats=mongodbstats collstats=mongodbcollstats host_infos=host_infos_main %}
+		{% include "status/mongodb-database.html" with dbstats=mongodbstats collstats=mongodbcollstats host_infos=host_infos_mongodb_main %}
 
 	</div>
 	<div class="col-md-5 col-md-offset-2">
-		{% include "status/mongodb-database.html" with dbstats=archivedbstats collstats=archivedbcollstats host_infos=host_infos_archive %}
+		{% include "status/mongodb-database.html" with dbstats=archivedbstats collstats=archivedbcollstats host_infos=host_infos_mongodb_archive %}
 	</div>
 </div>
 

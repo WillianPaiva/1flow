@@ -1,8 +1,12 @@
 
+<div class="spacer25"></div>
+
 <h1>{% trans "Registered tasks" %} <small class="very-muted">({{ celery_status.tasks_names|length }})</small></h1>
 
 <ul>
+
 {% for task_name in celery_status.tasks_names %}
 	<li>{{ task_name }}</li>
 {% endfor %}
+
 </ul>

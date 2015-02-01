@@ -381,28 +381,61 @@ def admin_status(request):
 
     from oneflow.base.utils import stats
 
-    return render(request, 'status/index.html', {
-        'mongodbstats': stats.mongodbstats(),
-        'mongodbcollstats': stats.mongodbcollstats(),
-        'archivedbstats': stats.archivedbstats(),
-        'archivedbcollstats': stats.archivedbcollstats(),
-        'host_infos_main': stats.host_infos_mongodb_main(),
-        'host_infos_archive': stats.host_infos_mongodb_archive(),
-        'server_status_main': stats.server_status_main(),
-        'server_status_archive': stats.server_status_archive(),
-        'cmd_line_ops_main': stats.cmd_line_ops_main(),
-        'cmd_line_ops_archive': stats.cmd_line_ops_archive(),
-        'mongo_statvfs': stats.mongo_statvfs(),
-        'host_infos': stats.host_infos(),
-        'pg_stats': stats.postgresql_status(),
-        'celery_status': stats.celery_status(),
-        'rabbitmq_status': stats.rabbitmq_queues(),
-        'memory': stats.memory(),
-        'partitions': {
-            part: stats.disk_usage(part.mountpoint)
-            for part in stats.disk_partitions()
-        },
-    })
+    page = request.GET.get('type', None)
+
+    if page is None:
+        return render(request, 'status/index.html')
+
+    pages = {
+        'mongodb': (
+            'mongodbstats', 'mongodbcollstats',
+            'archivedbstats', 'archivedbcollstats',
+            'host_infos_mongodb_main',  'host_infos_mongodb_archive',
+            'server_status_main', 'server_status_archive',
+            'cmd_line_ops_main', 'cmd_line_ops_archive',
+            'mongo_statvfs',
+        ),
+
+        'celery': (
+            'celery_status',
+        ),
+
+        'redis': (
+            # TODO: implement this.
+        ),
+
+        'rabbitmq': (
+            'rabbitmq_queues',
+        ),
+
+        'postgresql': (
+            'postgresql_status',
+        ),
+
+        'system': (
+            'memory',
+            'partitions_status',
+
+            # TODO: this is a mongodb function, needed in system.
+            #       port it to non-mongdb status to stop depending on it.
+            'host_infos',
+        ),
+    }
+
+    try:
+
+        return render(
+            request,
+            'status/{0}.html'.format(page),
+            dict(
+                (func_name, getattr(stats, func_name)())
+                for func_name in pages[page]
+            )
+        )
+
+    except Exception, e:
+        LOGGER.exception(u'Exception while loading Ajax admin status: %s',
+                         e)
 
 
 @token_protected
