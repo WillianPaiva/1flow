@@ -424,6 +424,26 @@ header {
     display: none;
 }
 
+thead.status-title {
+
+    border-top: none;
+
+    th {
+        color: $blood-red;
+        font-size: 150%;
+        font-weight: bold;
+        text-align: center;
+        border-bottom: none;
+        text-transform: initial;
+        padding-bottom: 5px !important;
+
+        small {
+            color: $light-green;
+        }
+    }
+}
+
+
 // —————————————————————————————————————————————————————————————— Mail accounts
 
 #mail-accounts,
