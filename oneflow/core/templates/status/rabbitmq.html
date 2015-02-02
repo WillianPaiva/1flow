@@ -26,7 +26,7 @@
 			<td>{{ queue.name|title }}</td>
 			<td>{% firstof queue.backing_queue_status.len ' ' %}</td>
 			<td>{{ queue.consumers }}</td>
-			<td>{{ queue.idle_since }}</td>
+			<td>{{ queue.idle_since|naturaldelta }}</td>
 			<td>{{ queue.memory|naturalsize }}</td>
 		</tr>
 
