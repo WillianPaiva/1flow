@@ -154,6 +154,9 @@ random_colors = [
 @register.filter
 def naturaldelta(the_datetime):
 
+    if the_datetime is None or the_datetime == u'' or not the_datetime:
+        return u''
+
     if isinstance(the_datetime, int):
         return onef_naturaldelta(the_datetime)
 
