@@ -236,7 +236,7 @@
 			</p>
 
 			<p>{% trans "Admin stuff:" %}
-					<a href="{{ settings.NONREL_ADMIN }}feed/{{ feed.id }}"
+					<a href="{% url 'admin:core_rssatomfeed_change' feed.id %}"
 						target="_blank">{{ feed.name }} – {{ feed.id }}</a>
 			</p>
 
