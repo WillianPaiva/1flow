@@ -94,6 +94,12 @@ def add_feed(request, feed_url, subscribe=True):
     if feeds:
         # Taking the first is completely arbitrary, but better than nothing.
         # TODO: enhance this with a nice form to show all feeds to the user.
+
+        for feed, created in feeds:
+            if feed.user is None:
+                feed.user = user
+                feed.save()
+
         feed, created = feeds[0]
 
         if subscribe:

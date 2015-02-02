@@ -46,7 +46,10 @@ from ..language import Language
 from ..common import DjangoUser as User  # ORIGINS,
 
 from category import ProcessorCategory
-from exceptions import InstanceNotAcceptedException
+from exceptions import (
+    InstanceNotAcceptedException,
+    StopProcessingException,
+)
 from error import ProcessingError
 
 
@@ -354,6 +357,13 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
                 all_went_ok = True
                 break
 
+            except StopProcessingException:
+                LOGGER.info(u'%s [run]: stopping processing %s %s after %s '
+                            u'upon explicit stop request by processor.',
+                            self, instance._meta.verbose_name,
+                            instance.id, processor)
+                break
+
             except Exception as e:
                 LOGGER.exception(u'%s [run]: processing %s %s with %s failed',
                                  self, instance._meta.verbose_name,
@@ -366,14 +376,16 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
 
         if all_went_ok:
             previous_errors = instance.processing_errors.filter(
-                    processor__in=processors)
+                processor__in=processors)
 
-            if previous_errors.exists():                
+            if previous_errors.exists():
+                errors_count = previous_errors.count()
+
                 previous_errors.delete()
 
                 if verbose:
                     LOGGER.info(u'%s: cleared now-obsolete previous '
-                                u'errors.', self, count)
+                                u'errors.', self, errors_count)
 
         if verbose:
             LOGGER.info(u'%s [run]: processed %s %s.', self,

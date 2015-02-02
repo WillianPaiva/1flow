@@ -1,5 +1,7 @@
 {% load mathfilters %}
 
+<div class="spacer25"></div>
+
 <h2>{% trans "Web server information" %}</h2>
 <div class="row">
 	<div class="col-xs-4 col-sm-2 right muted">
@@ -62,7 +64,7 @@
 	</div>
 </div>
 
-{% for partition, partinfo in partitions.items %}
+{% for partition, partinfo in partitions_status.items %}
 <div class="row">
 	<div class="col-xs-2 right strong">
 		{{ partition.mountpoint }}

@@ -675,6 +675,15 @@ def read_status_css_styles():
 
 
 @register.simple_tag
+def core_boolean(value):
+    """ Display a boolean value as a nicer font_awesome icon. """
+
+    return u"<i class='icon icon-{0}'></i>".format(
+        u'ok' if value else u'off'
+    )
+
+
+@register.simple_tag
 def core_label(text, label_type=None, item_type=None):
     """ Return a bootstrap label, changing the HTML item type if needed. """
 

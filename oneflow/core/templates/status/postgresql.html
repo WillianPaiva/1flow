@@ -1,7 +1,7 @@
 {% load mathfilters %}
 
-<h2>{% blocktrans with dbname=pg_stats.params.NAME alias=pg_stats.database_alias %}Database <strong>{{ dbname }}</strong> <small>(alias <code>{{ alias }}</code>)</small>{% endblocktrans %}</h2>
-
+<div class="spacer25"></div>
+<h2>{% blocktrans with dbname=postgresql_status.params.NAME alias=postgresql_status.database_alias %}Database <strong>{{ dbname }}</strong> <small>(alias <code>{{ alias }}</code>)</small>{% endblocktrans %}</h2>
 
 <div class="row">
 	<div class="col-xs-6 right muted">
@@ -10,9 +10,9 @@
 		{% trans "username:" %}
 	</div>
 	<div class="col-xs-6 strong">
-		{{ pg_stats.params.HOST }}<br />
-		{% firstof pg_stats.params.PORT '5432' %}<br />
-		{{ pg_stats.params.USER }}
+		{{ postgresql_status.params.HOST }}<br />
+		{% firstof postgresql_status.params.PORT '5432' %}<br />
+		{{ postgresql_status.params.USER }}
 	</div>
 </div>
 
@@ -27,17 +27,17 @@
 				{% trans "index size<br /><span class='muted'>(% of data size)</span>" %}<br />
 			</div>
 			<div class="col-xs-6">
-				{{ pg_stats.total_size|naturalsize }}<br />
-				{{ pg_stats.total_total|naturalsize }} <span class="muted">({{ pg_stats.total_total|mul:100.0|div:pg_stats.total_size|floatformat:-1 }}%)</span><br /><br />
-				{{ pg_stats.tables_sizes|length }}<br />
-				{{ pg_stats.total_tuples }}<br />
-				{{ pg_stats.total_indices|naturalsize }} <span class="muted">({{ pg_stats.total_indices|mul:100.0|div:pg_stats.total_total|floatformat:-1 }}%)<br />
+				{{ postgresql_status.total_size|naturalsize }}<br />
+				{{ postgresql_status.total_total|naturalsize }} <span class="muted">({{ postgresql_status.total_total|mul:100.0|div:postgresql_status.total_size|floatformat:-1 }}%)</span><br /><br />
+				{{ postgresql_status.tables_sizes|length }}<br />
+				{{ postgresql_status.total_tuples }}<br />
+				{{ postgresql_status.total_indices|naturalsize }} <span class="muted">({{ postgresql_status.total_indices|mul:100.0|div:postgresql_status.total_total|floatformat:-1 }}%)<br />
 			</div>
 		</div>
 	</div>
 </div>
 
-{%     for name, tuples, data, indices, total in pg_stats.tables_sizes %}
+{%     for name, tuples, data, indices, total in postgresql_status.tables_sizes %}
 <div class="row">
 	<div class="col-xs-5 right">
 		<h3>{{ name|title }}</h3>
@@ -59,13 +59,13 @@
 	<div class="col-xs-7">
 		<p>
 			<strong>{{ data|naturalsize }}</strong>
-			<span class="very-muted">({{ data|mul:100.0|div:pg_stats.total_data|floatformat:-1 }}%)</span><br />
+			<span class="very-muted">({{ data|mul:100.0|div:postgresql_status.total_data|floatformat:-1 }}%)</span><br />
 
 			<strong>{{ indices|naturalsize }}</strong>
-			<span class="very-muted">({{ indices|mul:100.0|div:pg_stats.total_indices|floatformat:-1 }}%)</span><br />
+			<span class="very-muted">({{ indices|mul:100.0|div:postgresql_status.total_indices|floatformat:-1 }}%)</span><br />
 
 			<strong>{{ total|naturalsize }}</strong>
-			<span class="very-muted">({{ total|mul:100.0|div:pg_stats.total_total|floatformat:-1 }}%)</span>
+			<span class="very-muted">({{ total|mul:100.0|div:postgresql_status.total_total|floatformat:-1 }}%)</span>
 		</p>
 	</div>
 </div>

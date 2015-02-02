@@ -40,11 +40,25 @@
 		<thead>
 
 		  <tr>
-			{% sort_th _("Feed name") 'name' '' 'col-sm-5' %}
-			{% sort_th _("Open") 'is_active' '' 'col-sm-1' %}
-			{% sort_th _("Restricted") 'is_restricted' '' 'col-sm-1' %}
+			{% sort_th _("Feed name") 'name' 'name' 'col-sm-5' %}
+
+			{% if native_filters.is_active %}
+
+			{% sort_th _("Created") 'date_created' 'date_created' 'col-sm-1 centered' %}
+
+			{% elif native_filters.is_active == False %}
+
+			{% sort_th _("Closed") 'date_closed' 'date_closed' 'col-sm-1 centered' %}
+
+			{% else %}
+
+			{% sort_th _("Active?") 'is_active' 'is_active' 'col-sm-1 centered' %}
+
+			{% endif %}
+
+			{% sort_th _("Restricted") 'is_restricted' 'is_restricted' 'col-sm-1' %}
 			<th class="col-sm-1">{% trans "Type" %}</th>
-			{% sort_th _("Refresh interval") 'fetch_interval' '' 'col-sm-1' %}
+			{% sort_th _("Refresh interval") 'fetch_interval' 'fetch_interval' 'col-sm-1' %}
 			<th class="col-sm-1 right">{% trans "good items" %}</th>
 			<th class="col-sm-1 right">{% trans "recent" %}</th>
 			<th class="col-sm-1 right">{% trans "total" %}</th>
@@ -58,6 +72,9 @@
 		{% for basefeed in basefeed_list %}
 			<tr>
 				<td>
+					{% if feed.url %}
+						{{ feed.url }}<br />
+					{% endif %}
 					<span class="pull-right">
 						<a href="# {#{% url 'staff_items_list_create' basefeed.pk %}#}"
 						class="btn btn-primary btn-xs">
@@ -67,7 +84,43 @@
 
 					{% inplace_edit 'basefeed.name' %}
 				</td>
-				<td>{{ basefeed.is_active }}</td>
+
+				<td class="centered">
+
+				{% if native_filters.is_active %}
+
+				{{ basefeed.date_created|naturaldelta }}
+
+				{% elif native_filters.is_active == False %}
+
+				{{ basefeed.date_closed|naturaldelta }}
+
+				{% else %}
+
+				<span class="popover-top"
+					data-toggle="tooltip"
+					title="{% spaceless %}
+
+					{% if basefeed.is_active %}
+						{% blocktrans with delta=basefeed.date_created|naturaldelta %}
+						    Feed created {{ delta }} ago.
+						{% endblocktrans %}
+
+					{% else %}
+						{% blocktrans with delta=basefeed.date_closed|naturaldelta %}
+						    Feed closed {{ delta }} ago.
+						{% endblocktrans %}
+					{% endif %}
+					{% endspaceless %}">
+
+					{% core_boolean basefeed.is_active %}
+
+				</span>
+
+				{% endif %}
+
+				</td>
+
 				<td>{{ basefeed.is_restricted }}</td>
 				<td>{% core_feed_type basefeed %}</td>
 				<td>{{ basefeed.fetch_interval|naturaldelta }}</td>

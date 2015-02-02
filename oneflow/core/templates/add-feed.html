@@ -1,248 +1,266 @@
 {% extends 'home.html' %}
+
 {% block title %}{% trans "Add a subscription" %}{% endblock title %}
 {% block body_id %}add-subscription{% endblock body_id %}
 
 {% block application_content %}
+
+{% inplace_static %}
 
 <div class="spacer50"></div>
 
 <div class="row">
 	<div class="jumbotron col-xs-12 col-md-8 col-md-offset-2 col-ld-6 col-ld-offset-3">
 
-{% url 'source_selector' as sel_url %}
-{% url 'add_subscription' as add_url %}
+	{% url 'source_selector' as sel_url %}
+	{% url 'add_subscription' as add_url %}
 
-{% if feed %}
+	{% if feed %}
 
-	{% with feed_name=feed.name %}
+		{% with feed_name=feed.name %}
 
-		{% if created %}
+			{% if created %}
 
-			{% if subscribe %}
+				{% if subscribe %}
 
-				{% if subscription %}
+					{% if subscription %}
 
-					<h1>{% trans "Subscribed!" %}</h1>
-					<div class="spacer25"></div>
+						<h2>{% trans "Subscribed!" %}</h2>
 
-					{% with sub_id=subscription.id sub_name=subscription.name %}
+
+						{% with sub_id=subscription.id sub_name=subscription.name %}
+
+							<p>{% blocktrans %}
+								You are now subscribed to {{feed_name}}.</p><p>
+
+								As this feed was unknown to 1flow before, you have
+								contributed to making it better. Thank You!</p><p>
+
+								<a href="{{sel_url}}#subscription-{{ sub_id }}">Go straight to your new subscription</a>, or <a href="javascript:window.open('', '_self', '');window.close()">close this window/tab</a>.
+							{% endblocktrans %}</p>
+
+						{% endwith %}
+
+					{% else %}
+
+						<h2>{% trans "Bummer!" %}</h2>
+
 
 						<p>{% blocktrans %}
-							You are now subscribed to {{feed_name}}.</p><p>
 
-							As this feed was unknown to 1flow before, you have
-							contributed to making it better. Thank You!</p><p>
+							<strong>We were not able to subscribe yourself to <em>{{feed_name}}</em></strong>. We are sorry for that.</p><p>
 
-							<a href="{{sel_url}}#subscription-{{ sub_id }}">Go straight to your new subscription</a>, or <a href="javascript:window.open('', '_self', '');window.close()">close this window/tab</a>.
+							Developers have been notified of the failure and will either subscribe you manually, or get in touch with you to get more information.</p><p>
+
+							Hoping this is a temporary problem in our infrastructure, you can try to <a href="{{add_url}}">re-suscribe to it manually from the dedicated page</a> in a moment.
+
 						{% endblocktrans %}</p>
 
-					{% endwith %}
+						{% if sub_exc %}
+							<p>{% blocktrans %}
+		    					For the record, if that means anything to you, the exact error is: <code>{{sub_exc}}</code>.
+							{% endblocktrans %}</p>
+						{% endif %}
+
+					{% endif %}
 
 				{% else %}
+					{# This is for staff members only… #}
 
-					<h1>{% trans "Bummer!" %}</h1>
-					<div class="spacer25"></div>
+					<h2>{% trans "Imported" %}</h2>
+
+
+					<p><strong>{{ feeds|length }}</strong> feed(s) analyzed.</p>
+
+					{% for subfeed, created in feeds %}
+						<p>
+						{% with subfeed_name=subfeed.name %}
+							{% if created %}
+								{% blocktrans %}
+								Feed <em>{{ subfeed_name }}</em> created.
+								{% endblocktrans %}
+
+							{% else %}
+								{% blocktrans %}
+								Feed <em>{{ subfeed_name }}</em> already in 1flow.
+								{% endblocktrans %}
+
+							{% endif %}
+
+						{% endwith %}
+						</p>
+
+					{% endfor %}
 
 					<p>{% blocktrans %}
-
-						<strong>We were not able to subscribe yourself to <em>{{feed_name}}</em></strong>. We are sorry for that.</p><p>
-
-						Developers have been notified of the failure and will either subscribe you manually, or get in touch with you to get more information.</p><p>
-
-						Hoping this is a temporary problem in our infrastructure, you can try to <a href="{{add_url}}">re-suscribe to it manually from the dedicated page</a> in a moment.
-
+					    <a href="javascript:window.open('', '_self', '');window.close()">Close this window/tab</a>.
 					{% endblocktrans %}</p>
-
-					{% if sub_exc %}
-						<p>{% blocktrans %}
-	    					For the record, if that means anything to you, the exact error is: <code>{{sub_exc}}</code>.
-						{% endblocktrans %}</p>
-					{% endif %}
 
 				{% endif %}
 
 			{% else %}
-				{# This is for staff members only… #}
 
-				<h1>{% trans "Imported" %}</h1>
-				<div class="spacer25"></div>
+				{% if subscribe %}
 
-				<p><strong>{{ feeds|length }}</strong> feed(s) analyzed.</p>
+					{% if subscription %}
 
-				{% for subfeed, created in feeds %}
-					<p>
-					{% with subfeed_name=subfeed.name %}
-						{% if created %}
-							{% blocktrans %}
-							Feed <em>{{ subfeed_name }}</em> created.
-							{% endblocktrans %}
+						<h2>{% trans "Subscribed!" %}</h2>
 
-						{% else %}
-							{% blocktrans %}
-							Feed <em>{{ subfeed_name }}</em> already in 1flow.
-							{% endblocktrans %}
 
+						{% with sub_id=subscription.id sub_name=subscription.name %}
+
+							{% if already_subscribed %}
+
+								<p>{% blocktrans %}
+									You were already subscribed to <em>{{sub_name}}</em>, all is well.</p><p>
+
+									<a href="{{sel_url}}#subscription-{{sub_id}}">Go straight to it</a>, or <a href="javascript:window.open('', '_self', '');window.close()">close this window/tab</a>.
+								{% endblocktrans %}</p>
+
+							{% else %}
+
+								<p>{% blocktrans %}
+									You are now subscribed to <em>{{sub_name}}</em>.</p><p>
+
+									<a href="{{sel_url}}#subscription-{{sub_id}}">Go straight to it</a>, or <a href="javascript:window.open('', '_self', '');window.close()">close this window/tab</a>.
+								{% endblocktrans %}</p>
+
+							{% endif %}
+
+						{% endwith %}
+
+					{% else %}
+
+						<h2>{% trans "Bummer!" %}</h2>
+
+
+						<p>{% blocktrans %}
+
+							<strong>We were not able to subscribe yourself to <em>{{ feed_name }}</em></strong>. We are sorry for that.</p><p>
+
+							Developers have been notified of the failure and will either subscribe you manually, or get in touch with you to get more information.</p><p>
+
+							Hoping this is a temporary problem in our infrastructure, you can try to <a href="{{add_url}}">re-suscribe to it manually from the dedicated page</a> in a moment.
+
+						{% endblocktrans %}</p>
+
+						{% if sub_exc %}
+							<p>{% blocktrans %}
+		    					For the record, if that means anything to you, the exact error is: <code>{{sub_exc}}</code>.
+							{% endblocktrans %}</p>
 						{% endif %}
 
-					{% endwith %}
-					</p>
-
-				{% endfor %}
-
-				<p>{% blocktrans %}
-				    <a href="javascript:window.open('', '_self', '');window.close()">Close this window/tab</a>.
-				{% endblocktrans %}</p>
-
-			{% endif %}
-
-		{% else %}
-
-			{% if subscribe %}
-
-				{% if subscription %}
-
-					<h1>{% trans "Subscribed!" %}</h1>
-					<div class="spacer25"></div>
-
-					{% with sub_id=subscription.id sub_name=subscription.name %}
-
-						{% if already_subscribed %}
-
-							<p>{% blocktrans %}
-								You were already subscribed to <em>{{sub_name}}</em>, all is well.</p><p>
-
-								<a href="{{sel_url}}#subscription-{{sub_id}}">Go straight to it</a>, or <a href="javascript:window.open('', '_self', '');window.close()">close this window/tab</a>.
-							{% endblocktrans %}</p>
-
-						{% else %}
-
-							<p>{% blocktrans %}
-								You are now subscribed to <em>{{sub_name}}</em>.</p><p>
-
-								<a href="{{sel_url}}#subscription-{{sub_id}}">Go straight to it</a>, or <a href="javascript:window.open('', '_self', '');window.close()">close this window/tab</a>.
-							{% endblocktrans %}</p>
-
-						{% endif %}
-
-					{% endwith %}
+					{% endif %}
 
 				{% else %}
+					{# This is for staff members only… #}
 
-					<h1>{% trans "Bummer!" %}</h1>
-					<div class="spacer25"></div>
+					<h2>{% trans "Imported" %}</h2>
+
+
+					<p><strong>{{ feeds|length }}</strong> feed(s) analyzed.</p>
+
+					{% for subfeed, created in feeds %}
+						<p>
+						{% with subfeed_name=subfeed.name %}
+							{% if created %}
+								{% blocktrans %}
+								Feed <em>{{ subfeed_name }}</em> created.
+								{% endblocktrans %}
+
+							{% else %}
+								{% blocktrans %}
+								Feed <em>{{ subfeed_name }}</em> already in 1flow.
+								{% endblocktrans %}
+
+							{% endif %}
+
+						{% endwith %}
+						</p>
+
+					{% endfor %}
 
 					<p>{% blocktrans %}
-
-						<strong>We were not able to subscribe yourself to <em>{{ feed_name }}</em></strong>. We are sorry for that.</p><p>
-
-						Developers have been notified of the failure and will either subscribe you manually, or get in touch with you to get more information.</p><p>
-
-						Hoping this is a temporary problem in our infrastructure, you can try to <a href="{{add_url}}">re-suscribe to it manually from the dedicated page</a> in a moment.
-
+					    <a href="javascript:window.open('', '_self', '');window.close()">Close this window/tab</a>.
 					{% endblocktrans %}</p>
-
-					{% if sub_exc %}
-						<p>{% blocktrans %}
-	    					For the record, if that means anything to you, the exact error is: <code>{{sub_exc}}</code>.
-						{% endblocktrans %}</p>
-					{% endif %}
 
 				{% endif %}
 
-			{% else %}
-				{# This is for staff members only… #}
-
-				<h1>{% trans "Imported" %}</h1>
-				<div class="spacer25"></div>
-
-				<p><strong>{{ feeds|length }}</strong> feed(s) analyzed.</p>
-
-				{% for subfeed, created in feeds %}
-					<p>
-					{% with subfeed_name=subfeed.name %}
-						{% if created %}
-							{% blocktrans %}
-							Feed <em>{{ subfeed_name }}</em> created.
-							{% endblocktrans %}
-
-						{% else %}
-							{% blocktrans %}
-							Feed <em>{{ subfeed_name }}</em> already in 1flow.
-							{% endblocktrans %}
-
-						{% endif %}
-
-					{% endwith %}
-					</p>
-
-				{% endfor %}
-
-				<p>{% blocktrans %}
-				    <a href="javascript:window.open('', '_self', '');window.close()">Close this window/tab</a>.
-				{% endblocktrans %}</p>
-
 			{% endif %}
 
+		{% endwith %}
+
+	{% else %}
+
+		<h2>{% trans "Doomed!" %}</h2>
+
+
+		<p>{% blocktrans %}
+
+			WOW. The whole operation failed. There must be a serious problem.</p><p>
+
+			We are very sorry for the inconvenience.</p><p>
+
+			Developers have been notified of the failure and will try to subscribe you manually to this feed if it's a valid one, or get in touch with you to get more information.</p><p>
+
+			You can <a href="javascript:window.open('', '_self', '');window.close()">close this window/tab</a>, or <a href="{{sel_url}}">head up to your source selector</a>.
+
+		{% endblocktrans %}</p>
+
+		{% if feed_exc %}
+			<p>{% blocktrans %}
+				For the record, if that means anything to you, the exact error is: <code>{{feed_exc}}</code>
+			{% endblocktrans %}</p>
 		{% endif %}
 
-	{% endwith %}
-
-{% else %}
-
-	<h1>{% trans "Doomed!" %}</h1>
-	<div class="spacer25"></div>
-
-	<p>{% blocktrans %}
-
-		WOW. The whole operation failed. There must be a serious problem.</p><p>
-
-		We are very sorry for the inconvenience.</p><p>
-
-		Developers have been notified of the failure and will try to subscribe you manually to this feed if it's a valid one, or get in touch with you to get more information.</p><p>
-
-		You can <a href="javascript:window.open('', '_self', '');window.close()">close this window/tab</a>, or <a href="{{sel_url}}">head up to your source selector</a>.
-
-	{% endblocktrans %}</p>
-
-	{% if feed_exc %}
-		<p>{% blocktrans %}
-			For the record, if that means anything to you, the exact error is: <code>{{feed_exc}}</code>
-		{% endblocktrans %}</p>
 	{% endif %}
-
-{% endif %}
 
 	</div>
 
 {% if user.is_staff_or_superuser_and_enabled and feed %}
 </div>
+
+<div class="spacer25"></div>
+
 <div class="row">
-	<div class="jumbotron col-xs-12 col-md-8 col-md-offset-2 col-ld-6 col-ld-offset-3 centered">
 
 		{% for feed, created in feeds %}
 
-			<p>
-			{% if not feed.languages %}
-				<span class="alert alert-warning">{% trans "no language!" %}</span>
-			{% endif %}
+	<div class="col-xs-12 col-sm-6 col-md-4 centered">
+		<div class="well well-lg">
+			<h4>
+				Admin: <a href="{% url 'admin:core_rssatomfeed_change' feed.id %}"
+						target="_blank">{{ feed.name }} ({{ feed.id }})</a>
+			</h4>
 
-			{% if not feed.description %}
-				<span class="alert alert-warning">{% trans "no description!" %}</span>
-			{% endif %}
+			<ul class="list-unstyled">
 
-			{% if not feed.thumbnail_url %}
-				<span class="alert alert-warning">{% trans "no thumbnail!" %}</span>
-			{% endif %}
-			</p>
+				<li>
+					Languages: {% inplace_edit 'feed.languages' %}
+				</li>
 
-			<p>{% trans "Admin stuff:" %}
-					<a href="{{ settings.NONREL_ADMIN }}feed/{{ feed.id }}"
-						target="_blank">{{ feed.name }} – {{ feed.id }}</a>
-			</p>
+				<li>
+					Thumbnail: {% inplace_edit 'feed.thumbnail' %}
+				</li>
+
+				<li>
+					Or URL: {% inplace_edit 'feed.thumbnail_url' %}
+				</li>
+
+				<li>
+					Short. descr.: {% inplace_edit 'feed.short_description' %}
+				</li>
+
+				<li>
+					Description: {% inplace_edit 'feed.description' %}
+				</li>
+
+			</ul>
+		</div>
+	</div>
 
 		{% endfor %}
 
-	</div>
 {% endif %}
 
 </div>

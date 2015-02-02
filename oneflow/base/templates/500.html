@@ -5,6 +5,12 @@
 {% block title %}{% trans "That's a bad catch!" %}{% endblock title %}
 
 {% block error_content %}
+
+	<div class="pull-right">
+		<img src="{{ STATIC_URL }}/img/life_unfair_300_red.png"
+			style="padding-left: 25px; padding-bottom: 25px;"/>
+	</div>
+
     <h1>{% trans 'Oh my!' %}</h1>
     <h2>{% trans "The server encountered an error and couldn't recover." %}</h2>
     <p>{% trans 'We apologize for this situation. Developers have been automatically alerted about this problem.' %}</p>

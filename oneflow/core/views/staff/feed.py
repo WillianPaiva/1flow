@@ -57,7 +57,9 @@ class StaffFeedListCreateView(mixins.ListCreateViewMixin,
 
         filters_fields = {
             'open': ('is_active', True),
+            'active': ('is_active', True),
             'closed': ('is_active', False),
+            'inactive': ('is_active', False),
         }
 
         klasses = {
@@ -67,14 +69,16 @@ class StaffFeedListCreateView(mixins.ListCreateViewMixin,
             'mail': models.MailFeed,
         }
 
-        LOGGER.info('FILTERS: %s', filters)
+        self.native_filters = {}
+
+        # LOGGER.info('FILTERS: %s', filters)
 
         for a_filter in filters:
 
             params = None
             a_filter = a_filter.lower()
 
-            LOGGER.info('FILTER: %s', a_filter)
+            # LOGGER.info('FILTER: %s', a_filter)
 
             if a_filter.startswith(u'type:'):
                 _, klass_name = a_filter.split(u':', 1)
@@ -105,10 +109,14 @@ class StaffFeedListCreateView(mixins.ListCreateViewMixin,
                 field_name, field_value = filters_fields[filter_name]
                 params = {field_name: field_value}
 
+                self.native_filters[field_name] = field_value
+
             elif a_filter.startswith(u'not:') or a_filter.startswith(u'isnot:'):
                 filter_name = a_filter.split(':', 1)[1]
                 field_name, field_value = filters_fields[filter_name]
                 params = {field_name: not field_value}
+
+                self.native_filters[field_name] = not field_value
 
             # elif a_filter.startswith(u'interval') \
             #         or a_filter.startswith(u'refresh'):
@@ -119,7 +127,7 @@ class StaffFeedListCreateView(mixins.ListCreateViewMixin,
             else:
                 params = {'name__icontains': a_filter}
 
-            LOGGER.info('FILTERING: %s', params)
+            # LOGGER.info('FILTERING: %s', params)
 
             if params is not None:
                 qs = qs.filter(**params)

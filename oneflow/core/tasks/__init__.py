@@ -36,7 +36,7 @@ from oneflow.base.utils.dateutils import (today, timedelta,
 
 from gr_import import clean_gri_keys
 
-from mongo import refresh_all_mongo_feeds  # NOQA
+# from mongo import refresh_all_mongo_feeds  # NOQA
 
 from migration import migrate_all_mongo_data  # NOQA
 
