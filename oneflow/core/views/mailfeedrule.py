@@ -60,6 +60,11 @@ class MailFeedRuleListCreateView(MailFeedRuleCommonViewsMixin,
     def list_queryset_filter(self, qs):
         """ Filter the mailfeed rules list of the current mailfeed only. """
 
+        user = self.request.user
+
+        if not user.is_staff_or_superuser_and_enabled:
+            qs = qs.filter(mailfeed__user_id=user.id)
+
         return qs.filter(mailfeed_id=self.kwargs.get('mailfeed_id'))
 
     def get_form_kwargs(self):
