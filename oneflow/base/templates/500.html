@@ -2,13 +2,22 @@
 
 {% load i18n %}
 
-{% block title %}{% trans "That's a bad catch!" %}{% endblock title %}
+{% block title %}{% trans "A wild bug appears!" %}{% endblock title %}
 
 {% block error_content %}
 
-	<div class="pull-right">
+	<div class="pull-right centered">
 		<img src="{{ STATIC_URL }}/img/life_unfair_300_red.png"
-			style="padding-left: 25px; padding-bottom: 25px;"/>
+			style="padding-left: 10px;"/>
+
+		<br />
+		<small class="muted">
+			.
+			<a href="http://knowyourmeme.com/memes/y-u-no-guy" target="_blank">.</a>
+			.
+			<a href="http://fr.wikipedia.org/wiki/Rage_comic" target="_blank">.</a>
+			.
+		</small>
 	</div>
 
     <h1>{% trans 'Oh my!' %}</h1>
