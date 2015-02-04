@@ -111,7 +111,7 @@
                 {% if user.is_staff_or_superuser_and_enabled and preferences.staff.selector_shows_admin_links %}
 
                     <div class="manage-admin-actions">
-                        <a href="{{ NONREL_ADMIN }}feed/{{ subscription.feed.id }}"
+                        <a href="{% url 'admin:core_rssatomfeed_change' subscription.feed.id %}"
                             target="_blank">
                           <i class="icon-edit icon-2x muted"></i>
                           {% trans "Open in Admin. Interface" %}

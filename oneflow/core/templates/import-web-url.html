@@ -53,7 +53,7 @@
 	<div class="jumbotron col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3 centered">
 	<h3>{% trans "Admin stuff" %}</h3>
 		<p>{% trans "Article: " %}
-			<a href="{{ settings.NONREL_ADMIN }}article/{{ article.id }}"
+			<a href="{% url 'admin:core_article_change' article.id %}"
 				target="_blank">{{ article.name }} – {{ article.id }}</a>
 		</p>
 	</div>
