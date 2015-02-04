@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-11 10:40+0100\n"
-"PO-Revision-Date: 2014-12-11 11:00+0009\n"
+"POT-Creation-Date: 2015-02-04 16:57+0100\n"
+"PO-Revision-Date: 2015-02-04 17:00+0009\n"
 "Last-Translator: Olivier Cortes <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -20,28 +20,24 @@ msgstr ""
 "X-Translated-Using: django-rosetta 0.7.4\n"
 
 #: admin.py:50
-#, fuzzy
 msgid "Worker control & maintenance mode"
-msgstr "En maintenance"
+msgstr "Contrôle des workers & mode maintenance"
 
 #: admin.py:65
-#, fuzzy
 msgid "User announcements"
-msgstr "Annonces ?"
+msgstr "Annonces aux utilisateurs"
 
 #: admin.py:75
-#, fuzzy
 msgid "Staff announcements"
-msgstr "Annonces ?"
+msgstr "Annonces aux membres du staff"
 
 #: admin.py:86
 msgid "Plain documents"
-msgstr ""
+msgstr "Documents"
 
 #: admin.py:93
-#, fuzzy
 msgid "Reading lists & subscriptions"
-msgstr "Listes de lecture"
+msgstr "Listes de lecture & abonnements"
 
 #: admin.py:104
 msgid "RSS feed refreshing"
@@ -52,43 +48,40 @@ msgid "Accounts (global/common)"
 msgstr "Comptes (globaux/communs)"
 
 #: admin.py:129
-#, fuzzy
 msgid "Twitter accounts"
-msgstr "Comptes externes"
+msgstr "Comptes Twitter"
 
 #: admin.py:146
-#, fuzzy
 msgid "e-Mail accounts & IMAP"
-msgstr "Gestion des comptes e-mail"
+msgstr "Comptes e-mail & IMAP"
 
 #: admin.py:160
 msgid "Article fetching & parsing"
-msgstr ""
+msgstr "Récupération et traitement des articles"
 
 #: admin.py:177
 msgid "Logins & registration"
-msgstr ""
+msgstr "Identification & enregistrement des comptes utilisateurs"
 
 #: admin.py:187
 msgid "Site theme & CDNs"
-msgstr ""
+msgstr "Thème du site et CDNs"
 
 #: admin.py:197
 msgid "User support"
-msgstr ""
+msgstr "Support utilisateur"
 
 #: admin.py:206
 msgid "Check tasks"
-msgstr ""
+msgstr "Tâches de vérification des données"
 
 #: admin.py:220
-#, fuzzy
 msgid "Dangerous or debug"
-msgstr "Zone rouge"
+msgstr "Dangereux et debuggage"
 
 #: admin.py:228
 msgid "Google Reader (obsolete)"
-msgstr ""
+msgstr "Google Reader (obsolète)"
 
 #: admin.py:360
 #, python-format
@@ -105,7 +98,7 @@ msgstr "Nom complet"
 
 #: forms.py:44
 msgid "The two password fields didn't match."
-msgstr ""
+msgstr "Les deux mots de passe sont différents."
 
 #: forms.py:48
 msgid "Password"
@@ -117,7 +110,7 @@ msgstr "Confirmation"
 
 #: forms.py:52
 msgid "Enter the same password as above, for verification."
-msgstr ""
+msgstr "Saisissez le même mot de passe, pour vérification."
 
 #: models.py:64
 msgid "Email name"
@@ -219,6 +212,8 @@ msgid ""
 "Full URL of the avatar displayed in the feed selector. Can be hosted outside"
 " of 1flow."
 msgstr ""
+"URL complète de l'avatar affiché dans le sélecteur de flux. Peut être "
+"hébergé en dehors de 1flow."
 
 #: models.py:182
 msgid "Address book"
@@ -242,24 +237,20 @@ msgid "Notes"
 msgstr "Notes"
 
 #: models.py:306
-#, fuzzy
 msgid "Is active"
-msgstr "actif"
+msgstr "est actif"
 
 #: models.py:314
-#, fuzzy
 msgid "Configuration"
-msgstr "Problème de configuration"
+msgstr "Configuration"
 
 #: models.py:315
-#, fuzzy
 msgid "Configurations"
-msgstr "Problème de configuration"
+msgstr "Configurations"
 
 #: urls.py:34
-#, fuzzy
 msgid "^profile/$"
-msgstr "Profil"
+msgstr "^profil/$"
 
 #: urls.py:37
 msgid "^unsubscribe/(?P<email>[^/]+)/(?P<hash_code>\\w{32,32})?$"
@@ -302,18 +293,18 @@ msgstr ""
 "autres. Retournez simplement <a href=\"/\">à l'accueil</a>."
 
 #: templates/500.html:5
-msgid "That's a bad catch!"
-msgstr "Vraiment pas cool !"
+msgid "A wild bug appears!"
+msgstr "Un bug sauvage apparait !"
 
-#: templates/500.html:8
+#: templates/500.html:23
 msgid "Oh my!"
 msgstr "Outch !"
 
-#: templates/500.html:9
+#: templates/500.html:24
 msgid "The server encountered an error and couldn't recover."
 msgstr "Le serveur a rencontré une erreur et ne s'en est pas remis."
 
-#: templates/500.html:10
+#: templates/500.html:25
 msgid ""
 "We apologize for this situation. Developers have been automatically alerted "
 "about this problem."
@@ -321,7 +312,7 @@ msgstr ""
 "Nous en sommes désolés. Les développeurs ont été automatiquement alertés de "
 "ce problème."
 
-#: templates/500.html:11
+#: templates/500.html:26
 msgid ""
 "Please try again a little later, or navigate to <a href=\"/\">elsewhere</a>."
 msgstr ""
@@ -799,6 +790,10 @@ msgstr "Défaut"
 msgid "Is modified"
 msgstr "Modifié ?"
 
+#: templates/endless/show_more.html:5
+msgid "more"
+msgstr "plus"
+
 #: templates/profile/base-information.html:13
 msgid "Your profile"
 msgstr "Profil"
@@ -872,7 +867,6 @@ msgid "Currently associated"
 msgstr "Actuellement associés"
 
 #: templates/profile/social-accounts.html:15
-#, fuzzy
 msgid ""
 "\n"
 "Click to disassociate any of your accounts, but beware:\n"
@@ -880,7 +874,7 @@ msgid ""
 "immediately disconnected from **1flow**.\n"
 msgstr ""
 "\n"
-"Cliquez pour désassocier l'un de vos comptes, mais attention : si c'est celui avec lequel vous êtes actuellement connecté(e), vous serez immédiatement déconnecté(e) de **1flow**.\n"
+"Cliquez pour désassocier l'un de vos comptes, mais attention : si c'est celui avec lequel vous êtes actuellement connecté(e), vous pourriez être immédiatement déconnecté(e) de **1flow**.\n"
 
 #: templates/profile/social-accounts.html:22
 msgid ""
@@ -902,11 +896,12 @@ msgstr "Déconnexion impossible de %(backend_name)s"
 msgid ""
 "Click to disassociate %(bname)s — %(buser)s from your local 1flow account"
 msgstr ""
+"Cliquez pour désassocier %(bname)s — %(buser)s de votre compte local 1flow"
 
 #: templates/profile/social-accounts.html:65
-#, fuzzy, python-format
+#, python-format
 msgid "Disconnect from %(bname)s — <em>%(buser)s</em>"
-msgstr "Déconnecter %(backend_name)s"
+msgstr "Déconnecter %(bname)s — <em>%(buser)s</em>"
 
 #: templates/profile/social-accounts.html:75
 msgid "Associate more accounts"
@@ -1127,6 +1122,9 @@ msgstr "m"
 #: templatetags/base_utils.py:211 templatetags/base_utils.py:212
 msgid "s"
 msgstr "s"
+
+#~ msgid "That's a bad catch!"
+#~ msgstr "Vraiment pas cool !"
 
 #~ msgid "External accounts"
 #~ msgstr "Comptes externes"
