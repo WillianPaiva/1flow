@@ -33,7 +33,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _, pgettext_lazy
 
 from ...base.templatetags.base_utils import get_view_name
-from ...base.utils.dateutils import (now, today,
+from ...base.utils.dateutils import (now, today, dateutilDateHandler, datetime,
                                      naturaldelta as onef_naturaldelta)
 
 from oneflow.core import models   # , CACHE_ONE_WEEK
@@ -154,8 +154,21 @@ random_colors = [
 @register.filter
 def naturaldelta(the_datetime):
 
+    if the_datetime is None or the_datetime == u'' or not the_datetime:
+        return u''
+
     if isinstance(the_datetime, int):
         return onef_naturaldelta(the_datetime)
+
+    if isinstance(the_datetime, str) or isinstance(the_datetime, unicode):
+        time_struct = dateutilDateHandler(the_datetime)
+
+        converted_datetime = datetime(*time_struct[:6])
+
+        if converted_datetime is None:
+            return the_datetime
+
+        return onef_naturaldelta(now() - converted_datetime)
 
     return onef_naturaldelta(now() - the_datetime)
 

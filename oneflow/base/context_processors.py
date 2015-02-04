@@ -18,6 +18,7 @@ You should have received a copy of the GNU Affero General Public
 License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
+import os
 
 from django.conf import settings
 from utils import full_version
@@ -30,7 +31,9 @@ def oneflow_version(request):
     return {
         'oneflow_version': VERSION,
         'VERSION': VERSION,
-        'FULL_VERSION': full_version()
+        'FULL_VERSION': full_version(),
+        'FLOWER_URL': os.environ.get('ONEFLOW_FLOWER_URL', None),
+        'STATS_URL': os.environ.get('ONEFLOW_STATS_URL', None),
     }
 
 

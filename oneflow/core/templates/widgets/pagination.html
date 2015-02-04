@@ -5,10 +5,9 @@
 
 	<div class="pagination">
 
+		{% show_pages %}
 
-	{% show_pages %}
-
-	<div class="pagination_info very-muted">{% blocktrans with items_per_page=settings.ENDLESS_PAGINATION_PER_PAGE %}{{ items_per_page }} items per page. {% endblocktrans %}</div>
+		<div class="pagination_info very-muted">{% blocktrans with items_per_page=settings.ENDLESS_PAGINATION_PER_PAGE %}{{ items_per_page }} items per page. {% endblocktrans %}</div>
 
 	</div>
 

@@ -59,6 +59,35 @@
                             data-tab-always-refresh="true">
                         {% trans "MongoDB" %}</a>
                 </li>
+
+                <li class="separator"></li>
+
+                {% if FLOWER_URL %}
+
+                  <li class="secondary-nav">
+                    <a href="{{ FLOWER_URL }}" style="white-space: nowrap">
+                      {% trans "Workers mgmt." %}&nbsp;
+                      <span class="muted">
+                        {% core_icon 'external-link' %}
+                      </span>
+                    </a>
+                  </li>
+
+                {% endif %}
+
+                {% if STATS_URL %}
+
+                  <li class="secondary-nav">
+                    <a href="{{ STATS_URL }}">
+                      {% trans "Statistics" %}&nbsp;
+                      <span class="muted">
+                        {% core_icon 'external-link' %}
+                      </span>
+                    </a>
+                  </li>
+
+                {% endif %}
+
             </ul>
         </div>
 

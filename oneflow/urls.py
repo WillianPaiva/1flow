@@ -19,6 +19,8 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 """
 import re
 
+import autocomplete_light
+
 from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.conf.urls.i18n import i18n_patterns
@@ -34,6 +36,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from .api import v1_api
 
+# HEADS UP: order matters.
+autocomplete_light.autodiscover()
 admin.autodiscover()
 
 # We need to import this after Django's standard autodiscover().
@@ -58,9 +62,10 @@ urlpatterns = patterns(
     url(r'^humans\.txt$', TemplateView.as_view(template_name='humans.txt',
         content_type='text/plain')),
     url(r'^i18n/', include('django.conf.urls.i18n')),
-    url(r'^djangojs/', include('djangojs.urls')),
-    url(r'^inplaceeditform/', include('inplaceeditform.urls')),
     url(r'^upload/', include('django_file_form.urls')),
+    url(r'^djangojs/', include('djangojs.urls')),
+    url(r'^autocomplete/', include('autocomplete_light.urls')),
+    url(r'^inplaceeditform/', include('inplaceeditform.urls')),
     #
     # HEADS UP: this URL belongs to `core` and is not translated.
     #           This is an hard-coded exception.

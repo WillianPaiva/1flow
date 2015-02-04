@@ -57,8 +57,8 @@
 
                                 {% if article.duplicate_of %}
                                     duplicate of: <a
-                                    href="{{ NONREL_ADMIN }}article/{{ article.duplicate_of.id }}/"
-                                    target="_blank">{{ article.duplicate_of.id }}</a>
+                                    href="{% url 'admin:core_article_change' article.duplicate_of_id %}"
+                                    target="_blank">{{ article.duplicate_of_id }}</a>
                                 {% endif %}
 
                                 {% if article.url_error %}

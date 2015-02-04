@@ -41,9 +41,9 @@
 		  {% include "mailfeed/form.html" %}
 
 		  <tr>
-			{% sort_th _("Feed name") 'name' '' 'col-sm-2' %}
+			{% sort_th _("Feed name") 'name' 'name' 'col-sm-2' %}
 			<th class="col-sm-1 centered">{% trans "Status" %}</th>
-			{% sort_th _("Restricted") 'is_restricted' '' 'col-sm-1' %}
+			{% sort_th _("Restricted") 'is_restricted' 'is_restricted' 'col-sm-1' %}
 
 			<th class="col-sm-2">{% trans "Mail account" %}</th>
 			{# <th>{% trans "Mailbox" %}</th> #}
@@ -69,8 +69,9 @@
 				<td>{% inplace_edit 'mailfeed.match_action' %}</td>
 				<td>{% inplace_edit 'mailfeed.finish_action' %}</td>
 
-				<td><a href="{% url 'mailfeedrule_list_create' mailfeed.pk %}"
-					class="btn btn-primary btn-xs">
+				<td>
+					<a href="{% url 'mailfeedrule_list_create' mailfeed.pk %}"
+							class="btn btn-primary btn-xs">
 						{% core_icon 'MailFeedRule' %}&nbsp;
 						{% trans "Manage" %}
 					</a>

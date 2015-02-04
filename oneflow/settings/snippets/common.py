@@ -483,6 +483,10 @@ INSTALLED_APPS = [
 
     # We could use Django's `humanize`, it produces more
     # detailled `*delta()` than the external `humanize` module.
+    #
+    # BUT, our naturaldelta() tag already takes a delta, an int (seconds)
+    # or even a datetime to compute the delta from now.
+    #
     # 'django.contrib.humanize',
 
     'django.contrib.messages',
@@ -491,8 +495,8 @@ INSTALLED_APPS = [
     'grappelli',
     'mongoadmin',
     'json_field',
-
     'django_extensions',
+    'autocomplete_light',
 
     'django.contrib.admin',
     # 'django.contrib.admindocs',

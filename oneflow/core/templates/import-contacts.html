@@ -72,48 +72,5 @@
 
 	</div>
 
-{% if user.is_staff_or_superuser_and_enabled and article %}
-</div>
-<div class="row-fluid">
-	<div class="hero-unit span8 offset2 centered">
-
-		<p>{% trans "Admin stuff:" %}
-			<a href="{{ settings.NONREL_ADMIN }}article/{{ article.id }}"
-				target="_blank">{{ article.name }} – {{ article.id }}</a>
-		</p>
-
-	</div>
-{% endif %}
-
 </div>
 {% endblock application_content %}
-
-{% block extrajs_footer %}
-
-    {{ block.super }}
-    {% compressed_js 'read-one' %}
-
-    <script type="text/javascript">
-
-        common_init();
-
-        {% if article %}
-
-			$(document).ready(function(){
-				var poll_article_status = function() {
-
-					$.get("{{ poll_url }}", function(data) {
-						if (data.indexOf('http') == 0) {
-							document.location = data;
-						}
-					});
-
-					setTimeout(poll_article_status, 1000);
-				}
-
-				setTimeout(poll_article_status, 1000);
-			});
-
-        {% endif %}
-
-    </script>{% endblock extrajs_footer %}
