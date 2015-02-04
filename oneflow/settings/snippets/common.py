@@ -495,8 +495,8 @@ INSTALLED_APPS = [
     'grappelli',
     'mongoadmin',
     'json_field',
-
     'django_extensions',
+    'autocomplete_light',
 
     'django.contrib.admin',
     # 'django.contrib.admindocs',
