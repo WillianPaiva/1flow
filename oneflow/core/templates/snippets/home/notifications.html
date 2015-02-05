@@ -1,6 +1,8 @@
 {# <div id="notifications" class="row-fluid hide"></div> #}
 
-{% system_announcements user %}
+{% if not no_announcements %}
+    {% system_announcements user %}
+{% endif %}
 
 {% if messages %}
     <script type="text/javascript">
