@@ -12,20 +12,12 @@
 
           {% endif %}
         </li>
-        <li class="spacer5"></li>
+
       	<li>
           {% if article.url_absolute %}
             {% core_label _('absolute') 'success' %}
-
           {% else %}
-            {% if article.url_error %}
-              <span class="muted">URL error: </span> <em>{{ article.url_error }}</em>
-
-            {% else %}
-              {% core_label _('unresolved yet') 'info' %}
-
-            {% endif %}
-
+            {% core_label _('unresolved yet') 'info' %}
           {% endif %}
         </li>
 
@@ -35,67 +27,112 @@
           </li>
         {% endif %}
 
-        <li class="spacer5"></li>
+        <li>
+          {% if article.original_data %}
+            {% if article.original_data.is_processed %}
+              {% core_label _('O.D processed') 'success' %}
+
+            {% else %}
+              {% core_label _('O.D not processed') 'info' %}
+
+            {% endif %}
+          {% else %}
+              {% core_label _('no O.D') 'warning' %}
+
+          {% endif %}
+        </li>
+
+      </ul>
+
+      {# putting a li.spacer1 here makes too much space. #}
+      <div class="spacer10"></div>
+
+      <ul class="list-unstyled list-inline">
 
         <li>
           {% if article.content_type %}
-              <span class="muted">content_type: </span>
+
+            {% captureas content_type %}{% core_icon 'file-text' %} {{ CONTENT_TYPES|symlookup:article.content_type }}{% endcaptureas %}
+
               {% if article.content_type in CONTENT_TYPES_FINAL %}
-                {% core_label article.content_type 'success' %}
+                {% core_label content_type 'success' %}
 
               {% else %}
-                {% core_label article.content_type 'warning' %}
+                {% core_label content_type 'warning' %}
 
               {% endif %}
-
-          {% else %}
-            {% if article.content_error %}
-              <span class="muted">content error: </span> <em>{{ article.content_error }}</em>
 
             {% else %}
               {% core_label _('not fetched yet') 'info' %}
 
-            {% endif %}
-
           {% endif %}
         </li>
 
-        <li class="spacer5"></li>
+        <li>
+          {% captureas origin %}{% core_icon 'screenshot' %} {{ ORIGINS|symlookup:article.origin }}{% endcaptureas %}
+          {% core_label origin 'default' %}
+        </li>
+
+      </ul>
+
+      <div class="spacer10"></div>
+
+      <ul class="list-unstyled">
 
         <li>
+          <span class="muted">processing: </span>
+
           {% if article.website.processing_chain %}
-            <span class="muted">processing: </span>
               {{ article.website.processing_chain }}
 
           {% else %}
-            <span class="very-muted">default processor</span>
+            <span class="very-muted">default</span>
 
           {% endif %}
         </li>
 
-        <li class="spacer5"></li>
+      </ul>
 
-      	<li><span class="muted">reads: </span> {{article.reads.count }}</li>
-      	<li><span class="muted">history:</span> {{ article.history.count }}</li>
+      <div class="spacer10"></div>
+
+      <ul class="list-unstyled list-inline">
+
+        {% captureas reads %}<span data-toggle="tooltip" title="{% trans "user reads" %}">{% core_icon 'user' %} {{ article.reads.count }}</span>{% endcaptureas %}
+        {% captureas histories %}<span data-toggle="tooltip" title="{% trans "article versions in history" %}">{% core_icon 'archive' %} {{ article.history.count }}</span>{% endcaptureas %}
+
+      	<li>{% core_label reads 'default' %}</li>
+        <li>{% core_label histories 'default' %}</li>
+
+      </ul>
+
+      <div class="spacer10"></div>
+
+      <ul class="list-unstyled">
 
         {% if article.processing_errors.exists %}
-        <li><span class="muted">errors:</span> {{ article.processing_errors.count }}
-          <ul>
-            {% for error in article.processing_errors.all %}
-              <li>{{ error.processor }}: <code>{{ error.exception }}</code></li>
-            {% endfor %}
-          </ul>
-        </li>
+          <li>
+            <span class="muted">errors: </span> {{ article.processing_errors.count }}
+
+            <ul>
+              {% for error in article.processing_errors.all %}
+                <li>{{ error.processor }}: <code>{{ error.exception }}</code></li>
+
+              {% endfor %}
+            </ul>
+          </li>
         {% endif %}
 
-        {% if article.processing_errors.exists %}
-        <li><span class="muted">errors:</span> {{ article.processing_errors.count }}
-          <ul>
-            {% for error in article.processing_errors.all %}
-              <li>{{ error.processor }}: <code>{{ error.exception }}</code></li>
-            {% endfor %}
-          </ul>
-        </li>
+        {% if article.url_error %}
+          <li>
+            <span class="muted">URL error: </span> <em>{{ article.url_error }}</em>
+          </li>
+        {% endif %}
+
+        {% if article.content_error %}
+          <li>
+            <span class="muted">content error: </span> <em>{{ article.content_error }}</em>
+          </li>
+
         {% endif %}
 
       </ul>
