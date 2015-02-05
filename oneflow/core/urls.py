@@ -114,6 +114,10 @@ urlpatterns = patterns(
         staff_member_required(never_cache(views.admin_status)),
         name='admin_status'),
 
+    url(_(ur'^command/(?P<command>\w+)/?$'),
+        staff_member_required(never_cache(views.admin_command)),
+        name='admin_command'),
+
     # —————————————————————————————————————————————————————————— Article & Read
 
     url(_(ur'^read/all/$'), never_cache(views.read_with_endless_pagination),
