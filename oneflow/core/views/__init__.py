@@ -438,6 +438,25 @@ def admin_status(request):
                          e)
 
 
+def admin_command(request, **kwargs):
+    """ execute a special command on the server. """
+
+    command = kwargs.get('command', None)
+
+    if command is None:
+        return HttpResponseBadRequest('No command supplied')
+
+    import admin_commands
+
+    try:
+        getattr(admin_commands, command)(request)
+
+    except AttributeError:
+        raise HttpResponseBadRequest(u'Unknown command “%s”' % command)
+
+    return render(request, u'command.html', {'command': command})
+
+
 @token_protected
 def export_content(request, **kwargs):
     """ Export recent feeds/articles as JSON. """

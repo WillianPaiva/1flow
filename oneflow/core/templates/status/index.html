@@ -11,114 +11,129 @@
     <div class="spacer15"></div>
 
     <div class="row">
-        <div class="col-md-2">
-            <ul class="nav nav-pills nav-stacked" id="status-tabs">
+      <div class="col-md-2">
+        <ul class="nav nav-pills nav-stacked" id="status-tabs">
 
-                <li class="secondary-nav">
-                    <a data-toggle="tab" href="#system"
-                            data-tab-url="?type=system"
-                            data-tab-always-refresh="true">
-                        {% trans "System" %}</a>
-                </li>
+          <li class="secondary-nav">
+              <a data-toggle="tab" href="#system"
+                      data-tab-url="?type=system"
+                      data-tab-always-refresh="true">
+                  {% trans "System" %}</a>
+          </li>
 
-                <li class="secondary-nav">
-                    <a data-toggle="tab" href="#postgresql"
-                            data-tab-url="?type=postgresql"
-                            data-tab-always-refresh="true">
-                        {% trans "PostgreSQL" %}</a>
-                </li>
+          <li class="secondary-nav">
+              <a data-toggle="tab" href="#postgresql"
+                      data-tab-url="?type=postgresql"
+                      data-tab-always-refresh="true">
+                  {% trans "PostgreSQL" %}</a>
+          </li>
 
-                <li class="secondary-nav">
-                    <a data-toggle="tab" href="#redis"
-                            data-tab-url="?type=redis"
-                            data-tab-always-refresh="true">
-                        {% trans "Redis" %}</a>
-                </li>
+          <li class="secondary-nav">
+              <a data-toggle="tab" href="#redis"
+                      data-tab-url="?type=redis"
+                      data-tab-always-refresh="true">
+                  {% trans "Redis" %}</a>
+          </li>
 
-                {% if 'amqp://' in settings.BROKER_URL %}
+          {% if 'amqp://' in settings.BROKER_URL %}
 
-                <li class="secondary-nav">
-                    <a data-toggle="tab" href="#rabbitmq"
-                            data-tab-url="?type=rabbitmq"
-                            data-tab-always-refresh="true">
-                        {% trans "RabbitMQ" %}</a>
-                </li>
+          <li class="secondary-nav">
+              <a data-toggle="tab" href="#rabbitmq"
+                      data-tab-url="?type=rabbitmq"
+                      data-tab-always-refresh="true">
+                  {% trans "RabbitMQ" %}</a>
+          </li>
 
-                {% endif %}
+          {% endif %}
 
-                <li class="secondary-nav">
-                    <a data-toggle="tab" href="#celery"
-                            data-tab-url="?type=celery"
-                            data-tab-always-refresh="true">
-                        {% trans "Celery" %}</a>
-                </li>
+          <li class="secondary-nav">
+              <a data-toggle="tab" href="#celery"
+                      data-tab-url="?type=celery"
+                      data-tab-always-refresh="true">
+                  {% trans "Celery" %}</a>
+          </li>
 
-                <li class="secondary-nav">
-                    <a data-toggle="tab" href="#mongodb"
-                            data-tab-url="?type=mongodb"
-                            data-tab-always-refresh="true">
-                        {% trans "MongoDB" %}</a>
-                </li>
+          <li class="secondary-nav">
+              <a data-toggle="tab" href="#mongodb"
+                      data-tab-url="?type=mongodb"
+                      data-tab-always-refresh="true">
+                  {% trans "MongoDB" %}</a>
+          </li>
 
-                <li class="separator"></li>
+          <li class="separator"></li>
 
-                {% if FLOWER_URL %}
+          {% if FLOWER_URL %}
 
-                  <li class="secondary-nav">
-                    <a href="{{ FLOWER_URL }}" style="white-space: nowrap">
-                      {% trans "Workers mgmt." %}&nbsp;
-                      <span class="muted">
-                        {% core_icon 'external-link' %}
-                      </span>
-                    </a>
-                  </li>
+            <li class="secondary-nav">
+              <a href="{{ FLOWER_URL }}" style="white-space: nowrap">
+                {% trans "Workers mgmt." %}&nbsp;
+                <span class="muted">
+                  {% core_icon 'external-link' %}
+                </span>
+              </a>
+            </li>
 
-                {% endif %}
+          {% endif %}
 
-                {% if STATS_URL %}
+          {% if STATS_URL %}
 
-                  <li class="secondary-nav">
-                    <a href="{{ STATS_URL }}">
-                      {% trans "Statistics" %}&nbsp;
-                      <span class="muted">
-                        {% core_icon 'external-link' %}
-                      </span>
-                    </a>
-                  </li>
+            <li class="secondary-nav">
+              <a href="{{ STATS_URL }}">
+                {% trans "Statistics" %}&nbsp;
+                <span class="muted">
+                  {% core_icon 'external-link' %}
+                </span>
+              </a>
+            </li>
 
-                {% endif %}
+          {% endif %}
+          </ul>
 
-            </ul>
+          <div class="spacer25"></div>
+
+          <h5>{% trans "Admin commands" %}</h5>
+
+          <ul class="list-unstyled">
+            <li class="secondary-nav">
+              <form data-async data-target="#clear_cache_result"
+                  action="{% url 'admin_command' command='clear_template_cache' %}">
+                <input type="submit" class="btn btn-xs btn-warning"
+                    value="{% trans "Clear templates cache" %}" />
+              </form>
+              <span id="clear_cache_result"></span>
+            </li>
+          </ul>
+
+      </div>
+
+      <div class="col-md-10">
+        <div class="tab-content">
+          <div class="tab-pane fade" id="system">
+              {# {% include "status/system.html" %} #}
+          </div>
+          <div class="tab-pane fade" id="postgresql">
+              {# {% include "status/postgresql.html" %} #}
+          </div>
+          <div class="tab-pane fade" id="redis">
+              {# {% include "status/redis.html" %} #}
+          </div>
+
+          {% if 'amqp://' in settings.BROKER_URL %}
+
+          <div class="tab-pane fade" id="rabbitmq">
+              {# {% include "status/rabbitmq.html" %} #}
+          </div>
+
+          {% endif %}
+
+          <div class="tab-pane fade" id="celery">
+              {# {% include "status/celery.html" %} #}
+          </div>
+          <div class="tab-pane fade" id="mongodb">
+              {# {% include "status/mongodb.html" %} #}
+          </div>
         </div>
-
-        <div class="col-md-10">
-            <div class="tab-content">
-                <div class="tab-pane fade" id="system">
-                    {# {% include "status/system.html" %} #}
-                </div>
-                <div class="tab-pane fade" id="postgresql">
-                    {# {% include "status/postgresql.html" %} #}
-                </div>
-                <div class="tab-pane fade" id="redis">
-                    {# {% include "status/redis.html" %} #}
-                </div>
-
-                {% if 'amqp://' in settings.BROKER_URL %}
-
-                <div class="tab-pane fade" id="rabbitmq">
-                    {# {% include "status/rabbitmq.html" %} #}
-                </div>
-
-                {% endif %}
-
-                <div class="tab-pane fade" id="celery">
-                    {# {% include "status/celery.html" %} #}
-                </div>
-                <div class="tab-pane fade" id="mongodb">
-                    {# {% include "status/mongodb.html" %} #}
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
 
 

@@ -1,0 +1,11 @@
+
+{% comment %}
+
+    Rendered from the admin_command view, which is mostly an Ajax view.
+
+    It expects the admin command itself filled the "messages" subsystem,
+    and will display notifications.
+
+{% endcomment %}
+
+    {% include "snippets/home/notifications.html" with no_announcements=True %}
