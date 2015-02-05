@@ -54,38 +54,6 @@
       </a>
     </li>
 
-    {% if FLOWER_URL or STATS_URL %}
-      <li class="divider"></li>
-
-    {% endif %}
-
-    {% if FLOWER_URL %}
-
-      <li>
-        <a href="{{ FLOWER_URL }}" style="white-space: nowrap">
-          {% trans "Workers management" %}&nbsp;
-          <span class="muted">
-            {% core_icon 'external-link' %}
-          </span>
-        </a>
-      </li>
-
-    {% endif %}
-
-    {% if STATS_URL %}
-
-      <li>
-        <a href="{{ STATS_URL }}">
-          {% trans "Statistics" %}&nbsp;
-          <span class="muted">
-            {% core_icon 'external-link' %}
-          </span>
-        </a>
-      </li>
-
-    {% endif %}
-
-
     <li class="divider"></li>
 
     <li>

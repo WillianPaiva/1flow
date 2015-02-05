@@ -4,12 +4,12 @@
 
 <h2>{% trans "Web server information" %}</h2>
 <div class="row">
-	<div class="col-xs-4 col-sm-2 right muted">
+	<div class="col-xs-5 col-sm-3 right muted">
 		{% trans "hostname:" %}<br />
 		{% trans "OS:" %}<br />
 		{% trans "architecture:" %}
 	</div>
-	<div class="col-xs-6 col-sm-8 strong">
+	<div class="col-xs-7 col-sm-9 strong">
 		{{ host_infos.system.hostname }}<br />
 		{{ host_infos.os.name }} {{ host_infos.os.version }}<br />
 		{{ host_infos.system.cpuArch }}{% if host_infos.system.numaEnabled %}{% trans "with NUMA" %}{% endif %}
@@ -23,6 +23,7 @@
 	</div>
 </div>
 
+<div class="spacer25"></div>
 <h2>{% trans "Used memories" %}</h2>
 <div class="row">
 	<div class="col-xs-2 right muted">
@@ -91,3 +92,85 @@
 	</div>
 </div>
 {% endfor %}
+
+
+<div class="spacer15"></div>
+<h2>{% trans "Management tools" %}</h2>
+
+<div class="spacer15"></div>
+
+<div class="row">
+
+	<div class="col-sm-2 right">
+			<h4>{% trans "Web app. caches" %}</h4>
+	</div>
+
+	<div class="col-sm-4 centered">
+		<form data-async data-target="#clear_templates_cache_result"
+		  	action="{% url 'admin_command' command='clear_templates_cache' %}">
+			<input type="submit" class="btn btn-warning"
+		    value="{% trans "Clear templates cache" %}" />
+		</form>
+		<span id="clear_templates_cache_result"></span>
+	</div>
+
+	<div class="col-sm-3 centered">
+	  <form data-async data-target="#clear_views_cache_result"
+	      action="{% url 'admin_command' command='clear_views_cache' %}">
+	    <input type="submit" class="btn btn-warning"
+	        value="{% trans "Clear views cache" %}" />
+	  </form>
+	  <span id="clear_views_cache_result"></span>
+	</div>
+
+	<div class="col-sm-3 centered">
+	  <form data-async data-target="#clear_all_caches_result"
+	      action="{% url 'admin_command' command='clear_all_caches' %}">
+	    <input type="submit" class="btn btn-danger" data-toggle="tooltip"
+	        title="{% trans "NOTE: your instance could be sluggish while caches reconstruct slowly" %}"
+	        value="{% trans "Clear all caches" %}" />
+	  </form>
+	  <span id="clear_all_caches_result"></span>
+	</div>
+
+</div>
+
+{% if FLOWER_URL or STATS_URL %}
+
+	<div class="spacer15 clearfix"></div>
+
+	<div class="row">
+
+		<div class="col-sm-2 right">
+			<h4>{% trans "External tools" %}</h4>
+		</div>
+
+	  {% if FLOWER_URL %}
+
+			<div class="col-sm-4 centered">
+	      <a href="{{ FLOWER_URL }}" class="btn btn-info centered">
+	        {% trans "Workers management" %}&nbsp;
+	        <span class="very-muted">
+	          {% core_icon 'external-link' %}
+	        </span>
+	      </a>
+			</div>
+
+	  {% endif %}
+
+	  {% if STATS_URL %}
+
+			<div class="col-sm-3 centered">
+	      <a href="{{ STATS_URL }}" class="btn btn-info centered">
+	        {% trans "Statistics" %}&nbsp;
+	        <span class="very-muted">
+	          {% core_icon 'external-link' %}
+	        </span>
+	      </a>
+			</div>
+
+	  {% endif %}
+
+	</div>
+
+{% endif %}
