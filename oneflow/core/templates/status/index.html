@@ -60,70 +60,7 @@
                   {% trans "MongoDB" %}</a>
           </li>
 
-          <li class="separator"></li>
-
-          {% if FLOWER_URL %}
-
-            <li class="secondary-nav">
-              <a href="{{ FLOWER_URL }}" style="white-space: nowrap">
-                {% trans "Workers mgmt." %}&nbsp;
-                <span class="muted">
-                  {% core_icon 'external-link' %}
-                </span>
-              </a>
-            </li>
-
-          {% endif %}
-
-          {% if STATS_URL %}
-
-            <li class="secondary-nav">
-              <a href="{{ STATS_URL }}">
-                {% trans "Statistics" %}&nbsp;
-                <span class="muted">
-                  {% core_icon 'external-link' %}
-                </span>
-              </a>
-            </li>
-
-          {% endif %}
-          </ul>
-
-          <div class="spacer25"></div>
-
-          <h5>{% trans "Admin commands" %}</h5>
-
-          <ul class="list-unstyled">
-            <li class="secondary-nav">
-              <form data-async data-target="#clear_templates_cache_result"
-                  action="{% url 'admin_command' command='clear_templates_cache' %}">
-                <input type="submit" class="btn btn-xs btn-warning"
-                    value="{% trans "Clear templates cache" %}" />
-              </form>
-              <span id="clear_templates_cache_result"></span>
-            </li>
-
-            <li class="secondary-nav">
-              <form data-async data-target="#clear_views_cache_result"
-                  action="{% url 'admin_command' command='clear_views_cache' %}">
-                <input type="submit" class="btn btn-xs btn-warning"
-                    value="{% trans "Clear views cache" %}" />
-              </form>
-              <span id="clear_views_cache_result"></span>
-            </li>
-
-            <li class="secondary-nav">
-              <form data-async data-target="#clear_all_caches_result"
-                  action="{% url 'admin_command' command='clear_all_caches' %}">
-                <input type="submit" class="btn btn-xs btn-danger" data-toggle="tooltip"
-                    title="{% trans "NOTE: your instance could be sluggish while caches reconstruct slowly" %}"
-                    value="{% trans "Clear all caches" %}" />
-              </form>
-              <span id="clear_all_caches_result"></span>
-            </li>
-
-          </ul>
-
+        </ul>
       </div>
 
       <div class="col-md-10">
