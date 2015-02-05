@@ -58,8 +58,8 @@ def admin_message(request, message_type, message, *args, **kwargs):
         getattr(messages, message_type)(request, message, **kwargs)
 
 
-def clear_template_cache(request=None):
-    """ Clear all templates cache in the corresponding DB.
+def clear_one_cache(request, cache_key_base, cache_name):
+    """ Clear a cache.
 
     This is not a view, but will be called from a view (or not) and thus
     accepts an optional request argument. If present, a message() will be
@@ -76,12 +76,13 @@ def clear_template_cache(request=None):
     CACHE_REDIS = redis.StrictRedis(host=host, port=port, db=dbnum)
 
     # example: :1:template.cache.article_meta_top.e7aa62b431edc175bb57783be24413ad  # NOQA
-    template_keys = CACHE_REDIS.keys('*:template.cache.*')
+    template_keys = CACHE_REDIS.keys(cache_key_base)
 
     num_keys = len(template_keys)
 
     if num_keys <= 0:
-        admin_message(request, 'info', _(u'Cache is already empty.'))
+        admin_message(request, 'info',
+                      _(u'{0} is already empty.').format(cache_name))
         return
 
     for counter in range(int(math.ceil(num_keys / 100.0))):
@@ -92,5 +93,33 @@ def clear_template_cache(request=None):
         )
 
     admin_message(request, 'info',
-                  _(u'Cleared %s entries from cache.'),
+                  _(u'Cleared %s entries from {0}.').format(cache_name),
                   num_keys)
+
+
+def clear_templates_cache(request=None):
+    """ Call :func:`clear_one_cache` on the templates part. """
+
+    clear_one_cache(
+        request,
+        '*:template.cache.*',
+        'templates cache',
+    )
+
+
+def clear_views_cache(request=None):
+    """ Call :func:`clear_one_cache` on the views part. """
+
+    clear_one_cache(
+        request,
+        '*:views.decorators.cache.*',
+        'views cache',
+    )
+
+
+def clear_all_caches(request=None):
+    """ Clear all caches one by one until the system is totally empty. """
+
+    clear_templates_cache(request)
+
+    clear_views_cache(request)
