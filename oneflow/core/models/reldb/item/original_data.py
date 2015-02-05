@@ -116,6 +116,24 @@ class OriginalData(models.Model):
         return u'Original data for {0}'.format(self.item)
 
     @property
+    def is_processed(self):
+        """ Tells if all original data have been processed at least once. """
+
+        for attr_name in (
+            'google_reader',
+            'feedparser',
+            'raw_email',
+            'twitter',
+            #  'webimport',
+        ):
+
+            if getattr(self, attr_name, None) \
+                    and not getattr(self, attr_name + 'processed'):
+                return False
+
+        return True
+
+    @property
     def google_reader_hydrated(self):
         """ XXX: should disappear when google_reader_data is useless. """
 

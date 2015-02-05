@@ -274,7 +274,7 @@ def processor_function({0}):
 data.result = processor_function({2})
 """.format(
             u', '.join(local_scope.keys()),
-            code_to_run.replace('\n', '\n    '),
+            code_to_run.replace(u'\n', u'\n    '),
             u', '.join(u'%s=%s' % (k, k) for k in local_scope.keys()),
         )
 
