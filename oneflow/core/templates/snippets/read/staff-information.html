@@ -2,7 +2,9 @@
 
       <div class="spacer50"></div>
 
-      <ul class="list-unstyled">
+      <h3>{% trans "Status" %}</h3>
+
+      <ul class="list-unstyled list-inline">
       	<li>
           {% if article.is_good %}
             {% core_label _('good') 'success' %}
