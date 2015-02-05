@@ -129,11 +129,11 @@ def global_feeds_checker():
     recently_closed_feeds = BaseFeed.objects.filter(is_active=False).filter(
         Q(date_closed=None) | Q(date_closed__gte=closed_limit))
 
-    count = recently_closed_feeds.count()
-
-    if not count:
+    if not recently_closed_feeds.exists():
         LOGGER.info('No feed was closed in the last %s days.', limit_days)
         return
+
+    count = recently_closed_feeds.count()
 
     mail_managers(_(u'Reminder: {0} feed(s) closed in last '
                   u'{1} day(s)').format(count, limit_days),
@@ -201,7 +201,7 @@ def global_subscriptions_checker(force=False, limit=None, from_feeds=True,
                 processed_count = 0
                 checked_count   = 0
 
-                for feed in feeds:
+                for feed in feeds.iterator():
 
                     if limit and checked_count > limit:
                         break
@@ -214,7 +214,7 @@ def global_subscriptions_checker(force=False, limit=None, from_feeds=True,
                     # the subscription.check_reads() already called below.
                     feed.check_subscriptions()
 
-                    for subscription in feed.subscriptions.all():
+                    for subscription in feed.subscriptions.all().iterator():
 
                         processed_count += 1
 
@@ -256,7 +256,7 @@ def global_subscriptions_checker(force=False, limit=None, from_feeds=True,
                         user.user_counters.compute_cached_descriptors()
                         # all=True, unread=True, starred=True, bookmarked=True
 
-                        for subscription in user.subscriptions.all():
+                        for subscription in user.subscriptions.all().iterator():
                                 processed_count += 1
 
                                 subscription.check_reads(extended_check=True,
@@ -329,12 +329,12 @@ def global_duplicates_checker(limit=None, force=False):
                    total_dupes_count)):
 
         try:
-            for duplicate in duplicates:
+            for duplicate in duplicates.iterator():
                 reads = duplicate.reads.all()
 
                 processed_dupes += 1
 
-                if reads:
+                if reads.exists():
                     done_dupes_count  += 1
                     reads_count        = reads.count()
                     total_reads_count += reads_count
@@ -479,7 +479,7 @@ def global_reads_checker(limit=None, extended_check=False, force=False,
     with benchmark(u"Check {0}/{1} reads".format(limit or u'all',
                    total_reads_count)):
         try:
-            for read in bad_reads:
+            for read in bad_reads.iterator():
 
                 processed_reads += 1
 
@@ -501,7 +501,7 @@ def global_reads_checker(limit=None, extended_check=False, force=False,
 
                 if extended_check:
                     try:
-                        if read.subscriptions.all():
+                        if read.subscriptions.all().exists():
 
                             # TODO: remove this
                             #       check_set_subscriptions_131004_done
@@ -652,7 +652,7 @@ def global_users_checker(limit=None, extended_check=False, force=False,
     with benchmark(u"Check {0}/{1} users".format(limit or u'all',
                    total_users_count)):
         try:
-            for user in active_users:
+            for user in active_users.iterator():
 
                 processed_users += 1
 
@@ -735,7 +735,7 @@ def global_orphaned_checker(limit=None, extended_check=False, force=False,
     with benchmark(u"Check {0}/{1} orphans".format(limit or u'all',
                    orphaned_items_count)):
         try:
-            for orphan in orphaned_items:
+            for orphan in orphaned_items.iterator():
                 processed_orphans += 1
 
                 if limit and changed_orphans >= limit:

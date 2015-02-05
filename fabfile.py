@@ -219,7 +219,7 @@ def logs(logs=None):
 
 @task
 def purge(queue=None):
-    """ get logs worker processes. """
+    """ purge one or more queue(s). """
 
     if queue is None:
         queue = u'refresh'
