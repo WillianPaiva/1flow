@@ -128,7 +128,7 @@ class OriginalData(models.Model):
         ):
 
             if getattr(self, attr_name, None) \
-                    and not getattr(self, attr_name + 'processed'):
+                    and not getattr(self, attr_name + '_processed'):
                 return False
 
         return True
