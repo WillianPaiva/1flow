@@ -24,6 +24,8 @@ import logging
 
 from django import forms
 
+from oneflow.base.utils.http import clean_url
+
 from oneflow.core import models
 
 
@@ -54,7 +56,7 @@ class WebPagesImportForm(forms.ModelForm):
 
         # Just in case.
         self.instance.urls = u'\n'.join(
-            l.strip() for l in self.instance.urls.splitlines())
+            clean_url(l.strip()) for l in self.instance.urls.splitlines())
 
         self.instance.user = user
         self.instance.lines = self.instance.count
