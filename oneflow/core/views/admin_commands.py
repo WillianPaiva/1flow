@@ -25,6 +25,8 @@ import math
 import redis
 import logging
 
+from cacheops import invalidate_all  # invalidate_obj, invalidate_model
+
 # from django.core.urlresolvers import reverse
 # from django.conf import settings
 from django.contrib import messages
@@ -117,9 +119,22 @@ def clear_views_cache(request=None):
     )
 
 
+def clear_models_cache(request=None):
+    """ Call :mod:`cacheops`'s :func:`invalidate_all`. """
+
+    # invalidate_obj(some_article)
+    # invalidate_model(Article)
+    invalidate_all()
+
+    admin_message(request, 'info',
+                  _(u'Cleared models cache (no detail available).'))
+
+
 def clear_all_caches(request=None):
     """ Clear all caches one by one until the system is totally empty. """
 
     clear_templates_cache(request)
 
     clear_views_cache(request)
+
+    clear_models_cache(request)
