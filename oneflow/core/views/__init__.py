@@ -40,6 +40,7 @@ from sparks.django.utils import HttpResponseTemporaryServerError
 
 from oneflow.base.utils.dateutils import now
 from oneflow.base.utils.decorators import token_protected
+from oneflow.base.utils.http import clean_url
 
 from oneflow.core import forms
 
@@ -278,7 +279,15 @@ def import_web_url(request, url):
             if 'articles' in user_import.results['created']:
                 article_url = user_import.results['created']['articles'][0]
 
-                article = Article.objects.get(url=article_url)
+                try:
+                    article = Article.objects.get(url=article_url)
+
+                except:
+                    # Just in case we hit
+                    # http://dev.1flow.net/1flow/1flow/group/51970/
+                    # But it should have been wrapped earlier, thus we
+                    # do not do it in first intention.
+                    article = Article.objects.get(url=clean_url(article_url))
 
                 if article.content_type in CONTENT_TYPES_FINAL:
                     read = get_object_or_404(Read, user=request.user,
