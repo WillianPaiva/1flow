@@ -164,7 +164,7 @@ class BaseItemQuerySet(PolymorphicQuerySet):
         return self.filter(date_created__lte=one_month_before)
 
     def older_than_delta(self, custom_timedelta):
-        """ Return items created more than :param:`delta` ago. 
+        """ Return items created more than :param:`delta` ago.
 
         :param delta: a python :class:`~datetime.timedelta` object.
         """

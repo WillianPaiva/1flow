@@ -112,7 +112,7 @@ def BaseItemQuerySet_parsed_method(self):
 
 
 def BaseItemQuerySet_content_error_method(self):
-    """ Return items that have a content errors. 
+    """ Return items that have a content errors.
 
     This means items that have either:
 
@@ -122,7 +122,7 @@ def BaseItemQuerySet_content_error_method(self):
 
     return self.filter(
         ~models.Q(content_error=None)
-        |models.Q(processing_errors__item__categories__slug=u'content')
+        | models.Q(processing_errors__item__categories__slug=u'content')
     )
 
 BaseItemQuerySet.empty = BaseItemQuerySet_empty_method
@@ -228,7 +228,7 @@ class ContentItem(models.Model):
 
         if self.content_type in CONTENT_TYPES_FINAL and not force:
             LOGGER.info(u'%s #%s has already been fetched.',
-                        self._meta.model.__name__, self.id)
+                        self._meta.verbose_name, self.id)
             return True
 
         if self.content_error:
@@ -240,29 +240,30 @@ class ContentItem(models.Model):
 
             else:
                 LOGGER.warning(u'%s #%s has a fetching error, aborting '
-                               u'(%s).', self._meta.model.__name__,
+                               u'(%s).', self._meta.verbose_name,
                                self.id, self.content_error)
                 return True
 
         if self.url_error:
             LOGGER.warning(u'%s #%s has an url error. Absolutize it to '
-                           u'clear: %s.', self._meta.model.__name__,
+                           u'clear: %s.', self._meta.verbose_name,
                            self.id, self.url_error)
             return True
 
         if self.is_orphaned and not force:
             LOGGER.warning(u'%s #%s is orphaned, cannot fetch.',
-                           self._meta.model.__name__, self.id)
+                           self._meta.verbose_name, self.id)
             return True
 
         if self.duplicate_of and not force:
             LOGGER.warning(u'Not fetching content for duplicate %s #%s.',
-                           self._meta.model.__name__, self.id)
+                           self._meta.verbose_name, self.id)
             return True
 
         return False
 
     def fetch_content(self, verbose=True, force=False, commit=True):
+        """ TODO: remove this method (obsoleted 20150205). """
 
         if self.fetch_content_must_abort(force=force, commit=commit):
             return
@@ -290,7 +291,7 @@ class ContentItem(models.Model):
             self.save()
 
             LOGGER.error(u'Connection failed while fetching %s #%s.',
-                         self._meta.model.__name__, self.id)
+                         self._meta.verbose_name, self.id)
             return
 
         except Exception as e:
@@ -300,7 +301,7 @@ class ContentItem(models.Model):
             self.save()
 
             LOGGER.exception(u'Extraction failed for %s #%s.',
-                             self._meta.model.__name__, self.id)
+                             self._meta.verbose_name, self.id)
             return
 
         self.activate_reads(verbose=verbose)
@@ -421,13 +422,13 @@ class ContentItem(models.Model):
 
         if self.image_url and not force:
             LOGGER.info(u'%s #%s image already found.',
-                        self._meta.model.__name__, self.id)
+                        self._meta.verbose_name, self.id)
             return True
 
         if self.content_type not in (CONTENT_TYPES.MARKDOWN, ):
             LOGGER.warning(u'%s #%s is not in Markdown format, '
                            u'aborting image lookup.',
-                           self._meta.model.__name__, self.id)
+                           self._meta.verbose_name, self.id)
             return True
 
     def find_image(self, force=False, commit=True):
@@ -470,7 +471,7 @@ class ContentItem(models.Model):
 
         except Exception:
             LOGGER.exception(u'Image extraction failed for %s #%s.',
-                             self._meta.model.__name__, self.id)
+                             self._meta.verbose_name, self.id)
 
         return None
 
@@ -551,7 +552,7 @@ class ContentItem(models.Model):
 
                 except:
                     LOGGER.exception(u'Could not extract title of %s #%s',
-                                     self._meta.model.__name__, self.id)
+                                     self._meta.verbose_name, self.id)
 
         old_title = self.name
 
@@ -561,11 +562,11 @@ class ContentItem(models.Model):
 
         except:
             LOGGER.exception(u'Could not extract title of %s #%s',
-                             self._meta.model.__name__, self.id)
+                             self._meta.verbose_name, self.id)
 
         else:
             LOGGER.info(u'Changed title of %s #%s from “%s” to “%s”.',
-                        self._meta.model.__name__, self.id,
+                        self._meta.verbose_name, self.id,
                         old_title, self.name)
 
             self.slug = slugify(self.name)
@@ -624,7 +625,7 @@ class ContentItem(models.Model):
         if not encoding:
             LOGGER.warning(u'Could not properly detect encoding for '
                            u'%s #%s, using utf-8 as fallback.',
-                           self._meta.model.__name__, self.id)
+                           self._meta.verbose_name, self.id)
             encoding = 'utf-8'
 
         if config.ARTICLE_FETCHING_DEBUG:
@@ -662,7 +663,7 @@ class ContentItem(models.Model):
                 logging.disable(logging.NOTSET)
                 LOGGER.exception(u'Strainer extraction [parser=%s] '
                                  u'failed for %s #%s', parser,
-                                 self._meta.model.__name__, self.id)
+                                 self._meta.verbose_name, self.id)
             else:
                 logging.disable(logging.NOTSET)
 
@@ -686,7 +687,7 @@ class ContentItem(models.Model):
             except:
                 logging.disable(logging.NOTSET)
                 LOGGER.exception(u'Breadability extraction failed for '
-                                 u'%s #%s', self._meta.model.__name__, self.id)
+                                 u'%s #%s', self._meta.verbose_name, self.id)
             else:
                 logging.disable(logging.NOTSET)
 
@@ -734,7 +735,7 @@ class ContentItem(models.Model):
         if self.content_type in (None, CONTENT_TYPES.NONE):
 
             LOGGER.info(u'Parsing text content for %s #%s…',
-                        self._meta.model.__name__, self.id)
+                        self._meta.verbose_name, self.id)
 
             if self.likely_multipage_content():
                 # If everything goes well, 'content' should be an utf-8
@@ -754,7 +755,7 @@ class ContentItem(models.Model):
                         self.pages_urls.append(next_link)
 
                 LOGGER.info(u'Fetched %s page(s) for %s #%s.', pages,
-                            self._meta.model.__name__, self.id)
+                            self._meta.verbose_name, self.id)
 
             else:
                 # first: http://www.crummy.com/software/BeautifulSoup/bs4/doc/#non-pretty-printing # NOQA
@@ -803,7 +804,7 @@ class ContentItem(models.Model):
         self.convert_to_markdown(force=force, commit=commit)
 
         LOGGER.info(u'Done parsing content for %s #%s.',
-                    self._meta.model.__name__, self.id)
+                    self._meta.verbose_name, self.id)
 
     def fetch_content_bookmark(self, force=False, commit=True):
 
@@ -859,7 +860,7 @@ class ContentItem(models.Model):
                     except:
                         LOGGER.exception(u'Could not extract description '
                                          u'of imported bookmark %s #%s',
-                                         self._meta.model.__name__, self.id)
+                                         self._meta.verbose_name, self.id)
 
                     else:
                         LOGGER.info(u'Successfully set description to “%s”',
@@ -876,7 +877,7 @@ class ContentItem(models.Model):
 
                 raise StopProcessingException(
                     u'Done setting up bookmark content for {0} #{1}.'.format(
-                        self._meta.model.__name__, self.id))
+                        self._meta.verbose_name, self.id))
 
     # ———————————————————————————————————————————————————————— NOT SURE TO KEEP
 
@@ -904,7 +905,7 @@ class ContentItem(models.Model):
         if self.content_type == CONTENT_TYPES.MARKDOWN:
             if not force:
                 LOGGER.info(u'%s #%s already converted to Markdown.',
-                            self._meta.model.__name__, self.id)
+                            self._meta.verbose_name, self.id)
                 return
 
             else:
@@ -913,11 +914,11 @@ class ContentItem(models.Model):
         elif self.content_type != CONTENT_TYPES.HTML:
             LOGGER.warning(u'%s #%s cannot be converted to Markdown, '
                            u'it is not currently HTML.',
-                           self._meta.model.__name__, self.id)
+                           self._meta.verbose_name, self.id)
             return
 
         LOGGER.info(u'Converting %s #%s to markdown…',
-                    self._meta.model.__name__, self.id)
+                    self._meta.verbose_name, self.id)
 
         md_converter = html2text.HTML2Text()
 
@@ -993,7 +994,7 @@ class ContentItem(models.Model):
 
         if website is None:
             LOGGER.warning(u'%s #%s has no website??? Post-processing '
-                           u'aborted.', self._meta.model.__name__, self.id)
+                           u'aborted.', self._meta.verbose_name, self.id)
             return
 
         website_url = website.url
