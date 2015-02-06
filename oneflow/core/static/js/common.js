@@ -151,12 +151,14 @@ function find_start(parent, klass){
 
         } catch (err) {
             console.error('Error finding ' + klass + ' in '
-                          + parent + ': ' + err)
+                          + parent.selector + ': ' + err)
         }
     }
 
-    //console.debug('start for ' + klass + ' in ' + parent + ':');
-    //console.debug(start);
+    // console.debug('start of ' + klass + ' in '
+    //               + parent.selector + ': '
+    //               + start.length + ' item(s).');
+    // console.debug(start);
 
     return start;
 }
@@ -883,6 +885,8 @@ function setup_modals(parent) {
 
     // Freely inspired from https://gist.github.com/havvg/3226804
     find_start(parent, 'form[data-async]').on('submit', handle_ajax_form);
+
+    // console.log('modals done.')
 }
 
 function setup_post_processors(parent) {
@@ -921,6 +925,19 @@ function setup_ajax_uploader(parent) {
     }
 }
 
+function setup_bootstrap_remote_data(html, trigger, container, json_data) {
+    // should be linked from data-tab-callback in tabs
+    // used in conjunction with bootstrap-remote-data.
+
+    //console.log('remote data setup with ' + container);
+    //console.log(container.selector);
+
+    setTimeout(function() {
+        setup_everything(container);
+    }, 50);
+}
+
+
 // ———————————————————————————————————————————————— reusable setup_everything()
 
 function setup_everything(parent) {
@@ -929,7 +946,7 @@ function setup_everything(parent) {
     // to setup the same things on "new" parts of the page without
     // re-walking the whole page.
 
-    console.debug('Setup everything...');
+    console.debug('Setting up everything…');
 
     try {
 
@@ -977,6 +994,8 @@ function setup_everything(parent) {
         console.debug('Exception while trying to run '
                       + func_name + '(): ' + err);
     }
+
+    console.debug('Done setting up everything.');
 }
 
 // ————————————————————————————————————————————————————————————— one-time setup
