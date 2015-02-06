@@ -55,6 +55,9 @@ from base import (
     baseitem_create_reads_task,
 )
 
+from original_data import baseitem_postprocess_original_data_task
+
+
 from abstract import (
     UrlItem,
     ContentItem,
@@ -355,12 +358,12 @@ class Article(BaseItem, UrlItem, ContentItem):
 
         if apply_now:
             try:
-                baseitem_absolutize_url_task.apply((self.id, ))
-                baseitem_create_reads_task.apply((self.id, ))
-                baseitem_fetch_content_task.apply((self.id, ))
+                result = baseitem_absolutize_url_task.apply((self.id, ))
 
-                # Done in RssAtomFeed now.
-                # baseitem_postprocess_original_data_task.apply((self.id, ))
+                if result is not False:
+                    baseitem_create_reads_task.apply((self.id, ))
+                    baseitem_fetch_content_task.apply((self.id, ))
+                    baseitem_postprocess_original_data_task.apply((self.id, ))
 
             except:
                 LOGGER.exception(u'Applying Article.post_create_task(%s) '
@@ -373,9 +376,7 @@ class Article(BaseItem, UrlItem, ContentItem):
 
             baseitem_create_reads_task.si(self.id),
             baseitem_fetch_content_task.si(self.id),
-
-            # Done in RssAtomFeed now.
-            # baseitem_postprocess_original_data_task.si(self.id),
+            baseitem_postprocess_original_data_task.si(self.id),
         )
 
         # OLD NOTES: randomize the absolutization a little, to avoid
@@ -394,8 +395,11 @@ class Article(BaseItem, UrlItem, ContentItem):
         # Thus, we link the post_absolutize_chain as a callback. It will
         # be run only if absolutization succeeds. Thanks, celery :-)
 
-        baseitem_absolutize_url_task.apply_async((self.id, ),
-                                                 link=post_absolutize_chain)
+        baseitem_absolutize_url_task.apply_async(
+            args=(self.id, ),
+            kwargs={'stop_chain_on_false': True},
+            link=post_absolutize_chain
+        )
 
         #
         # TODO: create short_url
