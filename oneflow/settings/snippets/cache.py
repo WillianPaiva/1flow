@@ -87,15 +87,10 @@ CACHEOPS = {
     'core.processingchain': {'ops': 'all', 'timeout': 60 * 60},
     'core.chaineditem': {'ops': 'all', 'timeout': 60 * 60},
 
-    # Enable manual caching on all other models with default timeout of an hour
-    # Use Post.objects.cache().get(...)
-    #  or Tags.objects.filter(...).order_by(...).cache()
-    # to cache particular ORM request.
-    # Invalidation is still automatic
-    #
-    # '*.*': {'ops': (), 'timeout': 60 * 60},
-    #
-    # And since ops is empty by default you can rewrite last line as:
+    # Other objects only use MANUAL caching, not automatic. Read
+    # https://github.com/Suor/django-cacheops#performance-tips to
+    # understand why. Anyway, even on 1flow.io we don't need that
+    # level of 'all-things' cached.
     '*.*': {'timeout': 60 * 60},
 }
 

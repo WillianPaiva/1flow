@@ -478,7 +478,7 @@ INSTALLED_APPS = [
     'account',
     'polymorphic',
     'cacheops',
-    'django_pickling',
+    # 'django_pickling',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     # 'django.contrib.sites',
