@@ -66,7 +66,6 @@ CACHEOPS_REDIS = {
     'socket_timeout': 3,
 }
 
-
 CACHEOPS = {
     # Automatically cache any User.objects.get() calls
     # for 30 minutes. This includes request.user or
