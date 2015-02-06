@@ -477,6 +477,7 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'account',
     'polymorphic',
+    'cacheops',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     # 'django.contrib.sites',

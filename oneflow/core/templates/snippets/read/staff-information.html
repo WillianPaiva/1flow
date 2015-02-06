@@ -1,13 +1,29 @@
+
     {% if user.is_staff_or_superuser_and_enabled %}
 
       <div class="spacer50"></div>
+
+      <div class="staff-information">
+
+      {% if not article.date_published %}
+
+        <h3>{% trans "Fixes" %}</h3>
+
+        <ul class="list-unstyled">
+          {% if not article.date_published %}
+            <li>{% inplace_edit 'article.date_published' %}</li>
+          {% endif %}
+        </ul>
+
+      {% endif %}
 
       <h3>{% trans "Status" %}</h3>
 
       <ul class="list-unstyled list-inline">
       	<li>
           {% if article.is_good %}
-            {% core_label _('good') 'success' %}
+            {% captureas good %}<span data-toggle="tooltip" title="{% trans "Item is considered good to be displayed by the engine" %}">{% core_icon 'ok' False %}</span>{% endcaptureas %}
+            {% core_label good 'success' %}
 
           {% else %}
             {% core_label _('bad') 'danger' %}
@@ -32,24 +48,20 @@
         <li>
           {% if article.original_data %}
             {% if article.original_data.is_processed %}
-              {% core_label _('O.D processed') 'success' %}
+              {% captureas origin %}<span data-toggle="tooltip" title="{% trans "Original data has been processed" %}">{% core_icon 'screenshot' %} {{ ORIGINS|symlookup:article.origin }}</span>{% endcaptureas %}
+              {% core_label origin 'success' %}
 
             {% else %}
-              {% core_label _('O.D not processed') 'info' %}
+              {% captureas origin %}<span data-toggle="tooltip" title="{% trans "Original data not yet processed" %}">{% core_icon 'time' %} {{ ORIGINS|symlookup:article.origin }}</span>{% endcaptureas %}
+              {% core_label origin 'info' %}
 
             {% endif %}
           {% else %}
-              {% core_label _('no O.D') 'warning' %}
+              {% captureas origin %}<span data-toggle="tooltip" title="{% trans "No original data recorded" %}">{% core_icon 'remove' %} {{ ORIGINS|symlookup:article.origin }}</span>{% endcaptureas %}
+              {% core_label origin 'warning' %}
 
           {% endif %}
         </li>
-
-      </ul>
-
-      {# putting a li.spacer1 here makes too much space. #}
-      <div class="spacer10"></div>
-
-      <ul class="list-unstyled list-inline">
 
         <li>
           {% if article.content_type %}
@@ -70,10 +82,11 @@
           {% endif %}
         </li>
 
-        <li>
-          {% captureas origin %}{% core_icon 'screenshot' %} {{ ORIGINS|symlookup:article.origin }}{% endcaptureas %}
-          {% core_label origin 'default' %}
-        </li>
+        {% captureas reads %}<span data-toggle="tooltip" title="{% trans "user reads" %}">{% core_icon 'user' %} {{ article.reads.count }}</span>{% endcaptureas %}
+        <li>{% core_label reads 'default' %}</li>
+
+        {% captureas histories %}<span data-toggle="tooltip" title="{% trans "article versions in history" %}">{% core_icon 'archive' %} {{ article.history.count }}</span>{% endcaptureas %}
+        <li>{% core_label histories 'default' %}</li>
 
       </ul>
 
@@ -92,18 +105,6 @@
 
           {% endif %}
         </li>
-
-      </ul>
-
-      <div class="spacer10"></div>
-
-      <ul class="list-unstyled list-inline">
-
-        {% captureas reads %}<span data-toggle="tooltip" title="{% trans "user reads" %}">{% core_icon 'user' %} {{ article.reads.count }}</span>{% endcaptureas %}
-        {% captureas histories %}<span data-toggle="tooltip" title="{% trans "article versions in history" %}">{% core_icon 'archive' %} {{ article.history.count }}</span>{% endcaptureas %}
-
-      	<li>{% core_label reads 'default' %}</li>
-        <li>{% core_label histories 'default' %}</li>
 
       </ul>
 
@@ -146,6 +147,6 @@ a = Article.objects.get(id={{ article.id }})
 r = Read.objects.get(id={{ read.id }})
 </pre></div>
 
-
+    </div>
 
     {% endif %}
