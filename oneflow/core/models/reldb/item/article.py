@@ -535,6 +535,14 @@ def article_pre_delete(instance, **kwargs):
         elif article.content_type in (None, CONTENT_TYPES.NONE, ):
             spipe.gauge('articles.counts.empty', -1, delta=True)
 
+    if instance.processing_errors.exists():
+        try:
+            instance.processing_errors.clear()
+
+        except:
+            LOGGER.exception(u'%s %s: could not clear processing errors',
+                             instance._meta.verbose_name, instance.id)
+
 
 pre_delete.connect(article_pre_delete, sender=Article)
 pre_save.connect(article_pre_save, sender=Article)
