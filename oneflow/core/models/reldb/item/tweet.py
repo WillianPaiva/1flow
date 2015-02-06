@@ -413,9 +413,10 @@ class Tweet(BaseItem):
                 try:
                     with transaction.atomic():
                         self.entities.add(item)
+
                 except:
                     LOGGER.error(u'Could not add entity %s to tweet #%s',
-                                 item.id,)
+                                 item.id, self.id)
 
             except:
                 all_went_ok = False
