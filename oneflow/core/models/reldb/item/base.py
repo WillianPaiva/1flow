@@ -378,12 +378,38 @@ class BaseItem(PolymorphicModel,
         BaseItem is too generic and too empty to have a processor chain.
 
         This method must be overriden by inheriting classes.
+
+        .. todo:: :meth:`get_processing_chain`() could
+            become :meth:`get_processing_chains`() in the near future.
+            There is no valid reason to have only one processing chain
+            for a given model. In fact, there are many good reasons to
+            have more than one.
         """
 
         return None
 
-    def run_processing_chain(self, verbose=True, force=False, commit=True):
-        """ **(internal method)** Run processors for the current item.
+    def processing_must_abort(self, verbose=True, force=False, commit=True):
+        """ On a base item, processing will never abort, except if duplicate.
+
+        This method always returns ``False``. It's up to inheriting classes
+        to test conditions in which they must abort or not.
+
+        If the current item is a duplicate (for whatever reason),
+        a `NeverProcessException` will be raised.
+        """
+
+        # force=True will not help. We NEVER process duplicates,
+        # this is just a waste of time and machine resources.
+        if self.duplicate_of_id:
+            LOGGER.warning(u'Not processing duplicate %s %s.',
+                           self._meta.verbose_name, self.id)
+
+            raise NeverProcessException('duplicate')
+
+        return False
+
+    def process(self, verbose=True, force=False, commit=True):
+        """ Run processors on the current item.
 
         This method is generic and will be the same for
         any :class:`BaseItem` derived item. Subclasses have
@@ -394,28 +420,6 @@ class BaseItem(PolymorphicModel,
         will be called, and it will be up to it to find one or more
         chain that can be run on the current item / model.
 
-        .. todo:: :meth:`get_processing_chain`() could
-            become :meth:`get_processing_chains`() in the near future.
-            There is no valid reason to have only one processing chain
-            for a given model. In fact, there are many good reasons to
-            have more than one.
-        """
-
-        processing_chain = self.get_processing_chain()
-
-        if processing_chain is None:
-            run_processing_chains(self, verbose=verbose,
-                                  force=force, commit=commit)
-
-        else:
-            processing_chain.run(self, verbose=verbose,
-                                 force=force, commit=commit)
-
-    def process(self, verbose=True, force=False, commit=True):
-        """ Run processors on the current item.
-
-        This method is generic enough to fit any item type.
-        See :meth:`run_processing_chain` for more explanations.
         """
 
         # HEADS UP: this test is already run by the processing
@@ -436,9 +440,16 @@ class BaseItem(PolymorphicModel,
         #     return
 
         # try:
-        self.run_processing_chain(verbose=verbose,
-                                  force=force,
-                                  commit=commit)
+
+        processing_chain = self.get_processing_chain()
+
+        if processing_chain is None:
+            run_processing_chains(self, verbose=verbose,
+                                  force=force, commit=commit)
+
+        else:
+            processing_chain.run(self, verbose=verbose,
+                                 force=force, commit=commit)
 
         # TODO: forward any exception to subclasses, for them to handle
         #       them individually, depending on the exception type, if
@@ -469,26 +480,6 @@ class BaseItem(PolymorphicModel,
         #     return
 
         self.activate_reads(verbose=verbose)
-
-    def processing_must_abort(self, verbose=True, force=False, commit=True):
-        """ On a base item, processing will never abort, except if duplicate.
-
-        This method always returns ``False``. It's up to inheriting classes
-        to test conditions in which they must abort or not.
-
-        If the current item is a duplicate (for whatever reason),
-        a `NeverProcessException` will be raised.
-        """
-
-        # force=True will not help. We NEVER process duplicates,
-        # this is just a waste of time and machine resources.
-        if self.duplicate_of_id:
-            LOGGER.warning(u'Not processing duplicate %s %s.',
-                           self._meta.verbose_name, self.id)
-
-            raise NeverProcessException('duplicate')
-
-        return False
 
     def reset(self, force=False, commit=True):
         """ See :meth:`Article.reset`() for explanations. """
