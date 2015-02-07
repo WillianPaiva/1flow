@@ -418,14 +418,22 @@ class BaseItem(PolymorphicModel,
         See :meth:`run_processing_chain` for more explanations.
         """
 
-        if self.processing_must_abort(verbose=verbose,
-                                      force=force,
-                                      commit=commit):
-            return
-
+        # HEADS UP: this test is already run by the processing
+        #           chain run() method. No need to do it twice.
         #
-        # TODO: implement switch based on content type.
+        #           Doing it here would seem logical and would
+        #           mimic the processor.process() method.
         #
+        #           But doing it in the chain is much more
+        #           legitimate as the chain is in charge of error
+        #           handling, and notably the translation of
+        #           NeverProcessException into a definitive
+        #           ProcessingError.
+        #
+        # if self.processing_must_abort(verbose=verbose,
+        #                               force=force,
+        #                               commit=commit):
+        #     return
 
         # try:
         self.run_processing_chain(verbose=verbose,
