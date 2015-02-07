@@ -54,18 +54,29 @@ class ProcessingError(models.Model):
 
     This allows to sort them out more easily.
 
+    Temporary errors should beretried with the same processing parameters
+    from time to time. Definitive errors needs manual/human review to be
+    fixed.
+
     """
 
     class Meta:
         app_label = 'core'
         verbose_name = _(u'Processing error')
         verbose_name_plural = _(u'Processing errors')
+        get_latest_by = 'date_created'
 
     instance_type = models.ForeignKey(ContentType, null=True, blank=True)
     instance_id = models.PositiveIntegerField(null=True, blank=True)
     instance = generic.GenericForeignKey('instance_type', 'instance_id')
 
-    processor = models.ForeignKey('ChainedItem', related_name='errors')
+    processor = models.ForeignKey('ChainedItem', related_name='errors',
+                                  null=True, blank=True)
+    chain = models.ForeignKey('ProcessingChain', related_name='errors',
+                              null=True, blank=True)
+
+    is_temporary = models.BooleanField(default=True,
+                                       verbose_name=_(u'is temporary?'))
 
     date_created = models.DateTimeField(auto_now_add=True, blank=True,
                                         verbose_name=_(u'Date created'))

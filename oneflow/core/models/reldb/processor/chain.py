@@ -49,6 +49,7 @@ from category import ProcessorCategory
 from exceptions import (
     InstanceNotAcceptedException,
     StopProcessingException,
+    NeverProcessException,
 )
 from error import ProcessingError
 
@@ -279,6 +280,78 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
             LOGGER.info(u'%s [process]: ran %s %s through our processors.',
                         self, instance._meta.verbose_name, instance.id)
 
+    def must_abort(self, instance, verbose=True, force=False, commit=True):
+        """ Return True if the current chain must not run.
+
+        There are a lot of conditions in which it can run or abort:
+
+            - the chain itself is currently inactive,
+            - any of its categories is inactive,
+            - the instance's :meth:`processing_must_abort`()
+              method returns ``True``.
+
+        In any of these cases (tested in this order), the chain will
+        create a temporary processing error and will abort. The temporary
+        error will be later queried by a catch-all task that will re-launch
+        the aborted processings.
+        """
+
+        # The instance has reported it MUST NEVER be processed with this chain.
+        # This happens when it's a duplicate item, which can be quite common.
+        if instance.processing_errors.filter(
+                is_temporary=False, chain=self).exists():
+            LOGGER.error(u'%s: %s %s must not be processed at all, aborting.',
+                         self, instance._meta.verbose_name, instance.id)
+            return True
+
+        chain_must_abort = False
+
+        if not self.is_active:
+            LOGGER.warning(u'%s: currently inactive, aborting.', self)
+            chain_must_abort = True
+
+        if self.categories.filter(is_active=False).exists():
+            LOGGER.warning(u'%s: in at least one currently inactive '
+                           u'category, aborting.', self)
+            chain_must_abort = True
+
+        try:
+            if instance.processing_must_abort(force=force, commit=commit):
+                LOGGER.warning(u'%s %s is not processable yet, aborting.',
+                               instance._meta.verbose_name, instance.id)
+                chain_must_abort = True
+
+        except NeverProcessException, e:
+            instance.processing_errors.create(
+                chain=self, is_temporary=False,
+                exception=unicode(e)
+            )
+            return True
+
+        if chain_must_abort:
+            if not instance.processing_errors.filter(chain=self).exists():
+                instance.processing_errors.create(
+                    chain=self, is_temporary=True,
+                    # no particular `exception` field, it's a temporary error.
+                )
+
+        return chain_must_abort
+
+    def instance_error(self, instance, processor, exception):
+        """ create a processing error on an instance for a processor. """
+
+        try:
+            instance.processing_errors.create(
+                processor=processor,
+                is_temporary=True,
+                exception=unicode(exception))
+
+        except:
+            LOGGER.exception(u'%s: could not create processing error '
+                             u'on %s %s with %s (exc. was: %s)', self,
+                             instance._meta.verbose_name, instance.id,
+                             processor, unicode(exception))
+
     def run(self, instance, verbose=True, force=False, commit=True):
         """ Run the processing chain on a given instance.
 
@@ -287,22 +360,15 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
         work and update the instance if it's in their attribution.
         """
 
-        def save_error(instance, processor, exception):
-            try:
-                error = ProcessingError(
-                    instance=instance,
-                    processor=processor,
-                    exception=unicode(exception))
-                error.save()
-
-            except:
-                LOGGER.exception(u'Could not save processing error!')
-
         if verbose and settings.DEBUG:
             LOGGER.debug(u'%s [run]: processing %s %s…', self,
                          instance._meta.verbose_name, instance.id)
 
         all_went_ok = False
+
+        if self.must_abort(instance=instance, verbose=verbose,
+                           force=force, commit=commit):
+            return
 
         processors = self.chained_items.filter(
             is_active=True).order_by('position')
@@ -353,7 +419,7 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
                 # else we don't know in which chain the processing failed.
                 # Only the processor is not sufficient, because we don't know
                 # what happened before it in the chain.
-                save_error(instance, item, e)
+                self.instance_error(instance, item, e)
                 all_went_ok = True
                 break
 
@@ -370,11 +436,14 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
                                  instance.id, processor)
 
                 # See previous comment about same call to save_error().
-                save_error(instance, item, e)
+                self.instance_error(instance, item, e)
                 all_went_ok = True
                 break
 
         if all_went_ok:
+
+            # This should select only temporary errors, because definitive
+            # ones have a `chain` field but no `processor`.
             previous_errors = instance.processing_errors.filter(
                 processor__in=processors)
 

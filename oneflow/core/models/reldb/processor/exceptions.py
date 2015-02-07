@@ -26,6 +26,16 @@ class ProcessorException(Exception):
     pass
 
 
+class NeverProcessException(ProcessorException):
+
+    """ Raised when an item must never be re-processed again.
+
+    Duplicates item raise this exception, to avoid wasting time on them again.
+    """
+
+    pass
+
+
 class StopProcessingException(ProcessorException):
 
     """ Raised when the current processor asks to stop the chain. """
