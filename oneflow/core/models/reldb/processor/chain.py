@@ -51,7 +51,8 @@ from exceptions import (
     StopProcessingException,
     NeverProcessException,
 )
-from error import ProcessingError
+
+# from error import ProcessingError
 
 
 LOGGER = logging.getLogger(__name__)
@@ -364,7 +365,7 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
             LOGGER.debug(u'%s [run]: processing %s %s…', self,
                          instance._meta.verbose_name, instance.id)
 
-        all_went_ok = False
+        all_went_ok = True
 
         if self.must_abort(instance=instance, verbose=verbose,
                            force=force, commit=commit):
@@ -420,7 +421,7 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
                 # Only the processor is not sufficient, because we don't know
                 # what happened before it in the chain.
                 self.instance_error(instance, item, e)
-                all_went_ok = True
+                all_went_ok = False
                 break
 
             except StopProcessingException:
@@ -437,7 +438,7 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
 
                 # See previous comment about same call to save_error().
                 self.instance_error(instance, item, e)
-                all_went_ok = True
+                all_went_ok = False
                 break
 
         if all_went_ok:
@@ -453,8 +454,8 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
                 previous_errors.delete()
 
                 if verbose:
-                    LOGGER.info(u'%s: cleared now-obsolete previous '
-                                u'errors.', self, errors_count)
+                    LOGGER.info(u'%s: cleared now-obsolete previous %s '
+                                u'error(s).', self, errors_count)
 
         if verbose:
             LOGGER.info(u'%s [run]: processed %s %s.', self,
