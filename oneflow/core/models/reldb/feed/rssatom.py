@@ -38,7 +38,7 @@ from django.core.validators import URLValidator
 from oneflow.base.utils import HttpResponseLogProcessor
 from oneflow.base.utils.http import clean_url
 from oneflow.base.utils.dateutils import (
-    dateutilDateHandler,
+    datetime_extended_parser,
     datetime_from_feedparser_entry,
 )
 
@@ -78,7 +78,7 @@ __all__ = [
 # —————————————————————————————————————————————— External modules configuration
 
 
-feedparser.registerDateHandler(dateutilDateHandler)
+feedparser.registerDateHandler(datetime_extended_parser)
 feedparser.USER_AGENT = settings.DEFAULT_USER_AGENT
 
 

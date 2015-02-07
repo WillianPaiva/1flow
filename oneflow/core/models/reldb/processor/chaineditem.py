@@ -109,9 +109,6 @@ class ChainedItem(models.Model):
 
     is_active = models.BooleanField(default=True)
 
-    # NOT READY. SHould probably be implemented by a real workflow engine.
-    # condition =
-
     # This should probably be a JSON field…
     parameters = models.TextField(
         null=True, blank=True,
