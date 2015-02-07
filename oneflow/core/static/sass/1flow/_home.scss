@@ -517,6 +517,15 @@ thead.status-title {
         }
     }
 
+    td.inactive {
+        div {
+            margin: 0 40px;
+            background-color: $dark-green;
+            @include border-radius(7px);
+            padding: 3px 0 7px;
+        }
+    }
+
     .form-group {
         label {
             margin-top: 9px;
