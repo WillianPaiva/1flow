@@ -49,9 +49,10 @@ from django.utils.text import slugify
 # from oneflow.base.utils import register_task_method
 from oneflow.base.utils.http import clean_url
 # from oneflow.base.utils.dateutils import now
-from oneflow.base.utils import (detect_encoding_from_requests_response,
-                                RedisExpiringLock,
-                                StopProcessingException)
+from oneflow.base.utils import (
+    detect_encoding_from_requests_response,
+    RedisExpiringLock,
+)
 
 from ...common import (
     NotTextHtmlException,
@@ -276,101 +277,6 @@ class ContentItem(models.Model):
                 return True
 
         return False
-
-    def fetch_content_must_abort(self, force=False, commit=True):
-        """ Abort in case we must. This is the pre-processing-era method.
-
-        .. todo:: this method should vanish when the processing
-            infrastructure is considered finished.
-        """
-
-        if config.ARTICLE_FETCHING_DISABLED:
-            LOGGER.info(u'Article fetching disabled in configuration.')
-            return True
-
-        if self.content_type in CONTENT_TYPES_FINAL and not force:
-            LOGGER.info(u'%s #%s has already been fetched.',
-                        self._meta.verbose_name, self.id)
-            return True
-
-        if self.content_error:
-            if force:
-                self.content_error = None
-
-                if commit:
-                    self.save()
-
-            else:
-                LOGGER.warning(u'%s #%s has a fetching error, aborting '
-                               u'(%s).', self._meta.verbose_name,
-                               self.id, self.content_error)
-                return True
-
-        if self.url_error:
-            LOGGER.warning(u'%s #%s has an url error. Absolutize it to '
-                           u'clear: %s.', self._meta.verbose_name,
-                           self.id, self.url_error)
-            return True
-
-        if self.is_orphaned and not force:
-            LOGGER.warning(u'%s #%s is orphaned, cannot fetch.',
-                           self._meta.verbose_name, self.id)
-            return True
-
-        if self.duplicate_of and not force:
-            LOGGER.warning(u'Not fetching content for duplicate %s #%s.',
-                           self._meta.verbose_name, self.id)
-            return True
-
-        return False
-
-    def fetch_content(self, verbose=True, force=False, commit=True):
-        """ TODO: remove this method (obsoleted 20150205). """
-
-        if self.fetch_content_must_abort(force=force, commit=commit):
-            return
-
-        #
-        # TODO: implement switch based on content type.
-        #
-
-        try:
-            self.run_processing_chain(verbose=verbose,
-                                      force=force,
-                                      commit=commit)
-
-        except NotTextHtmlException as e:
-            statsd.gauge('articles.counts.content_errors', 1, delta=True)
-            self.content_error = str(e)
-            self.save()
-
-            LOGGER.error(u'No text/html to extract in article %s.', self)
-            return
-
-        except requests.ConnectionError as e:
-            statsd.gauge('articles.counts.content_errors', 1, delta=True)
-            self.content_error = str(e)
-            self.save()
-
-            LOGGER.error(u'Connection failed while fetching %s #%s.',
-                         self._meta.verbose_name, self.id)
-            return
-
-        except Exception as e:
-            # TODO: except urllib2.error: retry with longer delay.
-            statsd.gauge('articles.counts.content_errors', 1, delta=True)
-            self.content_error = str(e)
-            self.save()
-
-            LOGGER.exception(u'Extraction failed for %s #%s.',
-                             self._meta.verbose_name, self.id)
-            return
-
-        self.activate_reads(verbose=verbose)
-
-        # No more needed now that Markdown
-        # contents are generated asynchronously.
-        # self.prefill_cache()
 
     def make_excerpt(self, commit=False):
         """ This method assumes a markdown content. Test it before calling.
@@ -867,93 +773,6 @@ class ContentItem(models.Model):
 
         LOGGER.info(u'Done parsing content for %s #%s.',
                     self._meta.verbose_name, self.id)
-
-    def fetch_content_bookmark(self, force=False, commit=True):
-
-        if config.ARTICLE_FETCHING_DISABLED:
-            LOGGER.info(u'Bookmarks fetching disabled in configuration.')
-            return
-
-        if self.content_type in (None, CONTENT_TYPES.NONE):
-
-            slashes_parts = [p for p in self.url.split(u'/') if p != u'']
-
-            parts_nr = len(slashes_parts)
-
-            if parts_nr > 5:
-                # For sure, this is not a bookmark.
-                return
-
-            if parts_nr == 2:
-                # This is a simple website link. For sure, a bookmark.
-                # eg. we got ['http', 'www.mysite.com']
-
-                self.content_type = CONTENT_TYPES.BOOKMARK
-
-            # elif parts_nr < 5:
-                # TODO: find a way to ask the user to choose if he wanted
-                # to bookmark the website or just fetch the content.
-
-                domain_dotted = slashes_parts[1]
-                domain_dashed = domain_dotted.replace(u'.', u'-')
-
-                self.image_url = (u'http://images.screenshots.com/'
-                                  u'{0}/{1}-small.jpg').format(
-                    domain_dotted, domain_dashed)
-
-                self.content = (u'http://images.screenshots.com/'
-                                u'{0}/{1}-large.jpg').format(
-                    domain_dotted, domain_dashed)
-
-                content = self.extract_and_set_title(commit=False)
-
-                #
-                # Use the fetched content to get
-                # the description of the page, if any.
-                #
-                if content is not None:
-                    try:
-                        soup = BeautifulSoup(content)
-                        for meta in soup.find_all('meta'):
-                            if meta.attrs.get('name', 'none').lower() \
-                                    == 'description':
-                                self.excerpt = meta.attrs['content']
-
-                    except:
-                        LOGGER.exception(u'Could not extract description '
-                                         u'of imported bookmark %s #%s',
-                                         self._meta.verbose_name, self.id)
-
-                    else:
-                        LOGGER.info(u'Successfully set description to “%s”',
-                                    self.excerpt)
-
-                if commit:
-                    self.save()
-
-            # TODO: fetch something like
-            # http://www.siteencyclopedia.com/{parts[1]}/
-            # and put it in the excerpt.
-
-            # TODO: generate a snapshot of the website and store the image.
-
-                raise StopProcessingException(
-                    u'Done setting up bookmark content for {0} #{1}.'.format(
-                        self._meta.verbose_name, self.id))
-
-    # ———————————————————————————————————————————————————————— NOT SURE TO KEEP
-
-    def fetch_content_image(self, force=False, commit=True):
-
-        if config.ARTICLE_FETCHING_IMAGE_DISABLED:
-            LOGGER.info(u'Article video fetching disabled in configuration.')
-            return
-
-    def fetch_content_video(self, force=False, commit=True):
-
-        if config.ARTICLE_FETCHING_VIDEO_DISABLED:
-            LOGGER.info(u'Article video fetching disabled in configuration.')
-            return
 
     # —————————————————————————————————————————————————————————————— Conversion
 

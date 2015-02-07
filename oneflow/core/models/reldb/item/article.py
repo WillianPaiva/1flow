@@ -63,10 +63,7 @@ from abstract import (
     UrlItem,
     ContentItem,
     baseitem_absolutize_url_task,
-    # baseitem_fetch_content_task,
 )
-
-# from original_data import baseitem_postprocess_original_data_task
 
 LOGGER = logging.getLogger(__name__)
 
@@ -420,7 +417,6 @@ class Article(BaseItem, UrlItem, ContentItem):
 
                 if result is not False:
                     baseitem_create_reads_task.apply((self.id, ))
-                    # baseitem_fetch_content_task.apply((self.id, ))
                     baseitem_process_task.apply((self.id, ))
                     baseitem_postprocess_original_data_task.apply((self.id, ))
 
