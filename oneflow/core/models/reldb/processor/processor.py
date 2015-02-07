@@ -278,7 +278,7 @@ class Processor(six.with_metaclass(ProcessorMeta, MPTTModel,
             'commit': kwargs.get('commit', True),
         })
 
-        function_string = """
+        function_string = u"""
 def processor_function({0}):
     {1}
 
