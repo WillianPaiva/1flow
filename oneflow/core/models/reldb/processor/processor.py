@@ -222,6 +222,11 @@ class Processor(six.with_metaclass(ProcessorMeta, MPTTModel,
 
             old_code = getattr(self, attr_name)
 
+            if old_code is None:
+                # Happens when a processor is beiing created
+                # inactive and author didn't write any code yet.
+                continue
+
             # pattern, repl, string
             new_code = re.sub(ur'''['"]{0}['"]'''.format(old_slug),
                               u"'{0}'".format(new_slug),
