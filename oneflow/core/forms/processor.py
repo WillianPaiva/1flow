@@ -47,6 +47,9 @@ class ProcessorEditRequirementsForm(forms.ModelForm):
 
     """ Edit a processor model requirements. """
 
+    # Catched in the edit_field modal, avoid ESC/click-outside.
+    prevent_accidental_close = True
+
     class Meta:
         model = Processor
         fields = ('requirements', )
@@ -64,6 +67,9 @@ class ProcessorEditAcceptCodeForm(forms.ModelForm):
 
     """ Edit a processor model accept code. """
 
+    # Catched in the edit_field modal, avoid ESC/click-outside.
+    prevent_accidental_close = True
+
     class Meta:
         model = Processor
         fields = ('accept_code', )
@@ -80,6 +86,9 @@ class ProcessorEditAcceptCodeForm(forms.ModelForm):
 class ProcessorEditProcessCodeForm(forms.ModelForm):
 
     """ Edit a processor model process code. """
+
+    # Catched in the edit_field modal, avoid ESC/click-outside.
+    prevent_accidental_close = True
 
     class Meta:
         model = Processor
