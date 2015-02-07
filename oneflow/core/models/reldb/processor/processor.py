@@ -152,7 +152,13 @@ class Processor(six.with_metaclass(ProcessorMeta, MPTTModel,
                     u'language or if not relevant.'),
     )
 
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(
+        # False upon creation of an empty processor seemsa sane default.
+        default=False,
+        help_text=_(u'Indicates whether this processor is globally active '
+                    u'or not, despite its active status in processor chains '
+                    u'(this field takes precedence).'),
+    )
 
     source_address = models.CharField(
         null=True, blank=True,
