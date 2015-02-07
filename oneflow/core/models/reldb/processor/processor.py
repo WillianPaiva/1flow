@@ -280,7 +280,7 @@ class Processor(six.with_metaclass(ProcessorMeta, MPTTModel,
 
         function_string = """
 def processor_function({0}):
-{1}
+    {1}
 
 data.result = processor_function({2})
 """.format(
