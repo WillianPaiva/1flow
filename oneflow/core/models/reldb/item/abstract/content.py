@@ -46,7 +46,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
 
-from oneflow.base.utils import register_task_method
+# from oneflow.base.utils import register_task_method
 from oneflow.base.utils.http import clean_url
 # from oneflow.base.utils.dateutils import now
 from oneflow.base.utils import (detect_encoding_from_requests_response,
@@ -64,7 +64,7 @@ from ...common import (
     REQUEST_BASE_HEADERS,
 )
 from ...website import WebSite
-from ..base import BaseItem, BaseItemQuerySet
+from ..base import BaseItemQuerySet  # BaseItem,
 
 
 LOGGER = logging.getLogger(__name__)
@@ -220,7 +220,69 @@ class ContentItem(models.Model):
         if commit:
             self.save()
 
+    @property
+    def is_processed(self):
+        """ Return True if our content type is final. """
+
+        return self.content_type in CONTENT_TYPES_FINAL
+
+    def processing_must_abort(self, force=False, commit=True):
+        """ Return True if processing of current instance must be aborted.
+
+        This can be for various reasons.
+
+        .. versionadded:: 0.90.x. This is the new method, used by the 2015
+            processing infrastructure.
+        """
+
+        if ContentItem.is_processed.fget(self) and not force:
+            LOGGER.info(u'%s %s has already been processed.',
+                        self._meta.verbose_name, self.id)
+            return True
+
+        # Slug “content” is related to the current “ContentItem” model.
+        content_processing_errors = self.processing_errors.filter(
+            processor__categories__slug=u'content')
+
+        if content_processing_errors.exists():
+            count = content_processing_errors.count()
+
+            if force:
+                content_processing_errors.delete()
+
+                LOGGER.info(u'%s %s: cleared %s content errors and restarting '
+                            u'processing.', self._meta.verbose_name, self.id,
+                            count)
+
+            else:
+                LOGGER.warning(u'%s %s has %s content error(s), processing '
+                               u'aborted (latest: %s).',
+                               self._meta.verbose_name, self.id,
+                               content_processing_errors.latest().exception)
+                return True
+
+        # OLD content_error, should vanish when converted to processing_error.
+        if self.content_error:
+            if force:
+                self.content_error = None
+
+                if commit:
+                    self.save()
+
+            else:
+                LOGGER.warning(u'%s %s has a fetching error, aborting '
+                               u' processing (%s).', self._meta.verbose_name,
+                               self.id, self.content_error)
+                return True
+
+        return False
+
     def fetch_content_must_abort(self, force=False, commit=True):
+        """ Abort in case we must. This is the pre-processing-era method.
+
+        .. todo:: this method should vanish when the processing
+            infrastructure is considered finished.
+        """
 
         if config.ARTICLE_FETCHING_DISABLED:
             LOGGER.info(u'Article fetching disabled in configuration.')
@@ -1045,8 +1107,3 @@ class ContentItem(models.Model):
                 self.save()
 
 # ———————————————————————————————————————————————————————————————— Celery Tasks
-
-# HEADS UP: we need to register against BaseItem, because ContentItem is
-#           abstract and cannot run .objects.get() in register_task_method().
-register_task_method(BaseItem, ContentItem.fetch_content,
-                     globals(), queue=u'fetch', default_retry_delay=3600)
