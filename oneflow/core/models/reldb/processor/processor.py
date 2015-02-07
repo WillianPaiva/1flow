@@ -339,8 +339,12 @@ data.result = processor_function({2})
             LOGGER.debug(u'%s: testing acceptance of %s %s…', self,
                          instance._meta.verbose_name, instance.id)
 
-        result = self._internal_exec(self.accept_code,
-                                     instance, **kwargs)
+        try:
+            result = self._internal_exec(self.accept_code,
+                                         instance, **kwargs)
+        except:
+            LOGGER.error(u'%s: exception while running accepts() code.', self)
+            raise
 
         if verbose:
             if result:
@@ -375,8 +379,13 @@ data.result = processor_function({2})
                 LOGGER.debug(u'%s: processing accepted %s %s…',
                              self, instance._meta.verbose_name, instance.id)
 
-            result = self._internal_exec(self.process_code,
-                                         instance, **kwargs)
+            try:
+                result = self._internal_exec(self.process_code,
+                                             instance, **kwargs)
+            except:
+                LOGGER.error(u'%s: exception while running process() code.',
+                             self)
+                raise
 
             if verbose:
                 LOGGER.info(u'%s: processed %s %s.', self,
