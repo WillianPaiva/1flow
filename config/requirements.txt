@@ -5,7 +5,7 @@
 -e git+https://github.com/Karmak23/django-shell-ipynb.git@master#egg=django-shell-ipynb
 -e git+https://github.com/Karmak23/django-sorting-bootstrap.git@master#egg=django_sorting_bootstrap-master
 -e git+https://github.com/Karmak23/humanize.git@master#egg=humanize
--e git+https://github.com:Karmak23/opengraph.git@master#egg=opengraph
+-e git+https://github.com/Karmak23/opengraph.git@master#egg=opengraph
 -e git+https://github.com/Karmak23/libgreader.git@master#egg=libgreader
 -e git+https://github.com/Karmak23/soup-strainer.git@master#egg=strainer
 -e git+https://github.com/gregmuellegger/django-reset.git@master#egg=django_reset
