@@ -38,7 +38,7 @@ stop, start, status = sdf.stop_services, sdf.start_services, sdf.status_services
 remove, pick, role = sdf.remove_services, sdf.pick, sdf.role
 push_environment, git_pull = sdf.push_environment, sdf.git_pull
 migrate, git_update = sdf.migrate, sdf.git_update
-mail_test = sdf.mail_test
+# mail_test = sdf.mail_test
 
 USE_JENKINS  = pwd.getpwuid(os.getuid()).pw_name == 'jenkins'
 JENKINS_JOB  = os.environ.get('JOB_NAME', '1flow')
@@ -253,7 +253,7 @@ def production():
             ),
             'worker_sync': (
                 'Inter-node synchronization worker',
-                'sync'
+                'sync,background'
             ),
             'worker_permanent': (
                 'Inter-node synchronization worker',
@@ -269,7 +269,7 @@ def production():
             ),
             'worker_articles': (
                 'Articles parsing worker',
-                'fetch,background'
+                'fetch'
             ),
             'worker_longtasks': (
                 'Long tasks worker',
@@ -298,22 +298,22 @@ def production():
             'shell': '-c 2 -n 1',
         },
 
-        'worker_pool': {
-            'worker_permanent': 'prefork',
-            '__all__': 'gevent',
-        },
+        # 'worker_pool': {
+        #     'worker_permanent': 'prefork',
+        #     '__all__': 'gevent',
+        # },
 
         # 'repository': {
         #     '__all__': 'git@10.0.3.110:1flow.git',
         # },
 
-        'autoscale': {
-            'worker_mongo':     '136,34',  # 'high,medium,low',
-            'worker_sync':      '32,8',    # 'sync',
-            'worker_net':       '96,24',  # 'swarm,refresh',
-            'worker_default':   '32,8',    # 'default,create',
-            'worker_articles':  '24,6',   # 'fetch,background',
-            'worker_longtasks': '2,1',   # 'check,clean',
+        'autoscale': {                      # queues:
+            'worker_mongo':     '144,2',     # 'high,medium,low',
+            'worker_sync':      '16,2',    # 'sync',
+            'worker_net':       '32,8',     # 'swarm,refresh',
+            'worker_default':   '16,4',     # 'default,create',
+            'worker_articles':  '64,16',     # 'fetch,background',
+            'worker_longtasks': '2,1',      # 'check,clean',
 
             '__all__': '8,2',
         },
@@ -322,6 +322,8 @@ def production():
             # Cleaning tasks are long; worker
             # consumes ~500Mb after first run.
             'worker_longtasks': '1',
+
+            'worker_articles': '16',
 
             '__all__': '128',
         },
