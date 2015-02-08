@@ -350,10 +350,7 @@ class BaseItem(PolymorphicModel,
         the :class:`BaseItem` property value in case it changes over time.
         """
 
-        if self.duplicate_of:
-            return False
-
-        return True
+        return self.duplicate_of_id is not None
 
     @property
     def is_processed(self):
