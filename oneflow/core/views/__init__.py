@@ -541,10 +541,15 @@ def edit_field(request, klass, oid, form_class):
 
     obj = get_object_or_404(obj_class, id=oid)
 
-    if obj.user != request.user \
-            and not request.user.is_staff_or_superuser_and_enabled:
-        return HttpResponseForbidden(u'Not owner nor superuser/staff')
+    try:
+        if obj.user != request.user \
+                and not request.user.is_staff_or_superuser_and_enabled:
+            return HttpResponseForbidden(u'Not owner nor superuser/staff')
 
+    except AttributeError:
+        if not request.user.is_staff_or_superuser_and_enabled:
+            return HttpResponseForbidden(
+                u'Not superuser/staff and no owner/creator field on instance')
     try:
         instance_name = obj.name
 
