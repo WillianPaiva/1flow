@@ -67,6 +67,7 @@ django-tastypie-mongoengine==0.4.5
 djangotoolbox==1.6.2
 django-transmeta==0.7.3
 django-widget-tweaks==1.3
+django-yamlfield==1.0.0
 Django>=1.6,<1.7
 dj-database-url==0.3.0
 dnspython==1.12.0
