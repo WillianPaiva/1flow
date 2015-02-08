@@ -82,12 +82,14 @@
       {% if article.date_published %}
         <a href="#" class="popover-tooltip popover-top"
             title="{{ article.date_published }}">{{ article.date_published_delta }}</a>
+
       {% else %}
         <span class="no-date">{% trans "no date" %}</span>
+
       {% endif %}
     </h4>
 
-    {% if article.authors %}
+    {% if article.authors.exists %}
       <h5 class="author">
           <span class="muted">{% trans "by" %}</span>
           {% for author in article.authors.all %}
@@ -96,14 +98,14 @@
       </h5>
     {% endif %}
 
-    {% if read.tags %}
+    {% if read.tags.exists %}
 
       <span class="in-tags muted">{% trans "in" %}</span>
       <ul class="tags">
         {% for tag in read.tags.all %}<li class="tag"><a href="#">{{ tag.name }}</a></li>{% endfor %}
       </ul>
 
-    {% elif article.tags %}
+    {% elif article.tags.exists %}
 
       <span class="in-tags muted">{% trans "in" %}</span>
       <ul class="tags">
