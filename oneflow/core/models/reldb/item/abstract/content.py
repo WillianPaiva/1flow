@@ -145,6 +145,7 @@ class ContentItem(models.Model):
         verbose_name_plural = _(u'Content items')
 
     image_url = models.URLField(verbose_name=_(u'image URL'),
+                                max_length=384,
                                 null=True, blank=True)
 
     excerpt = models.TextField(
