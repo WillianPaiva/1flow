@@ -197,10 +197,7 @@ class UrlItem(models.Model):
         # if self.is_orphaned:
         #    return False
 
-        if not self.url_absolute:
-            return False
-
-        return True
+        return self.url_absolute
 
     @property
     def is_processed(self):
