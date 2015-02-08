@@ -59,6 +59,7 @@ from twitterfeedrule import (  # NOQA
 from processor import (  # NOQA
     ProcessorForm,
     ProcessorEditRequirementsForm,
+    ProcessorEditParametersForm,
     ProcessorEditAcceptCodeForm,
     ProcessorEditProcessCodeForm,
 )
@@ -66,6 +67,12 @@ from processor import (  # NOQA
 from processingchain import (  # NOQA
     ProcessingChainForm,
     # ProcessingChainEditRequirementsForm,
+)
+
+from chaineditem import (  # NOQA
+    ChainedItemForm,
+    ChainedItemPositionForm,
+    ChainedItemEditParametersForm,
 )
 
 

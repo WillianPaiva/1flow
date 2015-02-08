@@ -305,14 +305,14 @@ CONSTANCE_CONFIG.update({
 
 CONSTANCE_CONFIG.update({
 
+    # TODO: mark obsolete / disable with processors architecture ?
+    # Every processing category can be individually disabled, and with
+    # cacheops its equivalent to a constance config.
+
     'ARTICLE_REPROCESSING_DISABLED': (False, ugettext(u'Disable or not '
                                   u'the reprocessing operations that could '
                                   u'repair failed articles. Default: '
                                   u'enabled in normal conditions.')),
-
-    'ARTICLE_FETCHING_DEBUG': (False, ugettext(u'Enable this to log '
-                               u'intermediate article versions. Default: '
-                                  u'not enabled in normal conditions.')),
 
     'ARTICLE_ABSOLUTIZING_DISABLED': (False, ugettext(u'Disable or not the '
                                       u'article URL absolutization. Default: '
@@ -321,10 +321,16 @@ CONSTANCE_CONFIG.update({
                                       u'duplicate content that will need '
                                       u'post-processing).')),
 
+    'ARTICLE_FETCHING_DEBUG': (False, ugettext(u'Enable this to log '
+                               u'intermediate article versions. Default: '
+                                  u'not enabled in normal conditions. Kept '
+                                  u'for mongodb code.')),
+
     'ARTICLE_FETCHING_DISABLED': (False, ugettext(u'Disable or not '
                                   u'global fetching operations for all '
                                   u'content types. Default: '
-                                  u'enabled in normal conditions.')),
+                                  u'enabled in normal conditions. Kept '
+                                  u'for mongodb code.')),
 
     'ARTICLE_FETCHING_TEXT_DISABLED': (False, ugettext(u'Disable or not '
                                        u'text fetching operations. Default: '
@@ -341,6 +347,8 @@ CONSTANCE_CONFIG.update({
     'ARTICLE_MARKDOWN_DISABLED': (False, ugettext(u'Disable or not the HTML '
                                   u'to Markdown internal conversion. '
                                   u'Default: enabled in normal conditions.')),
+
+
 
     'ARTICLE_ARCHIVE_BATCH_SIZE': (100 if DEBUG else 50000,
                                    ugettext(u'how much articles will be '

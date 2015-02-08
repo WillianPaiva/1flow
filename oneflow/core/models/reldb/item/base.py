@@ -51,7 +51,12 @@ from ..language import AbstractLanguageAwareModel
 from ..duplicate import AbstractDuplicateAwareModel
 from ..tag import AbstractTaggedModel
 from ..author import Author
-from ..processor import ProcessingError, run_processing_chains
+from ..processor import (
+    ProcessingError,
+    NeverProcessException,
+    run_processing_chains,
+)
+
 # from ..source import Source
 
 
@@ -164,7 +169,7 @@ class BaseItemQuerySet(PolymorphicQuerySet):
         return self.filter(date_created__lte=one_month_before)
 
     def older_than_delta(self, custom_timedelta):
-        """ Return items created more than :param:`delta` ago. 
+        """ Return items created more than :param:`delta` ago.
 
         :param delta: a python :class:`~datetime.timedelta` object.
         """
@@ -336,28 +341,102 @@ class BaseItem(PolymorphicModel,
 
     @property
     def is_good(self):
-        """ Return ``True`` if the current article
-            is ready to be seen by final users. """
+        """ Return ``True`` if the current item
+            is ready to be seen by final users.
 
-        if self.duplicate_of:
-            return False
+        For :class:`BaseItem`, it only means it's not a duplicate.
+
+        Subclasses should tweak this to their needs, and always check
+        the :class:`BaseItem` property value in case it changes over time.
+        """
+
+        return self.duplicate_of_id is None
+
+    @property
+    def is_processed(self):
+        """ For :class:`BaseItem`, always return True.
+
+        As there is currently no processors for `base`, it is considered
+        already processed. This could change when we add a ``base`` processor
+        category.
+
+        It's up to inheriting classes and abstract classes to override
+        this property. In fact they MUST override it for the processing
+        thing to work as expected.
+        """
 
         return True
 
     # ————————————————————————————————————————————————————————————————— Methods
 
     def get_processing_chain(self):
-        """ Return no processor chain.
+        """ For :class:`BaseItem`, return no processor chain.
 
-        BaseItem is too generic and too empty to have a processor chain ?
+        BaseItem is too generic and too empty to have a processor chain.
 
-        This method should be overriden by inheriting classes.
+        This method must be overriden by inheriting classes.
+
+        .. todo:: :meth:`get_processing_chain`() could
+            become :meth:`get_processing_chains`() in the near future.
+            There is no valid reason to have only one processing chain
+            for a given model. In fact, there are many good reasons to
+            have more than one.
         """
 
         return None
 
-    def run_processing_chain(self, verbose=True, force=False, commit=True):
-        """ Run processors for the content item. """
+    def processing_must_abort(self, verbose=True, force=False, commit=True):
+        """ On a base item, processing will never abort, except if duplicate.
+
+        This method always returns ``False``. It's up to inheriting classes
+        to test conditions in which they must abort or not.
+
+        If the current item is a duplicate (for whatever reason),
+        a `NeverProcessException` will be raised.
+        """
+
+        # force=True will not help. We NEVER process duplicates,
+        # this is just a waste of time and machine resources.
+        if self.duplicate_of_id:
+            LOGGER.warning(u'Not processing duplicate %s %s.',
+                           self._meta.verbose_name, self.id)
+
+            raise NeverProcessException('duplicate')
+
+        return False
+
+    def process(self, verbose=True, force=False, commit=True):
+        """ Run processors on the current item.
+
+        This method is generic and will be the same for
+        any :class:`BaseItem` derived item. Subclasses have
+        only to override :meth:`get_processing_chain`().
+
+        If :meth:`get_processing_chain`() returns ``None``,
+        the even-more-generic function :func:`run_processing_chains`()
+        will be called, and it will be up to it to find one or more
+        chain that can be run on the current item / model.
+
+        """
+
+        # HEADS UP: this test is already run by the processing
+        #           chain run() method. No need to do it twice.
+        #
+        #           Doing it here would seem logical and would
+        #           mimic the processor.process() method.
+        #
+        #           But doing it in the chain is much more
+        #           legitimate as the chain is in charge of error
+        #           handling, and notably the translation of
+        #           NeverProcessException into a definitive
+        #           ProcessingError.
+        #
+        # if self.processing_must_abort(verbose=verbose,
+        #                               force=force,
+        #                               commit=commit):
+        #     return
+
+        # try:
 
         processing_chain = self.get_processing_chain()
 
@@ -368,6 +447,36 @@ class BaseItem(PolymorphicModel,
         else:
             processing_chain.run(self, verbose=verbose,
                                  force=force, commit=commit)
+
+        # TODO: forward any exception to subclasses, for them to handle
+        #       them individually, depending on the exception type, if
+        #       needed.
+
+        # except NotTextHtmlException as e:
+        #     statsd.gauge('articles.counts.content_errors', 1, delta=True)
+        #     self.content_error = str(e)
+        #     self.save()
+        #     LOGGER.error(u'No text/html to extract in article %s.', self)
+        #     return
+
+        # except requests.ConnectionError as e:
+        #     statsd.gauge('articles.counts.content_errors', 1, delta=True)
+        #     self.content_error = str(e)
+        #     self.save()
+        #     LOGGER.error(u'Connection failed while fetching %s #%s.',
+        #                  self._meta.verbose_name, self.id)
+        #     return
+
+        # except Exception as e:
+        #     # TODO: except urllib2.error: retry with longer delay.
+        #     statsd.gauge('articles.counts.content_errors', 1, delta=True)
+        #     self.content_error = str(e)
+        #     self.save()
+        #     LOGGER.exception(u'Extraction failed for %s #%s.',
+        #                      self._meta.verbose_name, self.id)
+        #     return
+
+        self.activate_reads(verbose=verbose)
 
     def reset(self, force=False, commit=True):
         """ See :meth:`Article.reset`() for explanations. """
@@ -509,6 +618,9 @@ class BaseItem(PolymorphicModel,
 
 
 # ——————————————————————————————————————————————————————————————————————— Tasks
+
+register_task_method(BaseItem, BaseItem.process,
+                     globals(), queue=u'fetch', default_retry_delay=3600)
 
 
 register_task_method(BaseItem, BaseItem.create_reads,

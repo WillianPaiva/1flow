@@ -429,6 +429,21 @@ urlpatterns = patterns(
             views.ProcessingChainDeleteView.as_view())),
         name='processingchain_delete'),
 
+    url(_(ur'^processingchain/(?P<chain_id>\d+)/items/?$'),
+        login_required(never_cache(
+            views.ChainedItemListCreateView.as_view())),
+        name='chaineditem_list_create'),
+
+    url(_(ur'^processingchain/(?P<chain_id>\d+)/item/(?P<pk>\d+)/position/?$'),
+        login_required(never_cache(
+            views.ChainedItemPositionUpdateView.as_view())),
+        name='chaineditem_position'),
+
+    url(_(ur'^processingchain/(?P<chain_id>\d+)/item/(?P<pk>\d+)/delete/?$'),
+        login_required(never_cache(
+            views.ChainedItemDeleteView.as_view())),
+        name='chaineditem_delete'),
+
     # ————————————————————————————————————————————————————— Staff sources admin
 
     url(_(ur'^staff/feed/?$'),

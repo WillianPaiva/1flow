@@ -46,12 +46,13 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
 
-from oneflow.base.utils import register_task_method
+# from oneflow.base.utils import register_task_method
 from oneflow.base.utils.http import clean_url
 # from oneflow.base.utils.dateutils import now
-from oneflow.base.utils import (detect_encoding_from_requests_response,
-                                RedisExpiringLock,
-                                StopProcessingException)
+from oneflow.base.utils import (
+    detect_encoding_from_requests_response,
+    RedisExpiringLock,
+)
 
 from ...common import (
     NotTextHtmlException,
@@ -64,7 +65,7 @@ from ...common import (
     REQUEST_BASE_HEADERS,
 )
 from ...website import WebSite
-from ..base import BaseItem, BaseItemQuerySet
+from ..base import BaseItemQuerySet  # BaseItem,
 
 
 LOGGER = logging.getLogger(__name__)
@@ -112,7 +113,7 @@ def BaseItemQuerySet_parsed_method(self):
 
 
 def BaseItemQuerySet_content_error_method(self):
-    """ Return items that have a content errors. 
+    """ Return items that have a content errors.
 
     This means items that have either:
 
@@ -122,7 +123,7 @@ def BaseItemQuerySet_content_error_method(self):
 
     return self.filter(
         ~models.Q(content_error=None)
-        |models.Q(processing_errors__item__categories__slug=u'content')
+        | models.Q(processing_errors__item__categories__slug=u'content')
     )
 
 BaseItemQuerySet.empty = BaseItemQuerySet_empty_method
@@ -220,17 +221,48 @@ class ContentItem(models.Model):
         if commit:
             self.save()
 
-    def fetch_content_must_abort(self, force=False, commit=True):
+    @property
+    def is_processed(self):
+        """ Return True if our content type is final. """
 
-        if config.ARTICLE_FETCHING_DISABLED:
-            LOGGER.info(u'Article fetching disabled in configuration.')
+        return self.content_type in CONTENT_TYPES_FINAL
+
+    def processing_must_abort(self, force=False, commit=True):
+        """ Return True if processing of current instance must be aborted.
+
+        This can be for various reasons.
+
+        .. versionadded:: 0.90.x. This is the new method, used by the 2015
+            processing infrastructure.
+        """
+
+        if ContentItem.is_processed.fget(self) and not force:
+            LOGGER.info(u'%s %s has already been processed.',
+                        self._meta.verbose_name, self.id)
             return True
 
-        if self.content_type in CONTENT_TYPES_FINAL and not force:
-            LOGGER.info(u'%s #%s has already been fetched.',
-                        self._meta.model.__name__, self.id)
-            return True
+        # Slug “content” is related to the current “ContentItem” model.
+        content_processing_errors = self.processing_errors.filter(
+            processor__categories__slug=u'content')
 
+        if content_processing_errors.exists():
+            count = content_processing_errors.count()
+
+            if force:
+                content_processing_errors.delete()
+
+                LOGGER.info(u'%s %s: cleared %s content errors and restarting '
+                            u'processing.', self._meta.verbose_name, self.id,
+                            count)
+
+            else:
+                LOGGER.warning(u'%s %s has %s content error(s), processing '
+                               u'aborted (latest: %s).',
+                               self._meta.verbose_name, self.id,
+                               content_processing_errors.latest().exception)
+                return True
+
+        # OLD content_error, should vanish when converted to processing_error.
         if self.content_error:
             if force:
                 self.content_error = None
@@ -239,75 +271,12 @@ class ContentItem(models.Model):
                     self.save()
 
             else:
-                LOGGER.warning(u'%s #%s has a fetching error, aborting '
-                               u'(%s).', self._meta.model.__name__,
+                LOGGER.warning(u'%s %s has a fetching error, aborting '
+                               u' processing (%s).', self._meta.verbose_name,
                                self.id, self.content_error)
                 return True
 
-        if self.url_error:
-            LOGGER.warning(u'%s #%s has an url error. Absolutize it to '
-                           u'clear: %s.', self._meta.model.__name__,
-                           self.id, self.url_error)
-            return True
-
-        if self.is_orphaned and not force:
-            LOGGER.warning(u'%s #%s is orphaned, cannot fetch.',
-                           self._meta.model.__name__, self.id)
-            return True
-
-        if self.duplicate_of and not force:
-            LOGGER.warning(u'Not fetching content for duplicate %s #%s.',
-                           self._meta.model.__name__, self.id)
-            return True
-
         return False
-
-    def fetch_content(self, verbose=True, force=False, commit=True):
-
-        if self.fetch_content_must_abort(force=force, commit=commit):
-            return
-
-        #
-        # TODO: implement switch based on content type.
-        #
-
-        try:
-            self.run_processing_chain(verbose=verbose,
-                                      force=force,
-                                      commit=commit)
-
-        except NotTextHtmlException as e:
-            statsd.gauge('articles.counts.content_errors', 1, delta=True)
-            self.content_error = str(e)
-            self.save()
-
-            LOGGER.error(u'No text/html to extract in article %s.', self)
-            return
-
-        except requests.ConnectionError as e:
-            statsd.gauge('articles.counts.content_errors', 1, delta=True)
-            self.content_error = str(e)
-            self.save()
-
-            LOGGER.error(u'Connection failed while fetching %s #%s.',
-                         self._meta.model.__name__, self.id)
-            return
-
-        except Exception as e:
-            # TODO: except urllib2.error: retry with longer delay.
-            statsd.gauge('articles.counts.content_errors', 1, delta=True)
-            self.content_error = str(e)
-            self.save()
-
-            LOGGER.exception(u'Extraction failed for %s #%s.',
-                             self._meta.model.__name__, self.id)
-            return
-
-        self.activate_reads(verbose=verbose)
-
-        # No more needed now that Markdown
-        # contents are generated asynchronously.
-        # self.prefill_cache()
 
     def make_excerpt(self, commit=False):
         """ This method assumes a markdown content. Test it before calling.
@@ -421,13 +390,13 @@ class ContentItem(models.Model):
 
         if self.image_url and not force:
             LOGGER.info(u'%s #%s image already found.',
-                        self._meta.model.__name__, self.id)
+                        self._meta.verbose_name, self.id)
             return True
 
         if self.content_type not in (CONTENT_TYPES.MARKDOWN, ):
             LOGGER.warning(u'%s #%s is not in Markdown format, '
                            u'aborting image lookup.',
-                           self._meta.model.__name__, self.id)
+                           self._meta.verbose_name, self.id)
             return True
 
     def find_image(self, force=False, commit=True):
@@ -470,7 +439,7 @@ class ContentItem(models.Model):
 
         except Exception:
             LOGGER.exception(u'Image extraction failed for %s #%s.',
-                             self._meta.model.__name__, self.id)
+                             self._meta.verbose_name, self.id)
 
         return None
 
@@ -551,7 +520,7 @@ class ContentItem(models.Model):
 
                 except:
                     LOGGER.exception(u'Could not extract title of %s #%s',
-                                     self._meta.model.__name__, self.id)
+                                     self._meta.verbose_name, self.id)
 
         old_title = self.name
 
@@ -561,11 +530,11 @@ class ContentItem(models.Model):
 
         except:
             LOGGER.exception(u'Could not extract title of %s #%s',
-                             self._meta.model.__name__, self.id)
+                             self._meta.verbose_name, self.id)
 
         else:
             LOGGER.info(u'Changed title of %s #%s from “%s” to “%s”.',
-                        self._meta.model.__name__, self.id,
+                        self._meta.verbose_name, self.id,
                         old_title, self.name)
 
             self.slug = slugify(self.name)
@@ -624,7 +593,7 @@ class ContentItem(models.Model):
         if not encoding:
             LOGGER.warning(u'Could not properly detect encoding for '
                            u'%s #%s, using utf-8 as fallback.',
-                           self._meta.model.__name__, self.id)
+                           self._meta.verbose_name, self.id)
             encoding = 'utf-8'
 
         if config.ARTICLE_FETCHING_DEBUG:
@@ -662,7 +631,7 @@ class ContentItem(models.Model):
                 logging.disable(logging.NOTSET)
                 LOGGER.exception(u'Strainer extraction [parser=%s] '
                                  u'failed for %s #%s', parser,
-                                 self._meta.model.__name__, self.id)
+                                 self._meta.verbose_name, self.id)
             else:
                 logging.disable(logging.NOTSET)
 
@@ -686,7 +655,7 @@ class ContentItem(models.Model):
             except:
                 logging.disable(logging.NOTSET)
                 LOGGER.exception(u'Breadability extraction failed for '
-                                 u'%s #%s', self._meta.model.__name__, self.id)
+                                 u'%s #%s', self._meta.verbose_name, self.id)
             else:
                 logging.disable(logging.NOTSET)
 
@@ -734,7 +703,7 @@ class ContentItem(models.Model):
         if self.content_type in (None, CONTENT_TYPES.NONE):
 
             LOGGER.info(u'Parsing text content for %s #%s…',
-                        self._meta.model.__name__, self.id)
+                        self._meta.verbose_name, self.id)
 
             if self.likely_multipage_content():
                 # If everything goes well, 'content' should be an utf-8
@@ -754,7 +723,7 @@ class ContentItem(models.Model):
                         self.pages_urls.append(next_link)
 
                 LOGGER.info(u'Fetched %s page(s) for %s #%s.', pages,
-                            self._meta.model.__name__, self.id)
+                            self._meta.verbose_name, self.id)
 
             else:
                 # first: http://www.crummy.com/software/BeautifulSoup/bs4/doc/#non-pretty-printing # NOQA
@@ -803,94 +772,7 @@ class ContentItem(models.Model):
         self.convert_to_markdown(force=force, commit=commit)
 
         LOGGER.info(u'Done parsing content for %s #%s.',
-                    self._meta.model.__name__, self.id)
-
-    def fetch_content_bookmark(self, force=False, commit=True):
-
-        if config.ARTICLE_FETCHING_DISABLED:
-            LOGGER.info(u'Bookmarks fetching disabled in configuration.')
-            return
-
-        if self.content_type in (None, CONTENT_TYPES.NONE):
-
-            slashes_parts = [p for p in self.url.split(u'/') if p != u'']
-
-            parts_nr = len(slashes_parts)
-
-            if parts_nr > 5:
-                # For sure, this is not a bookmark.
-                return
-
-            if parts_nr == 2:
-                # This is a simple website link. For sure, a bookmark.
-                # eg. we got ['http', 'www.mysite.com']
-
-                self.content_type = CONTENT_TYPES.BOOKMARK
-
-            # elif parts_nr < 5:
-                # TODO: find a way to ask the user to choose if he wanted
-                # to bookmark the website or just fetch the content.
-
-                domain_dotted = slashes_parts[1]
-                domain_dashed = domain_dotted.replace(u'.', u'-')
-
-                self.image_url = (u'http://images.screenshots.com/'
-                                  u'{0}/{1}-small.jpg').format(
-                    domain_dotted, domain_dashed)
-
-                self.content = (u'http://images.screenshots.com/'
-                                u'{0}/{1}-large.jpg').format(
-                    domain_dotted, domain_dashed)
-
-                content = self.extract_and_set_title(commit=False)
-
-                #
-                # Use the fetched content to get
-                # the description of the page, if any.
-                #
-                if content is not None:
-                    try:
-                        soup = BeautifulSoup(content)
-                        for meta in soup.find_all('meta'):
-                            if meta.attrs.get('name', 'none').lower() \
-                                    == 'description':
-                                self.excerpt = meta.attrs['content']
-
-                    except:
-                        LOGGER.exception(u'Could not extract description '
-                                         u'of imported bookmark %s #%s',
-                                         self._meta.model.__name__, self.id)
-
-                    else:
-                        LOGGER.info(u'Successfully set description to “%s”',
-                                    self.excerpt)
-
-                if commit:
-                    self.save()
-
-            # TODO: fetch something like
-            # http://www.siteencyclopedia.com/{parts[1]}/
-            # and put it in the excerpt.
-
-            # TODO: generate a snapshot of the website and store the image.
-
-                raise StopProcessingException(
-                    u'Done setting up bookmark content for {0} #{1}.'.format(
-                        self._meta.model.__name__, self.id))
-
-    # ———————————————————————————————————————————————————————— NOT SURE TO KEEP
-
-    def fetch_content_image(self, force=False, commit=True):
-
-        if config.ARTICLE_FETCHING_IMAGE_DISABLED:
-            LOGGER.info(u'Article video fetching disabled in configuration.')
-            return
-
-    def fetch_content_video(self, force=False, commit=True):
-
-        if config.ARTICLE_FETCHING_VIDEO_DISABLED:
-            LOGGER.info(u'Article video fetching disabled in configuration.')
-            return
+                    self._meta.verbose_name, self.id)
 
     # —————————————————————————————————————————————————————————————— Conversion
 
@@ -904,7 +786,7 @@ class ContentItem(models.Model):
         if self.content_type == CONTENT_TYPES.MARKDOWN:
             if not force:
                 LOGGER.info(u'%s #%s already converted to Markdown.',
-                            self._meta.model.__name__, self.id)
+                            self._meta.verbose_name, self.id)
                 return
 
             else:
@@ -913,11 +795,11 @@ class ContentItem(models.Model):
         elif self.content_type != CONTENT_TYPES.HTML:
             LOGGER.warning(u'%s #%s cannot be converted to Markdown, '
                            u'it is not currently HTML.',
-                           self._meta.model.__name__, self.id)
+                           self._meta.verbose_name, self.id)
             return
 
         LOGGER.info(u'Converting %s #%s to markdown…',
-                    self._meta.model.__name__, self.id)
+                    self._meta.verbose_name, self.id)
 
         md_converter = html2text.HTML2Text()
 
@@ -993,7 +875,7 @@ class ContentItem(models.Model):
 
         if website is None:
             LOGGER.warning(u'%s #%s has no website??? Post-processing '
-                           u'aborted.', self._meta.model.__name__, self.id)
+                           u'aborted.', self._meta.verbose_name, self.id)
             return
 
         website_url = website.url
@@ -1044,8 +926,3 @@ class ContentItem(models.Model):
                 self.save()
 
 # ———————————————————————————————————————————————————————————————— Celery Tasks
-
-# HEADS UP: we need to register against BaseItem, because ContentItem is
-#           abstract and cannot run .objects.get() in register_task_method().
-register_task_method(BaseItem, ContentItem.fetch_content,
-                     globals(), queue=u'fetch', default_retry_delay=3600)

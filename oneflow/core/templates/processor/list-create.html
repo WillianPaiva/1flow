@@ -50,7 +50,6 @@
 			{% sort_th _("Slug") 'slug' '' 'col-sm-3' %}
 			{% sort_th _("Categories") 'categories' '' 'col-sm-1' %}
 			{% sort_th _("Active?") 'is_active' '' 'col-sm-1 centered' %}
-			{% sort_th _("Parameters?") 'needs_parameters' '' 'col-sm-1 centered' %}
 			<th class="col-sm-1 centered">{% trans "Code" %}</th>
 			<th class="col-sm-1 right">{% trans "Actions" %}</th>
 		  </tr>
@@ -75,7 +74,6 @@
 				<td>{% inplace_edit 'processor.slug' %}</td>
 				<td>{% inplace_edit 'processor.categories' %}</td>
 				<td class="centered">{% inplace_edit 'processor.is_active' %}</td>
-				<td class="centered">{% inplace_edit 'processor.needs_parameters' %}</td>
 				<td class="centered">
 				<div class="btn-group">
 
@@ -85,7 +83,16 @@
         				data-tooltip="tooltip"
         				title="{% trans "Edit processor requirements" %}"
         				class="btn btn-xs btn-default centered popover-top">
-        			{% core_icon 'list' %}
+        			{% core_icon 'list' False %}
+        			</a>
+
+					<a id="edit-parameters-processor-{{ processor.id }}"
+        				href="{% url 'edit_field' klass='Processor' oid=processor.id form_class='ProcessorEditParametersForm' %}"
+        				data-toggle="modal" data-target="#"
+        				data-tooltip="tooltip"
+        				title="{% trans "Edit processor parameters" %}"
+        				class="btn btn-xs btn-info centered popover-top">
+        			{% core_icon 'cog' False %}
         			</a>
 
 					<a id="edit-accept-code-processor-{{ processor.id }}"
@@ -94,7 +101,7 @@
         				data-tooltip="tooltip"
         				title="{% trans "Edit processor accept code" %}"
         				class="btn btn-xs btn-success centered popover-top">
-        			{% core_icon 'filter' %}
+        			{% core_icon 'filter' False %}
         			</a>
 
 					<a id="edit-process-code-processor-{{ processor.id }}"
@@ -103,7 +110,7 @@
         				data-tooltip="tooltip"
         				title="{% trans "Edit processor process code" %}"
         				class="btn btn-xs btn-primary centered popover-top">
-        			{% core_icon 'wrench' %}
+        			{% core_icon 'wrench' False %}
         			</a>
 
     			</div>

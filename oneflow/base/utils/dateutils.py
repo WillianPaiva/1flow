@@ -50,7 +50,7 @@ __all__ = ('today', 'timedelta', 'naturaltime', 'naturaldelta',
            'until_tomorrow_delta', 'stats_datetime', 'benchmark',
            'pytime', 'pydatetime', 'email_date_to_datetime_tz',
            'twitter_datestring_to_datetime_utc',
-           'dateutilDateHandler', 'datetime_from_feedparser_entry', )
+           'datetime_extended_parser', 'datetime_from_feedparser_entry', )
 
 # ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••• Local aliases
 
@@ -180,7 +180,7 @@ def twitter_datestring_to_datetime_utc(twitter_datestring):
     return dt - timedelta(seconds=time_tuple[-1])
 
 
-def dateutilDateHandler(aDateString):
+def datetime_extended_parser(aDateString):
     """ Custom date handler.
 
     See issue https://code.google.com/p/feedparser/issues/detail?id=404
@@ -236,7 +236,7 @@ def datetime_from_feedparser_entry(feedparser_article):
     if the_datetime is None:
         try:
             the_datetime = datetime(
-                *dateutilDateHandler(feedparser_article.published)[:6])
+                *datetime_extended_parser(feedparser_article.published)[:6])
         except:
             pass
 

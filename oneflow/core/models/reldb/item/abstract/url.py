@@ -197,12 +197,61 @@ class UrlItem(models.Model):
         # if self.is_orphaned:
         #    return False
 
-        if not self.url_absolute:
-            return False
+        return self.url_absolute
 
-        return True
+    @property
+    def is_processed(self):
+        """ Return True if our content type is final. """
+
+        #
+        # TODO: sync this property with is_good ?
+        #       Or NO because it's not really the same purpose.
+        #       CLARIFY.
+        #
+
+        return self.url_absolute or self.is_orphaned
 
     # ————————————————————————————————————————————————————————————————— Methods
+
+    def processing_must_abort(self, verbose=True, force=False, commit=True):
+        """ Return ``True`` if anything related to the URL needs aborting. """
+
+        if UrlItem.is_processed.fget(self) and not force:
+            LOGGER.info(u'%s %s has already been processed.',
+                        self._meta.verbose_name, self.id)
+            return True
+
+        if self.url_error:
+            if force:
+                # Do it here and now. No celery task.
+                self.absolutize_url(force=force, commit=commit)
+
+                if self.url_error:
+                    LOGGER.warning(u'%s %s still has an url error after '
+                                   u'absolutizing another time. Processing '
+                                   u'aborted (%s).', self._meta.verbose_name,
+                                   self.id, self.url_error)
+                    return True
+
+            else:
+                LOGGER.warning(u'%s %s has an url error; absolutize it '
+                               u'first (%s).', self._meta.verbose_name,
+                               self.id, self.url_error)
+                return True
+
+        # We could still process and reprocess an orphaned item if the first
+        # original fetching gave us some content. This is the case on “Chuck
+        # Norris facts”, where RSS give us the full fact content, but the
+        # fact doesn't have an individual URL (that's what we consider
+        # orphaned: an article with no unique originating URL).
+        #
+        # TODO: not sure if must keep this condition or not. the orphaned
+        # status could have nothing to do with the processing category beiing
+        # run on the instance. Returning True here could be a false negative.
+        if self.is_orphaned and not force:
+            LOGGER.warning(u'%s %s is orphaned and no `force` given, '
+                           u'aborting.', self._meta.verbose_name, self.id)
+            return True
 
     def reset(self, force=False, commit=True):
         """ See :meth:`Article.reset`() for explanations. """

@@ -159,15 +159,17 @@ def register_task_method(klass, meth, module_globals,
     #
     if issubclass(klass, models.Model):
 
-        @task(name=task_name, queue=queue,
+        @task(name=task_name, queue=queue, bind=True,
               default_retry_delay=default_retry_delay)
-        def task_func(object_pk, *args, **kwargs):
+        def task_func(self, object_pk, *args, **kwargs):
+
+            stop_chain_on_false = kwargs.pop('stop_chain_on_false', False)
 
             try:
                 # with transaction.atomic():
                 objekt = klass.objects.get(pk=object_pk)
 
-                return getattr(objekt, method_name)(*args, **kwargs)
+                result = getattr(objekt, method_name)(*args, **kwargs)
 
             except klass.DoesNotExist, exc:
                 # The transaction was not commited, the task went too fast.
@@ -198,6 +200,14 @@ def register_task_method(klass, meth, module_globals,
                 LOGGER.exception(u'exception while running %s on %s #%s',
                                  method_name, klass._meta.model.__name__,
                                  object_pk)
+
+            else:
+                if stop_chain_on_false and result is False:
+                    # Abort chain in the middle on a condition.
+                    # http://stackoverflow.com/a/21106596/654755
+                    self.request.callbacks[:] = []
+
+                return result
     else:
 
         @task(name=task_name, queue=queue,

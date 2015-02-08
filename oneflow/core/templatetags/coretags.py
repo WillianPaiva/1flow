@@ -33,7 +33,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _, pgettext_lazy
 
 from ...base.templatetags.base_utils import get_view_name
-from ...base.utils.dateutils import (now, today, dateutilDateHandler, datetime,
+from ...base.utils.dateutils import (now, today, datetime_extended_parser, datetime,
                                      naturaldelta as onef_naturaldelta)
 
 from oneflow.core import models   # , CACHE_ONE_WEEK
@@ -161,7 +161,7 @@ def naturaldelta(the_datetime):
         return onef_naturaldelta(the_datetime)
 
     if isinstance(the_datetime, str) or isinstance(the_datetime, unicode):
-        time_struct = dateutilDateHandler(the_datetime)
+        time_struct = datetime_extended_parser(the_datetime)
 
         converted_datetime = datetime(*time_struct[:6])
 

@@ -1,0 +1,203 @@
+{% extends 'home.html' %}
+{% load sorting_tags %}
+
+{% block title %}{% blocktrans with chain_name=chain.name %}Rules for {{ chain_name }}{% endblocktrans %}{% endblock title %}
+{% block body_id %}mail-feed-rules{% endblock body_id %}
+
+{% block application_content %}
+
+{% inplace_static %}
+
+<div class="spacer50"></div>
+
+<div class="row">
+	<div>
+	{% if chaineditem_list %}
+
+		 <div class="actions pull-right">
+		 	<div class="btn-group very-muted">
+		 		{% blocktrans count counter=chaineditem_list|length %}
+		 		    {{ counter }} item
+		 		{% plural %}
+					{{ counter }} items
+		 		{% endblocktrans %}
+		 	</div>
+
+			{% include "snippets/toolbars/add-new.html" %}
+		</div>
+
+		<h1>
+			{% include "chaineditem/breadcrumbs.html" %}
+
+			<span>
+			{% core_icon 'MailFeedRule' %}&nbsp;
+			{% blocktrans with chain_name=chain.name %}
+		    	Chain <strong>{{ chain_name }}</strong>
+			{% endblocktrans %}</span>
+		</h1>
+
+		<div class="row">
+			<div class="col-md-4 right">
+				<h4 class="muted">{% trans "Categories:" %}</h4>
+			</div>
+			<div class="col-md-8">
+			 <h4>{% inplace_edit "chain.categories" tag_name_cover:'span' %}</h4>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-4 right">
+				<h4 class="muted">{% trans "Chain is active:" %}</h4>
+			</div>
+			<div class="col-md-8">
+			 <h4>{% inplace_edit "chain.is_active" tag_name_cover:'span' %}</h4>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-4 right">
+				<h4 class="muted">{% trans "Chain applies on:" %}</h4>
+			</div>
+			<div class="col-md-8">
+			 <h4>{% inplace_edit "chain.applies_on" tag_name_cover:'span' %}</h4>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-4 right">
+				<h4 class="muted">{% trans "Of which language(s):" %}</h4>
+			</div>
+			<div class="col-md-8">
+			 <h4>{% inplace_edit "chain.languages" tag_name_cover:'span' %}</h4>
+			</div>
+		</div>
+
+		<div class="spacer50"></div>
+
+		<table class="table table-hover">
+		<thead>
+
+		  {% include "chaineditem/form.html" %}
+
+		  <tr>
+
+			{% sort_th _("Item") 'item' 'item__name' 'col-sm-5' %}
+			{% sort_th _("Active in this chain?") 'is_active' 'is_active' 'col-sm-2 centered' %}
+			<th class="col-sm-1 centered">{% trans "Parameters" %}</th>
+
+			{% comment %}
+			<th>{% trans "Result" %}</th>
+			<th>{% trans "Finish" %}</th>
+			{% endcomment %}
+
+			<th class="col-sm-1 centered">{% trans "Status" %}</th>
+			<th class="col-sm-1 centered">{% trans "Run order" %}</th>
+			<th class="col-sm-2 right">{% trans "Actions" %}</th>
+		  </tr>
+		</thead>
+		<tbody>
+		{% for previous, chaineditem, next in chaineditem_list|prevcurnext %}
+
+			{% with globally_inactive=chaineditem.item.is_active|yesno:',true' %}
+
+				<tr>
+					<td>
+						{{ chaineditem.item.name }}
+
+					<span class="pull-right very-muted">
+						<span class="popover-top" data-toggle="tooltip"
+								title="{{ chaineditem.item.id }}">
+							{% core_icon 'info-sign' %}
+						</span>
+					</span>
+
+
+					</td>
+
+					<td class="centered {{ globally_inactive|yesno:'inactive,' }}"
+						{% if globally_inactive %}
+							data-toggle="tooltip"
+							title="{% trans "This processor is globally inactive. You should re-activate it in the processors section before beiing able to use it here." %}"
+						{% endif %}
+					>
+						<div>
+							{% inplace_edit 'chaineditem.is_active' %}
+						</div>
+					</td>
+
+					<td class="centered">
+					{% if chaineditem.item.parameters %}
+						<div class="btn-group">
+							<a id="edit-parameters-processor-{{ processor.id }}"
+	        				href="{% url 'edit_field' klass='ChainedItem' oid=chaineditem.id form_class='ChainedItemEditParametersForm' %}"
+	        				data-toggle="modal" data-target="#" data-tooltip="tooltip"
+	        				title="{% trans "Edit processor parameters for this chain" %}"
+	        				class="btn btn-xs btn-info centered popover-top">
+	        			{% core_icon 'cog' False %}
+	      			</a>
+		  			</div>
+
+		  		{% else %}
+
+		  			<span class="very-muted" data-toggle="tooltip"
+				  			title="{% trans "Processor has no parameter" %}">—</span>
+
+					{% endif %}
+
+	    		</td>
+
+					<td class="centered">
+						<span class="very-muted" data-toggle="tooltip"
+							title="(TODO)" >—</span>
+					</td>
+
+					<td class="centered muted">{{ chaineditem.position|add:1 }}</td>
+
+					<td class="right">
+						{% url 'chaineditem_position' chain.pk chaineditem.pk as position_url %}
+						{% include "widgets/position-buttons.html" with obj=chaineditem position_first=forloop.first position_last=forloop.last %}
+
+						{% url 'chaineditem_delete' chain.pk chaineditem.pk as delete_url %}
+						{% include "widgets/delete-form-button.html" %}
+					</td>
+				</tr>
+
+			{% endwith %}
+
+		{% endfor %}
+
+		</tbody>
+		</table>
+	{% else %}
+
+		<h2>
+			{% include "chaineditem/breadcrumbs.html" %}
+
+			<span>
+			{% core_icon 'ChainedItem' %}&nbsp;
+			{% blocktrans with chain_name=chain.name %}
+			    No item yet in chain <strong>{{ chain_name }}</strong>.
+			{% endblocktrans %}</span>
+		</h2>
+
+		<div class="spacer50"></div>
+
+		<table class="table">
+			<tbody>
+				{% include "chaineditem/form.html" with create_first=1 %}
+			</tbody>
+		</table>
+	{% endif %}
+
+		<div class="spacer50"></div>
+		<hr />
+
+		{# {% include "processingchain/help.html" %} #}
+
+	</div>
+</div>
+{% endblock application_content %}
+
+{% block extrajs_footer %}
+    {{ block.super }}
+
+	{% include "snippets/mail-collapse-js-glue.html" with focus_name='id_account' object_list=chaineditem_list %}
+
+{% endblock extrajs_footer %}

@@ -52,17 +52,18 @@ from base import (
     BaseItemQuerySet,
     BaseItemManager,
     BaseItem,
+    baseitem_process_task,
     baseitem_create_reads_task,
 )
+
+from original_data import baseitem_postprocess_original_data_task
+
 
 from abstract import (
     UrlItem,
     ContentItem,
     baseitem_absolutize_url_task,
-    baseitem_fetch_content_task,
 )
-
-# from original_data import baseitem_postprocess_original_data_task
 
 LOGGER = logging.getLogger(__name__)
 
@@ -183,6 +184,17 @@ class Article(BaseItem, UrlItem, ContentItem):
 
         return True
 
+    @property
+    def is_processed(self):
+        """ See if all relevant processors have run on the current instance. """
+
+        if not BaseItem.is_processed.fget(self) \
+            or not UrlItem.is_processed.fget(self) \
+                or not ContentItem.is_processed.fget(self):
+            return False
+
+        return True
+
     # ————————————————————————————————————————————————————————————————— Methods
 
     def get_processing_chain(self):
@@ -199,6 +211,52 @@ class Article(BaseItem, UrlItem, ContentItem):
 
         else:
             return website.processing_chain
+
+    def processing_must_abort(self, verbose=True, force=False, commit=True):
+        """ Return True if processing of current instance must be aborted.
+
+        .. versionadded:: 0.90.x. This is the new method, used by the 2015
+            processing infrastructure.
+        """
+
+        # HEADS UP: we do not test self.is_processed, it's up to every
+        #           base class to do it in their processing_must_abort()
+        #           method.
+
+        # NOTE: we use all() and not any(). This is intentional. In the
+        #       current processors implementation this is needed.
+        #
+        #       Example: When an article URL is absolutized,
+        #       UrlItem.processing_must_abort() will return True.
+        #       But we must not abort the whole processing: we still
+        #       need to continue processing to handle the `content`
+        #       downloading and conversion to markdown (and soon
+        #       {pre,post}_processing content enhancements.
+        #
+        #       As every processor will be protected by its accepts()
+        #       method, there will never be no double-processing. Only
+        #       a little too much testing, at worst.
+        #
+        #       Even if we manage to forward the current processing
+        #       category to the processing_must_abort() method, there
+        #       will always be the accepts() tests. Bypassing them is
+        #       a design error for me. In this context, we would only
+        #       gain the all(True) → any(False) transformation.
+        #
+        #       And that would imply much more code. Thus, I consider
+        #       the current implementation an acceptable tradeoff.
+        #
+        #       As a final addition, we have exactly the same logic in
+        #       Article.is_processed, and there it feels perfectly fine:
+        #       an article is not considered processed if any of its part
+        #       is not. Perhaps it's just the name of the current method
+        #       that is a little misleading…
+
+        return all(
+            klass.processing_must_abort(self, verbose=verbose,
+                                        force=force, commit=commit)
+            for klass in (BaseItem, UrlItem, ContentItem)
+        )
 
     def reset(self, force=False, commit=True):
         """ clear the article content & content type.
@@ -355,12 +413,12 @@ class Article(BaseItem, UrlItem, ContentItem):
 
         if apply_now:
             try:
-                baseitem_absolutize_url_task.apply((self.id, ))
-                baseitem_create_reads_task.apply((self.id, ))
-                baseitem_fetch_content_task.apply((self.id, ))
+                result = baseitem_absolutize_url_task.apply((self.id, ))
 
-                # Done in RssAtomFeed now.
-                # baseitem_postprocess_original_data_task.apply((self.id, ))
+                if result is not False:
+                    baseitem_create_reads_task.apply((self.id, ))
+                    baseitem_process_task.apply((self.id, ))
+                    baseitem_postprocess_original_data_task.apply((self.id, ))
 
             except:
                 LOGGER.exception(u'Applying Article.post_create_task(%s) '
@@ -372,10 +430,8 @@ class Article(BaseItem, UrlItem, ContentItem):
             # want the group to run *after* the absolutization.
 
             baseitem_create_reads_task.si(self.id),
-            baseitem_fetch_content_task.si(self.id),
-
-            # Done in RssAtomFeed now.
-            # baseitem_postprocess_original_data_task.si(self.id),
+            baseitem_process_task.si(self.id),
+            baseitem_postprocess_original_data_task.si(self.id),
         )
 
         # OLD NOTES: randomize the absolutization a little, to avoid
@@ -394,8 +450,11 @@ class Article(BaseItem, UrlItem, ContentItem):
         # Thus, we link the post_absolutize_chain as a callback. It will
         # be run only if absolutization succeeds. Thanks, celery :-)
 
-        baseitem_absolutize_url_task.apply_async((self.id, ),
-                                                 link=post_absolutize_chain)
+        baseitem_absolutize_url_task.apply_async(
+            args=(self.id, ),
+            kwargs={'stop_chain_on_false': True},
+            link=post_absolutize_chain
+        )
 
         #
         # TODO: create short_url
@@ -530,6 +589,14 @@ def article_pre_delete(instance, **kwargs):
 
         elif article.content_type in (None, CONTENT_TYPES.NONE, ):
             spipe.gauge('articles.counts.empty', -1, delta=True)
+
+    if instance.processing_errors.exists():
+        try:
+            instance.processing_errors.clear()
+
+        except:
+            LOGGER.exception(u'%s %s: could not clear processing errors',
+                             instance._meta.verbose_name, instance.id)
 
 
 pre_delete.connect(article_pre_delete, sender=Article)

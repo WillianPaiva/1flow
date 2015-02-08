@@ -227,8 +227,11 @@ function toggle_content(oid, callback) {
 
             // console.debug('set open to null and last to ' + oid);
 
-            $('.article-meta-information').html('');
-            $('.article-meta-attributes').html('');
+            // 20150208: don't empty meta informations, for some reasons
+            // they are not reloaded. I should find why, but it's an easier
+            // fix until then.
+            // $('.article-meta-information').html('');
+            // $('.article-meta-attributes').html('');
 
             $content.slideUp(scroll_speed, "swing", run_callback);
 

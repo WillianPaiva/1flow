@@ -102,7 +102,7 @@ class Language(MPTTModel, AbstractDuplicateAwareModel):
             language = cls(name=code.title(), dj_code=code)
             language.save()
 
-        if language.duplicate_of:
+        if language.duplicate_of_id is not None:
             return language.duplicate_of
 
         if code != code.lower():

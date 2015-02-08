@@ -49,7 +49,7 @@
           {% endif %}
         </span>
 
-        {% if article.authors %}
+        {% if article.authors.exists %}
         —&nbsp;
         <span class="author">
             <span class="muted">{% trans "by" %}</span>
@@ -59,14 +59,14 @@
         </span>
         {% endif %}
 
-        {% if read.tags %}
+        {% if read.tags.exists %}
 
           <span class="in-tags muted">{% trans "in" %}</span>
           <ul class="tags">
             {% for tag in read.tags.all %}<li class="tag"><a href="{# LINK TO TAG READING-LIST HERE WHEN READY #}" disabled="disabled">{{ tag.name }}</a></li>{% endfor %}
           </ul>
 
-        {% elif article.tags %}
+        {% elif article.tags.exists %}
 
           <span class="in-tags muted">{% trans "in" %}</span>
           <ul class="tags">
