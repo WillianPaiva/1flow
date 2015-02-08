@@ -26,6 +26,7 @@ from positions import PositionField
 # from constance import config
 from transmeta import TransMeta
 # from json_field import JSONField
+from yamlfield.fields import YAMLField
 
 from django.db import models
 # from django.db.models.signals import post_save, pre_save  # , pre_delete
@@ -109,15 +110,15 @@ class ChainedItem(models.Model):
 
     is_active = models.BooleanField(default=True)
 
-    # This should probably be a JSON field…
-    parameters = models.TextField(
+    parameters = YAMLField(
         null=True, blank=True,
-        verbose_name=_(u'Chain parameters'),
-        help_text=_(u'Global parameters for this processor, '
-                    u'in this chain, at this position. Can be '
-                    u'none if the processor accepts only site-specific '
-                    u'parameters. Can be overridden by the site-specific '
-                    u'parameters, at the web site configuration level.'))
+        verbose_name=_(u'Processor parameters'),
+        help_text=_(u'Parameters for this processor, in this chain, at '
+                    u'this position. Can be left empty if the processor '
+                    u'parameters are optional. In YAML format (see '
+                    u'http://en.wikipedia.org/wiki/YAML for details).'))
+    # u'Can be overridden by the site-specific '
+    # u'parameters, at the web site configuration level.'))
 
     is_valid = models.BooleanField(verbose_name=_(u'Checked and valid'),
                                    default=True, blank=True)

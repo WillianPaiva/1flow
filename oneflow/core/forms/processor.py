@@ -38,8 +38,7 @@ class ProcessorForm(forms.ModelForm):
         model = Processor
         fields = (
             'name', 'slug', 'parent',
-            # 'is_active',
-            'needs_parameters',
+            'is_active',
         )
 
 
@@ -56,6 +55,26 @@ class ProcessorEditRequirementsForm(forms.ModelForm):
         widgets = {
             'requirements': CodeMirrorTextarea(
                 mode='shell',
+                addon_js=settings.CODEMIRROR_ADDONS_JS,
+                addon_css=settings.CODEMIRROR_ADDONS_CSS,
+                keymap=settings.CODEMIRROR_KEYMAP,
+            )
+        }
+
+
+class ProcessorEditParametersForm(forms.ModelForm):
+
+    """ Edit a processor model parameters. """
+
+    # Catched in the edit_field modal, avoid ESC/click-outside.
+    prevent_accidental_close = True
+
+    class Meta:
+        model = Processor
+        fields = ('parameters', )
+        widgets = {
+            'parameters': CodeMirrorTextarea(
+                mode='yaml',
                 addon_js=settings.CODEMIRROR_ADDONS_JS,
                 addon_css=settings.CODEMIRROR_ADDONS_CSS,
                 keymap=settings.CODEMIRROR_KEYMAP,

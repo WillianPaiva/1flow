@@ -27,8 +27,10 @@ import logging
 from statsd import statsd
 from constance import config
 from transmeta import TransMeta
-# from json_field import JSONField
 from collections import OrderedDict
+# from json_field import JSONField
+from yamlfield.fields import YAMLField
+
 from django.conf import settings
 from django.db import models
 from django.db.models.signals import pre_save  # , post_save, pre_delete
@@ -166,12 +168,15 @@ class Processor(six.with_metaclass(ProcessorMeta, MPTTModel,
         help_text=_(u'The processor home on the web, if any. A web URL, '
                     u'or a github short address.'))
 
-    needs_parameters = models.BooleanField(
-        default=False, blank=True, verbose_name=_(u'Needs parameters?'),
-        help_text=_(u'Defaults to False; and indicates the processor does '
-                    u'need some parameters specified to operate. '
-                    u'See https://github.com/1flow/1flow/wiki/Processors '
-                    u'for details.'))
+    parameters = YAMLField(
+        null=True, blank=True,
+        verbose_name=_(u'Processor parameters'),
+        help_text=_(u'Parameters accepted by this processor, in YAML '
+                    u'format (see http://en.wikipedia.org/wiki/YAML for '
+                    u'details). Can be left empty if none. This information '
+                    u'is purely informative for now; it is meant to help '
+                    u'chains maintainers to setup specific parameters for '
+                    u'website-dedicated chains.'))
 
     short_description = models.CharField(
         null=True, blank=True,
@@ -273,6 +278,7 @@ class Processor(six.with_metaclass(ProcessorMeta, MPTTModel,
             'settings': copy.copy(settings),
             'config': copy.copy(config),
 
+            'parameters': kwargs.get('parameters', {}),
             'verbose': kwargs.get('verbose', True),
             'force': kwargs.get('force', False),
             'commit': kwargs.get('commit', True),

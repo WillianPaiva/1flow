@@ -404,8 +404,14 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
             try:
                 with transaction.atomic():
                     # This will run accepts() automatically.
-                    processor.process(instance, verbose=verbose,
-                                      force=force, commit=commit)
+                    processor.process(instance,
+                                      # parameters must be a dict(); if not
+                                      # set in the chained item, it can be
+                                      # None, which can crash process code.
+                                      parameters=item.parameters or {},
+                                      verbose=verbose,
+                                      force=force,
+                                      commit=commit)
 
             except InstanceNotAcceptedException:
                 continue

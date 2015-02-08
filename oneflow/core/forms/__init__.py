@@ -59,6 +59,7 @@ from twitterfeedrule import (  # NOQA
 from processor import (  # NOQA
     ProcessorForm,
     ProcessorEditRequirementsForm,
+    ProcessorEditParametersForm,
     ProcessorEditAcceptCodeForm,
     ProcessorEditProcessCodeForm,
 )
