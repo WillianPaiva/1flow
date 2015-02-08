@@ -69,6 +69,12 @@ from processingchain import (  # NOQA
     # ProcessingChainEditRequirementsForm,
 )
 
+from chaineditem import (  # NOQA
+    ChainedItemForm,
+    ChainedItemPositionForm,
+    ChainedItemEditParametersForm,
+)
+
 
 # ———————————————————————————————————————————————————————————————————————— Sync
 

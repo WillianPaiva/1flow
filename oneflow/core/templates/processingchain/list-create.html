@@ -52,6 +52,7 @@
 			{% sort_th _("Active?") 'is_active' '' 'col-sm-1 centered' %}
 			<th class="col-sm-1 centered">{% trans "Used by" %}</th>
 			{# <th class="col-sm-1 centered">{% trans "Descriptions" %}</th> #}
+			<th class="col-sm-1">{% trans "Items" %}</th>
 			<th class="col-sm-1 right">{% trans "Actions" %}</th>
 		  </tr>
 		</thead>
@@ -93,6 +94,14 @@
         		</td>
 
 				{# <td class="centered"> — </td> #}
+
+				<td>
+					<a href="{% url 'chaineditem_list_create' processingchain.pk %}"
+							class="btn btn-primary btn-xs">
+						{% core_icon 'ChainedItem' %}&nbsp;
+						{% trans "Manage" %}
+					</a>
+				</td>
 
 				<td class="right">
 					{% comment %}

@@ -57,6 +57,7 @@ from ..models import (  # NOQA
 
     # Imported for `edit_field`
     Processor,
+    ChainedItem,
     IMPORT_STATUS,
     CONTENT_TYPES_FINAL,
 )
@@ -629,6 +630,12 @@ from processor import ProcessorListCreateView, ProcessorDeleteView  # NOQA
 from processingchain import (  # NOQA
     ProcessingChainListCreateView,
     ProcessingChainDeleteView,
+)
+
+from chaineditem import (  # NOQA
+    ChainedItemListCreateView,
+    ChainedItemPositionUpdateView,
+    ChainedItemDeleteView,
 )
 
 from staff import (  # NOQA
