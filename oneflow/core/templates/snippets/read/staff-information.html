@@ -34,8 +34,16 @@
       	<li>
           {% if article.url_absolute %}
             {% core_label _('absolute') 'success' %}
+
           {% else %}
-            {% core_label _('unresolved yet') 'info' %}
+            {% if article.tweet == article %}
+              {% captureas tweet %}{% core_icon 'twitter' False %}{% endcaptureas %}
+              {% core_label tweet 'info' %}
+
+            {% else %}
+              {% core_label _('unresolved yet') 'info' %}
+
+            {% endif %}
           {% endif %}
         </li>
 
@@ -141,7 +149,7 @@
       </ul>
 
       <div><pre style="font-size: 80%">
-a = Article.objects.get(id={{ article.id }})
+{% if article.tweet == article %}a = Tweet.objects.get(id={{ article.id }}){% else %}a = Article.objects.get(id={{ article.id }}){% endif %}
 r = Read.objects.get(id={{ read.id }})
 </pre></div>
 

@@ -40,47 +40,55 @@ def disk_partitions(all=False):
     """
 
     phydevs = []
-    f = open("/proc/filesystems", "r")
 
-    for line in f:
-        if not line.startswith("nodev"):
-            phydevs.append(line.strip())
+    with open('/proc/filesystems', 'r') as filesystems:
+        for line in filesystems:
+            if not line.startswith("nodev"):
+                phydevs.append(line.strip())
 
     retlist = []
-    f = open('/etc/mtab', "r")
     dev_done = []
 
-    for line in f:
-        if not all and line.startswith('none'):
-            continue
+    with open('/etc/mtab', 'r') as mtab:
+        for line in mtab:
+            if not all and line.startswith('none'):
+                continue
 
-        fields = line.split()
-        device = fields[0]
-        mountpoint = fields[1]
-        fstype = fields[2]
+            fields = line.split()
+            device = fields[0]
+            mountpoint = fields[1]
+            fstype = fields[2]
 
-        if (not all and fstype not in phydevs) or device in dev_done:
-            continue
+            if (not all and fstype not in phydevs) or device in dev_done:
+                continue
 
-        if device == 'none':
-            device = ''
+            if device == 'none':
+                device = ''
 
-        retlist.append(disk_ntuple(device, mountpoint, fstype))
+            retlist.append(disk_ntuple(device,
+                                       # Get rid of mtab strange
+                                       # formatting for spaces, else
+                                       # disk_usage() will fail.
+                                       mountpoint.replace('\\040',  ' '),
+                                       fstype))
 
-        # Avoid doing devices twice. This happens in LXCs with bind mounts.
-        # All we need is that / is mounted before other for it to show
-        # instead of them. Hoppefully, it should always be the case ;-)
-        dev_done.append(device)
+            # Avoid doing devices twice. This happens in LXCs with bind mounts.
+            # All we need is that / is mounted before other for it to show
+            # instead of them. Hoppefully, it should always be the case ;-)
+            dev_done.append(device)
 
     return retlist
 
 
 def disk_usage(path):
     """Return disk usage associated with path."""
+
     st = os.statvfs(path)
+
     free = (st.f_bavail * st.f_frsize)
     total = (st.f_blocks * st.f_frsize)
     used = (st.f_blocks - st.f_bfree) * st.f_frsize
+
     try:
         percent = (float(used) / total) * 100
 
@@ -97,8 +105,10 @@ def find_mount_point(path):
     """ Find the mount point of a given path. """
 
     path = os.path.abspath(path)
+
     while not os.path.ismount(path):
         path = os.path.dirname(path)
+
     return path
 
 
@@ -138,7 +148,13 @@ def memory():
 def partitions_status():
     """ The wrap-all-in-one function for templates rendering. """
 
-    return {
-        part: disk_usage(part.mountpoint)
-        for part in disk_partitions()
-    }
+    usage = {}
+
+    for part in disk_partitions():
+        try:
+            usage[part] = disk_usage(part.mountpoint)
+
+        except:
+            LOGGER.exception(u'Error getting partition %s usage', part)
+
+    return sorted(usage.iteritems())

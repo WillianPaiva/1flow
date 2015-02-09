@@ -59,6 +59,8 @@
         </span>
         {% endif %}
 
+        {% comment %}
+
         {% if read.tags.exists %}
 
           <span class="in-tags muted">{% trans "in" %}</span>
@@ -74,14 +76,15 @@
           </ul>
         {% endif %}
 
-        {% comment %}
-            {% if not forloop.last %}, {% endif %}
+        {# REVIEW / REIMPLEMENT RATINGS. #}
 
-            No more possible with the cached article.
+        {% if not forloop.last %}, {% endif %}
 
-            {% if with_rating %}
-              {% if read.rating %}<span class="rating">{% trans ", rated " %}{{ read.rating }}</span>{% endif %}
-            {% endif %}
+        No more possible with the cached article.
+
+        {% if with_rating %}
+          {% if read.rating %}<span class="rating">{% trans ", rated " %}{{ read.rating }}</span>{% endif %}
+        {% endif %}
         {% endcomment %}
 
       </span>

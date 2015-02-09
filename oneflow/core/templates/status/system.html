@@ -27,6 +27,7 @@
 
 <div class="spacer25"></div>
 <h2>{% trans "Used memories" %}</h2>
+<div class="spacer10"></div>
 <div class="row">
 	<div class="col-xs-2 right muted">
 		{% trans "RAM" %}
@@ -69,7 +70,8 @@
 
 {# —————————————————————————————————————————————————————————————————————————— #}
 
-{% for partition, partinfo in partitions_status.items %}
+{# partitions_status is a list, already sorted by partition name by the view. #}
+{% for partition, partinfo in partitions_status %}
 <div class="row">
 	<div class="col-xs-2 right strong">
 		{{ partition.mountpoint }}
