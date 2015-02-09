@@ -124,6 +124,11 @@ def create_article_from_url(url, feeds, origin):
     return new_article, created or (None if mutualized else False)
 
 
+def _format_feeds(feeds):
+    """ Return feeds in a compact string form for displaying in logs. """
+
+    return u', '.join(u'{0} ({1})'.format(f.name, f.id) for f in feeds)
+
 # —————————————————————————————————————————————————————————— Manager / QuerySet
 
 
@@ -327,17 +332,16 @@ class Article(BaseItem, UrlItem, ContentItem):
             created_retval = True
 
             LOGGER.info(u'Created %sarticle %s %s.', u'orphaned '
-                        if article.is_orphaned else u'', article,
-                        u'in feed(s) {0}'.format(
-                            u', '.join(unicode(f) for f in feeds))
-                        if feeds else u'without a feed')
+                        if article.is_orphaned else u'', article.id,
+                        u'in feed(s) {0}'.format(_format_feeds(feeds))
+                        if feeds else u'without any feed')
 
         else:
             created_retval = False
 
             if article.duplicate_of_id:
-                LOGGER.info(u'Swaping duplicate %s #%s for master #%s on '
-                            u'the fly.', article._meta.model.__name__,
+                LOGGER.info(u'Swaping duplicate %s %s for master %s on '
+                            u'the fly.', article._meta.verbose_name,
                             article.id, article.duplicate_of_id)
 
                 article = article.duplicate_of
@@ -349,15 +353,15 @@ class Article(BaseItem, UrlItem, ContentItem):
                 # as bad as being a true duplicate.
                 created_retval = None
 
-                LOGGER.info(u'Mutualized article “%s” (url: %s) in feed(s) %s.',
-                            title, url, u', '.join(unicode(f) for f in feeds))
+                LOGGER.info(u'Mutualized article %s in feed(s) %s.',
+                            article.id, _format_feeds(feeds))
 
                 article.create_reads(feeds=feeds)
 
             else:
                 # No statsd, because we didn't create any record in database.
-                LOGGER.info(u'Duplicate article “%s” (url: %s) in feed(s) %s.',
-                            title, url, u', '.join(unicode(f) for f in feeds))
+                LOGGER.info(u'Duplicate article %s in feed(s) %s.',
+                            article.id, _format_feeds(feeds))
 
             # Special case where a mutualized article arrives from RSS
             # (with date/author) while it was already here from Twitter
@@ -381,7 +385,7 @@ class Article(BaseItem, UrlItem, ContentItem):
                     article.tags.add(*tags)
 
             except IntegrityError:
-                LOGGER.exception(u'Could not add tags %s to article #%s',
+                LOGGER.exception(u'Could not add tags %s to article %s',
                                  tags, article.id)
 
         if feeds:
@@ -390,7 +394,7 @@ class Article(BaseItem, UrlItem, ContentItem):
                     article.feeds.add(*feeds)
 
             except:
-                LOGGER.exception(u'Could not add feeds to article #%s',
+                LOGGER.exception(u'Could not add feeds to article %s',
                                  article.id)
 
         # Get a chance to catch the duplicate if workers were fast.
@@ -400,8 +404,8 @@ class Article(BaseItem, UrlItem, ContentItem):
 
         if article.duplicate_of_id:
             if settings.DEBUG:
-                LOGGER.debug(u'Catched on-the-fly duplicate #%s, returning '
-                             u'master #%s instead.', article.id,
+                LOGGER.debug(u'Catched on-the-fly duplicate %s, returning '
+                             u'master %s instead.', article.id,
                              article.duplicate_of_id)
 
             return article.duplicate_of, False
