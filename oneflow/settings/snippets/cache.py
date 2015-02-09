@@ -27,7 +27,7 @@ CACHES = {
     'default': {
         'BACKEND': 'redis_cache.cache.RedisCache',
         # Don't set any fallback, we *need* to have this configured in `.env`.
-        'LOCATION': os.environ.get('REDIS_CACHE_DB'),
+        'LOCATION': REDIS_CACHE_DB,
 
         # This is the default timeout, reasonably sane to
         # keep the DB uncluterred. Some particular keys have
