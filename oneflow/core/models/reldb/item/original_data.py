@@ -298,15 +298,15 @@ def BaseItem_postprocess_guess_original_data_method(self, force=False,
         original_data.save()
         return
 
-    if self.original_data.feedparser_hydrated:
+    if self.original_data.feedparser:
         self.origin = ORIGINS.FEEDPARSER
         need_save   = True
 
-    elif self.original_data.google_reader_hydrated:
+    elif self.original_data.google_reader:
         self.origin = ORIGINS.GOOGLE_READER
         need_save   = True
 
-    elif self.original_data.twitter_hydrated:
+    elif self.original_data.twitter:
         self.origin = ORIGINS.TWITTER
         need_save   = True
 
