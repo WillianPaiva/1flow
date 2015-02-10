@@ -41,6 +41,9 @@ from django.utils.timezone import (is_aware, is_naive,  # NOQA
                                    make_aware, utc,
                                    now as dj_now)
 
+# Backward compatibility for the 1flow code that imports it from here.
+from sparks.utils import benchmark, stats_datetime
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -115,38 +118,6 @@ def until_tomorrow_delta(time_of_tomorrow=None):
         time_of_tomorrow = time(0, 0, 0)
 
     return combine(tomorrow, time_of_tomorrow) - now()
-
-
-def stats_datetime():
-    """ Generate a string from now, suitable for benchmark() calls. """
-
-    return pytime.strftime('%Y-%m-%d %H:%M')
-
-
-class benchmark(object):
-
-    """ Simple benchmark context-manager class.
-
-    http://dabeaz.blogspot.fr/2010/02/context-manager-for-timing-benchmarks.html  # NOQA
-    """
-
-    def __init__(self, name=None):
-        """ Oh my, pep257, this is an init method. """
-
-        self.name = name or u'Generic benchmark'
-
-    def __enter__(self):
-        """ Start the timer. """
-
-        self.start   = pytime.time()
-        self.dtstart = stats_datetime()
-
-    def __exit__(self, ty, val, tb):
-        """ Stop the timer and display a logging message with elapsed time. """
-
-        LOGGER.info("%s started %s, ran in %s.", self.name, self.dtstart,
-                    naturaldelta(pytime.time() - self.start))
-        return False
 
 
 def email_date_to_datetime_tz(email_date):
