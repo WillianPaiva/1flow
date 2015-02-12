@@ -85,7 +85,7 @@ class Command(BaseCommand):
                     article.url_absolute = url_absolute
                     article.is_orphaned = is_orphaned
 
-                article.fetch_content(verbose=test)
+                article.process(verbose=test)
 
             except:
                 LOGGER.exception(u'Could not fetch article %s', article)
