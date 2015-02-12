@@ -1,0 +1,1533 @@
+[
+{
+  "pk": 1, 
+  "model": "core.processorcategory", 
+  "fields": {
+    "short_description_en": "", 
+    "rght": 4, 
+    "name_fr": "processeurs souches de 1flow", 
+    "maintainer": [
+      "karmak23"
+    ], 
+    "short_description_nt": "Tous les processeurs et chaines de traitement livr\u00e9s avec 1flow ont cette cat\u00e9gorie", 
+    "parent": null, 
+    "level": 0, 
+    "description_nt": "", 
+    "description_fr": "Les processeurs et chaines de traitement qui sont publi\u00e9s avec chaque version de 1flow sont rassembl\u00e9s dans cette cat\u00e9gorie.\r\n\r\nMerci de ne pas les modifier, et de ne pas mettre les votres dans cette cat\u00e9gorie, car ils pourraient \u00eatre \u00e9cras\u00e9s lors d'un changement de version.", 
+    "is_active": true, 
+    "description_en": "This category rassembles all processors and chains released with each version of 1flow.\r\n\r\nPlease don't alter them, and don't put any of yours in this category, or they could be overwritten during a version upgrade.", 
+    "slug": "1flow-stock", 
+    "lft": 1, 
+    "user": [
+      "karmak23"
+    ], 
+    "tree_id": 1, 
+    "short_description_fr": "All processors and chains released with 1flow have this category", 
+    "name_en": "1flow stock processors", 
+    "source_address": "", 
+    "name_nt": ""
+  }
+},
+{
+  "pk": 3, 
+  "model": "core.processorcategory", 
+  "fields": {
+    "short_description_en": "Holds the necessary to individually validate processors and chains behavior", 
+    "rght": 3, 
+    "name_fr": "tests 1flow", 
+    "maintainer": [
+      "karmak23"
+    ], 
+    "short_description_nt": "", 
+    "parent": 1, 
+    "level": 1, 
+    "description_nt": "", 
+    "description_fr": "Cette cat\u00e9gorie et son nom auxilliaire (slug) sont r\u00e9serv\u00e9s, comme \u00ab\u00a01fs\u00a0\u00bb.\r\n\r\nVous y trouverez pratiquement toutes les chaines et processeurs de 1flow.\r\n\r\nNous l'utilisons pour effectuer des tests individuels sur certaines instances, et valider le fonctionnement des processeurs et chaines avant de les \u00e9tiquetter \u00ab\u00a0pr\u00eat(e) pour la production\u00a0\u00bb.", 
+    "is_active": true, 
+    "description_en": "This category and its slug are reserved, like \u201c1fs\u201d. \r\n\r\nYou will find a lot of chains and processors inside. \r\n\r\nWe use it to run tests on instances and validate the processors and chains before tagging them \u201cproduction ready\u201d.", 
+    "slug": "1flow-test", 
+    "lft": 2, 
+    "user": [
+      "karmak23"
+    ], 
+    "tree_id": 1, 
+    "short_description_fr": "Contient le n\u00e9cessaire pour valider individuellement le fonctionnement des processeurs et cha\u00eenes", 
+    "name_en": "1flow tests", 
+    "source_address": "", 
+    "name_nt": ""
+  }
+},
+{
+  "pk": 2, 
+  "model": "core.processorcategory", 
+  "fields": {
+    "short_description_en": "Related to anything that has \u201ca content\u201d", 
+    "rght": 2, 
+    "name_fr": "contenu", 
+    "maintainer": [
+      "karmak23"
+    ], 
+    "short_description_nt": "", 
+    "parent": null, 
+    "level": 0, 
+    "description_nt": "", 
+    "description_fr": "\u00c7a peut \u00eatre le mod\u00e8le ContentItem, ou n'importe quel mod\u00e8le qui h\u00e9rite de lui.\r\n\r\nLes processeurs qui traitent le contenu des articles (c-\u00e0-d `Article.content`) sont r\u00e9f\u00e9renc\u00e9s dans cette cat\u00e9gorie.\r\n\r\nLes erreurs de traitement relatives \u00e0 ces processeurs sont interrogeables gr\u00e2ce \u00e0 cette cat\u00e9gorie.", 
+    "is_active": true, 
+    "description_en": "Related to the ContentItem model, or any model that inherits from it.\r\n\r\nProcessors that handle articles content (eg. `Article.content`) are referenced in this category.\r\n\r\nProcessing errors related to these processors are queryable via this category.", 
+    "slug": "content", 
+    "lft": 1, 
+    "user": [
+      "karmak23"
+    ], 
+    "tree_id": 2, 
+    "short_description_fr": "En relation avec n'importe quoi qui a \u00ab un contenu\u00a0\u00bb", 
+    "name_en": "content", 
+    "source_address": "", 
+    "name_nt": ""
+  }
+},
+{
+  "pk": 4, 
+  "model": "core.processorcategory", 
+  "fields": {
+    "short_description_en": "Related to anything that process items metadata", 
+    "rght": 2, 
+    "name_fr": "M\u00e9ta-donn\u00e9es", 
+    "maintainer": [
+      "karmak23"
+    ], 
+    "short_description_nt": "", 
+    "parent": null, 
+    "level": 0, 
+    "description_nt": "", 
+    "description_fr": "", 
+    "is_active": true, 
+    "description_en": "", 
+    "slug": "metadata", 
+    "lft": 1, 
+    "user": [
+      "karmak23"
+    ], 
+    "tree_id": 3, 
+    "short_description_fr": "En relation avec n'importe quel traitement de m\u00e9ta-donn\u00e9es", 
+    "name_en": "Metadata", 
+    "source_address": "", 
+    "name_nt": ""
+  }
+},
+{
+  "pk": 1, 
+  "model": "core.processor", 
+  "fields": {
+    "rght": 2, 
+    "maintainer": null, 
+    "duplicate_of": null, 
+    "lft": 1, 
+    "description_fr": "", 
+    "requirements": "", 
+    "short_description_nt": "", 
+    "accept_code": "\r\n# We start from the base conditions.\r\nbase_conditions = get_processor_by_slug(\r\n    '1fs-article-parse-accept-conditions').accepts(\r\n        instance, force=force, verbose=verbose, commit=commit)\r\n\r\nreturn  base_conditions and instance.content_type in (None, models.CONTENT_TYPES.NONE)\r\n", 
+    "description_nt": "", 
+    "languages": [], 
+    "tree_id": 1, 
+    "short_description_fr": "", 
+    "source_address": "", 
+    "parent": null, 
+    "is_active": true, 
+    "description_en": "This is a 1flow legacy default basic processor.", 
+    "user": [
+      "karmak23"
+    ], 
+    "slug": "1fs-legacy-simple-html-downloader", 
+    "categories": [
+      1, 
+      2
+    ], 
+    "name": "Legacy simple HTML downloader", 
+    "short_description_en": "", 
+    "parameters": "{'force_encoding': {'help_en': u\"the `force_encoding` can take 2 special values (`meta` or `deep`) or any valid encoding name, like `utf-8`, `latin9`, `iso-8859-15`, etc.\\nIf `meta`, the HTML META tag will be returned if found (else a deep detection will be attempted).\\nIf 'deep', deep content inspection will occur, trying to detect an encoding directly from the item content.\\nWARNING \\u2014 this can take a long time and exhaust system resources if used in default chain. It is not necessary in most cases.\\nIf you set this parameter for a website only, it is best to force it to an encoding name. This will avoid resource avoiding and speed up fetching / parsing.\\nIf you need to set it for a chain used on many websites (and only if you really need to), the recommended value is `meta`, to avoid resource exhaustion.\\nHint \\u2014 you can try `deep` on just an article of a particular website to make the engine detect the encoding, look in the logs to get the detected value, and then make it fixed to keep the corresponding chain fast.\", 'required': False, 'type': 'string', 'default_en': 'nothing; no encoding forced.'}, 'user_agent': {'help_en': 'a classic user agent string, as seen in any modern web browser.', 'required': False, 'type': 'string', 'default_en': 'Application settings / configuration value'}}", 
+    "level": 0, 
+    "duplicate_status": null, 
+    "process_code": "import requests\r\n\r\nfrom oneflow.base.utils import detect_encoding_from_requests_response\r\n\r\n# NOTE:\r\n#   \u201cUser-agent\u201d is the official HTTP Header syntax.\r\n#   \u201cuser_agent\u201d is the processor parameter (a python name for a variable).\r\n\r\n# Get our own copy of defaults.\r\nHEADERS = models.REQUEST_BASE_HEADERS.copy()\r\n\r\n# See if we have headers parameters; `parameters` comes\r\n# from the chained item, not the processor itself.\r\nuser_agent = parameters.get('user_agent', HEADERS.get('User-agent', None))\r\nforce_encoding = parameters.get('force_encoding', None)\r\n\r\nif user_agent is not None:\r\n    # merge everything into our final headers.\r\n    HEADERS['User-agent'] = user_agent\r\n\r\nresponse = requests.get(instance.url, headers=HEADERS)\r\n\r\ncontent_type = response.headers.get('content-type', u'unspecified')\r\n\r\nif content_type.startswith(u'text/html'):\r\n  \t\r\n  \tif force_encoding is None:\r\n        encoding = detect_encoding_from_requests_response(response).lower()\r\n\r\n        if verbose:\r\n            LOGGER.info(u'html downloader: detected encoding is \u201c%s\u201d.', \r\n                        encoding)\r\n\r\n    else:\r\n        force_encoding = force_encoding.lower()\r\n\r\n        if force_encoding in ('meta trust', 'meta', 'meta-trust', 'meta_trust'):\r\n            force_encoding = 'meta trust'\r\n            encoding = detect_encoding_from_requests_response(\r\n                response, meta=True).lower()\r\n\r\n        elif force_encoding in ('deep search', 'deep', \r\n                                'search', 'deep-search', 'deep_search'):\r\n            force_encoding = 'deep search'\r\n            encoding = detect_encoding_from_requests_response(\r\n                response, deep=True).lower()\r\n\r\n        else:\r\n            encoding = force_encoding\r\n\r\n    if verbose:\r\n        LOGGER.info(u'html downloader: forced encoding to \u201c%s\u201d%s.', \r\n                    encoding, u' via {0}'.format(force_encoding) \r\n                    if force_encoding in ('meta', '', ) else u'')\r\n\r\n    \r\n\tif type(response.content) != type(unicode):\r\n\r\n        if verbose:\r\n            LOGGER.info(u'html downloader: content is not unicode, converting on the fly.')\r\n          \r\n        # TODO: if parameter override\r\n        content = unicode(response.content, encoding)\r\n\r\n    else:\r\n      content = response.content\r\n        \r\n\tinstance.content = content\r\n\tinstance.content_type = models.CONTENT_TYPES.HTML\r\n\r\n\tif commit:\r\n        instance.save()\r\n\r\n    with statsd.pipeline() as spipe:\r\n        spipe.gauge('articles.counts.empty', -1, delta=True)\r\n        spipe.gauge('articles.counts.html', 1, delta=True)\r\n\r\n\treturn True\r\n\r\n# HEADS UP: the NotTextHtmlException is not raised anymore: next parsers will\r\n# \t\t\ttest themselves if the content{_type} is HTML or not. Eventually\r\n# \t\t\tif they come after this one, they should detect any other handled\r\n# \t\t\ttype and download it or do anything relevant with it.\r\n#\r\n# raise NotTextHtmlException(u\"Content is not text/html \"\r\n#                            u\"but %s.\" % content_type,\r\n#                            response=response)"
+  }
+},
+{
+  "pk": 1, 
+  "model": "core.processor", 
+  "fields": {
+    "rght": 2, 
+    "maintainer": null, 
+    "duplicate_of": null, 
+    "lft": 1, 
+    "description_fr": "", 
+    "requirements": "", 
+    "short_description_nt": "", 
+    "accept_code": "\r\n# We start from the base conditions.\r\nbase_conditions = get_processor_by_slug(\r\n    '1fs-article-parse-accept-conditions').accepts(\r\n        instance, force=force, verbose=verbose, commit=commit)\r\n\r\nreturn  base_conditions and instance.content_type in (None, models.CONTENT_TYPES.NONE)\r\n", 
+    "description_nt": "", 
+    "languages": [], 
+    "tree_id": 1, 
+    "short_description_fr": "", 
+    "source_address": "", 
+    "parent": null, 
+    "is_active": true, 
+    "description_en": "This is a 1flow legacy default basic processor.", 
+    "user": [
+      "karmak23"
+    ], 
+    "slug": "1fs-legacy-simple-html-downloader", 
+    "categories": [
+      1, 
+      2
+    ], 
+    "name": "Legacy simple HTML downloader", 
+    "short_description_en": "", 
+    "parameters": "{'force_encoding': {'help_en': u\"the `force_encoding` can take 2 special values (`meta` or `deep`) or any valid encoding name, like `utf-8`, `latin9`, `iso-8859-15`, etc.\\nIf `meta`, the HTML META tag will be returned if found (else a deep detection will be attempted).\\nIf 'deep', deep content inspection will occur, trying to detect an encoding directly from the item content.\\nWARNING \\u2014 this can take a long time and exhaust system resources if used in default chain. It is not necessary in most cases.\\nIf you set this parameter for a website only, it is best to force it to an encoding name. This will avoid resource avoiding and speed up fetching / parsing.\\nIf you need to set it for a chain used on many websites (and only if you really need to), the recommended value is `meta`, to avoid resource exhaustion.\\nHint \\u2014 you can try `deep` on just an article of a particular website to make the engine detect the encoding, look in the logs to get the detected value, and then make it fixed to keep the corresponding chain fast.\", 'required': False, 'type': 'string', 'default_en': 'nothing; no encoding forced.'}, 'user_agent': {'help_en': 'a classic user agent string, as seen in any modern web browser.', 'required': False, 'type': 'string', 'default_en': 'Application settings / configuration value'}}", 
+    "level": 0, 
+    "duplicate_status": null, 
+    "process_code": "import requests\r\n\r\nfrom oneflow.base.utils import detect_encoding_from_requests_response\r\n\r\n# NOTE:\r\n#   \u201cUser-agent\u201d is the official HTTP Header syntax.\r\n#   \u201cuser_agent\u201d is the processor parameter (a python name for a variable).\r\n\r\n# Get our own copy of defaults.\r\nHEADERS = models.REQUEST_BASE_HEADERS.copy()\r\n\r\n# See if we have headers parameters; `parameters` comes\r\n# from the chained item, not the processor itself.\r\nuser_agent = parameters.get('user_agent', HEADERS.get('User-agent', None))\r\nforce_encoding = parameters.get('force_encoding', None)\r\n\r\nif user_agent is not None:\r\n    # merge everything into our final headers.\r\n    HEADERS['User-agent'] = user_agent\r\n\r\nresponse = requests.get(instance.url, headers=HEADERS)\r\n\r\ncontent_type = response.headers.get('content-type', u'unspecified')\r\n\r\nif content_type.startswith(u'text/html'):\r\n  \t\r\n  \tif force_encoding is None:\r\n        encoding = detect_encoding_from_requests_response(response).lower()\r\n\r\n        if verbose:\r\n            LOGGER.info(u'html downloader: detected encoding is \u201c%s\u201d.', \r\n                        encoding)\r\n\r\n    else:\r\n        force_encoding = force_encoding.lower()\r\n\r\n        if force_encoding in ('meta trust', 'meta', 'meta-trust', 'meta_trust'):\r\n            force_encoding = 'meta trust'\r\n            encoding = detect_encoding_from_requests_response(\r\n                response, meta=True).lower()\r\n\r\n        elif force_encoding in ('deep search', 'deep', \r\n                                'search', 'deep-search', 'deep_search'):\r\n            force_encoding = 'deep search'\r\n            encoding = detect_encoding_from_requests_response(\r\n                response, deep=True).lower()\r\n\r\n        else:\r\n            encoding = force_encoding\r\n\r\n    if verbose:\r\n        LOGGER.info(u'html downloader: forced encoding to \u201c%s\u201d%s.', \r\n                    encoding, u' via {0}'.format(force_encoding) \r\n                    if force_encoding in ('meta', '', ) else u'')\r\n\r\n    \r\n\tif type(response.content) != type(unicode):\r\n\r\n        if verbose:\r\n            LOGGER.info(u'html downloader: content is not unicode, converting on the fly.')\r\n          \r\n        # TODO: if parameter override\r\n        content = unicode(response.content, encoding)\r\n\r\n    else:\r\n      content = response.content\r\n        \r\n\tinstance.content = content\r\n\tinstance.content_type = models.CONTENT_TYPES.HTML\r\n\r\n\tif commit:\r\n        instance.save()\r\n\r\n    with statsd.pipeline() as spipe:\r\n        spipe.gauge('articles.counts.empty', -1, delta=True)\r\n        spipe.gauge('articles.counts.html', 1, delta=True)\r\n\r\n\treturn True\r\n\r\n# HEADS UP: the NotTextHtmlException is not raised anymore: next parsers will\r\n# \t\t\ttest themselves if the content{_type} is HTML or not. Eventually\r\n# \t\t\tif they come after this one, they should detect any other handled\r\n# \t\t\ttype and download it or do anything relevant with it.\r\n#\r\n# raise NotTextHtmlException(u\"Content is not text/html \"\r\n#                            u\"but %s.\" % content_type,\r\n#                            response=response)"
+  }
+},
+{
+  "pk": 2, 
+  "model": "core.processor", 
+  "fields": {
+    "rght": 2, 
+    "maintainer": null, 
+    "duplicate_of": null, 
+    "lft": 1, 
+    "description_fr": "", 
+    "requirements": "beautifulsoup4==4.3.2\r\n", 
+    "short_description_nt": "", 
+    "accept_code": "\r\n# We use the same conditions as the requests HTML content extractor.\r\nif not get_processor_by_slug(\r\n    '1fs-article-parse-accept-conditions').accepts(\r\n        instance, force=force, verbose=verbose, commit=commit):\r\n\treturn False\r\n\r\nslashes_parts = [p for p in instance.url.split(u'/') if p != u'']\r\n\r\nparts_nr = len(slashes_parts)\r\n\r\nif parts_nr > 5:\r\n    # For sure, this is not a bookmark.\r\n    return False\r\n\r\nif parts_nr == 2:\r\n    # This is a simple website link. For sure, a bookmark.\r\n    # eg. we got ['http', 'www.mysite.com']\r\n    return True\r\n", 
+    "description_nt": "", 
+    "languages": [], 
+    "tree_id": 2, 
+    "short_description_fr": "", 
+    "source_address": "", 
+    "parent": null, 
+    "is_active": true, 
+    "description_en": "This is 1flow historical bookmark extractor.", 
+    "user": [
+      "karmak23"
+    ], 
+    "slug": "1fs-legacy-simple-bookmark-extractor", 
+    "categories": [
+      1, 
+      2
+    ], 
+    "name": "Legacy simple bookmark extractor", 
+    "short_description_en": "", 
+    "parameters": null, 
+    "level": 0, 
+    "duplicate_status": null, 
+    "process_code": "\r\nfrom bs4 import BeautifulSoup\r\n\r\nCONTENT_TYPES = models.CONTENT_TYPES\r\n\r\n# If we are here, accepts() already returned True, this IS a bookmark.\r\nif force or instance.content_type in (None, CONTENT_TYPES.NONE):\r\n\r\n    instance.content_type = CONTENT_TYPES.BOOKMARK\r\n\r\n    slashes_parts = [p for p in instance.url.split(u'/') if p != u'']\r\n\r\n    domain_dotted = slashes_parts[1]\r\n    domain_dashed = domain_dotted.replace(u'.', u'-')\r\n\r\n    #\r\n    # TODO: generate a snapshot of the website and store the image.\r\n    #       stop using this external non-libre image provider.\r\n\r\n    instance.image_url = (u'http://images.screenshots.com/'\r\n                      u'{0}/{1}-small.jpg').format(\r\n        domain_dotted, domain_dashed)\r\n\r\n    instance.content = (u'http://images.screenshots.com/'\r\n                    u'{0}/{1}-large.jpg').format(\r\n        domain_dotted, domain_dashed)\r\n\r\n    content = instance.extract_and_set_title(commit=False)\r\n\r\n    #\r\n    # We use fetched content to get a proper \r\n    # website description of the page, if any.\r\n    #\r\n    if content is not None:\r\n        try:\r\n            soup = BeautifulSoup(content)\r\n\r\n            for meta in soup.find_all('meta'):\r\n                if meta.attrs.get('name', 'none').lower() \\\r\n                        == 'description':\r\n                    instance.excerpt = meta.attrs['content']\r\n\r\n        except:\r\n            LOGGER.exception(u'Could not extract description '\r\n                             u'of imported bookmark %s #%s',\r\n                             instance._meta.verbose_name, instance.id)\r\n\r\n        else:\r\n            LOGGER.info(u'Successfully set description to \u201c%s\u201d',\r\n                        instance.excerpt)\r\n\r\n    if commit:\r\n        instance.save()\r\n\r\n    #\r\n    # TODO: fetch something like http://www.siteencyclopedia.com/{parts[1]}/\r\n    #       and put it in the excerpt.\r\n\r\n    # HEADS UP: next processor will find the article with a CONTENT_TYPE_FINAL\r\n    #           and will not process it. Except that in the case of force=True\r\n    #           and a multiple-processors chain, this is override the behaviour\r\n    #           and fetch a content while the instance IS a bookmark. Thus we\r\n    #           must always raise a StopException to be sure the chain will \r\n    #           stop, whatever `force` is.\r\n\r\n    raise models.StopProcessingException(\r\n        u'Done setting up bookmark content for {0} #{1}.'.format(\r\n            instance._meta.verbose_name, instance.id))\r\n\r\n"
+  }
+},
+{
+  "pk": 2, 
+  "model": "core.processor", 
+  "fields": {
+    "rght": 2, 
+    "maintainer": null, 
+    "duplicate_of": null, 
+    "lft": 1, 
+    "description_fr": "", 
+    "requirements": "beautifulsoup4==4.3.2\r\n", 
+    "short_description_nt": "", 
+    "accept_code": "\r\n# We use the same conditions as the requests HTML content extractor.\r\nif not get_processor_by_slug(\r\n    '1fs-article-parse-accept-conditions').accepts(\r\n        instance, force=force, verbose=verbose, commit=commit):\r\n\treturn False\r\n\r\nslashes_parts = [p for p in instance.url.split(u'/') if p != u'']\r\n\r\nparts_nr = len(slashes_parts)\r\n\r\nif parts_nr > 5:\r\n    # For sure, this is not a bookmark.\r\n    return False\r\n\r\nif parts_nr == 2:\r\n    # This is a simple website link. For sure, a bookmark.\r\n    # eg. we got ['http', 'www.mysite.com']\r\n    return True\r\n", 
+    "description_nt": "", 
+    "languages": [], 
+    "tree_id": 2, 
+    "short_description_fr": "", 
+    "source_address": "", 
+    "parent": null, 
+    "is_active": true, 
+    "description_en": "This is 1flow historical bookmark extractor.", 
+    "user": [
+      "karmak23"
+    ], 
+    "slug": "1fs-legacy-simple-bookmark-extractor", 
+    "categories": [
+      1, 
+      2
+    ], 
+    "name": "Legacy simple bookmark extractor", 
+    "short_description_en": "", 
+    "parameters": null, 
+    "level": 0, 
+    "duplicate_status": null, 
+    "process_code": "\r\nfrom bs4 import BeautifulSoup\r\n\r\nCONTENT_TYPES = models.CONTENT_TYPES\r\n\r\n# If we are here, accepts() already returned True, this IS a bookmark.\r\nif force or instance.content_type in (None, CONTENT_TYPES.NONE):\r\n\r\n    instance.content_type = CONTENT_TYPES.BOOKMARK\r\n\r\n    slashes_parts = [p for p in instance.url.split(u'/') if p != u'']\r\n\r\n    domain_dotted = slashes_parts[1]\r\n    domain_dashed = domain_dotted.replace(u'.', u'-')\r\n\r\n    #\r\n    # TODO: generate a snapshot of the website and store the image.\r\n    #       stop using this external non-libre image provider.\r\n\r\n    instance.image_url = (u'http://images.screenshots.com/'\r\n                      u'{0}/{1}-small.jpg').format(\r\n        domain_dotted, domain_dashed)\r\n\r\n    instance.content = (u'http://images.screenshots.com/'\r\n                    u'{0}/{1}-large.jpg').format(\r\n        domain_dotted, domain_dashed)\r\n\r\n    content = instance.extract_and_set_title(commit=False)\r\n\r\n    #\r\n    # We use fetched content to get a proper \r\n    # website description of the page, if any.\r\n    #\r\n    if content is not None:\r\n        try:\r\n            soup = BeautifulSoup(content)\r\n\r\n            for meta in soup.find_all('meta'):\r\n                if meta.attrs.get('name', 'none').lower() \\\r\n                        == 'description':\r\n                    instance.excerpt = meta.attrs['content']\r\n\r\n        except:\r\n            LOGGER.exception(u'Could not extract description '\r\n                             u'of imported bookmark %s #%s',\r\n                             instance._meta.verbose_name, instance.id)\r\n\r\n        else:\r\n            LOGGER.info(u'Successfully set description to \u201c%s\u201d',\r\n                        instance.excerpt)\r\n\r\n    if commit:\r\n        instance.save()\r\n\r\n    #\r\n    # TODO: fetch something like http://www.siteencyclopedia.com/{parts[1]}/\r\n    #       and put it in the excerpt.\r\n\r\n    # HEADS UP: next processor will find the article with a CONTENT_TYPE_FINAL\r\n    #           and will not process it. Except that in the case of force=True\r\n    #           and a multiple-processors chain, this is override the behaviour\r\n    #           and fetch a content while the instance IS a bookmark. Thus we\r\n    #           must always raise a StopException to be sure the chain will \r\n    #           stop, whatever `force` is.\r\n\r\n    raise models.StopProcessingException(\r\n        u'Done setting up bookmark content for {0} #{1}.'.format(\r\n            instance._meta.verbose_name, instance.id))\r\n\r\n"
+  }
+},
+{
+  "pk": 3, 
+  "model": "core.processor", 
+  "fields": {
+    "rght": 2, 
+    "maintainer": null, 
+    "duplicate_of": null, 
+    "lft": 1, 
+    "description_fr": "", 
+    "requirements": "", 
+    "short_description_nt": "", 
+    "accept_code": "\r\n# We use the same conditions as the requests HTML content extractor.\r\nreturn get_processor_by_slug(\r\n    '1fs-article-parse-accept-conditions').accepts(\r\n        instance, force=force, verbose=verbose, commit=commit)", 
+    "description_nt": "", 
+    "languages": [], 
+    "tree_id": 3, 
+    "short_description_fr": "", 
+    "source_address": "", 
+    "parent": null, 
+    "is_active": true, 
+    "description_en": "This processor just calls instance.fetch_content_text(). It's a transition processor that will be split in 3 when the process chain runs flawlessly.", 
+    "user": [
+      "karmak23"
+    ], 
+    "slug": "1fs-legacy-multi-parser-content-extractor", 
+    "categories": [
+      1, 
+      2
+    ], 
+    "name": "Legacy multi-parser content extractor", 
+    "short_description_en": "Soup-strainer + newspaper + breadability (1flow legacy)", 
+    "parameters": null, 
+    "level": 0, 
+    "duplicate_status": null, 
+    "process_code": "\r\n# This runs the \"old\" 1flow content extractor\r\ninstance.fetch_content_text(force=force, commit=commit)"
+  }
+},
+{
+  "pk": 3, 
+  "model": "core.processor", 
+  "fields": {
+    "rght": 2, 
+    "maintainer": null, 
+    "duplicate_of": null, 
+    "lft": 1, 
+    "description_fr": "", 
+    "requirements": "", 
+    "short_description_nt": "", 
+    "accept_code": "\r\n# We use the same conditions as the requests HTML content extractor.\r\nreturn get_processor_by_slug(\r\n    '1fs-article-parse-accept-conditions').accepts(\r\n        instance, force=force, verbose=verbose, commit=commit)", 
+    "description_nt": "", 
+    "languages": [], 
+    "tree_id": 3, 
+    "short_description_fr": "", 
+    "source_address": "", 
+    "parent": null, 
+    "is_active": true, 
+    "description_en": "This processor just calls instance.fetch_content_text(). It's a transition processor that will be split in 3 when the process chain runs flawlessly.", 
+    "user": [
+      "karmak23"
+    ], 
+    "slug": "1fs-legacy-multi-parser-content-extractor", 
+    "categories": [
+      1, 
+      2
+    ], 
+    "name": "Legacy multi-parser content extractor", 
+    "short_description_en": "Soup-strainer + newspaper + breadability (1flow legacy)", 
+    "parameters": null, 
+    "level": 0, 
+    "duplicate_status": null, 
+    "process_code": "\r\n# This runs the \"old\" 1flow content extractor\r\ninstance.fetch_content_text(force=force, commit=commit)"
+  }
+},
+{
+  "pk": 4, 
+  "model": "core.processor", 
+  "fields": {
+    "rght": 2, 
+    "maintainer": null, 
+    "duplicate_of": null, 
+    "lft": 1, 
+    "description_fr": "", 
+    "requirements": "", 
+    "short_description_nt": "", 
+    "accept_code": "\r\nreturn (\r\n\r\n    # TODO: don't we work on any Content* model?\r\n\r\n    # we work on articles\r\n    isinstance(instance, models.Article)\r\n\r\n  \t# Content parsers accept only good articles.\r\n    # As of 20150208, ContentItem doesn't care,\r\n    # and for BaseItem & UrlItem it means already\r\n    # absolute and not duplicate, which is perfect.\r\n    and instance.is_good\r\n\r\n    # Note: as this is a generic parser chain applied to all websites,\r\n    # we cannot act on orphaned articles.\r\n    # \r\n    # Generally speaking, an orphaned article (eg. with no URL) can be\r\n    # processed in some conditions (eg. if the RSS feed brought us some\r\n    # content). But it so tightly depends on the website and the RSS \r\n    # feed that here, we must avoid doing anything, because there would\r\n    # be too much tests to run to be sure we can do something.\r\n    # \r\n    # Thus, we do nothing on orphaned articles as a conservative \r\n    # measure. But in dedicated parsers (eg. chains that apply only on\r\n    # one or a few websites), we would most certainly accept them.\r\n    and not instance.is_orphaned\r\n  \r\n    # and which are not already converted (or conversion is forced again).\r\n    and (\r\n    \tforce \r\n    \tor instance.content_type not in models.CONTENT_TYPES_FINAL\r\n    )\r\n)\r\n", 
+    "description_nt": "", 
+    "languages": [], 
+    "tree_id": 4, 
+    "short_description_fr": "", 
+    "source_address": "", 
+    "parent": null, 
+    "is_active": false, 
+    "description_en": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "slug": "1fs-article-parse-accept-conditions", 
+    "categories": [
+      1, 
+      2
+    ], 
+    "name": "base accept conditions for article content parsers", 
+    "short_description_en": "Accept-only processor for mutualized accept code", 
+    "parameters": null, 
+    "level": 0, 
+    "duplicate_status": null, 
+    "process_code": "\r\n# Do not process anything.\r\n\r\nreturn True"
+  }
+},
+{
+  "pk": 4, 
+  "model": "core.processor", 
+  "fields": {
+    "rght": 2, 
+    "maintainer": null, 
+    "duplicate_of": null, 
+    "lft": 1, 
+    "description_fr": "", 
+    "requirements": "", 
+    "short_description_nt": "", 
+    "accept_code": "\r\nreturn (\r\n\r\n    # TODO: don't we work on any Content* model?\r\n\r\n    # we work on articles\r\n    isinstance(instance, models.Article)\r\n\r\n  \t# Content parsers accept only good articles.\r\n    # As of 20150208, ContentItem doesn't care,\r\n    # and for BaseItem & UrlItem it means already\r\n    # absolute and not duplicate, which is perfect.\r\n    and instance.is_good\r\n\r\n    # Note: as this is a generic parser chain applied to all websites,\r\n    # we cannot act on orphaned articles.\r\n    # \r\n    # Generally speaking, an orphaned article (eg. with no URL) can be\r\n    # processed in some conditions (eg. if the RSS feed brought us some\r\n    # content). But it so tightly depends on the website and the RSS \r\n    # feed that here, we must avoid doing anything, because there would\r\n    # be too much tests to run to be sure we can do something.\r\n    # \r\n    # Thus, we do nothing on orphaned articles as a conservative \r\n    # measure. But in dedicated parsers (eg. chains that apply only on\r\n    # one or a few websites), we would most certainly accept them.\r\n    and not instance.is_orphaned\r\n  \r\n    # and which are not already converted (or conversion is forced again).\r\n    and (\r\n    \tforce \r\n    \tor instance.content_type not in models.CONTENT_TYPES_FINAL\r\n    )\r\n)\r\n", 
+    "description_nt": "", 
+    "languages": [], 
+    "tree_id": 4, 
+    "short_description_fr": "", 
+    "source_address": "", 
+    "parent": null, 
+    "is_active": false, 
+    "description_en": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "slug": "1fs-article-parse-accept-conditions", 
+    "categories": [
+      1, 
+      2
+    ], 
+    "name": "base accept conditions for article content parsers", 
+    "short_description_en": "Accept-only processor for mutualized accept code", 
+    "parameters": null, 
+    "level": 0, 
+    "duplicate_status": null, 
+    "process_code": "\r\n# Do not process anything.\r\n\r\nreturn True"
+  }
+},
+{
+  "pk": 9, 
+  "model": "core.processor", 
+  "fields": {
+    "rght": 2, 
+    "maintainer": null, 
+    "duplicate_of": null, 
+    "lft": 1, 
+    "description_fr": "", 
+    "requirements": "require::", 
+    "short_description_nt": "", 
+    "accept_code": "\r\n# We use the same conditions as the requests HTML content extractor.\r\nreturn get_processor_by_slug(\r\n    '1fs-article-parse-accept-conditions').accepts(\r\n        instance, force=force, verbose=verbose, commit=commit)", 
+    "description_nt": "", 
+    "languages": [], 
+    "tree_id": 5, 
+    "short_description_fr": "", 
+    "source_address": "", 
+    "parent": null, 
+    "is_active": true, 
+    "description_en": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "slug": "1fs-newspaper-full-processor", 
+    "categories": [
+      1, 
+      2
+    ], 
+    "name": "NewsPaper \u2014 full processor", 
+    "short_description_en": "", 
+    "parameters": null, 
+    "level": 0, 
+    "duplicate_status": null, 
+    "process_code": "\r\n# LOGGER.info(u'Parsing %s', instance)\r\n\r\nimport logging\r\nimport newspaper\r\n\r\nlogging.disable(logging.WARNING)\r\n\r\ntry:\r\n    article = newspaper.Article(instance.url)\r\n    article.download()\r\n    article.parse()\r\n\r\nfinally:\r\n    logging.disable(logging.NOTSET)\r\n\r\n# LOGGER.info(u'Parsed %s', instance.url)\r\n\r\ntext = article.text.strip()\r\n\r\nif text != u'':\r\n  instance.content = text\r\n  instance.content_type = models.CONTENT_TYPES.MARKDOWN\r\n  \r\n  if commit:\r\n    instance.save()"
+  }
+},
+{
+  "pk": 9, 
+  "model": "core.processor", 
+  "fields": {
+    "rght": 2, 
+    "maintainer": null, 
+    "duplicate_of": null, 
+    "lft": 1, 
+    "description_fr": "", 
+    "requirements": "require::", 
+    "short_description_nt": "", 
+    "accept_code": "\r\n# We use the same conditions as the requests HTML content extractor.\r\nreturn get_processor_by_slug(\r\n    '1fs-article-parse-accept-conditions').accepts(\r\n        instance, force=force, verbose=verbose, commit=commit)", 
+    "description_nt": "", 
+    "languages": [], 
+    "tree_id": 5, 
+    "short_description_fr": "", 
+    "source_address": "", 
+    "parent": null, 
+    "is_active": true, 
+    "description_en": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "slug": "1fs-newspaper-full-processor", 
+    "categories": [
+      1, 
+      2
+    ], 
+    "name": "NewsPaper \u2014 full processor", 
+    "short_description_en": "", 
+    "parameters": null, 
+    "level": 0, 
+    "duplicate_status": null, 
+    "process_code": "\r\n# LOGGER.info(u'Parsing %s', instance)\r\n\r\nimport logging\r\nimport newspaper\r\n\r\nlogging.disable(logging.WARNING)\r\n\r\ntry:\r\n    article = newspaper.Article(instance.url)\r\n    article.download()\r\n    article.parse()\r\n\r\nfinally:\r\n    logging.disable(logging.NOTSET)\r\n\r\n# LOGGER.info(u'Parsed %s', instance.url)\r\n\r\ntext = article.text.strip()\r\n\r\nif text != u'':\r\n  instance.content = text\r\n  instance.content_type = models.CONTENT_TYPES.MARKDOWN\r\n  \r\n  if commit:\r\n    instance.save()"
+  }
+},
+{
+  "pk": 10, 
+  "model": "core.processor", 
+  "fields": {
+    "rght": 4, 
+    "maintainer": null, 
+    "duplicate_of": null, 
+    "lft": 1, 
+    "description_fr": "", 
+    "requirements": "newspaper==0.0.8\r\n", 
+    "short_description_nt": "", 
+    "accept_code": "return False", 
+    "description_nt": "", 
+    "languages": [], 
+    "tree_id": 6, 
+    "short_description_fr": "", 
+    "source_address": "", 
+    "parent": null, 
+    "is_active": false, 
+    "description_en": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "slug": "1fs-newspaper-common", 
+    "categories": [
+      1
+    ], 
+    "name": "NewsPaper (common)", 
+    "short_description_en": "", 
+    "parameters": null, 
+    "level": 0, 
+    "duplicate_status": null, 
+    "process_code": "return True"
+  }
+},
+{
+  "pk": 11, 
+  "model": "core.processor", 
+  "fields": {
+    "rght": 3, 
+    "maintainer": null, 
+    "duplicate_of": null, 
+    "lft": 2, 
+    "description_fr": "", 
+    "requirements": "", 
+    "short_description_nt": "", 
+    "accept_code": "", 
+    "description_nt": "", 
+    "languages": [], 
+    "tree_id": 6, 
+    "short_description_fr": "", 
+    "source_address": "", 
+    "parent": 10, 
+    "is_active": true, 
+    "description_en": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "slug": "1fs-newspaper-title-extractor", 
+    "categories": [
+      1, 
+      4
+    ], 
+    "name": "Newspaper \u2014 title extractor", 
+    "short_description_en": "", 
+    "parameters": null, 
+    "level": 1, 
+    "duplicate_status": null, 
+    "process_code": ""
+  }
+},
+{
+  "pk": 11, 
+  "model": "core.processor", 
+  "fields": {
+    "rght": 3, 
+    "maintainer": null, 
+    "duplicate_of": null, 
+    "lft": 2, 
+    "description_fr": "", 
+    "requirements": "", 
+    "short_description_nt": "", 
+    "accept_code": "", 
+    "description_nt": "", 
+    "languages": [], 
+    "tree_id": 6, 
+    "short_description_fr": "", 
+    "source_address": "", 
+    "parent": 10, 
+    "is_active": true, 
+    "description_en": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "slug": "1fs-newspaper-title-extractor", 
+    "categories": [
+      1, 
+      4
+    ], 
+    "name": "Newspaper \u2014 title extractor", 
+    "short_description_en": "", 
+    "parameters": null, 
+    "level": 1, 
+    "duplicate_status": null, 
+    "process_code": ""
+  }
+},
+{
+  "pk": 13, 
+  "model": "core.processor", 
+  "fields": {
+    "rght": 4, 
+    "maintainer": null, 
+    "duplicate_of": null, 
+    "lft": 1, 
+    "description_fr": "", 
+    "requirements": "opengraph==0.5", 
+    "short_description_nt": "", 
+    "accept_code": "", 
+    "description_nt": "", 
+    "languages": [], 
+    "tree_id": 8, 
+    "short_description_fr": "", 
+    "source_address": "", 
+    "parent": null, 
+    "is_active": false, 
+    "description_en": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "slug": "1fs-opengraph-common", 
+    "categories": [
+      1
+    ], 
+    "name": "OpenGraph (common)", 
+    "short_description_en": "", 
+    "parameters": null, 
+    "level": 0, 
+    "duplicate_status": null, 
+    "process_code": ""
+  }
+},
+{
+  "pk": 14, 
+  "model": "core.processor", 
+  "fields": {
+    "rght": 3, 
+    "maintainer": null, 
+    "duplicate_of": null, 
+    "lft": 2, 
+    "description_fr": "", 
+    "requirements": "", 
+    "short_description_nt": "", 
+    "accept_code": "\r\n# We start from the base conditions.\r\nbase_conditions = get_processor_by_slug(\r\n    '1fs-article-parse-accept-conditions').accepts(\r\n        instance, force=force, verbose=verbose, commit=commit)\r\n\r\nreturn  base_conditions and instance.content_type == models.CONTENT_TYPES.HTML\r\n", 
+    "description_nt": "", 
+    "languages": [], 
+    "tree_id": 8, 
+    "short_description_fr": "", 
+    "source_address": "", 
+    "parent": 13, 
+    "is_active": true, 
+    "description_en": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "slug": "1fs-opengraph-article", 
+    "categories": [
+      1, 
+      4
+    ], 
+    "name": "OpenGraph \u2014 article metadata extractor", 
+    "short_description_en": "", 
+    "parameters": null, 
+    "level": 1, 
+    "duplicate_status": null, 
+    "process_code": "import opengraph\r\n\r\nfrom oneflow.base.utils.http import clean_url\r\nfrom oneflow.base.utils.dateutils import datetime, datetime_extended_parser\r\n\r\n# from https://github.com/erikriver/opengraph\r\n# site_name       => YouTube\r\n# description     => Eric Clapton and Paul McCartney perform George Harrison's \"While My Guitar Gently Weeps\" at the...\r\n# title           => While My Guitar Gently Weeps\r\n# url             => http://www.youtube.com/watch?v=q3ixBmDzylQ\r\n# image           => http://i2.ytimg.com/vi/q3ixBmDzylQ/default.jpg\r\n# video:type      => application/x-shockwave-flash\r\n# video:height    => 224\r\n# video           => http://www.youtube.com/v/q3ixBmDzylQ?version=3&autohide=1\r\n# video:width     => 398\r\n# type            => video\r\n\r\ndef data_ok(data):\r\n  \r\n    if isinstance(data, list):\r\n      return data[0] is not None and data[0].strip() != u''\r\n  \r\n\treturn data is not None and data.strip() != u''\r\n\r\ninstance_name = instance._meta.verbose_name\r\ninstance_id = instance.id\r\n\r\ntry:\r\n\tog_article = opengraph.OpenGraph(html=instance.content)\r\n\r\nexcept:\r\n  LOGGER.exception(u'opengraph: parsing %s %s failed, aborting.',\r\n                   instance_name, instance_id)\r\n  return\r\n\r\nif not og_article.is_valid():\r\n\tLOGGER.error(u'opengraph: invalid OpenGraph data in %s %s, aborting.',\r\n\t\t         instance_name, instance_id)\r\n\treturn\r\n\r\nneeds_commit = False\r\n\r\n# \u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013 Title\r\n\r\nname_needs_extraction = get_processor_by_slug(\r\n    '1fs-article-title-extract-accept-conditions').accepts(\r\n        instance, force=force, verbose=verbose, commit=commit)\r\n\r\nif data_ok(og_article.title) and name_needs_extraction:\r\n\r\n    instance.name = og_article.title\r\n    needs_commit = True\r\n\r\n\tif verbose:\r\n\t\tLOGGER.info(u'opengraph: set %s %s name to \u201c%s\u201d.', \r\n\t\t\t        instance_name, instance_id, instance.name)\r\n\r\n# \u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013 Date published\r\n# http://ogp.me/#type_article\r\n# \r\n# article:published_time - datetime - When the article was first published.\r\n# article:modified_time - datetime - When the article was last changed.\r\n# article:expiration_time - datetime - When the article is out of date after.\r\n# article:author - profile array - Writers of the article.\r\n# article:section - string - A high-level section name. E.g. Technology\r\n# article:tag - string array - Tag words associated with this article.\r\n# \r\n# http://ogp.me/#type_profile (for author)\r\n\r\nog_pub_time = og_article.get('article__published_time', None)\r\n\r\nif instance.date_published is None and data_ok(og_pub_time):\r\n\r\n\ttry:\r\n\t\tdate_published = datetime(*datetime_extended_parser(og_pub_time)[:6])\r\n\r\n\texcept:\r\n\t\tLOGGER.exception(u'OpenGraph article:published_time \u201c%s\u201d is unusable',\r\n\t\t\t\t         og_pub_time)\r\n\r\n\telse:\r\n\t\tinstance.date_published = date_published\r\n\t\tneeds_commit = True\r\n\t\tLOGGER.info(u'opengraph: set %s %s published date.', \r\n\t\t\t        instance_name, instance_id)\r\n\r\n# \u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013 Description\r\n\r\nog_description = og_article.get('description', None)\r\n\r\nif data_ok(og_description) and not data_ok(instance.excerpt):\r\n\tinstance.excerpt = og_description\r\n\tneeds_commit = True\r\n\r\n\tif verbose:\r\n\t\tLOGGER.info(u'opengraph: set %s %s excerpt.', \r\n\t\t\t        instance_name, instance_id)\r\n\r\n# \u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013 Authors\r\n\r\n#\r\n# TODO\r\n# \r\n\r\n# \u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2014\u2014\u2014 Language\r\n\r\nog_language = og_article.get('language', None)\r\n\r\nif data_ok(og_language) and instance.language_id is None:\r\n\tinstance.language = models.Language.get_by_code(og_language)\r\n\tneeds_commit = True\r\n\r\n\tif verbose:\r\n\t\tLOGGER.info(u'opengraph: set %s %s language to %s.', \r\n\t\t\t        instance_name, instance_id, instance.language)\r\n\r\n# \u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2014\u2014\u2014 Tags\r\n\r\nog_tags = og_article.get('article__tag', None)\r\n\r\nif data_ok(og_tags):\r\n  \r\n\tif not isinstance(og_tags, list):\r\n\t\tog_tags = [og_tags]\r\n\r\n\tif og_tags and not instance.tags.exists():\r\n\t\tinstance.tags.add(*models.SimpleTag.get_tags_set(og_tags, origin=instance))\r\n\r\n\t\tif verbose:\r\n\t\t\tLOGGER.info(u'opengraph: set %s %s tag(s) to %s.', \r\n\t\t\t\t        instance_name, instance_id, u', '.join(og_tags))\r\n\r\n# \u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013 Front image\r\n\r\nog_image = og_article.get('image', None)\r\n\r\nif data_ok(og_image) and not data_ok(instance.image_url):\r\n  \r\n    if isinstance(og_image, list):\r\n\t    instance.image_url = clean_url(og_image[0])\r\n\r\n    else:\r\n\t    instance.image_url = clean_url(og_image)\r\n      \r\n\tneeds_commit = True\r\n\r\n\tif verbose:\r\n\t\tLOGGER.info(u'opengraph: set %s %s image_url to %s.', \r\n\t\t\t        instance_name, instance_id, instance.image_url)\r\n\r\n# \u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2014\u2014\u2014\u2014\u2014\u2014\u2014 Beer\r\n\r\nif needs_commit and commit:\r\n\tinstance.save()"
+  }
+},
+{
+  "pk": 14, 
+  "model": "core.processor", 
+  "fields": {
+    "rght": 3, 
+    "maintainer": null, 
+    "duplicate_of": null, 
+    "lft": 2, 
+    "description_fr": "", 
+    "requirements": "", 
+    "short_description_nt": "", 
+    "accept_code": "\r\n# We start from the base conditions.\r\nbase_conditions = get_processor_by_slug(\r\n    '1fs-article-parse-accept-conditions').accepts(\r\n        instance, force=force, verbose=verbose, commit=commit)\r\n\r\nreturn  base_conditions and instance.content_type == models.CONTENT_TYPES.HTML\r\n", 
+    "description_nt": "", 
+    "languages": [], 
+    "tree_id": 8, 
+    "short_description_fr": "", 
+    "source_address": "", 
+    "parent": 13, 
+    "is_active": true, 
+    "description_en": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "slug": "1fs-opengraph-article", 
+    "categories": [
+      1, 
+      4
+    ], 
+    "name": "OpenGraph \u2014 article metadata extractor", 
+    "short_description_en": "", 
+    "parameters": null, 
+    "level": 1, 
+    "duplicate_status": null, 
+    "process_code": "import opengraph\r\n\r\nfrom oneflow.base.utils.http import clean_url\r\nfrom oneflow.base.utils.dateutils import datetime, datetime_extended_parser\r\n\r\n# from https://github.com/erikriver/opengraph\r\n# site_name       => YouTube\r\n# description     => Eric Clapton and Paul McCartney perform George Harrison's \"While My Guitar Gently Weeps\" at the...\r\n# title           => While My Guitar Gently Weeps\r\n# url             => http://www.youtube.com/watch?v=q3ixBmDzylQ\r\n# image           => http://i2.ytimg.com/vi/q3ixBmDzylQ/default.jpg\r\n# video:type      => application/x-shockwave-flash\r\n# video:height    => 224\r\n# video           => http://www.youtube.com/v/q3ixBmDzylQ?version=3&autohide=1\r\n# video:width     => 398\r\n# type            => video\r\n\r\ndef data_ok(data):\r\n  \r\n    if isinstance(data, list):\r\n      return data[0] is not None and data[0].strip() != u''\r\n  \r\n\treturn data is not None and data.strip() != u''\r\n\r\ninstance_name = instance._meta.verbose_name\r\ninstance_id = instance.id\r\n\r\ntry:\r\n\tog_article = opengraph.OpenGraph(html=instance.content)\r\n\r\nexcept:\r\n  LOGGER.exception(u'opengraph: parsing %s %s failed, aborting.',\r\n                   instance_name, instance_id)\r\n  return\r\n\r\nif not og_article.is_valid():\r\n\tLOGGER.error(u'opengraph: invalid OpenGraph data in %s %s, aborting.',\r\n\t\t         instance_name, instance_id)\r\n\treturn\r\n\r\nneeds_commit = False\r\n\r\n# \u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013 Title\r\n\r\nname_needs_extraction = get_processor_by_slug(\r\n    '1fs-article-title-extract-accept-conditions').accepts(\r\n        instance, force=force, verbose=verbose, commit=commit)\r\n\r\nif data_ok(og_article.title) and name_needs_extraction:\r\n\r\n    instance.name = og_article.title\r\n    needs_commit = True\r\n\r\n\tif verbose:\r\n\t\tLOGGER.info(u'opengraph: set %s %s name to \u201c%s\u201d.', \r\n\t\t\t        instance_name, instance_id, instance.name)\r\n\r\n# \u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013 Date published\r\n# http://ogp.me/#type_article\r\n# \r\n# article:published_time - datetime - When the article was first published.\r\n# article:modified_time - datetime - When the article was last changed.\r\n# article:expiration_time - datetime - When the article is out of date after.\r\n# article:author - profile array - Writers of the article.\r\n# article:section - string - A high-level section name. E.g. Technology\r\n# article:tag - string array - Tag words associated with this article.\r\n# \r\n# http://ogp.me/#type_profile (for author)\r\n\r\nog_pub_time = og_article.get('article__published_time', None)\r\n\r\nif instance.date_published is None and data_ok(og_pub_time):\r\n\r\n\ttry:\r\n\t\tdate_published = datetime(*datetime_extended_parser(og_pub_time)[:6])\r\n\r\n\texcept:\r\n\t\tLOGGER.exception(u'OpenGraph article:published_time \u201c%s\u201d is unusable',\r\n\t\t\t\t         og_pub_time)\r\n\r\n\telse:\r\n\t\tinstance.date_published = date_published\r\n\t\tneeds_commit = True\r\n\t\tLOGGER.info(u'opengraph: set %s %s published date.', \r\n\t\t\t        instance_name, instance_id)\r\n\r\n# \u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013 Description\r\n\r\nog_description = og_article.get('description', None)\r\n\r\nif data_ok(og_description) and not data_ok(instance.excerpt):\r\n\tinstance.excerpt = og_description\r\n\tneeds_commit = True\r\n\r\n\tif verbose:\r\n\t\tLOGGER.info(u'opengraph: set %s %s excerpt.', \r\n\t\t\t        instance_name, instance_id)\r\n\r\n# \u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013 Authors\r\n\r\n#\r\n# TODO\r\n# \r\n\r\n# \u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2014\u2014\u2014 Language\r\n\r\nog_language = og_article.get('language', None)\r\n\r\nif data_ok(og_language) and instance.language_id is None:\r\n\tinstance.language = models.Language.get_by_code(og_language)\r\n\tneeds_commit = True\r\n\r\n\tif verbose:\r\n\t\tLOGGER.info(u'opengraph: set %s %s language to %s.', \r\n\t\t\t        instance_name, instance_id, instance.language)\r\n\r\n# \u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2014\u2014\u2014 Tags\r\n\r\nog_tags = og_article.get('article__tag', None)\r\n\r\nif data_ok(og_tags):\r\n  \r\n\tif not isinstance(og_tags, list):\r\n\t\tog_tags = [og_tags]\r\n\r\n\tif og_tags and not instance.tags.exists():\r\n\t\tinstance.tags.add(*models.SimpleTag.get_tags_set(og_tags, origin=instance))\r\n\r\n\t\tif verbose:\r\n\t\t\tLOGGER.info(u'opengraph: set %s %s tag(s) to %s.', \r\n\t\t\t\t        instance_name, instance_id, u', '.join(og_tags))\r\n\r\n# \u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013 Front image\r\n\r\nog_image = og_article.get('image', None)\r\n\r\nif data_ok(og_image) and not data_ok(instance.image_url):\r\n  \r\n    if isinstance(og_image, list):\r\n\t    instance.image_url = clean_url(og_image[0])\r\n\r\n    else:\r\n\t    instance.image_url = clean_url(og_image)\r\n      \r\n\tneeds_commit = True\r\n\r\n\tif verbose:\r\n\t\tLOGGER.info(u'opengraph: set %s %s image_url to %s.', \r\n\t\t\t        instance_name, instance_id, instance.image_url)\r\n\r\n# \u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2014\u2014\u2014\u2014\u2014\u2014\u2014 Beer\r\n\r\nif needs_commit and commit:\r\n\tinstance.save()"
+  }
+},
+{
+  "pk": 15, 
+  "model": "core.processor", 
+  "fields": {
+    "rght": 2, 
+    "maintainer": null, 
+    "duplicate_of": null, 
+    "lft": 1, 
+    "description_fr": "", 
+    "requirements": "", 
+    "short_description_nt": "", 
+    "accept_code": "\r\nORIGINS = models.ORIGINS\r\n\r\nreturn (\r\n\t# If instance has no name currently, wherever its origin is, \r\n\t# it seems fine to try to find a name from any data we have\r\n\t# or can gather.\r\n\r\n\tinstance.name is None\r\n\tor \r\n\tinstance.name.strip() == u''\r\n\r\n\t# Or, generally speaking, RSS already sends us the title, \r\n\t# thus we should not do the job twice if we already have it.\r\n\tor (\r\n\t\tinstance.origin not in (\r\n\t\t\tORIGINS.FEEDPARSER,\r\n\t\t\tORIGINS.GOOGLE_READER,\r\n\t\t)\r\n\r\n\t\t# In case the origin is not one known to give us the title,\r\n\t\t# We should check if the title is not already extracted to \r\n\t\t# not do the job twice again.\r\n\r\n\t\tand (\r\n\t        instance.name.endswith(instance.url)\r\n\r\n\t        # Except if the user, the admin or the \r\n\t        # engine explicitely asks us to do so.\r\n\t        \r\n        \tor\r\n        \tforce\r\n        )\r\n\t) \r\n)", 
+    "description_nt": "", 
+    "languages": [], 
+    "tree_id": 9, 
+    "short_description_fr": "", 
+    "source_address": "", 
+    "parent": null, 
+    "is_active": false, 
+    "description_en": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "slug": "1fs-article-title-extract-accept-conditions", 
+    "categories": [
+      1, 
+      4
+    ], 
+    "name": "base accept conditions for article title extraction", 
+    "short_description_en": "", 
+    "parameters": null, 
+    "level": 0, 
+    "duplicate_status": null, 
+    "process_code": "\r\n# This processor does NOT extract any title from anything.\r\n# It just defines a common accepts() conditions set that \r\n# other title extractor processors can start from.\r\n\r\nreturn True"
+  }
+},
+{
+  "pk": 15, 
+  "model": "core.processor", 
+  "fields": {
+    "rght": 2, 
+    "maintainer": null, 
+    "duplicate_of": null, 
+    "lft": 1, 
+    "description_fr": "", 
+    "requirements": "", 
+    "short_description_nt": "", 
+    "accept_code": "\r\nORIGINS = models.ORIGINS\r\n\r\nreturn (\r\n\t# If instance has no name currently, wherever its origin is, \r\n\t# it seems fine to try to find a name from any data we have\r\n\t# or can gather.\r\n\r\n\tinstance.name is None\r\n\tor \r\n\tinstance.name.strip() == u''\r\n\r\n\t# Or, generally speaking, RSS already sends us the title, \r\n\t# thus we should not do the job twice if we already have it.\r\n\tor (\r\n\t\tinstance.origin not in (\r\n\t\t\tORIGINS.FEEDPARSER,\r\n\t\t\tORIGINS.GOOGLE_READER,\r\n\t\t)\r\n\r\n\t\t# In case the origin is not one known to give us the title,\r\n\t\t# We should check if the title is not already extracted to \r\n\t\t# not do the job twice again.\r\n\r\n\t\tand (\r\n\t        instance.name.endswith(instance.url)\r\n\r\n\t        # Except if the user, the admin or the \r\n\t        # engine explicitely asks us to do so.\r\n\t        \r\n        \tor\r\n        \tforce\r\n        )\r\n\t) \r\n)", 
+    "description_nt": "", 
+    "languages": [], 
+    "tree_id": 9, 
+    "short_description_fr": "", 
+    "source_address": "", 
+    "parent": null, 
+    "is_active": false, 
+    "description_en": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "slug": "1fs-article-title-extract-accept-conditions", 
+    "categories": [
+      1, 
+      4
+    ], 
+    "name": "base accept conditions for article title extraction", 
+    "short_description_en": "", 
+    "parameters": null, 
+    "level": 0, 
+    "duplicate_status": null, 
+    "process_code": "\r\n# This processor does NOT extract any title from anything.\r\n# It just defines a common accepts() conditions set that \r\n# other title extractor processors can start from.\r\n\r\nreturn True"
+  }
+},
+{
+  "pk": 3, 
+  "model": "core.processingchain", 
+  "fields": {
+    "short_description_en": "", 
+    "rght": 2, 
+    "applies_on": [
+      [
+        "core", 
+        "article"
+      ]
+    ], 
+    "duplicate_of": null, 
+    "parent": null, 
+    "level": 0, 
+    "description_nt": "", 
+    "short_description_nt": "", 
+    "is_active": true, 
+    "description_en": "", 
+    "languages": [], 
+    "lft": 1, 
+    "description_fr": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "tree_id": 3, 
+    "short_description_fr": "", 
+    "duplicate_status": null, 
+    "slug": "1fs-full-newspaper-only", 
+    "categories": [
+      1, 
+      2
+    ], 
+    "name": "full newspaper-only"
+  }
+},
+{
+  "pk": 3, 
+  "model": "core.processingchain", 
+  "fields": {
+    "short_description_en": "", 
+    "rght": 2, 
+    "applies_on": [
+      [
+        "core", 
+        "article"
+      ]
+    ], 
+    "duplicate_of": null, 
+    "parent": null, 
+    "level": 0, 
+    "description_nt": "", 
+    "short_description_nt": "", 
+    "is_active": true, 
+    "description_en": "", 
+    "languages": [], 
+    "lft": 1, 
+    "description_fr": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "tree_id": 3, 
+    "short_description_fr": "", 
+    "duplicate_status": null, 
+    "slug": "1fs-full-newspaper-only", 
+    "categories": [
+      1, 
+      2
+    ], 
+    "name": "full newspaper-only"
+  }
+},
+{
+  "pk": 2, 
+  "model": "core.processingchain", 
+  "fields": {
+    "short_description_en": "Articles default parsing chain", 
+    "rght": 2, 
+    "applies_on": [
+      [
+        "core", 
+        "article"
+      ]
+    ], 
+    "duplicate_of": null, 
+    "parent": null, 
+    "level": 0, 
+    "description_nt": "", 
+    "short_description_nt": "", 
+    "is_active": true, 
+    "description_en": "", 
+    "languages": [], 
+    "lft": 1, 
+    "description_fr": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "tree_id": 2, 
+    "short_description_fr": "", 
+    "duplicate_status": null, 
+    "slug": "1fs-article-default", 
+    "categories": [
+      1, 
+      2, 
+      4
+    ], 
+    "name": "articles default"
+  }
+},
+{
+  "pk": 2, 
+  "model": "core.processingchain", 
+  "fields": {
+    "short_description_en": "Articles default parsing chain", 
+    "rght": 2, 
+    "applies_on": [
+      [
+        "core", 
+        "article"
+      ]
+    ], 
+    "duplicate_of": null, 
+    "parent": null, 
+    "level": 0, 
+    "description_nt": "", 
+    "short_description_nt": "", 
+    "is_active": true, 
+    "description_en": "", 
+    "languages": [], 
+    "lft": 1, 
+    "description_fr": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "tree_id": 2, 
+    "short_description_fr": "", 
+    "duplicate_status": null, 
+    "slug": "1fs-article-default", 
+    "categories": [
+      1, 
+      2, 
+      4
+    ], 
+    "name": "articles default"
+  }
+},
+{
+  "pk": 2, 
+  "model": "core.processingchain", 
+  "fields": {
+    "short_description_en": "Articles default parsing chain", 
+    "rght": 2, 
+    "applies_on": [
+      [
+        "core", 
+        "article"
+      ]
+    ], 
+    "duplicate_of": null, 
+    "parent": null, 
+    "level": 0, 
+    "description_nt": "", 
+    "short_description_nt": "", 
+    "is_active": true, 
+    "description_en": "", 
+    "languages": [], 
+    "lft": 1, 
+    "description_fr": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "tree_id": 2, 
+    "short_description_fr": "", 
+    "duplicate_status": null, 
+    "slug": "1fs-article-default", 
+    "categories": [
+      1, 
+      2, 
+      4
+    ], 
+    "name": "articles default"
+  }
+},
+{
+  "pk": 5, 
+  "model": "core.processingchain", 
+  "fields": {
+    "short_description_en": "", 
+    "rght": 2, 
+    "applies_on": [
+      [
+        "core", 
+        "article"
+      ]
+    ], 
+    "duplicate_of": null, 
+    "parent": null, 
+    "level": 0, 
+    "description_nt": "", 
+    "short_description_nt": "", 
+    "is_active": true, 
+    "description_en": "", 
+    "languages": [], 
+    "lft": 1, 
+    "description_fr": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "tree_id": 5, 
+    "short_description_fr": "", 
+    "duplicate_status": null, 
+    "slug": "1fs-article-default-forced-utf8", 
+    "categories": [
+      1, 
+      2, 
+      4
+    ], 
+    "name": "articles default \u2014 HTML forced to utf-8"
+  }
+},
+{
+  "pk": 5, 
+  "model": "core.processingchain", 
+  "fields": {
+    "short_description_en": "", 
+    "rght": 2, 
+    "applies_on": [
+      [
+        "core", 
+        "article"
+      ]
+    ], 
+    "duplicate_of": null, 
+    "parent": null, 
+    "level": 0, 
+    "description_nt": "", 
+    "short_description_nt": "", 
+    "is_active": true, 
+    "description_en": "", 
+    "languages": [], 
+    "lft": 1, 
+    "description_fr": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "tree_id": 5, 
+    "short_description_fr": "", 
+    "duplicate_status": null, 
+    "slug": "1fs-article-default-forced-utf8", 
+    "categories": [
+      1, 
+      2, 
+      4
+    ], 
+    "name": "articles default \u2014 HTML forced to utf-8"
+  }
+},
+{
+  "pk": 5, 
+  "model": "core.processingchain", 
+  "fields": {
+    "short_description_en": "", 
+    "rght": 2, 
+    "applies_on": [
+      [
+        "core", 
+        "article"
+      ]
+    ], 
+    "duplicate_of": null, 
+    "parent": null, 
+    "level": 0, 
+    "description_nt": "", 
+    "short_description_nt": "", 
+    "is_active": true, 
+    "description_en": "", 
+    "languages": [], 
+    "lft": 1, 
+    "description_fr": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "tree_id": 5, 
+    "short_description_fr": "", 
+    "duplicate_status": null, 
+    "slug": "1fs-article-default-forced-utf8", 
+    "categories": [
+      1, 
+      2, 
+      4
+    ], 
+    "name": "articles default \u2014 HTML forced to utf-8"
+  }
+},
+{
+  "pk": 6, 
+  "model": "core.processingchain", 
+  "fields": {
+    "short_description_en": "", 
+    "rght": 2, 
+    "applies_on": [
+      [
+        "core", 
+        "article"
+      ]
+    ], 
+    "duplicate_of": null, 
+    "parent": null, 
+    "level": 0, 
+    "description_nt": "", 
+    "short_description_nt": "", 
+    "is_active": true, 
+    "description_en": "", 
+    "languages": [], 
+    "lft": 1, 
+    "description_fr": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "tree_id": 6, 
+    "short_description_fr": "", 
+    "duplicate_status": null, 
+    "slug": "1ft-article-default-download-html-only", 
+    "categories": [
+      1, 
+      3
+    ], 
+    "name": "test article download HTML only"
+  }
+},
+{
+  "pk": 6, 
+  "model": "core.processingchain", 
+  "fields": {
+    "short_description_en": "", 
+    "rght": 2, 
+    "applies_on": [
+      [
+        "core", 
+        "article"
+      ]
+    ], 
+    "duplicate_of": null, 
+    "parent": null, 
+    "level": 0, 
+    "description_nt": "", 
+    "short_description_nt": "", 
+    "is_active": true, 
+    "description_en": "", 
+    "languages": [], 
+    "lft": 1, 
+    "description_fr": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "tree_id": 6, 
+    "short_description_fr": "", 
+    "duplicate_status": null, 
+    "slug": "1ft-article-default-download-html-only", 
+    "categories": [
+      1, 
+      3
+    ], 
+    "name": "test article download HTML only"
+  }
+},
+{
+  "pk": 1, 
+  "model": "core.processingchain", 
+  "fields": {
+    "short_description_en": "The historical 1flow processing chain, just ported as a dynamic chain.", 
+    "rght": 2, 
+    "applies_on": [
+      [
+        "core", 
+        "article"
+      ]
+    ], 
+    "duplicate_of": null, 
+    "parent": null, 
+    "level": 0, 
+    "description_nt": "", 
+    "short_description_nt": "", 
+    "is_active": true, 
+    "description_en": "", 
+    "languages": [], 
+    "lft": 1, 
+    "description_fr": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "tree_id": 1, 
+    "short_description_fr": "", 
+    "duplicate_status": null, 
+    "slug": "1fs-legacy-article-parsers", 
+    "categories": [
+      1, 
+      2, 
+      4
+    ], 
+    "name": "legacy article parsers"
+  }
+},
+{
+  "pk": 1, 
+  "model": "core.processingchain", 
+  "fields": {
+    "short_description_en": "The historical 1flow processing chain, just ported as a dynamic chain.", 
+    "rght": 2, 
+    "applies_on": [
+      [
+        "core", 
+        "article"
+      ]
+    ], 
+    "duplicate_of": null, 
+    "parent": null, 
+    "level": 0, 
+    "description_nt": "", 
+    "short_description_nt": "", 
+    "is_active": true, 
+    "description_en": "", 
+    "languages": [], 
+    "lft": 1, 
+    "description_fr": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "tree_id": 1, 
+    "short_description_fr": "", 
+    "duplicate_status": null, 
+    "slug": "1fs-legacy-article-parsers", 
+    "categories": [
+      1, 
+      2, 
+      4
+    ], 
+    "name": "legacy article parsers"
+  }
+},
+{
+  "pk": 1, 
+  "model": "core.processingchain", 
+  "fields": {
+    "short_description_en": "The historical 1flow processing chain, just ported as a dynamic chain.", 
+    "rght": 2, 
+    "applies_on": [
+      [
+        "core", 
+        "article"
+      ]
+    ], 
+    "duplicate_of": null, 
+    "parent": null, 
+    "level": 0, 
+    "description_nt": "", 
+    "short_description_nt": "", 
+    "is_active": true, 
+    "description_en": "", 
+    "languages": [], 
+    "lft": 1, 
+    "description_fr": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "tree_id": 1, 
+    "short_description_fr": "", 
+    "duplicate_status": null, 
+    "slug": "1fs-legacy-article-parsers", 
+    "categories": [
+      1, 
+      2, 
+      4
+    ], 
+    "name": "legacy article parsers"
+  }
+},
+{
+  "pk": 4, 
+  "model": "core.processingchain", 
+  "fields": {
+    "short_description_en": "", 
+    "rght": 2, 
+    "applies_on": [
+      [
+        "core", 
+        "article"
+      ]
+    ], 
+    "duplicate_of": null, 
+    "parent": null, 
+    "level": 0, 
+    "description_nt": "", 
+    "short_description_nt": "", 
+    "is_active": true, 
+    "description_en": "", 
+    "languages": [], 
+    "lft": 1, 
+    "description_fr": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "tree_id": 4, 
+    "short_description_fr": "", 
+    "duplicate_status": null, 
+    "slug": "1ft-opengraph", 
+    "categories": [
+      1, 
+      3
+    ], 
+    "name": "test OpenGraph extractor"
+  }
+},
+{
+  "pk": 4, 
+  "model": "core.processingchain", 
+  "fields": {
+    "short_description_en": "", 
+    "rght": 2, 
+    "applies_on": [
+      [
+        "core", 
+        "article"
+      ]
+    ], 
+    "duplicate_of": null, 
+    "parent": null, 
+    "level": 0, 
+    "description_nt": "", 
+    "short_description_nt": "", 
+    "is_active": true, 
+    "description_en": "", 
+    "languages": [], 
+    "lft": 1, 
+    "description_fr": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "tree_id": 4, 
+    "short_description_fr": "", 
+    "duplicate_status": null, 
+    "slug": "1ft-opengraph", 
+    "categories": [
+      1, 
+      3
+    ], 
+    "name": "test OpenGraph extractor"
+  }
+},
+{
+  "pk": 3, 
+  "model": "core.chaineditem", 
+  "fields": {
+    "chain": [
+      "1fs-legacy-article-parsers"
+    ], 
+    "parameters": null, 
+    "notes_fr": "", 
+    "is_active": true, 
+    "check_error": "", 
+    "item_type": [
+      "core", 
+      "processor"
+    ], 
+    "is_valid": true, 
+    "notes_nt": "", 
+    "item_id": 2, 
+    "position": 0, 
+    "notes_en": ""
+  }
+},
+{
+  "pk": 4, 
+  "model": "core.chaineditem", 
+  "fields": {
+    "chain": [
+      "1fs-legacy-article-parsers"
+    ], 
+    "parameters": null, 
+    "notes_fr": "", 
+    "is_active": true, 
+    "check_error": "", 
+    "item_type": [
+      "core", 
+      "processor"
+    ], 
+    "is_valid": true, 
+    "notes_nt": "", 
+    "item_id": 1, 
+    "position": 1, 
+    "notes_en": ""
+  }
+},
+{
+  "pk": 8, 
+  "model": "core.chaineditem", 
+  "fields": {
+    "chain": [
+      "1fs-legacy-article-parsers"
+    ], 
+    "parameters": null, 
+    "notes_fr": "", 
+    "is_active": true, 
+    "check_error": "", 
+    "item_type": [
+      "core", 
+      "processor"
+    ], 
+    "is_valid": true, 
+    "notes_nt": "", 
+    "item_id": 14, 
+    "position": 2, 
+    "notes_en": ""
+  }
+},
+{
+  "pk": 5, 
+  "model": "core.chaineditem", 
+  "fields": {
+    "chain": [
+      "1fs-legacy-article-parsers"
+    ], 
+    "parameters": null, 
+    "notes_fr": "", 
+    "is_active": true, 
+    "check_error": "", 
+    "item_type": [
+      "core", 
+      "processor"
+    ], 
+    "is_valid": true, 
+    "notes_nt": "", 
+    "item_id": 3, 
+    "position": 3, 
+    "notes_en": ""
+  }
+},
+{
+  "pk": 2, 
+  "model": "core.chaineditem", 
+  "fields": {
+    "chain": [
+      "1fs-article-default"
+    ], 
+    "parameters": null, 
+    "notes_fr": "", 
+    "is_active": true, 
+    "check_error": "", 
+    "item_type": [
+      "core", 
+      "processingchain"
+    ], 
+    "is_valid": true, 
+    "notes_nt": "", 
+    "item_id": 1, 
+    "position": 0, 
+    "notes_en": ""
+  }
+},
+{
+  "pk": 6, 
+  "model": "core.chaineditem", 
+  "fields": {
+    "chain": [
+      "1fs-full-newspaper-only"
+    ], 
+    "parameters": null, 
+    "notes_fr": "", 
+    "is_active": true, 
+    "check_error": "", 
+    "item_type": [
+      "core", 
+      "processor"
+    ], 
+    "is_valid": true, 
+    "notes_nt": "", 
+    "item_id": 9, 
+    "position": 0, 
+    "notes_en": ""
+  }
+},
+{
+  "pk": 9, 
+  "model": "core.chaineditem", 
+  "fields": {
+    "chain": [
+      "1ft-opengraph"
+    ], 
+    "parameters": null, 
+    "notes_fr": "", 
+    "is_active": true, 
+    "check_error": null, 
+    "item_type": [
+      "core", 
+      "processor"
+    ], 
+    "is_valid": true, 
+    "notes_nt": "", 
+    "item_id": 1, 
+    "position": 0, 
+    "notes_en": ""
+  }
+},
+{
+  "pk": 10, 
+  "model": "core.chaineditem", 
+  "fields": {
+    "chain": [
+      "1ft-opengraph"
+    ], 
+    "parameters": null, 
+    "notes_fr": "", 
+    "is_active": true, 
+    "check_error": null, 
+    "item_type": [
+      "core", 
+      "processor"
+    ], 
+    "is_valid": true, 
+    "notes_nt": "", 
+    "item_id": 14, 
+    "position": 1, 
+    "notes_en": ""
+  }
+},
+{
+  "pk": 11, 
+  "model": "core.chaineditem", 
+  "fields": {
+    "chain": [
+      "1fs-article-default-forced-utf8"
+    ], 
+    "parameters": "{'force_encoding': 'utf-8'}", 
+    "notes_fr": "Teste la cha\u00eene de traitement par d\u00e9faut en for\u00e7ant le d\u00e9codage du contenu en utf-8, ne tenant pas compte de ce que le site d\u00e9clare dans ses en-t\u00eates.", 
+    "is_active": true, 
+    "check_error": null, 
+    "item_type": [
+      "core", 
+      "processingchain"
+    ], 
+    "is_valid": true, 
+    "notes_nt": "", 
+    "item_id": 2, 
+    "position": 0, 
+    "notes_en": ""
+  }
+},
+{
+  "pk": 12, 
+  "model": "core.chaineditem", 
+  "fields": {
+    "chain": [
+      "1ft-article-default-download-html-only"
+    ], 
+    "parameters": null, 
+    "notes_fr": "", 
+    "is_active": true, 
+    "check_error": null, 
+    "item_type": [
+      "core", 
+      "processor"
+    ], 
+    "is_valid": true, 
+    "notes_nt": "", 
+    "item_id": 1, 
+    "position": 0, 
+    "notes_en": ""
+  }
+}
+]
