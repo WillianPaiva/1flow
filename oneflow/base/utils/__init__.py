@@ -349,7 +349,7 @@ def request_context_celery(request, *args, **kwargs):
     return context
 
 
-def detect_encoding_from_requests_response(response):
+def detect_encoding_from_requests_response(response, meta=False, deep=False):
     """ :param:`response` beiing a :module:`requests` response, this function
         will try to detect the encoding as much as possible. Fist, the "normal"
         response encoding will be tried, else the headers will be parsed, and
@@ -362,39 +362,75 @@ def detect_encoding_from_requests_response(response):
             which you are sure they will contain HTML.
     """
 
-    if getattr(response, 'encoding', None):
+    if getattr(response, 'encoding', None) and not (meta or deep):
+
+        if settings.DEBUG:
+            LOGGER.debug(u'detect_encoding_from_requests_response(): '
+                         u'detected %s via `requests` module.',
+                         response.encoding)
+
         return response.encoding
 
-    # In case the headers don't contain an content-type, we get()
-    # 'text/html' as a fallback value, which will trigger the same
-    # behaviour as having a content-type header with no charset value.
+    # If requests doesn't bring us any encoding, we have 3 fallback options:
+    # - inspect the server headers ourselves (fast, but rarely they exist,
+    #   and sometimes they are wrong),
+    # - look up the META tags (fast, but sometimes the tag is not
+    #   present or is wrong too),
+    # - detect it via `charade` (slow, but gives good results).
+
     encoding = response.headers.get(
-        'content-type', 'text/html').lower().split('charset=')[-1]
+        'content-type', None).lower().split('charset=')[-1]
 
-    if encoding.lower() == 'text/html':
-        # HTTP headers don't contain any encoding.
-        # Search in page head, then try to detect from data.
+    # If found and no deeper search is wanted, return it.
+    if encoding is not None and not (meta or deep):
 
-        html_content = BeautifulSoup(response.content, 'lxml')
+        if settings.DEBUG:
+            LOGGER.debug(u'detect_encoding_from_requests_response(): '
+                         u'detected %s via server headers.',
+                         encoding)
 
-        for meta_header in html_content.head.findAll('meta'):
-            for attribute, value in meta_header.attrs.items():
-                if attribute.lower() == 'http-equiv':
-                    if value.lower() == 'content-type':
-                        content  = meta_header.attrs.get('content')
-                        encoding = content.lower().split('charset=')[-1]
-                        break
+        return encoding
 
-        if encoding.lower() == 'text/html':
-            # If we couldn't find an encoding in the HTML <head>,
-            # try to detect it manually wth charade. This can
-            # eventually fail, too… In this case, OMG… We are alone.
-            try:
-                return charade.detect(response)['encoding']
+    # HTTP headers don't contain any encoding.
+    # Search in page head, then try to detect from data.
 
-            except:
-                LOGGER.critical('Could not detect encoding of %s', response)
+    html_content = BeautifulSoup(response.content, 'lxml')
 
+    for meta_header in html_content.head.findAll('meta'):
+        for attribute, value in meta_header.attrs.items():
+            if attribute.lower() == 'http-equiv':
+                if value.lower() == 'content-type':
+                    content  = meta_header.attrs.get('content')
+                    encoding = content.lower().split('charset=')[-1]
+                    break
+
+    # If no deeper search is wanted, return it now.
+    if encoding not in ('text/html', '') and not deep:
+
+        if settings.DEBUG:
+            LOGGER.debug(u'detect_encoding_from_requests_response(): '
+                         u'detected %s via HTML meta tags.',
+                         encoding)
+
+        return encoding
+
+    try:
+        charade_result = charade.detect(response)
+
+    except:
+        pass
+
+    else:
+        if settings.DEBUG:
+            LOGGER.debug(u'detect_encoding_from_requests_response(): '
+                         u'detected %s via `charade` module (with %s%% '
+                         u'confidence).',
+                         charade_result['encoding'],
+                         charade_result['confidence'])
+        return charade_result['encoding']
+
+    LOGGER.critical('detect_encoding_from_requests_response(): could not '
+                    u'detect encoding of %s via all test methods.', response)
     return None
 
 
