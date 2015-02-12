@@ -66,32 +66,51 @@ CACHEOPS_REDIS = {
     'socket_timeout': 3,
 }
 
+CACHE_ONE_HOUR = 60 * 60
+CACHE_ONE_DAY = CACHE_ONE_HOUR * 24
+CACHE_ONE_WEEK = CACHE_ONE_DAY * 7
+CACHE_ONE_MONTH = CACHE_ONE_DAY * 31
+
 CACHEOPS = {
     # Automatically cache any User.objects.get() calls
     # for 30 minutes. This includes request.user or
     # post.author access, where Post.author is a foreign
     # key to auth.User.
-    'auth.user': {'ops': 'get', 'timeout': 60 * 30},
+    'auth.user': {'ops': 'get', 'timeout': CACHE_ONE_DAY},
 
     # Automatically cache all gets and queryset fetches
     # to other django.contrib.auth and oneflow.base models
     # for an hour.
-    'auth.*': {'ops': ('fetch', 'get'), 'timeout': 60 * 60},
-    'base.*': {'ops': ('fetch', 'get'), 'timeout': 60 * 60},
+    'auth.*': {'ops': ('fetch', 'get'), 'timeout': CACHE_ONE_DAY},
+    'base.*': {'ops': ('fetch', 'get'), 'timeout': CACHE_ONE_DAY},
 
     # Cache gets, fetches, counts and exists to Permission
     # 'all' is just an alias for ('get', 'fetch', 'count', 'exists')
-    'auth.permission': {'ops': 'all', 'timeout': 60 * 60},
+    'auth.permission': {'ops': 'all', 'timeout': CACHE_ONE_DAY},
 
-    'core.processor': {'ops': 'all', 'timeout': 60 * 60},
-    'core.processingchain': {'ops': 'all', 'timeout': 60 * 60},
-    'core.chaineditem': {'ops': 'all', 'timeout': 60 * 60},
+    'core.processor': {'ops': 'all', 'timeout': CACHE_ONE_DAY},
+    'core.processingchain': {'ops': 'all', 'timeout': CACHE_ONE_DAY},
+    'core.chaineditem': {'ops': 'all', 'timeout': CACHE_ONE_DAY},
+
+    'core.language': {'ops': 'all', 'timeout': CACHE_ONE_WEEK},
+    'core.simpletag': {'ops': 'all', 'timeout': CACHE_ONE_WEEK},
+    'core.website': {'ops': 'all', 'timeout': CACHE_ONE_WEEK},
+    'core.author': {'ops': 'all', 'timeout': CACHE_ONE_WEEK},
+
+    'core.basefeed': {'ops': 'all', 'timeout': CACHE_ONE_HOUR},
+    'core.rssatomfeed': {'ops': 'all', 'timeout': CACHE_ONE_HOUR},
+    'core.twitterfeed': {'ops': 'all', 'timeout': CACHE_ONE_HOUR},
+    'core.emailfeed': {'ops': 'all', 'timeout': CACHE_ONE_HOUR},
+
+    'core.subscription': {'ops': 'all', 'timeout': CACHE_ONE_DAY},
+    'core.usersubscriptions': {'ops': 'all', 'timeout': CACHE_ONE_DAY},
+    'core.userfeeds': {'ops': 'all', 'timeout': CACHE_ONE_DAY},
 
     # Other objects only use MANUAL caching, not automatic. Read
     # https://github.com/Suor/django-cacheops#performance-tips to
     # understand why. Anyway, even on 1flow.io we don't need that
     # level of 'all-things' cached.
-    '*.*': {'timeout': 60 * 60},
+    '*.*': {'timeout': CACHE_ONE_DAY},
 }
 
 # In development, I now use a cache for enhanced reading speed

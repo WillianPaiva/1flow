@@ -75,6 +75,9 @@ class StaffWebSiteListCreateView(mixins.ListCreateViewMixin,
                     field_name, field_value = filters_fields[filter_name]
                     params = {field_name: field_value}
 
+            elif a_filter.startswith(u'id:'):
+                params = {'id__in': a_filter[3:].split(u',')}
+
             elif a_filter.startswith(u'not:') \
                     or a_filter.startswith(u'isnot:'):
 

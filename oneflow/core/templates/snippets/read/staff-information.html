@@ -105,13 +105,23 @@
         <li>
           <span class="muted">processing: </span>
 
-          {% if article.website.processing_chain %}
-              {{ article.website.processing_chain }}
+          {% with article.website as website %}
 
-          {% else %}
-            <span class="very-muted">default</span>
+            <a title="{% trans "Go to websites management to change the processing chain" %}"
+                data-toggle="tooltip" class="popover-top"
+                href="{% url 'staff_website_list_create' %}?filter=id:{{ website.id }}">
 
-          {% endif %}
+            {% if website.processing_chain %}
+                {{ article.website.processing_chain }}
+
+            {% else %}
+              <span class="very-muted">default</span>
+
+            {% endif %}
+
+            </a>
+
+          {% endwith %}
         </li>
 
       </ul>
