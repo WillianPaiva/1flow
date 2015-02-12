@@ -203,6 +203,13 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
             applies_on__in=(ContentType.objects.get_for_model(model), None)
         )
 
+    @property
+    def parameters(self):
+        """ Return true if any of our items accepts parameters. """
+
+        return any(item.item.parameters
+                   for item in self.chained_items.all())
+
     def accepts(self, instance, **kwargs):
         """ Return True if any of my items accepts instance. """
 
