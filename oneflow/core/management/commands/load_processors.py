@@ -25,6 +25,7 @@ import logging
 # from django.conf import settings
 from django.core import serializers
 from django.core.management.base import BaseCommand
+from django.db import connection
 
 from sparks.django.fabfile import get_all_fixtures
 
@@ -75,6 +76,49 @@ class Command(BaseCommand):
             else:
                 LOGGER.info(u'Succesfully imported %s.', obj)
                 total_count += 1
+
+                #
+                # HEADS UP: how ugly this is, not to have a Django model
+                #           method to do this cleanly. What is the purpose
+                #           of forcing the admin to do this manually by
+                #           copy-n-pasting this, instead of allowing the
+                #           developer to run it on demand.
+                #
+
+        reset_sql = '''
+SELECT setval(pg_get_serial_sequence('"core_processorcategory"','id'),
+      coalesce(max("id"), 1), max("id") IS NOT null)
+FROM "core_processorcategory";
+SELECT setval(pg_get_serial_sequence('"core_processor_languages"','id'),
+      coalesce(max("id"), 1), max("id") IS NOT null)
+FROM "core_processor_languages";
+SELECT setval(pg_get_serial_sequence('"core_processor_categories"','id'),
+      coalesce(max("id"), 1), max("id") IS NOT null)
+FROM "core_processor_categories";
+SELECT setval(pg_get_serial_sequence('"core_processor"','id'),
+      coalesce(max("id"), 1), max("id") IS NOT null)
+FROM "core_processor";
+SELECT setval(pg_get_serial_sequence('"core_processingchain_languages"','id'),
+      coalesce(max("id"), 1), max("id") IS NOT null)
+FROM "core_processingchain_languages";
+SELECT setval(pg_get_serial_sequence('"core_processingchain_categories"','id'),
+      coalesce(max("id"), 1), max("id") IS NOT null)
+FROM "core_processingchain_categories";
+SELECT setval(pg_get_serial_sequence('"core_processingchain_applies_on"','id'),
+      coalesce(max("id"), 1), max("id") IS NOT null)
+FROM "core_processingchain_applies_on";
+SELECT setval(pg_get_serial_sequence('"core_processingchain"','id'),
+      coalesce(max("id"), 1), max("id") IS NOT null)
+FROM "core_processingchain";
+SELECT setval(pg_get_serial_sequence('"core_processingerror"','id'),
+      coalesce(max("id"), 1), max("id") IS NOT null)
+FROM "core_processingerror";
+        '''
+        cursor = connection.cursor()
+        cursor.execute(reset_sql)
+        cursor.close()
+
+        LOGGER.info(u'Sucessfully reset database sequences.')
 
         LOGGER.info(u'Imported %s items from %s (failed: %s).',
                     total_count, fixture_filename, failed_count)
