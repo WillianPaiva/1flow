@@ -224,18 +224,18 @@ class BaseItem(PolymorphicModel,
 
     is_restricted = models.BooleanField(
         verbose_name=_(u'restricted'),
-        help_text=_(u'This article comes from a paid paid subscription '
-                    u'and cannot be shared like others inside the platform.'),
+        help_text=_(u'This item cannot be shared freely inside or '
+                    u'outside the platform.'),
         default=False, blank=True)
 
     date_created = models.DateTimeField(
         auto_now_add=True, db_index=True,
         verbose_name=_(u'Date added'),
-        help_text=_(u'When the article was added to the 1flow database.'))
+        help_text=_(u'When the item was added to the 1flow database.'))
 
     date_updated = models.DateTimeField(
         auto_now=True, verbose_name=_(u'Date updated'),
-        help_text=_(u'When the article was updated.'))
+        help_text=_(u'When the item was updated.'))
 
     date_published = models.DateTimeField(
         verbose_name=_(u'date published'),
