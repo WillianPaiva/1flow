@@ -30,6 +30,8 @@ from .importers import WebPagesImportForm  # NOQA
 
 from .read import ReadShareForm  # NOQA
 
+from .website import WebSiteEditProcessingParametersForm  # NOQA
+
 # —————————————————————————————————————————————————————————————————————— E-mail
 
 from mailaccount import MailAccountForm  # NOQA
