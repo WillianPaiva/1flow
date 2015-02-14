@@ -34,6 +34,8 @@ from django.utils.text import slugify
 
 from simple_history.models import HistoricalRecords
 
+from sparks.foundations.utils import combine_dicts
+
 from oneflow.base.utils import register_task_method
 from oneflow.base.utils.http import clean_url
 from oneflow.base.utils.dateutils import now, datetime, benchmark
@@ -199,6 +201,23 @@ class Article(BaseItem, UrlItem, ContentItem):
             return False
 
         return True
+
+    @property
+    def processing_parameters(self):
+        """ Return a merge of all inherited classes processing parameters.
+
+        .. todo:: get and merge feeds parameters, if any.
+
+        .. todo:: cache the result via `cacheops` if possible and relevant.
+        """
+
+        return combine_dicts(
+            BaseItem.processing_parameters.fget(self),
+            combine_dicts(
+                UrlItem.processing_parameters.fget(self),
+                ContentItem.processing_parameters.fget(self)
+            )
+        )
 
     # ————————————————————————————————————————————————————————————————— Methods
 

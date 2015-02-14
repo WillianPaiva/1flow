@@ -367,6 +367,12 @@ class BaseItem(PolymorphicModel,
 
         return True
 
+    @property
+    def processing_parameters(self):
+        """ Return a base item processing_parameters. Currently ``{}``. """
+
+        return {}
+
     # ————————————————————————————————————————————————————————————————— Methods
 
     def get_processing_chain(self):
