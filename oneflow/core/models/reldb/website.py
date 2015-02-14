@@ -25,6 +25,7 @@ from statsd import statsd
 from constance import config
 from transmeta import TransMeta
 from json_field import JSONField
+from yamlfield.fields import YAMLField
 
 from django.db import models, ProgrammingError
 from django.db.models.signals import post_save, pre_save, pre_delete
@@ -127,6 +128,15 @@ class WebSite(six.with_metaclass(WebSiteMeta, MPTTModel,
 
     mail_warned = JSONField(default=list, blank=True)
 
+    date_created = models.DateTimeField(
+        auto_now_add=True, db_index=True,
+        verbose_name=_(u'Date added'),
+        help_text=_(u'When the web site was added to the 1flow database.'))
+
+    date_updated = models.DateTimeField(
+        auto_now=True, verbose_name=_(u'Date updated'),
+        help_text=_(u'When the web site was updated.'))
+
     image = models.ImageField(
         verbose_name=_(u'Image'), null=True, blank=True,
         upload_to=get_website_image_upload_path, max_length=256,
@@ -154,6 +164,17 @@ class WebSite(six.with_metaclass(WebSiteMeta, MPTTModel,
     processing_chain = models.ForeignKey(ProcessingChain,
                                          null=True, blank=True,
                                          related_name='websites')
+
+    processing_parameters = YAMLField(
+        null=True, blank=True,
+        verbose_name=_(u'Processing parameters'),
+        help_text=_(u'Processing parameters for this website. '
+                    u'Can be left empty. As they are more specific, '
+                    u'the website parameters take precedence over the '
+                    u'processors parameters, but will be overriden by '
+                    u'feed-level or item-level processing parameters, '
+                    u'if any. In YAML format (see '
+                    u'http://en.wikipedia.org/wiki/YAML for details).'))
 
     # ————————————————————————————————————————————————————————— Python & Django
 
