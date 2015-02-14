@@ -126,22 +126,22 @@
 					{% if chaineditem.item.parameters %}
 						<div class="btn-group">
 							<a id="edit-parameters-processor-{{ processor.id }}"
-	        				href="{% url 'edit_field' klass='ChainedItem' oid=chaineditem.id form_class='ChainedItemEditParametersForm' %}"
-	        				data-toggle="modal" data-target="#" data-tooltip="tooltip"
-	        				title="{% trans "Edit processor parameters for this chain" %}"
-	        				class="btn btn-xs btn-info centered popover-top">
-	        			{% core_icon 'cog' False %}
-	      			</a>
-		  			</div>
+			        				href="{% url 'edit_field' klass='ChainedItem' oid=chaineditem.id form_class='ChainedItemEditParametersForm' %}"
+			        				data-toggle="modal" data-target="#" data-tooltip="tooltip"
+			        				title="{% if chaineditem.parameters %}{% trans "Edit parameters for this processor in this chain" %}{% else %}{% trans "Create specific parameters for this processor in this chain" %}{% endif %}"
+			        				class="btn btn-xs btn-{{ chaineditem.parameters|yesno:'primary,default' }} centered popover-top">
+			        			{% core_icon 'cog' False %}
+			      			</a>
+				  			</div>
 
-		  		{% else %}
+			  		{% else %}
 
-		  			<span class="very-muted" data-toggle="tooltip"
-				  			title="{% trans "Processor has no parameter" %}">—</span>
+			  			<span class="very-muted" data-toggle="tooltip"
+					  			title="{% trans "Processor has no parameter" %}">—</span>
 
 					{% endif %}
 
-	    		</td>
+		    		</td>
 
 					<td class="centered">
 						<span class="very-muted" data-toggle="tooltip"

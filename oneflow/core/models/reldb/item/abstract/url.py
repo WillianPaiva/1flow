@@ -211,6 +211,15 @@ class UrlItem(models.Model):
 
         return self.url_absolute or self.is_orphaned
 
+    @property
+    def processing_parameters(self):
+        """ Return an URL-aware item processing parameters.
+
+        Eg. the ones from its website, if the website has any. else ``{}``.
+        """
+
+        return self.website.processing_parameters or {}
+
     # ————————————————————————————————————————————————————————————————— Methods
 
     def processing_must_abort(self, verbose=True, force=False, commit=True):

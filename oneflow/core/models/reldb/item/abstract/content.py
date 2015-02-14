@@ -203,6 +203,21 @@ class ContentItem(models.Model):
 
         return None
 
+    @property
+    def processing_parameters(self):
+        """ Return a content-enabled item processing parameters.
+
+        Currently, it's ``{}``.
+        """
+
+        return {}
+
+    @property
+    def is_processed(self):
+        """ Return True if our content type is final. """
+
+        return self.content_type in CONTENT_TYPES_FINAL
+
     # ————————————————————————————————————————————————————————————————— Methods
 
     def reset(self, force=False, commit=True):
@@ -221,12 +236,6 @@ class ContentItem(models.Model):
 
         if commit:
             self.save()
-
-    @property
-    def is_processed(self):
-        """ Return True if our content type is final. """
-
-        return self.content_type in CONTENT_TYPES_FINAL
 
     def processing_must_abort(self, force=False, commit=True):
         """ Return True if processing of current instance must be aborted.

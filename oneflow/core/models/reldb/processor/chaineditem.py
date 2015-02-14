@@ -112,13 +112,13 @@ class ChainedItem(models.Model):
 
     parameters = YAMLField(
         null=True, blank=True,
-        verbose_name=_(u'Processor parameters'),
+        verbose_name=_(u'Processing parameters'),
         help_text=_(u'Parameters for this processor, in this chain, at '
                     u'this position. Can be left empty if the processor '
-                    u'parameters are optional. In YAML format (see '
+                    u'parameters are optional. Can be overridden, by '
+                    u'order of importance, by website, feed or item-level '
+                    u'processing parameters. In YAML format (see '
                     u'http://en.wikipedia.org/wiki/YAML for details).'))
-    # u'Can be overridden by the site-specific '
-    # u'parameters, at the web site configuration level.'))
 
     is_valid = models.BooleanField(verbose_name=_(u'Checked and valid'),
                                    default=True, blank=True)

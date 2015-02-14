@@ -58,6 +58,7 @@ from ..models import (  # NOQA
     # Imported for `edit_field`
     Processor,
     ChainedItem,
+    WebSite,
     IMPORT_STATUS,
     CONTENT_TYPES_FINAL,
 )

@@ -39,6 +39,7 @@ from django.utils.text import slugify
 
 from mptt.models import MPTTModelBase, MPTTModel, TreeForeignKey
 from sparks.django.models.mixins import DiffMixin
+from sparks.foundations.utils import combine_dicts
 
 from ..duplicate import AbstractDuplicateAwareModel
 from ..language import Language
@@ -402,6 +403,24 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
                                    u'pos. %s.', self, processor, item.position)
                 continue
 
+            parameters = combine_dicts(
+                item.parameters or {},
+
+                # As documented in combine_dicts, the instance parameters
+                # will take precedence and overwrite the processor ones
+                # because they are in second position. This is a cascade.
+                instance.processing_parameters
+            )
+
+            for category in processor.categories.all():
+                if not parameters.get('process_{0}'.format(category.slug),
+                                      True):
+                    if verbose:
+                        LOGGER.warning(u'%s [run]: skipped processor %s at '
+                                       u'pos. %s, bypassed by parameters.',
+                                       self, processor, item.position)
+                    continue
+
             if verbose and settings.DEBUG:
                 LOGGER.debug(u'%s [run]: running %s at pos. %s, verbose=%s, '
                              u'force=%s, commit=%s.',
@@ -411,14 +430,16 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
             try:
                 with transaction.atomic():
                     # This will run accepts() automatically.
-                    processor.process(instance,
-                                      # parameters must be a dict(); if not
-                                      # set in the chained item, it can be
-                                      # None, which can crash process code.
-                                      parameters=item.parameters or {},
-                                      verbose=verbose,
-                                      force=force,
-                                      commit=commit)
+                    processor.process(
+                        instance,
+                        # parameters must be a dict(); if not
+                        # set in the chained item, it can be
+                        # None, which can crash process code.
+                        parameters=parameters,
+                        verbose=verbose,
+                        force=force,
+                        commit=commit
+                    )
 
             except InstanceNotAcceptedException:
                 continue
