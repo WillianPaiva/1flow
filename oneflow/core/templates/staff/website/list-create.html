@@ -43,11 +43,14 @@
 
 		  <tr>
 			<th class="col-sm-1">{% trans "Img." %}</th>
-			{% sort_th _("Name") 'name' '' 'col-sm-2' %}
+			{% sort_th _("Name (description)") 'name' '' 'col-sm-4' %}
 			{% sort_th _("URI") 'url' '' 'col-sm-3' %}
-			<th class="col-sm-3">{% trans "Short description" %}</th>
-			{% sort_th _("Processing chain") 'processing_chain' '' 'col-sm-1' %}
-			{% sort_th _("Fetch limit") 'fetch_limit_nr' '' 'col-sm-1' %}
+			{% sort_th _("Added") 'date_created' '' 'col-sm-1' %}
+			<th class="col-sm-1 centered">{% trans "Processing parameters" %}</th>
+			{% sort_th _("Processing chain") 'processing_chain' '' 'col-sm-1 centered' %}
+			{% comment %}
+				{% sort_th _("Fetch limit") 'fetch_limit_nr' '' 'col-sm-1 centered' %}
+			{% endcomment %}
 			<th class="col-sm-1 right">{% trans "Actions" %}</th>
 		  </tr>
 		</thead>
@@ -67,18 +70,49 @@
 					{% endif %}
 				</td>
 				<td>
-					{% inplace_edit 'website.name' %}
-
 					<span class="pull-right very-muted"
 							data-toggle="tooltip"
 							title="{{ website.id }}">
 						{% core_icon 'info-sign' %}
 					</span>
+					{% inplace_edit 'website.name' %}
+					<br />
+					<span class="muted">{% trans "Description: " %}</span>
+					{% inplace_edit 'website.short_description' edit_empty_value=_('—') %}
+
 				</td>
 				<td><a href="{{ website.url }}">{{ website.url }}</a></td>
-				<td>{% inplace_edit 'website.short_description' %}</td>
-				<td>{% inplace_edit 'website.processing_chain' %}</td>
-				<td>{% inplace_edit 'website.fetch_limit_nr' %}</td>
+				<td>
+					<span title="{{ website.date_created }}" data-toggle="tooltip">
+						{{ website.date_created|naturaldelta }}
+					</span>
+				</td>
+					<td class="centered">
+					{% if not website.processing_chain or website.processing_chain.parameters %}
+
+						<div class="btn-group">
+							<a id="edit-parameters-processor-{{ processor.id }}"
+			        				href="{% url 'edit_field' klass='WebSite' oid=website.id form_class='WebSiteEditProcessingParametersForm' %}"
+			        				data-toggle="modal" data-target="#" data-tooltip="tooltip"
+			        				title="{% if website.processing_parameters %}{% trans "Edit processing parameters" %}{% else %}{% trans "Create processing parameters for this web site" %}{% endif %}"
+			        				class="btn btn-xs btn-{{ website.processing_parameters|yesno:'primary,default' }} centered popover-top">
+			        			{% core_icon 'cog' False %}
+			      			</a>
+				  			</div>
+
+			  		{% else %}
+
+			  			<span class="very-muted" data-toggle="tooltip"
+					  			title="{% trans "Processing chain has no parameter" %}">—</span>
+
+					{% endif %}
+
+	    		</td>
+				<td class="centered">{% inplace_edit 'website.processing_chain' edit_empty_value=_('default') %}</td>
+
+				{% comment %}
+					<td class="centered">{% inplace_edit 'website.fetch_limit_nr' %}</td>
+				{% endcomment %}
 
 				<td class="right">
 					{% url 'staff_website_delete' website.pk as delete_url %}
