@@ -502,18 +502,29 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
 
         return option in self.options
 
-    def reopen(self, commit=True):
+    def reopen(self, message=None, verbose=True, commit=True):
         """ Reopen the feed, clearing errors, date closed, etc. """
 
         self.errors        = []
         self.is_active     = True
         self.date_closed   = now()
         self.closed_reason = u'Reopen on %s' % now().isoformat()
-        self.save()
+
+        if commit:
+            self.save()
 
         statsd.gauge('feeds.counts.open', 1, delta=True)
 
-        LOGGER.info(u'Feed %s has just been re-opened.', self)
+        if verbose:
+            if message is None:
+                LOGGER.info(u'%s %s: %sre-opened.',
+                            self._meta.verbose_name, self.id,
+                            u'' if commit else u'temporarily ')
+
+            else:
+                LOGGER.info(u'%s %s: %s',
+                            self._meta.verbose_name,
+                            self.id, message)
 
     def close(self, reason=None, commit=True):
         """ Close the feed with or without a reason. """
@@ -527,8 +538,9 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
 
         statsd.gauge('feeds.counts.open', -1, delta=True)
 
-        LOGGER.warning(u'Feed %s closed with reason "%s"!',
-                       self, self.closed_reason)
+        LOGGER.warning(u'%s %s: closed with reason “%s”.',
+                       self._meta.verbose_name,
+                       self.id, self.closed_reason)
 
     def error(self, message, commit=True, last_fetch=False):
         """ Take note of an error.
@@ -585,17 +597,20 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
         """
 
         if not self.is_active:
-            LOGGER.info(u'Feed %s is closed. refresh aborted.', self)
+            LOGGER.info(u'%s %s: is currently inactive, refresh aborted.',
+                        self._meta.verbose_name, self.id)
             return True
 
         if self.is_internal:
-            LOGGER.info(u'Feed %s is internal, no need to refresh.', self)
+            LOGGER.info(u'%s %s: beiing internal, no need to refresh.',
+                        self._meta.verbose_name, self.id)
             return True
 
         if config.FEED_FETCH_DISABLED:
             # we do not raise .retry() because the global refresh
             # task will call us again anyway at next global check.
-            LOGGER.info(u'Feed %s refresh disabled by configuration.', self)
+            LOGGER.info(u'%s %s: refresh disabled by configuration.',
+                        self._meta.verbose_name, self.id)
             return True
 
         try:
@@ -609,28 +624,29 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
 
         if not self.refresh_lock.acquire():
             if force:
-                LOGGER.warning(u'Forcing refresh for feed %s, despite of '
-                               u'lock already acquired.', self)
+                LOGGER.warning(u'%s %s: forcing refresh unlocking.',
+                               self._meta.verbose_name, self.id)
                 self.refresh_lock.release()
                 self.refresh_lock.acquire()
 
             else:
-                LOGGER.info(u'Refresh for %s already running, aborting.', self)
+                LOGGER.info(u'%s %s: refresh already locked, aborting.',
+                            self._meta.verbose_name, self.id)
                 return True
 
         if self.date_last_fetch is not None and self.date_last_fetch >= (
                 now() - timedelta(seconds=self.fetch_interval)):
             if force:
-                LOGGER.warning(u'Forcing refresh of recently fetched feed %s.',
-                               self)
+                LOGGER.warning(u'%s %s: forcing refresh despite recently '
+                               u'fetched.', self._meta.verbose_name, self.id)
             else:
-                LOGGER.info(u'Last refresh of feed %s too recent, aborting.',
-                            self)
+                LOGGER.info(u'%s %s: last refresh too recent, aborting.',
+                            self._meta.verbose_name, self.id)
                 return True
 
         return False
 
-    def refresh(self, force=False):
+    def refresh(self, force=False, commit=True):
         """ Look for new content in a 1flow feed. """
 
         # HEADS UP: refresh_must_abort() has already acquire()'d our lock.
@@ -641,7 +657,7 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
         preventive_slow_down = False
 
         try:
-            data = self.refresh_feed_internal(force=force)
+            data = self.refresh_feed_internal(force=force, commit=commit)
 
         except:
             LOGGER.exception(u'Could not refresh feed %s, operating '
@@ -670,9 +686,14 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
 
             # Artificially slow down things to let the remote site
             # eventually recover while not bothering us too much.
-            self.throttle_fetch_interval(0, 0, 1)
+            if not force:
+                self.throttle_fetch_interval(0, 0, 1)
+
             self.update_last_fetch()
-            self.save()
+
+            if commit:
+                self.save()
+
             return
 
         new_items, duplicates, mutualized = data
@@ -703,7 +724,8 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
 
         self.update_last_fetch()
 
-        self.save()
+        if commit:
+            self.save()
 
         with statsd.pipeline() as spipe:
             spipe.incr('feeds.refresh.fetch.global.done')

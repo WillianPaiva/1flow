@@ -447,10 +447,11 @@ class RssAtomFeed(BaseFeed):
 
         return kwargs, http_logger
 
-    def refresh_feed_internal(self, force=False):
+    def refresh_feed_internal(self, force=False, commit=True):
         """ Refresh an RSS feed. """
 
-        LOGGER.info(u'Refreshing RSS feed %s…', self)
+        LOGGER.info(u'%s %s: refreshing now…',
+                    self._meta.verbose_name, self.id)
 
         feedparser_kwargs, http_logger = self.build_refresh_kwargs()
         parsed_feed = feedparser.parse(self.url, **feedparser_kwargs)
@@ -465,21 +466,22 @@ class RssAtomFeed(BaseFeed):
 
             self.error(u'Could not refresh RSS/Atom feed ({0})'.format(
                        parsed_feed.get('bozo_exception', u'IndexError')),
-                       last_fetch=True)
+                       last_fetch=True, commit=commit)
             return
 
         # Stop on HTTP errors before stopping on feedparser errors,
         # because he is much more lenient in many conditions.
         if feed_status in (400, 401, 402, 403, 404, 500, 502, 503):
             self.error(u'HTTP %s on %s' % (http_logger.log[-1]['status'],
-                       http_logger.log[-1]['url']), last_fetch=True)
+                       http_logger.log[-1]['url']),
+                       last_fetch=True, commit=commit)
             return
 
         try:
             check_feedparser_error(parsed_feed, self)
 
         except Exception as e:
-            self.close(reason=unicode(e))
+            self.close(reason=unicode(e), commit=commit)
             return
 
         new_articles  = 0
@@ -487,7 +489,8 @@ class RssAtomFeed(BaseFeed):
         mutualized    = 0
 
         if feed_status == 304:
-            LOGGER.info(u'No new content in feed %s.', self)
+            LOGGER.info(u'%s %s: no new content.',
+                        self._meta.verbose_name, self.id)
 
             return new_articles, duplicates, mutualized
 
@@ -501,11 +504,13 @@ class RssAtomFeed(BaseFeed):
             # better than us, and we trust him about the tags he sets
             # on the feed. Thus, we don't union() with the new tags,
             # but simply replace current by new ones.
-            LOGGER.info(u'Updating tags of feed %s from %s to %s.',
-                        self_tags, tags)
 
             self.tags.clear()
             self.tags.add(*tags)
+
+            LOGGER.info(u'%s %s: updated tags from %s to %s.',
+                        self._meta.verbose_name,
+                        self.id, self_tags, tags)
 
         for article in parsed_feed.entries:
             created = self.create_article_from_feedparser(article, tags)
