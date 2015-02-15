@@ -164,6 +164,12 @@ class Folder(MPTTModel, DiffMixin):
         attr_name='f.ba_c', default=folder_bookmarked_items_count_default,
         set_default=True)
 
+    @property
+    def read_items_count(self):
+        """ Return all items count minus unread items count. """
+
+        return self.all_items_count - self.unread_items_count
+
     # ————————————————————————————————————————————————————————— Django & Python
 
     def __unicode__(self):
