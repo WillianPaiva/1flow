@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-04 16:58+0100\n"
-"PO-Revision-Date: 2015-02-04 17:18+0009\n"
+"POT-Creation-Date: 2015-02-15 13:36+0100\n"
+"PO-Revision-Date: 2015-02-15 13:41+0009\n"
 "Last-Translator: Olivier Cortes <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -42,7 +42,7 @@ msgstr "lectures"
 
 #: admin.old.gri.py:81 models/common.py:254 models/common.py:263
 #: templates/snippets/read/reading-list-header.html:52
-#: templates/snippets/read/reading-list-header.html:84
+#: templates/snippets/read/reading-list-header.html:88
 #: templates/snippets/selector/folder.html:91
 #: templates/snippets/selector/subscription.html:73
 msgid "starred"
@@ -131,333 +131,337 @@ msgstr "^preferences/$"
 msgid "^status/?$"
 msgstr "^etat/?$"
 
-#: urls.py:119
+#: urls.py:117
+msgid "^command/(?P<command>\\w+)/?$"
+msgstr ""
+
+#: urls.py:123
 msgid "^read/all/$"
 msgstr "^lire/tous/$"
 
-#: urls.py:127
+#: urls.py:131
 msgid "^read/meta/(\\d+)/$"
 msgstr "^lire/meta/(\\d+)/$"
 
-#: urls.py:131
+#: urls.py:135
 msgid "^read/$"
 msgstr "^lire/$"
 
-#: urls.py:143
+#: urls.py:147
 msgid "^article/(\\d+)/$"
 msgstr ""
 
-#: urls.py:148
+#: urls.py:152
 #, fuzzy
 msgid "^article/image/(\\d+)/$"
 msgstr "^article/image/([0-9a-f]{24,24})/$"
 
-#: urls.py:167
+#: urls.py:171
 msgid "^read/(\\d+)/$"
 msgstr "^lire/(\\d+)/$"
 
-#: urls.py:171
+#: urls.py:175
 msgid "^share/(\\d+)/$"
 msgstr ""
 
-#: urls.py:178
+#: urls.py:182
 msgid "^json/user-address-book/$"
 msgstr "^json/user-address-book/$"
 
-#: urls.py:182
+#: urls.py:186
 msgid "^sources/$"
 msgstr "^sources/$"
 
-#: urls.py:187
+#: urls.py:191
 msgid "^selector/$"
 msgstr "^selecteur/$"
 
-#: urls.py:196
+#: urls.py:200
 msgid "^folder/new/(?P<parent>\\d+)/$"
 msgstr "^dossier/nouveau/(?P<parent>\\d+)/$"
 
-#: urls.py:200
+#: urls.py:204
 msgid "^folder/new/$"
 msgstr "^dossier/nouveau/$"
 
-#: urls.py:217
+#: urls.py:221
 msgid "^folder/(?P<folder_id>\\d+)/delete$"
 msgstr "^dossier/(?P<folder_id>\\d+)/supprimer$"
 
-#: urls.py:221
+#: urls.py:225
 #, fuzzy
 msgid "^folder/(?P<folder_id>\\d+)/purge$"
 msgstr "^dossier/(?P<folder>(?:[0-9a-f]{24,24})+)$"
 
-#: urls.py:225
+#: urls.py:229
 #, fuzzy
 msgid "^folder/(?P<folder_id>\\d+)$"
 msgstr "^basculergr/(?P<user_id>\\d+)/$"
 
-#: urls.py:231
+#: urls.py:235
 msgid "^feed/add/nosub/(.*)$"
 msgstr "^flux/ajouter/pasdab/(.*)$"
 
-#: urls.py:235
+#: urls.py:239
 msgid "^feed/add/(.*)$"
 msgstr "^flux/ajouter/(.*)$"
 
-#: urls.py:240
+#: urls.py:244
 msgid "^subscription/new/$"
 msgstr "^abonnement/nouveau/$"
 
-#: urls.py:248
+#: urls.py:252
 msgid "^json/feeds-completer/$"
 msgstr "^json/feeds-completer/$"
 
-#: urls.py:266
+#: urls.py:270
 #, fuzzy
 msgid "^subscription/(?P<subscription_id>\\d+)/cancel$"
 msgstr "^abonnement/(?P<subscription>(?:[0-9a-f]{24,24})+)/resilier$"
 
-#: urls.py:270
+#: urls.py:274
 #, fuzzy
 msgid "^subscription/(?P<subscription_id>\\d+)/cancel/do$"
 msgstr "^abonnement/(?P<subscription>(?:[0-9a-f]{24,24})+)/resilier/vraiment$"
 
-#: urls.py:274
+#: urls.py:278
 #, fuzzy
 msgid "^subscription/(?P<subscription_id>\\d+)$"
 msgstr "^abonnement/(?P<subscription>(?:[0-9a-f]{24,24})+)$"
 
-#: urls.py:278
+#: urls.py:282
 msgid "^import/contacts/$"
 msgstr "^importer/contacts/$"
 
-#: urls.py:288
+#: urls.py:292
 msgid "^import/url/(.*)$"
 msgstr "^importer/url/(.*)$"
 
-#: urls.py:297
+#: urls.py:301
 #, fuzzy
 msgid "^status/article/(\\d+)/$"
 msgstr "^etat/article/([0-9a-f]{24,24})/$"
 
-#: urls.py:301
+#: urls.py:305
 msgid "^webimport/$"
 msgstr "^import-web/$"
 
-#: urls.py:305
+#: urls.py:309
 msgid "^(?P<klass>\\w+)/(?P<oid>\\w+)/toggle/(?P<key>\\w+.\\w+)/?$"
 msgstr "^(?P<klass>\\w+)/(?P<oid>\\w+)/toggle/(?P<key>\\w+.\\w+)/?$"
 
-#: urls.py:308
+#: urls.py:312
 #, fuzzy
 msgid "^edit/(?P<klass>\\w+)/(?P<oid>\\w+)/(?P<form_class>\\w+)/?$"
 msgstr "^(?P<klass>\\w+)/(?P<oid>\\w+)/toggle/(?P<key>\\w+.\\w+)/?$"
 
-#: urls.py:311
+#: urls.py:315
 msgid "^help/$"
 msgstr "^aide/$"
 
-#: urls.py:313
+#: urls.py:317
 msgid "^signin_error/$"
 msgstr "^erreur_connexion/$"
 
-#: urls.py:318
+#: urls.py:322
 msgid "^mailaccount/?$"
 msgstr "^comptemail/?$"
 
-#: urls.py:323
+#: urls.py:327
 msgid "^mailaccount/(?P<pk>\\d+)/delete/?$"
 msgstr ""
 
-#: urls.py:334
+#: urls.py:338
 msgid "^mailfeed/?$"
 msgstr "^fluxmail/?$"
 
-#: urls.py:339
+#: urls.py:343
 #, fuzzy
 msgid "^mailfeed/(?P<pk>\\d+)/delete/?$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: urls.py:344
+#: urls.py:348
 #, fuzzy
 msgid "^mailfeed/(?P<mailfeed_id>\\d+)/rules/?$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: urls.py:349
+#: urls.py:353
 #, fuzzy
 msgid "^mailfeed/(?P<mailfeed_id>\\d+)/rule/(?P<pk>\\d+)/position/?$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: urls.py:354
+#: urls.py:358
 #, fuzzy
 msgid "^mailfeed/(?P<mailfeed_id>\\d+)/rule/(?P<pk>\\d+)/group/?$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: urls.py:359
+#: urls.py:363
 #, fuzzy
 msgid "^mailfeed/(?P<mailfeed_id>\\d+)/rule/(?P<pk>\\d+)/delete/?$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: urls.py:366
+#: urls.py:370
 #, fuzzy
 msgid "^twitteraccount/?$"
 msgstr "^comptemail/?$"
 
-#: urls.py:371
+#: urls.py:375
 #, fuzzy
 msgid "^twitteraccount/(?P<pk>\\d+)/delete/?$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: urls.py:376
+#: urls.py:380
 #, fuzzy
 msgid "^twitterfeed/?$"
 msgstr "^fluxmail/?$"
 
-#: urls.py:381
+#: urls.py:385
 #, fuzzy
 msgid "^twitterfeed/(?P<pk>\\d+)/delete/?$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: urls.py:386
+#: urls.py:390
 #, fuzzy
 msgid "^twitterfeed/(?P<twitterfeed_id>\\d+)/rules/?$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: urls.py:391
+#: urls.py:395
 #, fuzzy
 msgid "^twitterfeed/(?P<twitterfeed_id>\\d+)/rule/(?P<pk>\\d+)/position/?$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: urls.py:396
+#: urls.py:400
 #, fuzzy
 msgid "^twitterfeed/(?P<twitterfeed_id>\\d+)/rule/(?P<pk>\\d+)/group/?$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: urls.py:401
+#: urls.py:405
 #, fuzzy
 msgid "^twitterfeed/(?P<twitterfeed_id>\\d+)/rule/(?P<pk>\\d+)/delete/?$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: urls.py:408
+#: urls.py:412
 #, fuzzy
 msgid "^processor/?$"
 msgstr "^profil/$"
 
-#: urls.py:413
+#: urls.py:417
 #, fuzzy
 msgid "^processor/(?P<pk>\\d+)/delete/?$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: urls.py:418
+#: urls.py:422
 #, fuzzy
 msgid "^processingchain/?$"
 msgstr "Chaîne de traitement"
 
-#: urls.py:423
+#: urls.py:427
 #, fuzzy
 msgid "^processingchain/(?P<pk>\\d+)/delete/?$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: urls.py:428
+#: urls.py:432
 #, fuzzy
 msgid "^processingchain/(?P<chain_id>\\d+)/items/?$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: urls.py:433
+#: urls.py:437
 #, fuzzy
 msgid "^processingchain/(?P<chain_id>\\d+)/item/(?P<pk>\\d+)/position/?$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: urls.py:438
+#: urls.py:442
 #, fuzzy
 msgid "^processingchain/(?P<chain_id>\\d+)/item/(?P<pk>\\d+)/delete/?$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: urls.py:445
+#: urls.py:449
 #, fuzzy
 msgid "^staff/feed/?$"
 msgstr "^fluxmail/?$"
 
-#: urls.py:450
+#: urls.py:454
 msgid "^staff/website/?$"
 msgstr ""
 
-#: urls.py:455
+#: urls.py:459
 #, fuzzy
 msgid "^staff/website/(?P<pk>\\d+)/delete/?$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: urls.py:462
+#: urls.py:466
 msgid "^grimport/(?:(?P<user_id>\\d+)/)?$"
 msgstr "^importgr/(?:(?P<user_id>\\d+)/)?$"
 
-#: urls.py:465
+#: urls.py:469
 msgid "^grstop/(?P<user_id>\\d+)/$"
 msgstr "^stopgr/(?P<user_id>\\d+)/$"
 
-#: urls.py:468
+#: urls.py:472
 msgid "^grtoggle/(?P<user_id>\\d+)/$"
 msgstr "^basculergr/(?P<user_id>\\d+)/$"
 
-#: urls.py:471
+#: urls.py:475
 msgid "^grstatus/$"
 msgstr "^etatgr/$"
 
-#: urls.py:476
+#: urls.py:480
 msgid "^history/$"
 msgstr "^historique/$"
 
-#: urls.py:481
+#: urls.py:485
 #, fuzzy
 msgid "^history/(?P<pk>\\d+)/delete/?$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: urls.py:486
+#: urls.py:490
 #, fuzzy
 msgid "^history/(?P<pk>\\d+)/retry/?$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: urls.py:494
+#: urls.py:498
 msgid "^syncnode/?$"
 msgstr ""
 
-#: urls.py:499
+#: urls.py:503
 #, fuzzy
 msgid "^syncnode/(?P<pk>\\d+)/delete/?$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: urls.py:504
+#: urls.py:508
 msgid "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 msgstr "^feed/(?P<feed_id>\\w+)/close/toggle/$"
 
-#: urls.py:516
+#: urls.py:520
 msgid ""
 "^export/folder/(?P<folder_id>\\d+)/(?P<since>[^/]+)/(?P<token>\\w{32,32})/?$"
 msgstr ""
 
-#: urls.py:521
+#: urls.py:525
 msgid ""
 "^export/folder/(?P<folder_id>\\d+)/(?P<since>[^/]+)/(?P<until>[^/]+)/(?P<token>\\w{32,32})/?$"
 msgstr ""
 
-#: urls.py:526
+#: urls.py:530
 msgid ""
 "^export/folder/(?P<folder_slug>[-\\w]+)/(?P<since>[^/]+)/(?P<token>\\w{32,32})/?$"
 msgstr ""
 
-#: urls.py:531
+#: urls.py:535
 msgid ""
 "^export/folder/(?P<folder_slug>[-\\w]+)/(?P<since>[^/]+)/(?P<until>[^/]+)/(?P<token>\\w{32,32})/?$"
 msgstr ""
 
-#: urls.py:536
+#: urls.py:540
 msgid "^export/(?P<since>[^/]+)/(?P<token>\\w{32,32})/?$"
 msgstr ""
 
-#: urls.py:540
+#: urls.py:544
 msgid "^export/(?P<since>[^/]+)/(?P<until>[^/]+)/(?P<token>\\w{32,32})/?$"
 msgstr ""
 
 #: admin/article.py:39 models/nonrel/article.py:198
-#: models/reldb/item/abstract/content.py:160
+#: models/reldb/item/abstract/content.py:162
 msgid "Content type"
 msgstr "Type de contenu"
 
@@ -466,7 +470,7 @@ msgid "None"
 msgstr "aucun"
 
 #: admin/article.py:58 models/nonrel/tag.py:62
-#: models/reldb/feed/combinedrule.py:74 models/reldb/item/base.py:285
+#: models/reldb/feed/combinedrule.py:74 models/reldb/item/base.py:290
 msgid "Origin"
 msgstr "Origine"
 
@@ -489,7 +493,7 @@ msgid "Duplicate of"
 msgstr "Duplicata de"
 
 #: admin/article.py:211 admin/mongo.py:351 models/nonrel/article.py:195
-#: models/reldb/item/abstract/content.py:155
+#: models/reldb/item/abstract/content.py:157
 msgid "Content"
 msgstr "Contenu"
 
@@ -573,8 +577,7 @@ msgstr "Sous…"
 msgid "The feed is open"
 msgstr "Le flux est ouvert"
 
-#: admin/feed.py:266 templates/chaineditem/list-create.html:82
-#: templates/processingchain/list-create.html:52
+#: admin/feed.py:266 templates/processingchain/list-create.html:52
 #: templates/processor/list-create.html:52
 #: templates/staff/feed/list-create.html:55
 msgid "Active?"
@@ -620,7 +623,7 @@ msgstr "Staff ?"
 msgid "Superuser?"
 msgstr "Super-utilisateur ?"
 
-#: admin/mongo.py:456 models/reldb/item/article.py:148
+#: admin/mongo.py:456 models/reldb/item/article.py:156
 msgid "Article"
 msgstr "Article"
 
@@ -645,7 +648,7 @@ msgstr "Sys ?"
 msgid "Shown?"
 msgstr "Affiché ?"
 
-#: admin/mongo.py:710
+#: admin/mongo.py:710 templates/staff/website/list-create.html:48
 msgid "Added"
 msgstr "Ajouté(e)"
 
@@ -653,13 +656,13 @@ msgstr "Ajouté(e)"
 msgid "Run?"
 msgstr "Actif ?"
 
-#: admin/processor.py:96 models/reldb/website.py:151
+#: admin/processor.py:96 models/reldb/website.py:161
 #: models/reldb/feed/base.py:320 models/reldb/processor/category.py:119
-#: models/reldb/processor/chain.py:164 models/reldb/processor/processor.py:176
+#: models/reldb/processor/chain.py:167 models/reldb/processor/processor.py:187
 msgid "Description"
 msgstr "Description"
 
-#: admin/processor.py:109 templates/processor/list-create.html:54
+#: admin/processor.py:109 templates/processor/list-create.html:53
 msgid "Code"
 msgstr "Code"
 
@@ -859,7 +862,7 @@ msgstr "Markdown"
 msgid "MultiMarkdown"
 msgstr "MultiMarkdown"
 
-#: models/common.py:61 models/reldb/folder.py:134 models/reldb/website.py:131
+#: models/common.py:61 models/reldb/folder.py:134 models/reldb/website.py:141
 msgid "Image"
 msgstr "Image"
 
@@ -995,8 +998,8 @@ msgstr "%(count)s article lu"
 
 #: models/common.py:243
 #, python-format
-msgid "%(count)s read articles"
-msgstr "%(count)s articles lus"
+msgid "%(count)s read articles (by reverse read date)"
+msgstr "%(count)s articles, dans l'ordre inverse où vous les avez lus"
 
 #: models/common.py:244
 msgid "Mark as unread"
@@ -1130,7 +1133,7 @@ msgid "Remove from reading list"
 msgstr "Supprimer de la liste de lecture"
 
 #: models/common.py:294 templates/navbars/read-endless.html:46
-#: templatetags/coretags.py:68
+#: templatetags/coretags.py:71
 msgid "Read later"
 msgstr "Lire plus tard"
 
@@ -1669,11 +1672,11 @@ msgstr ""
 "sont là."
 
 #: models/nonrel/article.py:144 models/nonrel/feed.py:185
-#: models/reldb/feed/base.py:264 models/reldb/item/base.py:221
+#: models/reldb/feed/base.py:264 models/reldb/item/base.py:226
 msgid "restricted"
 msgstr "restreint"
 
-#: models/nonrel/article.py:145 models/reldb/item/base.py:222
+#: models/nonrel/article.py:145
 msgid ""
 "This article comes from a paid paid subscription and cannot be shared like "
 "others inside the platform."
@@ -1693,11 +1696,11 @@ msgstr ""
 "pour un autre raison."
 
 #: models/nonrel/article.py:156 models/reldb/feed/combinedrule.py:77
-#: models/reldb/item/abstract/content.py:169
+#: models/reldb/item/abstract/content.py:171
 msgid "Word count"
 msgstr "Nombre de mots"
 
-#: models/nonrel/article.py:161 models/reldb/item/base.py:236
+#: models/nonrel/article.py:161 models/reldb/item/base.py:241
 msgid "date published"
 msgstr "date de publication"
 
@@ -1705,11 +1708,12 @@ msgstr "date de publication"
 msgid "When the article first appeared on the publisher's website."
 msgstr "Quand l'article est apparu la première fois sur le site de l'éditeur."
 
-#: models/nonrel/article.py:166 models/reldb/item/base.py:228
+#: models/nonrel/article.py:166 models/reldb/website.py:133
+#: models/reldb/item/base.py:233
 msgid "Date added"
 msgstr "Date d'ajout"
 
-#: models/nonrel/article.py:167 models/reldb/item/base.py:229
+#: models/nonrel/article.py:167
 msgid "When the article was added to the 1flow database."
 msgstr "Date à laquelle le flux a été ajouté dans la base 1flow."
 
@@ -1719,11 +1723,11 @@ msgstr ""
 "Tags qui seront appliqués automatiquement à toute nouvelle lecture liée à "
 "cet article."
 
-#: models/nonrel/article.py:174 models/reldb/item/base.py:246
+#: models/nonrel/article.py:174 models/reldb/item/base.py:251
 msgid "default rating"
 msgstr "score de référence"
 
-#: models/nonrel/article.py:175 models/reldb/item/base.py:247
+#: models/nonrel/article.py:175 models/reldb/item/base.py:252
 msgid "Rating used as a base when a user has not already rated the content."
 msgstr ""
 "Score qui sera utilisé comme base tant que l'utilisateur n'a pas encore "
@@ -1737,31 +1741,31 @@ msgstr "Langue de l'article"
 msgid "2 letters or 5 characters language code (eg “en”, “fr-FR”…)."
 msgstr "Code de langue sur 2 ou 5 caractères."
 
-#: models/nonrel/article.py:183 models/reldb/item/base.py:250
+#: models/nonrel/article.py:183 models/reldb/item/base.py:255
 msgid "Text direction"
 msgstr "Direction du texte"
 
-#: models/nonrel/article.py:184 models/reldb/item/base.py:251
+#: models/nonrel/article.py:184 models/reldb/item/base.py:256
 msgid "Left-to-Right"
 msgstr "gauche-à-droite"
 
-#: models/nonrel/article.py:185 models/reldb/item/base.py:252
+#: models/nonrel/article.py:185 models/reldb/item/base.py:257
 msgid "Right-to-Left"
 msgstr "droite-à-gauche"
 
-#: models/nonrel/article.py:188 models/reldb/item/abstract/content.py:146
+#: models/nonrel/article.py:188 models/reldb/item/abstract/content.py:147
 msgid "image URL"
 msgstr "URL de l'image"
 
-#: models/nonrel/article.py:190 models/reldb/item/abstract/content.py:150
+#: models/nonrel/article.py:190 models/reldb/item/abstract/content.py:152
 msgid "Excerpt"
 msgstr "Extrait"
 
-#: models/nonrel/article.py:191 models/reldb/item/abstract/content.py:152
+#: models/nonrel/article.py:191 models/reldb/item/abstract/content.py:154
 msgid "Small excerpt of content, if applicable."
 msgstr "Court résumé de l'article, s'il existe."
 
-#: models/nonrel/article.py:196 models/reldb/item/abstract/content.py:157
+#: models/nonrel/article.py:196 models/reldb/item/abstract/content.py:159
 msgid "Article content"
 msgstr "Contenu de l'article"
 
@@ -1769,7 +1773,7 @@ msgstr "Contenu de l'article"
 msgid "Type of article content (text, image…)"
 msgstr "Type de contenu d'article (texte, image…)"
 
-#: models/nonrel/article.py:201 models/reldb/item/abstract/content.py:165
+#: models/nonrel/article.py:201 models/reldb/item/abstract/content.py:167
 msgid "Error"
 msgstr "Erreur"
 
@@ -1798,7 +1802,7 @@ msgstr ""
 "ont des URLs différentes (une peut être raccourcie, l'autre non), celles-ci "
 "pointent vers la même destination finale sur le web."
 
-#: models/nonrel/article.py:261 models/reldb/item/article.py:170
+#: models/nonrel/article.py:261 models/reldb/item/article.py:178
 #, python-brace-format
 msgid "{0} (#{1}) from {2}"
 msgstr "{0} (#{1}) from {2}"
@@ -1808,17 +1812,17 @@ msgstr "{0} (#{1}) from {2}"
 msgid "Article #{0} from {1}"
 msgstr "Article #{0} de {1}"
 
-#: models/nonrel/article.py:310 models/reldb/item/base.py:302
+#: models/nonrel/article.py:310 models/reldb/item/base.py:307
 #, python-brace-format
 msgid "{0} ago"
 msgstr "il y a {0}"
 
-#: models/nonrel/article.py:339 models/reldb/item/base.py:320
+#: models/nonrel/article.py:339 models/reldb/item/base.py:325
 msgid "Unknown source"
 msgstr "Source inconnue"
 
 #: models/nonrel/article.py:352 models/nonrel/read.py:425
-#: models/reldb/read.py:432 models/reldb/item/base.py:333
+#: models/reldb/read.py:432 models/reldb/item/base.py:338
 #, python-brace-format
 msgid "Multiple sources ({0} feeds)"
 msgstr "Sources multiples ({0} flux)"
@@ -1872,11 +1876,11 @@ msgstr ""
 
 #: models/nonrel/feed.py:161 models/nonrel/tag.py:54
 #: models/reldb/language.py:52 models/reldb/tag.py:59
-#: models/reldb/website.py:103 models/reldb/feed/base.py:245
+#: models/reldb/website.py:104 models/reldb/feed/base.py:245
 msgid "name"
 msgstr "nom"
 
-#: models/nonrel/feed.py:162 models/reldb/website.py:112
+#: models/nonrel/feed.py:162 models/reldb/website.py:113
 #: models/reldb/feed/rssatom.py:357
 msgid "url"
 msgstr "url"
@@ -1895,10 +1899,10 @@ msgstr ""
 
 #: models/nonrel/feed.py:169 models/nonrel/tag.py:55
 #: models/nonrel/website.py:61 models/reldb/folder.py:123
-#: models/reldb/tag.py:60 models/reldb/website.py:109
+#: models/reldb/tag.py:60 models/reldb/website.py:110
 #: models/reldb/account/base.py:143 models/reldb/feed/base.py:249
-#: models/reldb/processor/category.py:86 models/reldb/processor/chain.py:117
-#: models/reldb/processor/processor.py:119
+#: models/reldb/processor/category.py:86 models/reldb/processor/chain.py:120
+#: models/reldb/processor/processor.py:121
 msgid "slug"
 msgstr "slug"
 
@@ -1968,7 +1972,7 @@ msgstr "intervalle de récupération"
 msgid "last fetch"
 msgstr "dernière récupération"
 
-#: models/nonrel/feed.py:207 models/reldb/website.py:121
+#: models/nonrel/feed.py:207 models/reldb/website.py:122
 msgid "fetch limit"
 msgstr "limite de récupération"
 
@@ -1991,8 +1995,8 @@ msgstr "modifié"
 
 #: models/nonrel/feed.py:223 models/reldb/subscription.py:169
 #: models/reldb/account/base.py:175 models/reldb/feed/base.py:289
-#: models/reldb/processor/chaineditem.py:132
-#: models/reldb/processor/error.py:91 models/reldb/processor/parameter.py:90
+#: models/reldb/processor/chaineditem.py:130
+#: models/reldb/processor/error.py:102 models/reldb/processor/parameter.py:90
 msgid "Notes"
 msgstr "Notes"
 
@@ -2047,7 +2051,7 @@ msgid "Public description of the feed in English language. As Markdown."
 msgstr "Public description of the feed in English language. As Markdown."
 
 #: models/nonrel/feed.py:368 models/nonrel/folder.py:122
-#: models/reldb/folder.py:177
+#: models/reldb/folder.py:183
 #, python-brace-format
 msgid "{0} (#{1})"
 msgstr "{0} (#{1})"
@@ -2064,7 +2068,7 @@ msgstr "commentaires pour "
 msgid "comments on"
 msgstr "commentaires sur "
 
-#: models/nonrel/feed.py:774 models/reldb/item/article.py:89
+#: models/nonrel/feed.py:774 models/reldb/item/article.py:92
 #: models/reldb/item/tweet.py:89
 #, python-brace-format
 msgid "Imported item from {0}"
@@ -2072,13 +2076,11 @@ msgstr "Élément importé depuis {0}"
 
 #: models/nonrel/folder.py:85 models/nonrel/subscription.py:120
 #: models/reldb/author.py:59 models/reldb/folder.py:122
-#: models/reldb/subscription.py:157 models/reldb/item/base.py:212
-#: models/reldb/processor/category.py:81 models/reldb/processor/chain.py:112
-#: models/reldb/processor/processor.py:114
+#: models/reldb/subscription.py:157 models/reldb/item/base.py:217
+#: models/reldb/processor/category.py:81 models/reldb/processor/chain.py:115
+#: models/reldb/processor/processor.py:116
 #: templates/processingchain/list-create.html:49
-#: templates/processor/list-create.html:49
-#: templates/staff/website/list-create.html:46
-#: templates/status/rabbitmq.html:14
+#: templates/processor/list-create.html:49 templates/status/rabbitmq.html:14
 msgid "Name"
 msgstr "Nom"
 
@@ -2097,12 +2099,12 @@ msgstr "Dossier(s) enfant(s)"
 msgid "{0} (#{1}) for user {2}{3}{4}"
 msgstr "{0} (#{1}) de l'utilisateur {2}{3}{4}"
 
-#: models/nonrel/folder.py:119 models/reldb/folder.py:174
+#: models/nonrel/folder.py:119 models/reldb/folder.py:180
 #, python-brace-format
 msgid ", parent: {0} (#{1})"
 msgstr ", parent : {0} (#{1})"
 
-#: models/nonrel/folder.py:121 models/reldb/folder.py:176
+#: models/nonrel/folder.py:121 models/reldb/folder.py:182
 #, python-brace-format
 msgid ", children: {0}"
 msgstr ", enfant(s) : {0}"
@@ -2737,7 +2739,7 @@ msgstr ""
 msgid "Folder(s) in which this subscription appears."
 msgstr "Dossier(s) dans lesquel(s) cet abonnement apparaît."
 
-#: models/nonrel/subscription.py:164 models/reldb/subscription.py:213
+#: models/nonrel/subscription.py:164 models/reldb/subscription.py:219
 #, python-brace-format
 msgid "{0}+{1} (#{2})"
 msgstr "{0}+{1} (#{2})"
@@ -2803,7 +2805,7 @@ msgstr ""
 "Ce champ ne devrait pas être éditable par les utilisateurs, ni dans "
 "l'interface d'administration."
 
-#: models/nonrel/website.py:68 models/reldb/website.py:164
+#: models/nonrel/website.py:68 models/reldb/website.py:185
 #, python-format
 msgid "(dupe of #%s)"
 msgstr "(duplicata de #%s)"
@@ -2812,7 +2814,7 @@ msgstr "(duplicata de #%s)"
 msgid "Author"
 msgstr "Auteur"
 
-#: models/reldb/author.py:54 models/reldb/item/base.py:242
+#: models/reldb/author.py:54 models/reldb/item/base.py:247
 msgid "Authors"
 msgstr "Auteurs"
 
@@ -2820,7 +2822,7 @@ msgstr "Auteurs"
 msgid "Username (nick)"
 msgstr "Nom d'utilisateur (pseudo)"
 
-#: models/reldb/author.py:66 models/reldb/website.py:85
+#: models/reldb/author.py:66 models/reldb/website.py:86
 #: models/reldb/feed/rssatom.py:361
 msgid "Web site"
 msgstr "Site web"
@@ -2861,8 +2863,8 @@ msgstr "identité non-confirmée"
 
 #: models/reldb/author.py:102 models/reldb/feed/base.py:242
 #: models/reldb/feed/combined.py:41 models/reldb/feed/common.py:160
-#: models/reldb/item/base.py:215 models/reldb/processor/category.py:92
-#: models/reldb/processor/chain.py:124 models/reldb/processor/processor.py:127
+#: models/reldb/item/base.py:220 models/reldb/processor/category.py:92
+#: models/reldb/processor/chain.py:127 models/reldb/processor/processor.py:129
 #: models/reldb/sync/node.py:84
 msgid "Creator"
 msgstr "Créateur"
@@ -2899,7 +2901,7 @@ msgstr ""
 
 #: models/reldb/folder.py:130 models/reldb/subscription.py:166
 #: models/reldb/account/base.py:152 models/reldb/feed/base.py:258
-#: models/reldb/processor/error.py:71
+#: models/reldb/processor/error.py:82
 msgid "Date created"
 msgstr "Date de création"
 
@@ -2911,7 +2913,7 @@ msgstr ""
 "Une image personnalisée pour le dossier. L'image locale a priorité sur l'URL"
 " si les deux sont renseignées."
 
-#: models/reldb/folder.py:140 models/reldb/website.py:139
+#: models/reldb/folder.py:140 models/reldb/website.py:149
 msgid "Image URL"
 msgstr "URL de l'image"
 
@@ -2922,7 +2924,7 @@ msgstr ""
 "Une URL complète d'image en ligne, si vous préférez l'héberger en dehors de "
 "1flow."
 
-#: models/reldb/folder.py:172
+#: models/reldb/folder.py:178
 #, fuzzy, python-brace-format
 msgid "{0} (#{1}, level {2}) for user {3}{4}{5}"
 msgstr "{0} (#{1}) de l'utilisateur {2}{3}{4}"
@@ -3083,6 +3085,8 @@ msgstr "Abonnement"
 msgid ""
 "Write anything you want about this subscription. MultiMarkdown accepted."
 msgstr ""
+"Écrivez ce que vous souhaitez concernant cet abonnement. Format Markdown "
+"accepté."
 
 #: models/reldb/subscription.py:175 models/reldb/account/base.py:179
 #: models/reldb/feed/base.py:301
@@ -3143,7 +3147,7 @@ msgstr "date de terminaison"
 #: templates/mailaccount/list-create.html:53
 #: templates/mailfeed/list-create.html:45
 #: templates/mailfeedrule/list-create.html:83
-#: templates/snippets/read/staff-information.html:12
+#: templates/snippets/read/staff-information.html:20
 #: templates/twitteraccount/list-create.html:61
 #: templates/twitterfeed/list-create.html:55
 #: templates/twitterfeedrule/list-create.html:83
@@ -3201,13 +3205,13 @@ msgid ""
 "Your import #{0} failed to run. If will be automatically retried in {1}"
 msgstr "L'import n°{0} a échoué. Il sera retenté automatiquement dans {1}"
 
-#: models/reldb/website.py:86
+#: models/reldb/website.py:87
 #: templates/snippets/navbar/staff-config-menu.html:28
 #: templates/staff/website/list-create.html:32
 msgid "Web sites"
 msgstr "Sites web"
 
-#: models/reldb/website.py:122
+#: models/reldb/website.py:123
 #, python-brace-format
 msgid ""
 "The maximum number of articles that can be fetched from the website in "
@@ -3215,13 +3219,28 @@ msgid ""
 "from real-life results."
 msgstr ""
 
-#: models/reldb/website.py:133 models/reldb/account/base.py:181
+#: models/reldb/website.py:134
+#, fuzzy
+msgid "When the web site was added to the 1flow database."
+msgstr "Date à laquelle le flux a été ajouté dans la base 1flow."
+
+#: models/reldb/website.py:137 models/reldb/item/base.py:237
+#: models/reldb/processor/error.py:84
+msgid "Date updated"
+msgstr "Date de mise à jour"
+
+#: models/reldb/website.py:138
+#, fuzzy
+msgid "When the web site was updated."
+msgstr "Date à laquelle l'article a été mis à jour."
+
+#: models/reldb/website.py:143 models/reldb/account/base.py:181
 msgid ""
 "Use either image when 1flow instance hosts the image, or image_url when "
 "hosted elsewhere. If both are filled, image takes precedence."
 msgstr ""
 
-#: models/reldb/website.py:140 models/reldb/account/base.py:187
+#: models/reldb/website.py:150 models/reldb/account/base.py:187
 msgid ""
 "Full URL of the image displayed in the feed selector. Can be hosted outside "
 "of 1flow."
@@ -3229,15 +3248,14 @@ msgstr ""
 "URL complète de l'image affichée dans le sélecteur de flux. Peut être "
 "hébergée en dehors de 1flow."
 
-#: models/reldb/website.py:145 models/reldb/feed/base.py:314
-#: models/reldb/processor/category.py:115 models/reldb/processor/chain.py:158
-#: models/reldb/processor/processor.py:172
-#: templates/staff/website/list-create.html:48
+#: models/reldb/website.py:155 models/reldb/feed/base.py:314
+#: models/reldb/processor/category.py:115 models/reldb/processor/chain.py:161
+#: models/reldb/processor/processor.py:183
 msgid "Short description"
 msgstr "Description courte"
 
-#: models/reldb/website.py:146 models/reldb/feed/base.py:315
-#: models/reldb/processor/chain.py:159
+#: models/reldb/website.py:156 models/reldb/feed/base.py:315
+#: models/reldb/processor/chain.py:162
 msgid ""
 "Public short description of the feed, for auto-completer listing. Markdown "
 "text."
@@ -3245,12 +3263,27 @@ msgstr ""
 "Description publique courte du flux, pour le compléteur automatique. En "
 "Markdown."
 
-#: models/reldb/website.py:152 models/reldb/feed/base.py:321
-#: models/reldb/processor/chain.py:165
+#: models/reldb/website.py:162 models/reldb/feed/base.py:321
+#: models/reldb/processor/chain.py:168
 msgid "Public description of the feed. Markdown text."
 msgstr ""
 "Description publique du flux en langue française. Apparaîtra dans le "
 "sélecteur. En Markdown."
+
+#: models/reldb/website.py:170 models/reldb/processor/chaineditem.py:115
+#: templates/staff/website/list-create.html:49
+#, fuzzy
+msgid "Processing parameters"
+msgstr "Erreurs de traitement"
+
+#: models/reldb/website.py:171
+msgid ""
+"Processing parameters for this website. Can be left empty. As they are more "
+"specific, the website parameters take precedence over the processors "
+"parameters, but will be overriden by feed-level or item-level processing "
+"parameters, if any. In YAML format (see http://en.wikipedia.org/wiki/YAML "
+"for details)."
+msgstr ""
 
 #: models/reldb/account/base.py:117
 msgid "Base account"
@@ -3287,7 +3320,7 @@ msgstr "actif"
 
 #: models/reldb/account/base.py:170
 msgid "Is account enabled for fetching?"
-msgstr ""
+msgstr "La récupération est-elle activée sur ce compte ?"
 
 #: models/reldb/account/base.py:176
 msgid "User notes for this account."
@@ -3543,7 +3576,7 @@ msgstr ""
 msgid "BaseFeed {0} (#{1})"
 msgstr "Flux de base {0} (#{1})"
 
-#: models/reldb/feed/base.py:523
+#: models/reldb/feed/base.py:534
 msgid "NO REASON GIVEN"
 msgstr "AUCUNE RAISON DONNÉE"
 
@@ -3658,7 +3691,7 @@ msgstr "ne correspond pas à l'expr. ratio."
 
 #: models/reldb/feed/combinedrule.py:143 models/reldb/feed/mailrule.py:147
 #: models/reldb/feed/twitterrule.py:147
-#: models/reldb/processor/chaineditem.py:125
+#: models/reldb/processor/chaineditem.py:123
 #: models/reldb/processor/parameter.py:83
 msgid "Checked and valid"
 msgstr "Vérifiée et validé"
@@ -4113,54 +4146,63 @@ msgstr ""
 "/smtp-headers (en anglais), vous y trouverez une liste d'en-têtes valides. "
 "Ça ne serait pas juste une faute de frappe ?"
 
-#: models/reldb/item/article.py:149
+#: models/reldb/item/article.py:157
 msgid "Articles"
 msgstr "Articles"
 
-#: models/reldb/item/article.py:158
+#: models/reldb/item/article.py:166
 msgid "Version description"
 msgstr "Description de version"
 
-#: models/reldb/item/article.py:159
+#: models/reldb/item/article.py:167
 msgid ""
 "Set by content processors or author to know with which processor chain this "
 "version was produced. Can be a code or a processor chain ID/slug to help "
 "querying."
 msgstr ""
 
-#: models/reldb/item/base.py:206
+#: models/reldb/item/base.py:211
 msgid "Base item"
 msgstr "Élément de base"
 
-#: models/reldb/item/base.py:207
+#: models/reldb/item/base.py:212
 msgid "Base items"
 msgstr "Éléments de base"
 
-#: models/reldb/item/base.py:232 models/reldb/processor/error.py:73
-msgid "Date updated"
-msgstr "Date de mise à jour"
+#: models/reldb/item/base.py:227
+#, fuzzy
+msgid "This item cannot be shared freely inside or outside the platform."
+msgstr ""
+"Cet article vient d'un abonnement payant et ne peut pas être partagé "
+"librement à travers la plateforme."
 
-#: models/reldb/item/base.py:233
-msgid "When the article was updated."
-msgstr "Date à laquelle l'article a été mis à jour."
+#: models/reldb/item/base.py:234
+#, fuzzy
+msgid "When the item was added to the 1flow database."
+msgstr "Date à laquelle le flux a été ajouté dans la base 1flow."
 
 #: models/reldb/item/base.py:238
+#, fuzzy
+msgid "When the item was updated."
+msgstr "Date à laquelle l'article a été mis à jour."
+
+#: models/reldb/item/base.py:243
 msgid "When the item was put online."
 msgstr "Quand l'item a été mis en ligne"
 
-#: models/reldb/item/base.py:280 templates/preferences.html:31
+#: models/reldb/item/base.py:285 templates/preferences.html:31
 #: templates/selector.html:3 templates/navbars/read-endless.html:16
 #: templates/snippets/navbar.html:31
 msgid "Sources"
 msgstr "Sources"
 
-#: models/reldb/item/base.py:288
+#: models/reldb/item/base.py:293
 msgid ""
 "Origin of article (RSS/Atom, web import, twitter…). Can be None if item has "
 "a source (=internal origin)."
 msgstr ""
 
-#: models/reldb/item/base.py:292
+#: models/reldb/item/base.py:297
 #, python-brace-format
 msgid "{0} (#{1}){2}"
 msgstr "{0} (#{1}){2}"
@@ -4202,19 +4244,19 @@ msgstr "mentions"
 msgid "{0} ({1}, {2})"
 msgstr "{0} ({1}, {2})"
 
-#: models/reldb/item/abstract/content.py:143
+#: models/reldb/item/abstract/content.py:144
 msgid "Content item"
 msgstr "Élément avec du contenu"
 
-#: models/reldb/item/abstract/content.py:144
+#: models/reldb/item/abstract/content.py:145
 msgid "Content items"
 msgstr "Éléments avec du contenu"
 
-#: models/reldb/item/abstract/content.py:162
+#: models/reldb/item/abstract/content.py:164
 msgid "Type of article content (HTML, Markdown…)"
 msgstr "Type de contenu d'article (texte, image…)"
 
-#: models/reldb/item/abstract/content.py:167
+#: models/reldb/item/abstract/content.py:169
 msgid "Error when fetching content."
 msgstr "Erreur pendant la récupération du contenu."
 
@@ -4260,12 +4302,12 @@ msgid "Processor categories"
 msgstr "Catégories de traitement"
 
 #: models/reldb/processor/category.py:98
-#: models/reldb/processor/processor.py:134
+#: models/reldb/processor/processor.py:136
 msgid "Maintainer"
 msgstr "Mainteneur"
 
 #: models/reldb/processor/category.py:109
-#: models/reldb/processor/processor.py:159
+#: models/reldb/processor/processor.py:167
 msgid "Source address"
 msgstr "Adresse de la source"
 
@@ -4274,85 +4316,85 @@ msgid ""
 "The category home on the web, if any. A web URL, or a github short address."
 msgstr ""
 
-#: models/reldb/processor/chain.py:104
-#: templates/staff/website/list-create.html:49
+#: models/reldb/processor/chain.py:107
+#: templates/staff/website/list-create.html:50
 msgid "Processing chain"
 msgstr "Chaîne de traitement"
 
-#: models/reldb/processor/chain.py:105
+#: models/reldb/processor/chain.py:108
 #: templates/processingchain/list-create.html:4
 #: templates/processingchain/list-create.html:34
 #: templates/snippets/navbar/staff-config-menu.html:35
 msgid "Processing chains"
 msgstr "Chaînes de traitement"
 
-#: models/reldb/processor/chain.py:133 models/reldb/processor/processor.py:150
+#: models/reldb/processor/chain.py:136 models/reldb/processor/processor.py:152
 msgid ""
 "The language(s) in which this processor can process content. Let empty "
 "(None/null) for any language or if not relevant."
 msgstr ""
 
-#: models/reldb/processor/chain.py:141
+#: models/reldb/processor/chain.py:144
 msgid ""
 "Any relevant categories. Helps reducing resources consumtion when looking up"
 " processing chains, and also helps staff members find chains to manage."
 msgstr ""
 
-#: models/reldb/processor/chain.py:151
+#: models/reldb/processor/chain.py:154
 msgid "Applies on"
 msgstr "S'applique à"
 
-#: models/reldb/processor/chain.py:153
+#: models/reldb/processor/chain.py:156
 msgid ""
 "On which 1flow models can this chain run ? Not selecting any is like "
 "selecting all."
 msgstr ""
 
-#: models/reldb/processor/chaineditem.py:79
+#: models/reldb/processor/chaineditem.py:80
 msgid "Chained item"
 msgstr "Élément enchaîné"
 
-#: models/reldb/processor/chaineditem.py:80
+#: models/reldb/processor/chaineditem.py:81
 msgid "Chained items"
 msgstr "Éléments enchaînés"
 
-#: models/reldb/processor/chaineditem.py:118
-msgid "Chain parameters"
-msgstr "Paramètres dans cette chaîne de traitement"
-
-#: models/reldb/processor/chaineditem.py:119
+#: models/reldb/processor/chaineditem.py:116
 msgid ""
-"Global parameters for this processor, in this chain, at this position. Can "
-"be none if the processor accepts only site-specific parameters. Can be "
-"overridden by the site-specific parameters, at the web site configuration "
-"level."
+"Parameters for this processor, in this chain, at this position. Can be left "
+"empty if the processor parameters are optional. Can be overridden, by order "
+"of importance, by website, feed or item-level processing parameters. In YAML"
+" format (see http://en.wikipedia.org/wiki/YAML for details)."
 msgstr ""
 
-#: models/reldb/processor/chaineditem.py:133
-#: models/reldb/processor/error.py:92
+#: models/reldb/processor/chaineditem.py:131
+#: models/reldb/processor/error.py:103
 msgid "Things to know about this processor, in this chain, at this position."
 msgstr ""
 "Choses à savoir sur ce processeur, à cette position, dans cette chaîne."
 
-#: models/reldb/processor/error.py:61
+#: models/reldb/processor/error.py:65
 msgid "Processing error"
 msgstr "Erreur de traitement"
 
-#: models/reldb/processor/error.py:62
+#: models/reldb/processor/error.py:66
 msgid "Processing errors"
 msgstr "Erreurs de traitement"
 
-#: models/reldb/processor/error.py:77
+#: models/reldb/processor/error.py:79
+msgid "is temporary?"
+msgstr ""
+
+#: models/reldb/processor/error.py:88
 msgid "Exception"
 msgstr "Exception"
 
-#: models/reldb/processor/error.py:78
+#: models/reldb/processor/error.py:89
 msgid ""
 "The full exception traceback. Can be a sentry ID or a full sentry URL if not"
 " using http://dev.1flow.net/"
 msgstr ""
 
-#: models/reldb/processor/error.py:85
+#: models/reldb/processor/error.py:96
 msgid ""
 "The official issue reference, if any. Can be anything like a Github issue#, "
 "a short issue URI or a fully qualified URI."
@@ -4372,18 +4414,18 @@ msgid ""
 "Specific parameters for this chained item AND this instance. Can be none."
 msgstr ""
 
-#: models/reldb/processor/processor.py:108
+#: models/reldb/processor/processor.py:110
 msgid "Processor"
 msgstr "Processeur"
 
-#: models/reldb/processor/processor.py:109
+#: models/reldb/processor/processor.py:111
 #: templates/processor/list-create.html:4
 #: templates/processor/list-create.html:34
 #: templates/snippets/navbar/staff-config-menu.html:40
 msgid "Processors"
 msgstr "Processeurs"
 
-#: models/reldb/processor/processor.py:143
+#: models/reldb/processor/processor.py:145
 msgid ""
 "Any relevant categories. Helps reducing resources consumtion when looking up"
 " processors, and also helps staff members find processors to manage."
@@ -4391,25 +4433,33 @@ msgstr ""
 
 #: models/reldb/processor/processor.py:160
 msgid ""
+"Indicates whether this processor is globally active or not, despite its "
+"active status in processor chains (this field takes precedence)."
+msgstr ""
+
+#: models/reldb/processor/processor.py:168
+msgid ""
 "The processor home on the web, if any. A web URL, or a github short address."
 msgstr ""
 
-#: models/reldb/processor/processor.py:164
-msgid "Needs parameters?"
-msgstr "Besoin de paramètres ?"
+#: models/reldb/processor/processor.py:173
+#, fuzzy
+msgid "Processor parameters"
+msgstr "Catégories de traitement"
 
-#: models/reldb/processor/processor.py:165
+#: models/reldb/processor/processor.py:174
 msgid ""
-"Defaults to False; and indicates the processor does need some parameters "
-"specified to operate. See https://github.com/1flow/1flow/wiki/Processors for"
-" details."
+"Parameters accepted by this processor, in YAML format (see "
+"http://en.wikipedia.org/wiki/YAML for details). Can be left empty if none. "
+"This information is purely informative for now; it is meant to help chains "
+"maintainers to setup specific parameters for website-dedicated chains."
 msgstr ""
 
-#: models/reldb/processor/processor.py:179
+#: models/reldb/processor/processor.py:190
 msgid "Requirements"
 msgstr "Exigences"
 
-#: models/reldb/processor/processor.py:180
+#: models/reldb/processor/processor.py:191
 msgid ""
 "PIP-compatible requirements. Can be empty. See "
 "https://github.com/1flow/1flow/wiki/Processors for details."
@@ -4418,17 +4468,17 @@ msgstr ""
 "https://github.com/1flow/1flow/wiki/Processors (en anglais) pour plus de "
 "détails."
 
-#: models/reldb/processor/processor.py:185
+#: models/reldb/processor/processor.py:196
 msgid "Accept source code"
 msgstr "Code source d'acceptation"
 
-#: models/reldb/processor/processor.py:186
-#: models/reldb/processor/processor.py:192
+#: models/reldb/processor/processor.py:197
+#: models/reldb/processor/processor.py:203
 msgid "See https://github.com/1flow/1flow/wiki/Processors for details."
 msgstr ""
 "Lisez https://github.com/1flow/1flow/wiki/Processors pour plus de détails."
 
-#: models/reldb/processor/processor.py:191
+#: models/reldb/processor/processor.py:202
 msgid "Processing source code"
 msgstr "Code source de traitement"
 
@@ -4724,7 +4774,7 @@ msgstr "Imports utilisateur"
 msgid "This field is here just for the model to be created by south/django."
 msgstr ""
 
-#: models/reldb/user/counters.py:230
+#: models/reldb/user/counters.py:236
 #, fuzzy, python-brace-format
 msgid "Counters for user {0})"
 msgstr "Import #{0} de l'utilisateur {1}"
@@ -4797,21 +4847,26 @@ msgstr "(pas d'abonnement ; pour le staff)"
 msgid "Forcing statsd gauges synchronization…"
 msgstr ""
 
-#: tasks/checks.py:138
-#, python-brace-format
-msgid "Reminder: {0} feed(s) closed in last {1} day(s)"
+#: tasks/checks.py:164
+#, fuzzy, python-brace-format
+msgid ""
+"Reminder: {0} feed(s) closed in last {1} day(s), {2} automatically reopened"
 msgstr "Rappel : {0} flux fermé(s) ce(s) {1} dernier(s) jour(s)"
 
-#: tasks/checks.py:140
-#, python-brace-format
+#: tasks/checks.py:167
+#, fuzzy, python-format, python-brace-format
 msgid ""
-"\n"
 "\n"
 "Here is the list, dates (if any), and reasons (if any) of closing:\n"
 "\n"
 "{feed_list}\n"
 "\n"
 "You can manually reopen any of them from the admin interface.\n"
+"\n"
+"%s closed feeds were tested to see if they came back to life,\n"
+"out of which %s were reopened:\n"
+"\n"
+"{reopened_list}\n"
 "\n"
 msgstr ""
 "\n"
@@ -5341,6 +5396,10 @@ msgstr ""
 msgid "Item"
 msgstr "Élément"
 
+#: templates/chaineditem/list-create.html:82
+msgid "Active in this chain?"
+msgstr ""
+
 #: templates/chaineditem/list-create.html:83
 msgid "Parameters"
 msgstr "Paramètres ?"
@@ -5354,9 +5413,9 @@ msgstr ""
 #: templates/mailfeed/list-create.html:54
 #: templates/mailfeedrule/list-create.html:84
 #: templates/processingchain/list-create.html:56
-#: templates/processor/list-create.html:55
+#: templates/processor/list-create.html:54
 #: templates/staff/feed/list-create.html:65
-#: templates/staff/website/list-create.html:51
+#: templates/staff/website/list-create.html:55
 #: templates/syncnode/list-create.html:93
 #: templates/twitteraccount/list-create.html:62
 #: templates/twitterfeed/list-create.html:66
@@ -5364,7 +5423,28 @@ msgstr ""
 msgid "Actions"
 msgstr "Actions"
 
-#: templates/chaineditem/list-create.html:130
+#: templates/chaineditem/list-create.html:118
+msgid ""
+"This processor is globally inactive. You should re-activate it in the "
+"processors section before beiing able to use it here."
+msgstr ""
+
+#: templates/chaineditem/list-create.html:132
+#, fuzzy
+msgid "Edit parameters for this processor in this chain"
+msgstr "Merci de saisir les paramètres pour une nouvelle chaîne de traitement"
+
+#: templates/chaineditem/list-create.html:132
+#, fuzzy
+msgid "Create specific parameters for this processor in this chain"
+msgstr "Merci de saisir les paramètres pour une nouvelle chaîne de traitement"
+
+#: templates/chaineditem/list-create.html:141
+#, fuzzy
+msgid "Processor has no parameter"
+msgstr "Catégorie de processeur"
+
+#: templates/chaineditem/list-create.html:176
 #, python-format
 msgid ""
 "\n"
@@ -5770,11 +5850,11 @@ msgstr "Raccourcis :"
 msgid "Reading lists"
 msgstr "Listes de lecture"
 
-#: templates/navbars/read-endless.html:38 templatetags/coretags.py:78
+#: templates/navbars/read-endless.html:38 templatetags/coretags.py:81
 msgid "Funbox"
 msgstr "Funbox"
 
-#: templates/navbars/read-endless.html:41 templatetags/coretags.py:71
+#: templates/navbars/read-endless.html:41 templatetags/coretags.py:74
 msgid "Starred"
 msgstr "Sélectionné"
 
@@ -5783,23 +5863,23 @@ msgid "Unread"
 msgstr "Non-lu"
 
 #: templates/navbars/read-endless.html:56
-#: templates/snippets/selector/selector.html:32
+#: templates/snippets/selector/selector.html:33
 msgid "Watching lists"
 msgstr "Listes de veille"
 
-#: templates/navbars/read-endless.html:63 templatetags/coretags.py:103
+#: templates/navbars/read-endless.html:63 templatetags/coretags.py:106
 msgid "Knowledge"
 msgstr "Savoirs"
 
-#: templates/navbars/read-endless.html:65 templatetags/coretags.py:100
+#: templates/navbars/read-endless.html:65 templatetags/coretags.py:103
 msgid "Quotes"
 msgstr "Citations"
 
-#: templates/navbars/read-endless.html:67 templatetags/coretags.py:91
+#: templates/navbars/read-endless.html:67 templatetags/coretags.py:94
 msgid "Prospective"
 msgstr "Prospective"
 
-#: templates/navbars/read-endless.html:69 templatetags/coretags.py:97
+#: templates/navbars/read-endless.html:69 templatetags/coretags.py:100
 msgid "Regulations"
 msgstr "Réglementations"
 
@@ -5807,15 +5887,15 @@ msgstr "Réglementations"
 msgid "Best-Practices"
 msgstr "Best-practices"
 
-#: templates/navbars/read-endless.html:76 templatetags/coretags.py:82
+#: templates/navbars/read-endless.html:76 templatetags/coretags.py:85
 msgid "Facts"
 msgstr "Faits"
 
-#: templates/navbars/read-endless.html:78 templatetags/coretags.py:85
+#: templates/navbars/read-endless.html:78 templatetags/coretags.py:88
 msgid "Numbers"
 msgstr "Chiffres clefs"
 
-#: templates/navbars/read-endless.html:80 templatetags/coretags.py:88
+#: templates/navbars/read-endless.html:80 templatetags/coretags.py:91
 msgid "Analysis"
 msgstr "Analyses"
 
@@ -5883,7 +5963,7 @@ msgid "Items"
 msgstr "Éléments"
 
 #: templates/processingchain/list-create.html:67
-#: templates/processor/list-create.html:66
+#: templates/processor/list-create.html:65
 #, python-format
 msgid "created by %(user)s"
 msgstr ""
@@ -5940,23 +6020,24 @@ msgstr[1] ""
 "\n"
 "%(counter)s processeurs"
 
-#: templates/processor/list-create.html:53
-msgid "Parameters?"
-msgstr "Paramètres ?"
-
-#: templates/processor/list-create.html:86
+#: templates/processor/list-create.html:84
 msgid "Edit processor requirements"
 msgstr "Éditer les exigences du processeur"
 
-#: templates/processor/list-create.html:95
+#: templates/processor/list-create.html:93
+#, fuzzy
+msgid "Edit processor parameters"
+msgstr "Éditer les exigences du processeur"
+
+#: templates/processor/list-create.html:102
 msgid "Edit processor accept code"
 msgstr "Éditer le code d'acceptation du processeur"
 
-#: templates/processor/list-create.html:104
+#: templates/processor/list-create.html:111
 msgid "Edit processor process code"
 msgstr "Éditer le code de traitement du processeur"
 
-#: templates/processor/list-create.html:137
+#: templates/processor/list-create.html:144
 msgid "No processor yet"
 msgstr "Pas encore de processeur"
 
@@ -6100,15 +6181,21 @@ msgstr "Ajouter un nouveau"
 msgid "Toggle navigation"
 msgstr "(dés-)activer la navigation"
 
-#: templates/snippets/edit_field/modal.html:6
+#: templates/snippets/edit_field/modal.html:10
 #, fuzzy, python-format
 msgid ""
 "\n"
-"                    Edit <strong>%(field_name)s</strong> of <em>%(instance_name)s</em>\n"
-"                "
+"          Edit <strong>%(field_name)s</strong> of <em>%(instance_name)s</em>\n"
+"        "
 msgstr ""
 "\n"
 " Modifier le champ <strong>%(field_name)s</strong> de <em>%(instance_name)s</em>"
+
+#: templates/snippets/edit_field/modal.html:15
+msgid ""
+"Note: ESC and click-outside are disabled to prevent you from loosing work "
+"while editing."
+msgstr ""
 
 #: templates/snippets/edit_field/result.html:6
 #, fuzzy, python-format
@@ -6232,24 +6319,15 @@ msgstr "État du système"
 msgid "Synchronization network"
 msgstr "Réseau de synchronisation"
 
-#: templates/snippets/navbar/staff-config-menu.html:66
-msgid "Workers management"
-msgstr "Gestion des exécuteurs de tâches"
-
-#: templates/snippets/navbar/staff-config-menu.html:79
-#: templates/status/index.html:82
-msgid "Statistics"
-msgstr "Statistiques"
-
-#: templates/snippets/navbar/staff-config-menu.html:93
+#: templates/snippets/navbar/staff-config-menu.html:61
 msgid "Live configuration"
 msgstr "Configuration dynamique"
 
-#: templates/snippets/navbar/staff-config-menu.html:99
+#: templates/snippets/navbar/staff-config-menu.html:67
 msgid "Django administration"
 msgstr "Administration Django"
 
-#: templates/snippets/navbar/staff-config-menu.html:105
+#: templates/snippets/navbar/staff-config-menu.html:73
 msgid "1flow translations"
 msgstr "Traductions 1flow"
 
@@ -6339,7 +6417,7 @@ msgid "Folders and subscriptions"
 msgstr "Dossiers et abonnements"
 
 #: templates/snippets/preferences/selector.html:26
-#: templates/snippets/selector/selector.html:137
+#: templates/snippets/selector/selector.html:138
 msgid "Closed streams"
 msgstr "Flux fermés"
 
@@ -6652,32 +6730,23 @@ msgid "Entry identified as %(content_type)s by the 1flow engine"
 msgstr ""
 "Cet article a été détecté comme un %(content_type)s par le moteur 1flow"
 
-#: templates/snippets/read/article-meta.html:48
-#: templates/snippets/read/read-meta-async.html:87
+#: templates/snippets/read/article-meta.html:61
+#: templates/snippets/read/read-meta-async.html:88
 msgid "no date"
 msgstr "pas de date"
 
-#: templates/snippets/read/article-meta.html:55
-#: templates/snippets/read/read-meta-async.html:93
+#: templates/snippets/read/article-meta.html:68
+#: templates/snippets/read/read-meta-async.html:105
 msgid "by"
 msgstr "par"
 
-#: templates/snippets/read/article-meta.html:64
-#: templates/snippets/read/article-meta.html:71
-#: templates/snippets/read/read-meta-async.html:102
-#: templates/snippets/read/read-meta-async.html:109
-#: templates/snippets/read/read-tiles-experimental-tile.html:41
-#: templates/snippets/read/read-tiles-tile.html:41
-msgid "in"
-msgstr "dans"
-
 #: templates/snippets/read/read-action-original.html:2
-#: templatetags/coretags.py:545
+#: templatetags/coretags.py:548
 msgid "Display on the original website"
 msgstr "Afficher sur le site d'origine"
 
 #: templates/snippets/read/read-action-original.html:5
-#: templatetags/coretags.py:547
+#: templatetags/coretags.py:550
 msgid "Read original"
 msgstr "Voir l'original"
 
@@ -6805,23 +6874,40 @@ msgstr "Visitez le site web de ce flux"
 msgid "Open original article in a new window/tab"
 msgstr "Ouvrir l'article original dans une nouvelle fenêtre/onglet."
 
-#: templates/snippets/read/read-meta-async.html:117
+#: templates/snippets/read/read-meta-async.html:96
+#, fuzzy, python-format
+msgid ""
+"\n"
+"              read %(read_date_delta)s ago\n"
+"          "
+msgstr ""
+"\n"
+" Ou alors <a href=\"%(read_url)s\">lire des nouvelles fraîches</a> ?"
+
+#: templates/snippets/read/read-meta-async.html:114
+#: templates/snippets/read/read-meta-async.html:121
+#: templates/snippets/read/read-tiles-experimental-tile.html:41
+#: templates/snippets/read/read-tiles-tile.html:41
+msgid "in"
+msgstr "dans"
+
+#: templates/snippets/read/read-meta-async.html:129
 #: templates/snippets/read/read-tiles-experimental-tile.html:41
 #: templates/snippets/read/read-tiles-tile.html:41
 msgid ", rated "
 msgstr ", noté"
 
-#: templates/snippets/read/read-meta-async.html:134
-#: templates/snippets/read/read-meta-async.html:140
+#: templates/snippets/read/read-meta-async.html:146
+#: templates/snippets/read/read-meta-async.html:152
 msgid "Open posterior item"
 msgstr "Ouvrir l'élément postérieur"
 
-#: templates/snippets/read/read-meta-async.html:146
+#: templates/snippets/read/read-meta-async.html:158
 msgid "Close current item"
 msgstr "Fermer l'élément courant"
 
-#: templates/snippets/read/read-meta-async.html:152
-#: templates/snippets/read/read-meta-async.html:160
+#: templates/snippets/read/read-meta-async.html:164
+#: templates/snippets/read/read-meta-async.html:172
 msgid "Open anterior item"
 msgstr "Ouvrir l'élément antérieur"
 
@@ -6859,53 +6945,85 @@ msgid "Go back to source selector"
 msgstr "Retourner au sélecteur de source"
 
 #: templates/snippets/read/reading-list-header.html:44
-#: templates/snippets/read/reading-list-header.html:76
+#: templates/snippets/read/reading-list-header.html:80
 #: templates/snippets/selector/folder.html:89
 #: templates/snippets/selector/subscription.html:71
 msgid "unread"
 msgstr "non-lu"
 
 #: templates/snippets/read/reading-list-header.html:48
-#: templates/snippets/read/reading-list-header.html:80
+#: templates/snippets/read/reading-list-header.html:84
 #: templates/snippets/selector/folder.html:90
 #: templates/snippets/selector/subscription.html:72
 msgid "for later"
 msgstr "plus tard"
 
 #: templates/snippets/read/reading-list-header.html:56
-#: templates/snippets/read/reading-list-header.html:88
+#: templates/snippets/read/reading-list-header.html:92
+msgid "read history"
+msgstr "historique de lecture"
+
+#: templates/snippets/read/reading-list-header.html:60
+#: templates/snippets/read/reading-list-header.html:96
 #: templates/snippets/selector/folder.html:92
 #: templates/snippets/selector/subscription.html:74
 msgid "all"
 msgstr "tous"
 
-#: templates/snippets/read/staff-information.html:5
+#: templates/snippets/read/staff-information.html:10
 msgid "Fixes"
 msgstr ""
 
-#: templates/snippets/read/staff-information.html:17
-msgid "good"
+#: templates/snippets/read/staff-information.html:25
+msgid "Item is considered good to be displayed by the engine"
 msgstr ""
 
-#: templates/snippets/read/staff-information.html:20
+#: templates/snippets/read/staff-information.html:29
 msgid "bad"
 msgstr ""
 
-#: templates/snippets/read/staff-information.html:27
+#: templates/snippets/read/staff-information.html:36
 msgid "absolute"
 msgstr "absolu(e)"
 
-#: templates/snippets/read/staff-information.html:34
+#: templates/snippets/read/staff-information.html:44
 msgid "unresolved yet"
 msgstr ""
 
-#: templates/snippets/read/staff-information.html:43
+#: templates/snippets/read/staff-information.html:52
 msgid "orphaned"
 msgstr "orphelin"
 
-#: templates/snippets/read/staff-information.html:65
+#: templates/snippets/read/staff-information.html:59
+msgid "Original data has been processed"
+msgstr ""
+
+#: templates/snippets/read/staff-information.html:63
+msgid "Original data not yet processed"
+msgstr ""
+
+#: templates/snippets/read/staff-information.html:68
+#, fuzzy
+msgid "No original data recorded"
+msgstr "Données d'origine"
+
+#: templates/snippets/read/staff-information.html:88
 msgid "not fetched yet"
 msgstr "pas encore récupéré"
+
+#: templates/snippets/read/staff-information.html:93
+#, fuzzy
+msgid "user reads"
+msgstr "lu ?"
+
+#: templates/snippets/read/staff-information.html:96
+msgid "article versions in history"
+msgstr ""
+
+#: templates/snippets/read/staff-information.html:110
+#, fuzzy
+msgid "Go to websites management to change the processing chain"
+msgstr "Merci de saisir les paramètres pour une nouvelle chaîne de traitement"
 
 #: templates/snippets/selector/add-subscription-bookmarklets.html:4
 #: templates/snippets/selector/add-subscription-bookmarklets.html:5
@@ -7109,7 +7227,7 @@ msgid "Edit folder"
 msgstr "Modifier le dossier"
 
 #: templates/snippets/selector/manage-folder.html:19
-#: templates/snippets/selector/selector.html:83
+#: templates/snippets/selector/selector.html:84
 msgid "Add a folder"
 msgstr "Ajouter un dossier"
 
@@ -7188,43 +7306,43 @@ msgstr "Résilier cet abonnement"
 msgid "Sent Articles"
 msgstr "Articles envoyés"
 
-#: templates/snippets/selector/selector.html:60
+#: templates/snippets/selector/selector.html:61
 msgid ""
 "Import standalone web pages, keep their content or create simple bookmarks "
 "from their URLs. You can also paste RSS/Atom feeds URLs to subscribe to "
 "them. Keyboard shortcut: “i i” (=“import item”)."
 msgstr ""
 
-#: templates/snippets/selector/selector.html:63
+#: templates/snippets/selector/selector.html:64
 msgid "Import elements"
 msgstr "Importer des éléments"
 
-#: templates/snippets/selector/selector.html:70
+#: templates/snippets/selector/selector.html:71
 msgid ""
 "Subscribe to any stream already present and shared by other users of 1flow "
 "databases across the world. Keyboard shortcut: “a s” (=“add subscription”)."
 msgstr ""
 
-#: templates/snippets/selector/selector.html:73
+#: templates/snippets/selector/selector.html:74
 #: templates/sources-list/rssatom.html:20
 msgid "Subscribe to a 1flow stream"
 msgstr "S'abonner à un flux 1flow"
 
-#: templates/snippets/selector/selector.html:80
+#: templates/snippets/selector/selector.html:81
 msgid ""
 "Add a folder to your sources selector (this page). Keyboard shortcut: “a f” "
 "(= “add folder”)."
 msgstr ""
 
-#: templates/snippets/selector/selector.html:108
+#: templates/snippets/selector/selector.html:109
 msgid "Unclassified information streams"
 msgstr "Flux d'informations non-classés"
 
-#: templates/snippets/selector/selector.html:117
+#: templates/snippets/selector/selector.html:118
 msgid "unclassified-streams"
 msgstr "flux-non-classes"
 
-#: templates/snippets/selector/selector.html:146
+#: templates/snippets/selector/selector.html:147
 msgid "closed-streams"
 msgstr "flux-fermes"
 
@@ -7309,11 +7427,19 @@ msgstr ""
 msgid "Send"
 msgstr "Envoyer"
 
-#: templates/snippets/toolbars/filter/dupes.html:3
+#: templates/snippets/toolbars/filter/active.html:2
+msgid "Show active/open only"
+msgstr ""
+
+#: templates/snippets/toolbars/filter/active.html:3
+msgid "Show inactive/closed only"
+msgstr ""
+
+#: templates/snippets/toolbars/filter/dupes.html:2
 msgid "Show masters only (not duplicates)"
 msgstr ""
 
-#: templates/snippets/toolbars/filter/dupes.html:8
+#: templates/snippets/toolbars/filter/dupes.html:3
 #, fuzzy
 msgid "Show duplicates only (not masters)"
 msgstr ""
@@ -7331,7 +7457,12 @@ msgstr ""
 msgid "Filter…"
 msgstr "Filtrer…"
 
-#: templates/snippets/toolbars/filter/reset.html:3
+#: templates/snippets/toolbars/filter/more-dropdown.html:6
+#, fuzzy
+msgid "More filters"
+msgstr "Favoriteurs"
+
+#: templates/snippets/toolbars/filter/reset.html:6
 msgid "Reset filters to default"
 msgstr "Revenir au filtre par défaut"
 
@@ -7603,7 +7734,7 @@ msgid "total"
 msgstr "Total"
 
 #: templates/staff/feed/list-create.html:70
-#: templates/staff/website/list-create.html:56
+#: templates/staff/website/list-create.html:60
 #: templates/twitterfeed/list-create.html:71
 msgctxt "plural"
 msgid "All"
@@ -7668,16 +7799,45 @@ msgstr[1] ""
 msgid "Img."
 msgstr ""
 
+#: templates/staff/website/list-create.html:46
+#, fuzzy
+msgid "Name (description)"
+msgstr "pas de description !"
+
 #: templates/staff/website/list-create.html:47
 #: templates/syncnode/list-create.html:86
 msgid "URI"
 msgstr "URI"
 
-#: templates/staff/website/list-create.html:50
-msgid "Fetch limit"
-msgstr "limite de récupération"
+#: templates/staff/website/list-create.html:81
+#, fuzzy
+msgid "Description: "
+msgstr "Description :"
 
-#: templates/staff/website/list-create.html:103
+#: templates/staff/website/list-create.html:82
+msgid "—"
+msgstr ""
+
+#: templates/staff/website/list-create.html:98
+#, fuzzy
+msgid "Edit processing parameters"
+msgstr "Éditer les exigences du processeur"
+
+#: templates/staff/website/list-create.html:98
+msgid "Create processing parameters for this web site"
+msgstr ""
+
+#: templates/staff/website/list-create.html:107
+#, fuzzy
+msgid "Processing chain has no parameter"
+msgstr "Chaînes de traitement"
+
+#: templates/staff/website/list-create.html:112
+#, fuzzy
+msgid "default"
+msgstr "directive du flux"
+
+#: templates/staff/website/list-create.html:139
 msgid ""
 "\n"
 "\t\t\t    No website matching filter query.\n"
@@ -7686,7 +7846,7 @@ msgstr ""
 "\n"
 "Pas de site web correspondant au(x) critère(s)"
 
-#: templates/staff/website/list-create.html:105
+#: templates/staff/website/list-create.html:141
 msgid ""
 "\n"
 "\t\t\t    No website.\n"
@@ -7694,6 +7854,14 @@ msgid ""
 msgstr ""
 "\n"
 "Aucun site web."
+
+#: templates/staff/website/toolbar.html:5
+msgid "Filter web sites that have some processing parameters set"
+msgstr ""
+
+#: templates/staff/website/toolbar.html:8
+msgid "Filter web sites that have a custom processing chain set"
+msgstr ""
 
 #: templates/status/celery.html:4
 #, fuzzy
@@ -7708,33 +7876,29 @@ msgstr "État et statistiques de l'instance"
 msgid "1flow instance status and statistics"
 msgstr "État et statistiques de l'instance 1flow"
 
-#: templates/status/index.html:21
+#: templates/status/index.html:22
 msgid "System"
 msgstr "Système"
 
-#: templates/status/index.html:28
+#: templates/status/index.html:30
 msgid "PostgreSQL"
 msgstr "PostgreSQL"
 
-#: templates/status/index.html:35
+#: templates/status/index.html:38
 msgid "Redis"
 msgstr "Redis"
 
-#: templates/status/index.html:44
+#: templates/status/index.html:48
 msgid "RabbitMQ"
 msgstr "RabbitMQ"
 
-#: templates/status/index.html:53
+#: templates/status/index.html:58
 msgid "Celery"
 msgstr "Celery"
 
-#: templates/status/index.html:60
+#: templates/status/index.html:66
 msgid "MongoDB"
 msgstr "MongoDB"
-
-#: templates/status/index.html:69
-msgid "Workers mgmt."
-msgstr ""
 
 #: templates/status/mongodb-database.html:3
 #, python-format
@@ -7881,43 +8045,87 @@ msgstr ""
 msgid "Web server information"
 msgstr "Informations sur le serveur web"
 
-#: templates/status/system.html:26
+#: templates/status/system.html:29
 msgid "Used memories"
 msgstr "Utilisation des mémoires"
 
-#: templates/status/system.html:29
+#: templates/status/system.html:33
 msgid "RAM"
 msgstr "RAM"
 
-#: templates/status/system.html:35
+#: templates/status/system.html:39
 #, python-format
 msgid "Active memory: %(percent)s%% (%(value)s)"
 msgstr "Mémoire active : %(percent)s%% (%(value)s)"
 
-#: templates/status/system.html:40
+#: templates/status/system.html:44
 #, python-format
 msgid "Inactive memory: %(percent)s%% (%(value)s)"
 msgstr "Mémoire inactive : %(percent)s%% (%(value)s)"
 
-#: templates/status/system.html:45
+#: templates/status/system.html:49
 #, python-format
 msgid "Buffers: %(percent)s%% (%(value)s)"
 msgstr "Tampons : %(percent)s%% (%(value)s)"
 
-#: templates/status/system.html:50
+#: templates/status/system.html:54
 #, python-format
 msgid "Cache: %(percent)s%% (%(value)s)"
 msgstr "Cache : %(percent)s%% (%(value)s)"
 
-#: templates/status/system.html:56 templates/status/system.html.py:82
+#: templates/status/system.html:60 templates/status/system.html.py:89
 #, python-format
 msgid "Free: %(percent)s%% (%(value)s)"
 msgstr "Libre : %(percent)s%% (%(value)s)"
 
-#: templates/status/system.html:76
+#: templates/status/system.html:83
 #, python-format
 msgid "Used space on %(mntpt)s: %(percent)s%% (%(value)s)"
 msgstr "Espace utilisé sur %(mntpt)s : %(percent)s%% (%(value)s)"
+
+#: templates/status/system.html:105
+#, fuzzy
+msgid "Management tools"
+msgstr "Gestion"
+
+#: templates/status/system.html:113
+msgid "External tools"
+msgstr ""
+
+#: templates/status/system.html:120
+msgid "Workers management"
+msgstr "Gestion des exécuteurs de tâches"
+
+#: templates/status/system.html:133
+msgid "Statistics"
+msgstr "Statistiques"
+
+#: templates/status/system.html:152
+msgid "Web app. caches"
+msgstr ""
+
+#: templates/status/system.html:159
+msgid "Clear templates"
+msgstr ""
+
+#: templates/status/system.html:168
+#, fuzzy
+msgid "Clear views"
+msgstr "Effacer"
+
+#: templates/status/system.html:177
+#, fuzzy
+msgid "Clear models"
+msgstr "Lecture globale de tout les modèles"
+
+#: templates/status/system.html:186
+msgid "NOTE: your instance could be sluggish while caches reconstruct slowly"
+msgstr ""
+
+#: templates/status/system.html:187
+#, fuzzy
+msgid "Clear all"
+msgstr "Effacer"
 
 #: templates/syncnode/list-create.html:18
 #, python-format
@@ -8172,75 +8380,84 @@ msgstr "Tous les non-lus"
 msgid "You have {0} unread articles"
 msgstr "Vous avez {0} articles non-lus"
 
+#: templatetags/coretags.py:68
+msgid "Read history"
+msgstr "Historique de lecture"
+
 #: templatetags/coretags.py:69
+#, fuzzy, python-brace-format
+msgid "You have read {0} articles"
+msgstr "Vous avez {0} articles tordants"
+
+#: templatetags/coretags.py:72
 #, python-brace-format
 msgid "You have {0} articles to read later"
 msgstr "Vous avez {0} articles à lire plus tard"
 
-#: templatetags/coretags.py:72
+#: templatetags/coretags.py:75
 #, python-brace-format
 msgid "You have {0} starred articles"
 msgstr "Vous avez {0} articles sélectionnés"
 
-#: templatetags/coretags.py:74
+#: templatetags/coretags.py:77
 msgid "Archived"
 msgstr "Archivé"
 
-#: templatetags/coretags.py:75
+#: templatetags/coretags.py:78
 #, python-brace-format
 msgid "You have {0} archived articles"
 msgstr "Vous avez {0} articles archivés"
 
-#: templatetags/coretags.py:79
+#: templatetags/coretags.py:82
 #, python-brace-format
 msgid "You have {0} fun articles"
 msgstr "Vous avez {0} articles tordants"
 
-#: templatetags/coretags.py:83
+#: templatetags/coretags.py:86
 #, python-brace-format
 msgid "You have {0} articles marked as fact(s)"
 msgstr "Vous avez {0} articles contenant des faits marquants"
 
-#: templatetags/coretags.py:86
+#: templatetags/coretags.py:89
 #, python-brace-format
 msgid "You have {0} articles marked as number(s)"
 msgstr "Vous avez {0} articles contenant des chiffres-clefs"
 
-#: templatetags/coretags.py:89
+#: templatetags/coretags.py:92
 #, python-brace-format
 msgid "You have {0} articles marked as analysis"
 msgstr "Vous avez {0} articles marqués comme analyses/études"
 
-#: templatetags/coretags.py:92
+#: templatetags/coretags.py:95
 #, python-brace-format
 msgid "You have {0} articles marked as prospective"
 msgstr "Vous avez {0} éléments de prospective"
 
-#: templatetags/coretags.py:94
+#: templatetags/coretags.py:97
 msgid "Best-practices"
 msgstr "Bonnes pratiques"
 
-#: templatetags/coretags.py:95
+#: templatetags/coretags.py:98
 #, python-brace-format
 msgid "You have {0} articles marked as best-practices"
 msgstr "Vous avez {0} articles marqués comme bonnes-pratiques/état de l'art"
 
-#: templatetags/coretags.py:98
+#: templatetags/coretags.py:101
 #, python-brace-format
 msgid "You have {0} articles marked as regulation/legal"
 msgstr "Vous avez {0} éléments marqués comme réglementation/juridique/légal"
 
-#: templatetags/coretags.py:101
+#: templatetags/coretags.py:104
 #, python-brace-format
 msgid "You have {0} articles marked as quote(s)"
 msgstr "Vous avez {0} articles contenant des citations"
 
-#: templatetags/coretags.py:104
+#: templatetags/coretags.py:107
 #, python-brace-format
 msgid "You have {0} articles marked as knowledge"
 msgstr "Vous avez {0} éléments marqués comme savoir ou connaissance"
 
-#: templatetags/coretags.py:180
+#: templatetags/coretags.py:183
 msgid ""
 "Feature coming soon. More information on the 1flow blog "
 "http://blog.1flow.io/ or Twitter @1flow_io."
@@ -8248,85 +8465,85 @@ msgstr ""
 "Fonctionnalité en cours de développement. Plus d'informations sur le blog "
 "1flow http://blog.1flow.io/ ou sur Twitter @1flow_io."
 
-#: templatetags/coretags.py:202
+#: templatetags/coretags.py:205
 msgid "Search in folder…"
 msgstr "Rechercher dans le dossier…"
 
-#: templatetags/coretags.py:205
+#: templatetags/coretags.py:208
 msgid "Search in feed…"
 msgstr "Rechercher dans le flux…"
 
-#: templatetags/coretags.py:207
+#: templatetags/coretags.py:210
 msgid "Search…"
 msgstr "Rechercher…"
 
-#: templatetags/coretags.py:344
+#: templatetags/coretags.py:347
 msgid "You have nothing in this list yet."
 msgstr "Vous n'avez rien dans cette liste"
 
-#: templatetags/coretags.py:389
+#: templatetags/coretags.py:392
 msgid "M+"
 msgstr "M+"
 
-#: templatetags/coretags.py:394
+#: templatetags/coretags.py:397
 msgid "k+"
 msgstr "k+"
 
-#: templatetags/coretags.py:409
+#: templatetags/coretags.py:412
 #, python-brace-format
 msgid "{0} articles"
 msgstr "{0} articles"
 
-#: templatetags/coretags.py:639 templatetags/coretags.py:641
+#: templatetags/coretags.py:642 templatetags/coretags.py:644
 msgid "Convert to full-text"
 msgstr "Convertir en plein-texte"
 
-#: templatetags/coretags.py:640
+#: templatetags/coretags.py:643
 msgid "Switch back to original"
 msgstr "Revenir à l'original"
 
-#: templatetags/coretags.py:642
+#: templatetags/coretags.py:645
 msgid "View original"
 msgstr "Voir l'original"
 
-#: templatetags/coretags.py:643
+#: templatetags/coretags.py:646
 msgid "converted"
 msgstr "converti"
 
-#: templatetags/coretags.py:645 templatetags/coretags.py:647
+#: templatetags/coretags.py:648 templatetags/coretags.py:650
 msgctxt "awesome-font icon name"
 msgid "exchange"
 msgstr "exchange"
 
-#: templatetags/coretags.py:741
+#: templatetags/coretags.py:744
 msgid "Any matching rule in the group will do it. Click to change."
 msgstr "N'importe laquelle des règles du groupe suffit. Cliquez pour changer."
 
-#: templatetags/coretags.py:742
+#: templatetags/coretags.py:745
 msgid "All rules of the group must match. Click to change."
 msgstr ""
 "Toutes les règles du groupe doivent être validées. Cliquez pour changer."
 
-#: templatetags/coretags.py:761
+#: templatetags/coretags.py:764
 #, python-brace-format
 msgid "Account successfully working, tested {ago} ago."
 msgstr "Compte pleinement fonctionnel, testé il y a {ago}."
 
-#: templatetags/coretags.py:762
+#: templatetags/coretags.py:765
 #, python-brace-format
 msgid "Account not working, tested {ago} ago. Error reported: {err}"
 msgstr "Compte non fonctionnel, testé il y a {ago}. Erreur remontée : {err}"
 
-#: templatetags/coretags.py:768
+#: templatetags/coretags.py:771
 msgid "Rule validated successfully and will be used for next fetch."
 msgstr "La règle a été validée et sera utilisée aux exécutions suivantes."
 
-#: templatetags/coretags.py:770
+#: templatetags/coretags.py:773
 #, python-brace-format
 msgid "Rule did not validate. Error reported: {err}"
 msgstr "La règle n'a pu être validée. Erreur remontée : {err}"
 
-#: templatetags/coretags.py:792
+#: templatetags/coretags.py:795
 msgid ""
 "Account connectivity not yet tested. Please wait a few seconds and reload "
 "the current page."
@@ -8334,11 +8551,25 @@ msgstr ""
 "Connectivité du compte non testée. Merci d'attendre quelques secondes, puis "
 "rechargez la page."
 
-#: views/__init__.py:304
+#: views/__init__.py:317
 #, python-brace-format
 msgid ""
 "Could not import url “<code>{0}</code>”. Check your latest history entry to "
 "know why."
+msgstr ""
+
+#: views/admin_commands.py:87
+#, python-brace-format
+msgid "{0} is already empty."
+msgstr ""
+
+#: views/admin_commands.py:98
+#, fuzzy, python-format, python-brace-format
+msgid "Cleared %s entries from {0}."
+msgstr "Élément importé depuis {0}"
+
+#: views/admin_commands.py:130
+msgid "Cleared models cache (no detail available)."
 msgstr ""
 
 #: views/feed.py:71
@@ -8453,21 +8684,21 @@ msgstr "Import #{0} relancé avec succès."
 msgid "Preferences updated."
 msgstr "Préférences mises à jour."
 
-#: views/read.py:259
+#: views/read.py:272
 #, python-format
 msgid " (%(count)s subscription)"
 msgid_plural " (%(count)s subscriptions)"
 msgstr[0] " (%(count)s abonnement)"
 msgstr[1] " (%(count)s abonnements)"
 
-#: views/read.py:267
+#: views/read.py:280
 #, python-format
 msgid "In your <span class=\"hide\">%(count)s</span> subscription"
 msgid_plural "In your %(count)s subscriptions"
 msgstr[0] "Dans votre <span class=\"hide\">%(count)s</span> abonnement"
 msgstr[1] "Dans vos %(count)s abonnements"
 
-#: views/read.py:320 views/read.py:344
+#: views/read.py:333 views/read.py:357
 msgid ""
 "As administrator, you are accessing the feed of another user. USE WITH "
 "CAUTION."
@@ -8475,28 +8706,28 @@ msgstr ""
 "Vous accédez au flux d'un autre utilisateur en tant qu'administrateur. "
 "AGISSEZ AVEC PRUDENCE."
 
-#: views/read.py:491
+#: views/read.py:504
 msgid "no item"
 msgstr "aucun élément"
 
-#: views/read.py:574
+#: views/read.py:587
 #, python-brace-format
 msgid "{1} shared <em>{0}</em> with you."
 msgstr "{1} a partagé <em>{0}</em> avec vous."
 
-#: views/read.py:577
+#: views/read.py:590
 #, python-brace-format
 msgid "Recorded <em>{0}</em> as shared by {1} in your inbox."
 msgstr ""
 "<em>{0}</em> a été enregistré dans votre boîte de réception, comme partagé "
 "par {1}."
 
-#: views/read.py:619
+#: views/read.py:632
 #, python-brace-format
 msgid "Share article with <code>{0}</code> failed: {1}"
 msgstr "Le partage de l'article avec <code>{0}</code> a échoué : {1}"
 
-#: views/read.py:625
+#: views/read.py:638
 #, python-brace-format
 msgid "Successfully shared <em>{0}</em> with {1} persons"
 msgstr "L'article <em>{0}</em> a été partagé avec {1} personne(s)"
@@ -8525,6 +8756,21 @@ msgstr ""
 msgid "Subscription <em>{0}</em> successfully cancelled."
 msgstr "Abonnement <em>{0}</em> résilié avec succès."
 
+#~ msgid "%(count)s read articles"
+#~ msgstr "%(count)s articles lus"
+
+#~ msgid "Chain parameters"
+#~ msgstr "Paramètres dans cette chaîne de traitement"
+
+#~ msgid "Needs parameters?"
+#~ msgstr "Besoin de paramètres ?"
+
+#~ msgid "Parameters?"
+#~ msgstr "Paramètres ?"
+
+#~ msgid "Fetch limit"
+#~ msgstr "limite de récupération"
+
 #~ msgid "Autodetect (use the accepts() method)"
 #~ msgstr "Autodétection (utilise la méthode accepts())"
 
@@ -8539,9 +8785,6 @@ msgstr "Abonnement <em>{0}</em> résilié avec succès."
 
 #~ msgid "no language!"
 #~ msgstr "pas de langue !"
-
-#~ msgid "no description!"
-#~ msgstr "pas de description !"
 
 #~ msgid "no thumbnail!"
 #~ msgstr "pas de vignette !"
@@ -8621,9 +8864,6 @@ msgstr "Abonnement <em>{0}</em> résilié avec succès."
 #~ msgid "Choose nothing to execute action defined at the feed level."
 #~ msgstr ""
 #~ "Ne choisissez rien pour utiliser l'action globale définie au niveau du flux."
-
-#~ msgid "feed default"
-#~ msgstr "directive du flux"
 
 #~ msgid "Result"
 #~ msgstr "Résultat"
