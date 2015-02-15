@@ -495,7 +495,13 @@ class BaseItem(PolymorphicModel,
         if self.processing_errors.exists():
             count = self.processing_errors.count()
             self.processing_errors.clear()
-            LOGGER.info(u'Cleared %s processing errors…', count)
+            LOGGER.info(u'%s %s: cleared %s processing errors.',
+                        self._meta.verbose_name, self.id, count)
+
+        self.history.all().delete()
+
+        LOGGER.warning(u'%s: %s: deleted all history.',
+                       self._meta.verbose_name, self.id)
 
         return
 
