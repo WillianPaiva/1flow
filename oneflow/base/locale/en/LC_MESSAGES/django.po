@@ -9,193 +9,189 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-02-15 13:36+0100\n"
-"PO-Revision-Date: 2015-02-04 17:00+0009\n"
-"Last-Translator: Olivier Cortes <>\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Translated-Using: django-rosetta 0.7.4\n"
 
 #: admin.py:50
 msgid "Worker control & maintenance mode"
-msgstr "Contrôle des workers & mode maintenance"
+msgstr ""
 
 #: admin.py:65
 msgid "User announcements"
-msgstr "Annonces aux utilisateurs"
+msgstr ""
 
 #: admin.py:75
 msgid "Staff announcements"
-msgstr "Annonces aux membres du staff"
+msgstr ""
 
 #: admin.py:86
 msgid "Plain documents"
-msgstr "Documents"
+msgstr ""
 
 #: admin.py:93
 msgid "Reading lists & subscriptions"
-msgstr "Listes de lecture & abonnements"
+msgstr ""
 
 #: admin.py:104
 msgid "RSS feed refreshing"
-msgstr "Rafraîchissement des flux RSS"
+msgstr ""
 
 #: admin.py:121
 msgid "Accounts (global/common)"
-msgstr "Comptes (globaux/communs)"
+msgstr ""
 
 #: admin.py:129
 msgid "Twitter accounts"
-msgstr "Comptes Twitter"
+msgstr ""
 
 #: admin.py:146
 msgid "e-Mail accounts & IMAP"
-msgstr "Comptes e-mail & IMAP"
+msgstr ""
 
 #: admin.py:160
 msgid "Article fetching & parsing"
-msgstr "Récupération et traitement des articles"
+msgstr ""
 
 #: admin.py:177
 msgid "Logins & registration"
-msgstr "Identification & enregistrement des comptes utilisateurs"
+msgstr ""
 
 #: admin.py:187
 msgid "Site theme & CDNs"
-msgstr "Thème du site et CDNs"
+msgstr ""
 
 #: admin.py:197
 msgid "User support"
-msgstr "Support utilisateur"
+msgstr ""
 
 #: admin.py:206
 msgid "Check tasks"
-msgstr "Tâches de vérification des données"
+msgstr ""
 
 #: admin.py:220
 msgid "Dangerous or debug"
-msgstr "Dangereux et debuggage"
+msgstr ""
 
 #: admin.py:228
 msgid "Google Reader (obsolete)"
-msgstr "Google Reader (obsolète)"
+msgstr ""
 
 #: admin.py:360
 #, python-format
 msgid "Export selected %(verbose_name_plural)s to CSV"
-msgstr "Exporter les %(verbose_name_plural)s sélectionnés en CSV"
+msgstr ""
 
 #: admin.py:390
 msgid "Groups"
-msgstr "Groupes"
+msgstr ""
 
 #: admin.py:395
 msgid "Full name"
-msgstr "Nom complet"
+msgstr ""
 
 #: forms.py:44
 msgid "The two password fields didn't match."
-msgstr "Les deux mots de passe sont différents."
+msgstr ""
 
 #: forms.py:48
 msgid "Password"
-msgstr "Mot de passe"
+msgstr ""
 
 #: forms.py:50
 msgid "Password confirmation"
-msgstr "Confirmation"
+msgstr ""
 
 #: forms.py:52
 msgid "Enter the same password as above, for verification."
-msgstr "Saisissez le même mot de passe, pour vérification."
+msgstr ""
 
 #: models.py:64
 msgid "Email name"
-msgstr "Nom du mail"
+msgstr ""
 
 #: models.py:66
 msgid "Email subject"
-msgstr "Sujet du mail"
+msgstr ""
 
 #: models.py:67
 msgid "Email body"
-msgstr "Corps du mail"
+msgstr ""
 
 #: models.py:70
 #, python-brace-format
 msgid "{field_name}: {truncated_field_value}"
-msgstr "{field_name} : {truncated_field_value}"
+msgstr ""
 
 #: models.py:76
 msgid "Email content"
-msgstr "Contenu d'email"
+msgstr ""
 
 #: models.py:77
 msgid "Emails contents"
-msgstr "Contenus d'emails"
+msgstr ""
 
 #: models.py:145
 msgid "user"
-msgstr "utilisateur"
+msgstr ""
 
 #: models.py:146
 msgid "users"
-msgstr "utilisateurs"
+msgstr ""
 
 #: models.py:150
 msgid "User name"
-msgstr "Nom d'utilisateur"
+msgstr ""
 
 #: models.py:152
 msgid "Required. letters, digits, and \"@+-_\"."
-msgstr "Obligatoire. Lettres, chiffres et « @*-_ »."
+msgstr ""
 
 #: models.py:154
 msgid "email address"
-msgstr "adresse e-mail"
+msgstr ""
 
 #: models.py:156
 msgid "Any valid email address."
-msgstr "N'importe quelle adresse valide"
+msgstr ""
 
 #: models.py:157
 msgid "first name"
-msgstr "prénom"
+msgstr ""
 
 #: models.py:158
 msgid "last name"
-msgstr "nom"
+msgstr ""
 
 #: models.py:159
 msgid "staff status"
-msgstr "Staff"
+msgstr ""
 
 #: models.py:160
 msgid "Designates whether the user can log into this admin site."
 msgstr ""
-"Indique si l'utilisateur peut se connecter sur l'interface d'administration."
 
 #: models.py:163
 msgid "active"
-msgstr "actif"
+msgstr ""
 
 #: models.py:164
 msgid ""
 "Designates whether this user should be treated as active. Unselect this "
 "instead of deleting accounts."
 msgstr ""
-"Indique si le compte est utilisable. Évite de devoir supprimer le compte."
 
 #: models.py:168
 msgid "date joined"
-msgstr "Date d'inscription"
+msgstr ""
 
 #: models.py:171
 msgid "Avatar"
-msgstr "Avatar"
+msgstr ""
 
 #: models.py:173
 msgid ""
@@ -205,137 +201,125 @@ msgstr ""
 
 #: models.py:178 templates/profile/base-information.html:73
 msgid "Avatar URL"
-msgstr "URL d'avatar"
+msgstr ""
 
 #: models.py:179
 msgid ""
 "Full URL of the avatar displayed in the feed selector. Can be hosted outside "
 "of 1flow."
 msgstr ""
-"URL complète de l'avatar affiché dans le sélecteur de flux. Peut être "
-"hébergé en dehors de 1flow."
 
 #: models.py:182
 msgid "Address book"
-msgstr "Carnet de contacts"
+msgstr ""
 
 #: models.py:262
 #, python-brace-format
 msgid "/users/{username}/"
-msgstr "/utilisateurs/{username}/"
+msgstr ""
 
 #: models.py:299 templates/admin/constance_change_list.html:36
 msgid "Name"
-msgstr "Nom"
+msgstr ""
 
 #: models.py:301 templates/admin/constance_change_list.html:38
 msgid "Value"
-msgstr "Valeur"
+msgstr ""
 
 #: models.py:303
 msgid "Notes"
-msgstr "Notes"
+msgstr ""
 
 #: models.py:306
 msgid "Is active"
-msgstr "est actif"
+msgstr ""
 
 #: models.py:314
 msgid "Configuration"
-msgstr "Configuration"
+msgstr ""
 
 #: models.py:315
 msgid "Configurations"
-msgstr "Configurations"
+msgstr ""
 
 #: urls.py:34
 msgid "^profile/$"
-msgstr "^profil/$"
+msgstr ""
 
 #: urls.py:37
 msgid "^unsubscribe/(?P<email>[^/]+)/(?P<hash_code>\\w{32,32})?$"
-msgstr "^desinscription/(?P<email>[^/]+)/(?P<hash_code>\\w{32,32})?$"
+msgstr ""
 
 #: urls.py:40
 msgid "^social_signup_closed/$"
-msgstr "^enregistrement_social_ferme/$"
+msgstr ""
 
 #: views.py:86
 msgid "Invalid email or unsubscribe token."
-msgstr "Email ou jeton de désinscription invalide."
+msgstr ""
 
 #: templates/404.html:5
 msgid "Resource not found"
-msgstr "Ressource introuvable"
+msgstr ""
 
 #: templates/404.html:8
 msgid "Not found."
-msgstr "Introuvable."
+msgstr ""
 
 #: templates/404.html:9
 msgid "The page or resource you requested is unknown to us:"
-msgstr "La page ou ressource que vous avez demandée nous est inconnue :"
+msgstr ""
 
 #: templates/404.html:11
 msgid ""
 "In fact, we asked Google and Bing and they do not know anything about it "
 "either. Perhaps you should ask a greek Oracle®?"
 msgstr ""
-"En fait, nous avons même demandé à Google et Bing mais aucun d'eux ne la "
-"connait. Peut-être devriez-vous interroger un Oracle® grec ? "
 
 #: templates/404.html:12
 msgid ""
 "Just joking. They won't know more than the others. Just go back <a "
 "href='/'>Home</a>."
 msgstr ""
-"Désolé, c'est une blague de geek. Oracle® n'en saura pas plus que les "
-"autres. Retournez simplement <a href=\"/\">à l'accueil</a>."
 
 #: templates/500.html:5
 msgid "A wild bug appears!"
-msgstr "Un bug sauvage apparait !"
+msgstr ""
 
 #: templates/500.html:23
 msgid "Oh my!"
-msgstr "Outch !"
+msgstr ""
 
 #: templates/500.html:24
 msgid "The server encountered an error and couldn't recover."
-msgstr "Le serveur a rencontré une erreur et ne s'en est pas remis."
+msgstr ""
 
 #: templates/500.html:25
 msgid ""
 "We apologize for this situation. Developers have been automatically alerted "
 "about this problem."
 msgstr ""
-"Nous en sommes désolés. Les développeurs ont été automatiquement alertés de "
-"ce problème."
 
 #: templates/500.html:26
 msgid ""
 "Please try again a little later, or navigate to <a href=\"/\">elsewhere</a>."
 msgstr ""
-"Merci de ré-essayer dans un moment, ou de naviguer sur <a href=\"/\">une "
-"autre partie du site</a>."
 
 #: templates/503.html:5 templates/503.html.py:9
 msgid "Maintenance mode"
-msgstr "En maintenance"
+msgstr ""
 
 #: templates/503.html:11
 msgid "We are upgrading the plane engines with a major booster."
-msgstr "Nous améliorons les moteurs avec un tout nouveau turbo."
+msgstr ""
 
 #: templates/503.html:12
 msgid "<strong>1flow</strong> should be able to fly again in a few moments."
 msgstr ""
-"<strong>1flow</strong> devrait pouvoir voler de nouveau d'ici quelques "
-"instants."
 
 #: templates/503.html:13
 msgid "Please retry in a little while (just reload this page)."
-msgstr "Merci de ré-essayer plus tard (rechargez simplement cette page)."
+msgstr ""
 
 #: templates/503.html:14
 msgid ""
@@ -343,13 +327,10 @@ msgid ""
 "href=\"https://twitter.com/1flow_io\">more information on our twitter feed</"
 "a>."
 msgstr ""
-"Si l'avion reste au sol trop longtemps, vous devriez trouver <a href="
-"\"https://twitter.com/1flow_io\">plus d'informations sur notre flux Twitter</"
-"a>."
 
 #: templates/503.html:15
 msgid "Thanks for your patience."
-msgstr "Merci de votre patience."
+msgstr ""
 
 #: templates/error_base.html:11
 #, python-format
@@ -358,13 +339,10 @@ msgid ""
 "        If you need assistance, you can reference this error as <code>"
 "%(sentry_id)s</code>."
 msgstr ""
-"\n"
-"Si vous avez besoin d'assistance, la référence de ce plantage est <code>"
-"%(sentry_id)s</code>."
 
 #: templates/unsubscribe.html:6
 msgid "Successfully unsubscribed!"
-msgstr "Désinscrit(e) avec succès !"
+msgstr ""
 
 #: templates/unsubscribe.html:10
 #, python-format
@@ -384,37 +362,25 @@ msgid ""
 "  [Home]: /\n"
 "\n"
 msgstr ""
-"\n"
-"# Désinscrit(e) !\n"
-"\n"
-"## Vous ne recevrez plus rien de notre part à votre adresse %(email)s.\n"
-"\n"
-"Nous sommes attristés de vous voir sauter sans parachute pendant le vol de "
-"[1flow][home].\n"
-"\n"
-"Si vous changez d'avis, vous n'avez pas besoin d'appeler *IronMan* : laissez-"
-"vous simplement flotter jusqu'à la [Home][home] et ré-enregistrez-vous.\n"
-"\n"
-"  [home]: /\n"
 
 #: templates/account/base.html:12
 msgid "Account"
-msgstr "Compte"
+msgstr ""
 
 #: templates/account/base.html:13
 msgid "Settings"
-msgstr "Configuration"
+msgstr ""
 
 #: templates/account/base.html:14 templates/account/password_change.html:5
 #: templates/account/password_change.html:10
 #: templates/profile/base-information.html:36
 msgid "Change password"
-msgstr "Changer le mot de passe"
+msgstr ""
 
 #: templates/account/base.html:15 templates/account/delete.html:5
 #: templates/account/delete.html.py:9
 msgid "Delete account"
-msgstr "Supprimer le compte"
+msgstr ""
 
 #: templates/account/delete.html:13
 #, python-format
@@ -424,52 +390,41 @@ msgid ""
 "information and data (feeds, reads, tags, etc) will be <b>expunged within "
 "%(ACCOUNT_DELETION_EXPUNGE_HOURS)s hours</b>."
 msgstr ""
-"\n"
-"Si vous continuez et supprimez votre compte, <strong>TOUTES</strong> vos "
-"informations et données (flux, lectures, étiquettes, etc) seront "
-"<b>supprimées dans les  %(ACCOUNT_DELETION_EXPUNGE_HOURS)s heures</b>."
 
 #: templates/account/delete.html:16
 msgid ""
 "Make your decision like a man. Or a woman. Or a platypus. Whatever you are. "
 "<em>“Freedom is the right of all sentient beings”.</em>"
 msgstr ""
-"Faites votre choix comme un homme. Ou une femme. Ou un ornithorynque. Quoi "
-"que vous soyez, en fait. <em>« Toute créature sensible a droit à la "
-"liberté ».</em>"
 
 #: templates/account/delete.html:23
 msgid "I understand. Have mercy, just shoot me!"
-msgstr "Je comprends. Ayez-pitié, achevez-moi ! "
+msgstr ""
 
 #: templates/account/delete.html:29
 msgid ""
 "After that you will be redirected to the signin page, and will not be able "
 "to login anymore."
 msgstr ""
-"Après ça, vous serez redirigé(e) vers la page d'identification, mais ne "
-"pourrez plus utiliser ce compte pour vous identifier."
 
 #: templates/account/email_confirm.html:5
 msgid "Confirm email"
-msgstr "Confirmation d'adresse e-mail"
+msgstr ""
 
 #: templates/account/email_confirm.html:14
 msgid "Confirm email address"
-msgstr "Confirmation d'adresse e-mail"
+msgstr ""
 
 #: templates/account/email_confirm.html:16
 msgid ""
 "To make sure you are a human – or a skilled-enough robot with now-obvious "
 "strange intentions – please click below:"
 msgstr ""
-"Afin de confirmer que vous êtes un humain – ou un robot évolué dont les "
-"intentions douteuses sont maintenant claires – cliquez sur le bouton :"
 
 #: templates/account/email_confirm.html:21
 #, python-format
 msgid "Confirm <b>%(email)s</b>"
-msgstr "Je confirme <b>%(email)s</b>"
+msgstr ""
 
 #: templates/account/email_confirm.html:26
 #: templates/account/password_reset_token.html:32
@@ -477,13 +432,11 @@ msgid ""
 "If it works, you will be redirected to the signin page, and will be able to "
 "login immediately."
 msgstr ""
-"Si ça marche, vous serez redirigé(e) vers la page d'identification et vous "
-"pourrez vous connecter dans la foulée."
 
 #: templates/account/email_confirmation_sent.html:5
 #: templates/account/email_confirmation_sent.html:9
 msgid "Confirm your email address"
-msgstr "Confirmez votre adresse e-mail"
+msgstr ""
 
 #: templates/account/email_confirmation_sent.html:11
 #, python-format
@@ -491,45 +444,43 @@ msgid ""
 "We have sent you an email to <b>%(email)s</b> for verification. Follow the "
 "link provided to finalize the signup process. "
 msgstr ""
-"Je vous ai envoyé un e-mail à l'adresse <b>%(email)s</b> pour la vérifier. "
-"Suivez le lien qu'il contient pour finaliser votre inscription."
 
 #: templates/account/email_confirmation_sent.html:13
 msgid "If you do not receive it within a few minutes, "
-msgstr "Si vous ne le recevez pas dans les prochaines minutes,"
+msgstr ""
 
 #: templates/account/email_confirmation_sent.html:18
 #, python-format
 msgid ""
 "<a href=\"%(success_url)s\">Proceed to signin</a> or\n"
 "        "
-msgstr "<a href=\"%(success_url)s\">Continuez en vous identifiant</a> ou"
+msgstr ""
 
 #: templates/account/email_confirmation_sent.html:19
 msgid "close this window/tab"
-msgstr "fermez cette fenêtre/onglet"
+msgstr ""
 
 #: templates/account/email_confirmed.html:6
 #: templates/account/email_confirmed.html:10
 msgid "Email confirmed"
-msgstr "e-mail confirmé"
+msgstr ""
 
 #: templates/account/email_confirmed.html:12
 #, python-format
 msgid "You have confirmed <b>%(email)s</b>. Thanks."
-msgstr "Vous avez confirmé votre adresse <b>%(email)s</b>. Merci."
+msgstr ""
 
 #: templates/account/login.html:14 templates/account/ajax/login.html:14
 msgid "Sign in"
-msgstr "S'identifier"
+msgstr ""
 
 #: templates/account/login.html:21 templates/account/ajax/login.html:21
 msgid "Welcome to 1flow"
-msgstr "Bienvenue sur 1flow"
+msgstr ""
 
 #: templates/account/login.html:32 templates/account/ajax/login.html:32
 msgid "Configuration problem"
-msgstr "Problème de configuration"
+msgstr ""
 
 #: templates/account/login.html:34 templates/account/ajax/login.html:34
 msgid ""
@@ -539,10 +490,6 @@ msgid ""
 "                web application <a href=\"/admin/constance/config/\"\n"
 "                    target=\"_blank\">dynamic configuration</a>."
 msgstr ""
-"ATTENTION: aucune des directives <code>LOCAL_LOGIN_ENABLED</code>\n"
-"ni <code>SOCIAL_LOGIN_ENABLED</code> n'est actuellement activée dans la <a "
-"href=\"/admin/constance/config/\"\n"
-"target=\"_blank\">configuration dynamique</a> de l'application web."
 
 #: templates/account/login.html:38 templates/account/ajax/login.html:38
 msgid ""
@@ -551,53 +498,48 @@ msgid ""
 "troubleshooting\n"
 "                this problem, "
 msgstr ""
-"Cela empêche l'identification de tous les utilisateurs, y compris ceux qui "
-"ont déjà des comptes. C'est probablement une erreur, l'une des deux au moins "
-"doit être activée. Si vous avez besoin d'aide pour résoudre ce problème, "
 
 #: templates/account/login.html:64 templates/account/ajax/login.html:64
 msgid "Sign in with your 1flow account"
-msgstr "Identification via votre compte 1flow"
+msgstr ""
 
 #: templates/account/login.html:64 templates/account/ajax/login.html:64
 msgid "Please sign in"
-msgstr "Merci de vous identifier"
+msgstr ""
 
 #: templates/account/login.html:95 templates/account/ajax/login.html:95
 msgid "Log in"
-msgstr "Se connecter"
+msgstr ""
 
 #: templates/account/login.html:99 templates/account/ajax/login.html:99
 msgid "Forgot your password?"
-msgstr "Mot de passe oublié ?"
+msgstr ""
 
 #: templates/account/login.html:110 templates/account/ajax/login.html:110
 msgid "Register a new account?"
-msgstr "Enregistrer un nouveau compte ?"
+msgstr ""
 
 #: templates/account/login.html:130 templates/account/ajax/login.html:130
 msgid "Authenticate via a social network"
-msgstr "Identification via un réseau social"
+msgstr ""
 
 #: templates/account/login.html:140 templates/account/ajax/login.html:140
 msgid ""
 "If you never signed in before, this will automatically create an account "
 "for you."
 msgstr ""
-"Si vous ne vous êtes jamais enregistré(e) auparavant, cela créera "
-"automatiquement un compte 1flow pour vous."
 
 #: templates/account/logout.html:6 templates/account/logout.html.py:10
 msgid "Signed out."
-msgstr "Déconnecté."
+msgstr ""
 
 #: templates/account/logout.html:11
 msgid "Welcome back to anonymous world."
-msgstr "Bon retour dans le monde de l'anonymat."
+msgstr ""
 
 #: templates/account/logout.html:11
 msgid "Thanks for spending some time on <strong>1flow</strong>."
-msgstr "Merci d'avoir passé un moment sur <strong>1flow</strong>."
+msgstr ""
 
 #: templates/account/logout.html:13
 #, python-format
@@ -607,81 +549,72 @@ msgid ""
 "another account?\n"
 "    "
 msgstr ""
-"\n"
-"Souhaitez-vous <a href=\"%(signin_url)s\">vous connecter à nouveau</a> avec "
-"un autre compte ?"
 
 #: templates/account/logout1.html:6 templates/account/logout1.html.py:12
 #: templates/account/logout1.html:17
 msgid "Log out"
-msgstr "Déconnexion"
+msgstr ""
 
 #: templates/account/logout1.html:15
 msgid "Are you sure you want to log out?"
-msgstr "Êtes-vous sûr(e) de vouloir vous déconnecter ?"
+msgstr ""
 
 #: templates/account/password_change.html:23
 #: templates/account/password_reset_token.html:26
 #: templates/admin/constance_change_list.html:82
 #: templates/profile/base-information.html:106
 msgid "Save"
-msgstr "Sauver"
+msgstr ""
 
 #: templates/account/password_reset.html:6
 #: templates/account/password_reset.html:13
 msgid "Password reset"
-msgstr "Réinitialisation de mot de passe"
+msgstr ""
 
 #: templates/account/password_reset.html:15
 msgid ""
 "Enter your email address below, and we'll send you instructions allowing you "
 "to reset your password."
 msgstr ""
-"Saisissez votre adresse e-mail ci-dessous, et je vous enverrai les "
-"instructions pour ré-initialiser votre mot de passe."
 
 #: templates/account/password_reset.html:29
 msgid "Reset my password"
-msgstr "Désintégrer mon mot de passe"
+msgstr ""
 
 #: templates/account/password_reset.html:38
 msgid "If you have any trouble, "
-msgstr "Si vous avez le moindre problème, "
+msgstr ""
 
 #: templates/account/password_reset_sent.html:6
 #: templates/account/password_reset_sent.html:11
 msgid "Password reset sent"
-msgstr "Ré-initialisation de mot de passe envoyée"
+msgstr ""
 
 #: templates/account/password_reset_sent.html:14
 msgid ""
 "We have resent the password email. If you do not receive it within a few "
 "minutes, "
 msgstr ""
-"J'ai renvoyé l'e-mail de réinitialisation du mot de passe. Si vous ne le "
-"recevez pas dans les prochaines minutes, "
 
 #: templates/account/password_reset_sent.html:19
 msgid ""
 "We have sent you an email. If you do not receive it within a few minutes, "
 "try resending or "
 msgstr ""
-"Je vous ai envoyé un e-mail. Si vous ne le recevez pas dans les prochaines "
-"minutes, essayez de le renvoyer ou"
 
 #: templates/account/password_reset_sent.html:28
 msgid "Resend"
-msgstr "Renvoyer"
+msgstr ""
 
 #: templates/account/password_reset_token.html:5
 #: templates/account/password_reset_token.html:12
 msgid "Set your new password"
-msgstr "Choisissez votre nouveau mot de passe"
+msgstr ""
 
 #: templates/account/password_reset_token_fail.html:5
 #: templates/account/password_reset_token_fail.html:10
 msgid "Bad token"
-msgstr "Code invalide"
+msgstr ""
 
 #: templates/account/password_reset_token_fail.html:14
 #, python-format
@@ -689,40 +622,36 @@ msgid ""
 "The password reset link was invalid, possibly because it has already been "
 "used.  Please request a <a href=\"%(url)s\">new password reset</a>."
 msgstr ""
-"Le code de ré-initialisation est invalide, probablement parce qu'il a déjà "
-"été utilisé. Merci d'en <a href=\"%(url)s\">générer un nouveau</a>."
 
 #: templates/account/signup.html:5
 msgid "Register a new 1flow account"
-msgstr "Enregistrer un nouveau compte 1flow"
+msgstr ""
 
 #: templates/account/signup.html:13
 msgid "Register a new account"
-msgstr "Enregistrer un nouveau compte"
+msgstr ""
 
 #: templates/account/signup.html:41
 msgid "Sign up"
-msgstr "Enregistrement"
+msgstr ""
 
 #: templates/account/signup.html:56
 msgid ""
 "You can link and merge any social account to your 1flow account once done."
 msgstr ""
-"Vous pourrez lier et fusionner vos comptes de réseaux sociaux à votre compte "
-"1flow une fois qu'il sera créé."
 
 #: templates/account/signup_closed.html:5
 #: templates/account/signup_closed.html:9
 msgid "Sign up closed"
-msgstr "Enregistrement fermé"
+msgstr ""
 
 #: templates/account/signup_closed.html:11
 msgid "The code you provided was not accepted."
-msgstr "Le code que vous avez fourni n'est pas accepté."
+msgstr ""
 
 #: templates/account/signup_closed.html:13
 msgid "Sign up is closed to the general public."
-msgstr "L'enregistrement est actuellement fermé au public."
+msgstr ""
 
 #: templates/account/signup_closed.html:18
 msgid ""
@@ -730,17 +659,12 @@ msgid ""
 "                We thank you for your interest in the 1flow platform. Follow "
 "<a href=\"http://blog.1flow.io/\">our blog</a> for more information, or "
 msgstr ""
-"\n"
-"Merci pour l'intérêt que vous portez à la plateforme 1flow. Suivez <a href="
-"\"http://blog.1flow.io/\">notre blog</a> pour plus d'informations, ou"
 
 #: templates/account/signup_closed.html:23
 msgid ""
 "If you would like to be part of the contributors team and get an account on "
 "our platform, "
 msgstr ""
-"Si vous souhaitez devenir membre de l'équipe de contributeurs pour ouvrir un "
-"compte sur notre plateforme, "
 
 #: templates/account/email/email_confirmation_message.txt:1
 #, python-format
@@ -749,29 +673,11 @@ msgid ""
 "\n"
 "To confirm this is correct, go to %(activate_url)s\n"
 msgstr ""
-"Bonjour,\n"
-"\n"
-"Le nouvel utilisateur « %(user_name)s » a demandé a enregistrer cette "
-"adresse e-mail sur le site %(site_name)s.\n"
-"\n"
-"Si c'est vous, et que vous êtes d'accord, merci de suivre ce lien :\n"
-"\n"
-"%(activate_url)s\n"
-"\n"
-"Ceci terminera l'enregistrement de votre compte.\n"
-"\n"
-"Si ce n'est pas vous, ignorez simplement cet e-mail.\n"
-"\n"
-"Merci et à bientôt,\n"
-"\n"
-"--\n"
-"Le robot 1flow, \n"
-"content de créer nouveau compte\n"
 
 #: templates/account/email/email_confirmation_subject.txt:1
 #, python-format
 msgid "Confirm email address for %(site_name)s"
-msgstr "Confirmation d'adresse e-mail pour %(site_name)s"
+msgstr ""
 
 #: templates/account/email/password_reset.txt:1
 #, python-format
@@ -783,73 +689,57 @@ msgid ""
 "\n"
 "%(password_reset_url)s\n"
 msgstr ""
-"Bonjour,\n"
-"\n"
-"vous recevez cet e-mail car vous ou quelqu'un d'autre a demandé une ré-"
-"initialisation de mot de passe sur le site %(site_name)s.\n"
-"\n"
-"Si vous n'êtes pas à l'origine de cette requête, vous pouvez simplement "
-"l'ignorer. Sinon, cliquez sur le lien ci-dessous pour ré-initialiser votre "
-"mot de passe :\n"
-"\n"
-"%(password_reset_url)s\n"
-"\n"
-"à bientôt,\n"
-"\n"
-"--\n"
-"le robot 1flow,\n"
-"ravi de pouvoir vous aider\n"
 
 #: templates/account/email/password_reset_subject.txt:1
 #, python-format
 msgid "[%(site_name)s] Password reset"
-msgstr "[%(site_name)s] ré-initialisation de votre mot de passe"
+msgstr ""
 
 #: templates/admin/constance_change_list.html:37
 msgid "Default"
-msgstr "Défaut"
+msgstr ""
 
 #: templates/admin/constance_change_list.html:39
 msgid "Is modified"
-msgstr "Modifié ?"
+msgstr ""
 
 #: templates/endless/show_more.html:5
 msgid "more"
-msgstr "plus"
+msgstr ""
 
 #: templates/profile/base-information.html:13
 msgid "Your profile"
-msgstr "Profil"
+msgstr ""
 
 #: templates/profile/base-information.html:20
 msgid "username"
-msgstr "nom d'utilisateur"
+msgstr ""
 
 #: templates/profile/base-information.html:27
 #: templates/profile/base-information.html:49
 msgid "First name"
-msgstr "Prénom"
+msgstr ""
 
 #: templates/profile/base-information.html:31
 #: templates/profile/base-information.html:53
 msgid "Last name"
-msgstr "Nom"
+msgstr ""
 
 #: templates/profile/base-information.html:69
 msgid "Local avatar"
-msgstr "Avatar local"
+msgstr ""
 
 #: templates/profile/base-information.html:77
 msgid "e-mail"
-msgstr "e-mail"
+msgstr ""
 
 #: templates/profile/base-information.html:81
 msgid "Last login: "
-msgstr "Dernière connexion :"
+msgstr ""
 
 #: templates/profile/base-information.html:85
 msgid "Registered:"
-msgstr "Enregistrement :"
+msgstr ""
 
 #: templates/profile/base-information.html:92
 msgid ""
@@ -857,26 +747,22 @@ msgid ""
 "your social account provider (eg. Google, Twitter…). Change any parameter "
 "directly there, it will be reflected here next time you sign in."
 msgstr ""
-"Ces données ne sont pas stockées durablement dans 1flow. Elles sont "
-"transmises par votre fournisseur de réseau social (Google, Twitter…). "
-"Modifiez vos données directement là-bas, elles seront mises à jour ici à "
-"votre prochaine connexion."
 
 #: templates/profile/danger-zone.html:2
 msgid "Danger zone"
-msgstr "Zone rouge"
+msgstr ""
 
 #: templates/profile/danger-zone.html:4
 msgid "Delete your 1flow account"
-msgstr "Supprimer votre compte 1flow"
+msgstr ""
 
 #: templates/profile/index.html:6
 msgid "Profile"
-msgstr "Profil"
+msgstr ""
 
 #: templates/profile/social-accounts.html:3
 msgid "Social accounts"
-msgstr "Comptes sociaux"
+msgstr ""
 
 #: templates/profile/social-accounts.html:6
 msgid ""
@@ -887,7 +773,7 @@ msgstr ""
 
 #: templates/profile/social-accounts.html:11
 msgid "Currently associated"
-msgstr "Actuellement associés"
+msgstr ""
 
 #: templates/profile/social-accounts.html:15
 msgid ""
@@ -896,10 +782,6 @@ msgid ""
 "if it's the account you're signed in, you could be\n"
 "immediately disconnected from **1flow**.\n"
 msgstr ""
-"\n"
-"Cliquez pour désassocier l'un de vos comptes, mais attention : si c'est "
-"celui avec lequel vous êtes actuellement connecté(e), vous pourriez être "
-"immédiatement déconnecté(e) de **1flow**.\n"
 
 #: templates/profile/social-accounts.html:22
 msgid ""
@@ -908,35 +790,30 @@ msgid ""
 "from **1flow**: this would leave you lost in cyberspace without any way to\n"
 "find back the spaceport.\n"
 msgstr ""
-"\n"
-"Comme vous n'avez actuellement qu'un seul compte de réseau social, vous ne "
-"pouvez pas le désassocier de **1flow** : ça vous laisserait perdu(e) dans le "
-"cyber-espace sans aucun moyen de rejoindre le spacio-port.\n"
 
 #: templates/profile/social-accounts.html:54
 #, python-format
 msgid "Cannot disconnect from %(backend_name)s"
-msgstr "Déconnexion impossible de %(backend_name)s"
+msgstr ""
 
 #: templates/profile/social-accounts.html:64
 #, python-format
 msgid ""
 "Click to disassociate %(bname)s — %(buser)s from your local 1flow account"
 msgstr ""
-"Cliquez pour désassocier %(bname)s — %(buser)s de votre compte local 1flow"
 
 #: templates/profile/social-accounts.html:65
 #, python-format
 msgid "Disconnect from %(bname)s — <em>%(buser)s</em>"
-msgstr "Déconnecter %(bname)s — <em>%(buser)s</em>"
+msgstr ""
 
 #: templates/profile/social-accounts.html:75
 msgid "Associate more accounts"
-msgstr "Associer d'autres comptes"
+msgstr ""
 
 #: templates/profile/social-accounts.html:77
 msgid "Associate accounts"
-msgstr "Associer des comptes"
+msgstr ""
 
 #: templates/snippets/contact-support.html:8
 #, python-format
@@ -945,9 +822,6 @@ msgid ""
 "\"irc://%(supserv)s/%(supchan)s\"><code>%(supchan)s</code> on <code>"
 "%(supserv)s</code></a>"
 msgstr ""
-"contactez-nous à l'adresse <a href=\"mailto:%(supmail)s\">%(supmail)s</a> ou "
-"via <a href=\"irc://%(supserv)s/%(supchan)s\"><code>%(supchan)s</code> sur "
-"<code>%(supserv)s</code></a>"
 
 #: templates/snippets/contact-support.html:11
 #: templates/snippets/contact-support.html:29
@@ -956,14 +830,11 @@ msgid ""
 " (try the <a href=\"http://webchat.freenode.net/?channels=%(supchan)s\">web "
 "chat</a> if you do not have an IRC client installed)"
 msgstr ""
-" (essayez <a href=\"http://webchat.freenode.net/?channels=%(supchan)s"
-"\">l'interface web</a> si vous n'avez pas de client IRC installé)"
 
 #: templates/snippets/contact-support.html:20
 #, python-format
 msgid " contact us at <a href=\"mailto:%(supmail)s\">%(supmail)s</a>."
 msgstr ""
-"contactez-nous à l'adresse <a href=\"mailto:%(supmail)s\">%(supmail)s</a>."
 
 #: templates/snippets/contact-support.html:26
 #, python-format
@@ -971,21 +842,16 @@ msgid ""
 " contact us via <a href=\"irc://%(supserv)s/%(supchan)s\"><code>%(supchan)s</"
 "code> on <code>%(supserv)s</code></a>"
 msgstr ""
-"contactez-nous via <a href=\"irc://%(supserv)s/%(supchan)s\"><code>"
-"%(supchan)s</code> sur <code>%(supserv)s</code></a>"
 
 #: templates/snippets/contact-support.html:38
 msgid ""
 " er… How to say it… Well, I can only sympathize because the local "
 "administrator has not configured any support information. Sorry for you!"
 msgstr ""
-"heu… comment dire ça… En fait je peux juste vous exprimer toute mon "
-"empathie, car l'administrateur n'a configuré aucun canal de support. Désolé "
-"pour vous !"
 
 #: templates/snippets/copyrights-and-licenses.html:12
 msgid "1flow's copyrights & licenses"
-msgstr "Copyrights & Licences de 1flow"
+msgstr ""
 
 #: templates/snippets/copyrights-and-licenses.html:15
 msgid ""
@@ -1002,16 +868,6 @@ msgid ""
 "  [repo]: https://github.com/1flow/\n"
 "\n"
 msgstr ""
-"\n"
-"## 1flow est un logiciel libre\n"
-"\n"
-"Selon les termes de la [licence générale publique GNU Affero version 3]"
-"[affero] ou supérieure. Vous pouvez à tout moment récupérer le code source "
-"le plus récent, et celui qui tourne sur cette application web, dans [le "
-"dépôt public][repo].\n"
-"\n"
-"  [affero]: http://www.gnu.org/licenses/agpl-3.0.html\n"
-"  [repo]: https://github.com/1flow/\n"
 
 #: templates/snippets/copyrights-and-licenses.html:25
 msgid ""
@@ -1027,15 +883,6 @@ msgid ""
 "  [mchai]: https://twitter.com/mchaignot\n"
 "\n"
 msgstr ""
-"\n"
-"### Images de 1flow.io\n"
-"\n"
-"Le 17 Janvier 2014, [Matthieu Chaignot][mchai] a placé ces images sous "
-"licence CC-BY-SA 4.0. Ça pourrait éventuellement changer, mais seulement "
-"dans le sens qui rendrait la nouvelle licence compatible avec la AGPLv3 et "
-"si tant est que l'actuelle ne soit pas compatible avec elle.\n"
-"\n"
-"  [mchai]: https://twitter.com/mchaignot\n"
 
 #: templates/snippets/copyrights-and-licenses.html:34
 msgid ""
@@ -1055,21 +902,6 @@ msgid ""
 "  [list]: https://github.com/1flow/1flow/blob/master/AUTHORS.md\n"
 "\n"
 msgstr ""
-"\n"
-"## Copyrights / droits de paternité\n"
-"\n"
-"- Copyright 2013-2014 [Olivier Cortès][kmk23] pour le code source, la "
-"majorité du design de de l'application, le contenu textuel de la section "
-"aide/fonctionnalités, et la persona du projet.\n"
-"- Copyright 2013 [Matthieu Chaignot][mchai] pour les contenus de la landing "
-"page et des emails, ainsi que les images de la section aide/fonctionnalités "
-"et l'arrière-plan de la landing page,\n"
-"- Copyright partiel 2013-2014 autres contributeurs ([voir la liste complète]"
-"[list]).\n"
-"\n"
-"  [kmk23]: https://twitter.com/Karmak23  \n"
-"  [mchai]: https://twitter.com/mchaignot\n"
-"  [list]: https://github.com/1flow/1flow/blob/master/AUTHORS.md\n"
 
 #: templates/snippets/copyrights-and-licenses.html:47
 msgid ""
@@ -1083,14 +915,6 @@ msgid ""
 "`Redis`, `Bootstrap`, `jQuery`, and a lot more.\n"
 "\n"
 msgstr ""
-"\n"
-"## Remerciements\n"
-"\n"
-"`1flow` est fondé sur un grand nombre de composants *logiciels *libres* et "
-"*Open Source®*. Nous remerçions tous leurs développeurs pour leur "
-"contribution à un monde meilleur. La liste non-exhaustive inclut `Python`, "
-"`Django`, `PostgreSQL`, `MongoDB`, `Redis`, `Bootstrap`, `jQuery`, et plein "
-"d'autres.\n"
 
 #: templates/snippets/copyrights-and-licenses.html:54
 msgid ""
@@ -1104,135 +928,71 @@ msgid ""
 "what you do with it. You have been warned.\n"
 "\n"
 msgstr ""
-"\n"
-"## Contenu des bases de données\n"
-"\n"
-"Les contenus de la base de données de `1flow.io` sont sous copyright de "
-"leur(s) auteur(s) dans leur(s) pays respectif(s). Dans ce cadre, les "
-"licences sont diverses et variées, et vous utilisez la plateforme `1flow.io` "
-"à vos risques et périls, en fonction de ce que vous faites avec ces "
-"contenus. Vous êtes prévenu(e)s !\n"
 
 #: templates/snippets/copyrights-and-licenses.html:64
 msgid "Agreed"
-msgstr "J'ai compris"
+msgstr ""
 
 #: templatetags/base_utils.py:178 templatetags/base_utils.py:192
 msgid "day"
-msgstr "jour"
+msgstr ""
 
 #: templatetags/base_utils.py:179 templatetags/base_utils.py:193
 msgid "days"
-msgstr "jours"
+msgstr ""
 
 #: templatetags/base_utils.py:180 templatetags/base_utils.py:194
 msgid "hour"
-msgstr "heure"
+msgstr ""
 
 #: templatetags/base_utils.py:181 templatetags/base_utils.py:195
 msgid "hours"
-msgstr "heures"
+msgstr ""
 
 #: templatetags/base_utils.py:182
 msgid "minute"
-msgstr "minute"
+msgstr ""
 
 #: templatetags/base_utils.py:183
 msgid "minutes"
-msgstr "minutes"
+msgstr ""
 
 #: templatetags/base_utils.py:184
 msgid "second"
-msgstr "seconde"
+msgstr ""
 
 #: templatetags/base_utils.py:185
 msgid "seconds"
-msgstr "seconde"
+msgstr ""
 
 #: templatetags/base_utils.py:196
 msgid "min"
-msgstr "min"
+msgstr ""
 
 #: templatetags/base_utils.py:197
 msgid "mins"
-msgstr "mins"
+msgstr ""
 
 #: templatetags/base_utils.py:198
 msgid "sec"
-msgstr "sec"
+msgstr ""
 
 #: templatetags/base_utils.py:199
 msgid "secs"
-msgstr "secs"
+msgstr ""
 
 #: templatetags/base_utils.py:205 templatetags/base_utils.py:206
 msgid "d"
-msgstr "j"
+msgstr ""
 
 #: templatetags/base_utils.py:207 templatetags/base_utils.py:208
 msgid "h"
-msgstr "h"
+msgstr ""
 
 #: templatetags/base_utils.py:209 templatetags/base_utils.py:210
 msgid "m"
-msgstr "m"
+msgstr ""
 
 #: templatetags/base_utils.py:211 templatetags/base_utils.py:212
 msgid "s"
-msgstr "s"
-
-#~ msgid "That's a bad catch!"
-#~ msgstr "Vraiment pas cool !"
-
-#~ msgid "External accounts"
-#~ msgstr "Comptes externes"
-
-#~ msgid "Manage e-mail accounts"
-#~ msgstr "Gestion des comptes e-mail"
-
-#~ msgid "Super-user access"
-#~ msgstr "Accès super-utilisateur"
-
-#~ msgid "PostgreSQL"
-#~ msgstr "PostgreSQL"
-
-#~ msgid "MongoDB"
-#~ msgstr "MongoDB"
-
-#~ msgid "Search in folder…"
-#~ msgstr "Rechercher dans le dossier…"
-
-#~ msgid "Search in feed…"
-#~ msgstr "Rechercher dans le flux…"
-
-#~ msgid "Search…"
-#~ msgstr "Rechercher…"
-
-#~ msgid ""
-#~ "PS: do not contact us to explicit these qualities. It's up to you to "
-#~ "define and argue them. Have fun!"
-#~ msgstr ""
-#~ "PS: ne nous contactez pas pour savoir quelles sont ces qualités. C'est à "
-#~ "vous de les inventer et de les argumenter. Éclatez-vous !"
-
-#~ msgid "Log in to an existing account"
-#~ msgstr "Identification via un compte local"
-
-#~ msgid "Delete Account"
-#~ msgstr " "
-
-#~ msgid "Edit"
-#~ msgstr "Éditer"
-
-#~ msgid ""
-#~ "\n"
-#~ "                            If you need assistance, you may reference "
-#~ "this error as <strong>%(sentry_id)s</strong>.\n"
-#~ "                        "
-#~ msgstr ""
-#~ "\n"
-#~ "Si vous avez besoin d'assistance, vous pouvez vous référer à ce plantage "
-#~ "sous le numéro <strong>%(sentry_id)s</strong>."
-
-#~ msgid "Perhaps you could ask an Oracle®?"
-#~ msgstr "Peut-être devriez-vous interroger un Oracle® ?"
+msgstr ""
