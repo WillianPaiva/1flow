@@ -243,7 +243,8 @@ class ContentItem(models.Model):
         self.word_count = None
 
         if commit:
-            self.save()
+            # We are reseting, don't waste a version.
+            self.save_without_historical_record()
 
     def processing_must_abort(self, force=False, commit=True):
         """ Return True if processing of current instance must be aborted.

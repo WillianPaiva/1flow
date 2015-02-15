@@ -278,7 +278,8 @@ class UrlItem(models.Model):
         self.is_orphaned = False
 
         if commit:
-            self.save()
+            # We are reseting, don't waste a version.
+            self.save_without_historical_record()
 
     def absolutize_url_must_abort(self, force=False, commit=True):
 
@@ -301,7 +302,8 @@ class UrlItem(models.Model):
                 self.url_error = None
 
                 if commit:
-                    self.save()
+                    # Don't waste a version just for these changes.
+                    self.save_without_historical_record()
             else:
                 LOGGER.warning(u'%s #%s already has an URL error, '
                                u'aborting absolutization (currently: %s).',
@@ -350,7 +352,8 @@ class UrlItem(models.Model):
                 args = (self.url, str(e), )
 
                 self.url_error = message % args
-                self.save()
+                # Don't waste a version just for that.
+                self.save_without_historical_record()
 
                 LOGGER.error(message, *args)
                 return
@@ -375,7 +378,9 @@ class UrlItem(models.Model):
                     spipe.gauge('articles.counts.orphaned', 1, delta=True)
 
             self.url_error = message % args
-            self.save()
+
+            # Don't waste a version just for that.
+            self.save_without_historical_record()
 
             LOGGER.error(message, *args)
             return
@@ -429,7 +434,8 @@ class UrlItem(models.Model):
                 # to register duplicate, potentially leading to massive
                 # inconsistencies in the caller's context.
                 try:
-                    self.save()
+                    # Don't waste a version just for that.
+                    self.save_without_historical_record()
 
                 except IntegrityError:
                     duplicate = True
@@ -464,7 +470,9 @@ class UrlItem(models.Model):
             statsd.gauge('articles.counts.absolutes', 1, delta=True)
             self.url_absolute = True
             self.url_error = None
-            self.save()
+
+            # Don't waste a version just for that.
+            self.save_without_historical_record()
 
         return True
 
