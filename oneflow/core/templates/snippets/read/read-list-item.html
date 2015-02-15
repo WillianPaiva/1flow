@@ -17,7 +17,7 @@
       class="read-list-item hover-unmute-children {{ read.is_restricted|yesno:"restricted-read," }} {% read_status_css read %}"
       {% read_action_toggle_url read %} data-index="{{ tenths_counter|add:forloop.counter }}">
 
-        {% cache 0 article_meta_top article LANGUAGE_CODE %}
+        {% cache 604800 article_meta_top article LANGUAGE_CODE %}
           {% include "snippets/read/article-meta.html" %}
         {% endcache %}
 
