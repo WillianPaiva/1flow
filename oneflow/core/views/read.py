@@ -62,6 +62,7 @@ def _rwep_generate_query_kwargs(request, **kwargs):
     primary_mode = None
     combinations = set()
     attributes   = READ_STATUS_DATA.keys()
+    user         = request.user
 
     # First, get the view mode we were called from.
     if kwargs.get('all', False):
@@ -80,7 +81,7 @@ def _rwep_generate_query_kwargs(request, **kwargs):
                 query_kwargs[attrname] = mykwarg
 
                 # TODO: KEEP ?
-                if request.user.is_superuser or request.user.is_staff:
+                if user.is_staff_or_superuser_and_enabled:
                     combinations.union(set(
                         attr2, request.GET.get(attr2, None), bool)
                         for attr2 in attributes if attr2 not in attributes
@@ -105,7 +106,7 @@ def _rwep_generate_query_kwargs(request, **kwargs):
     return query_kwargs, primary_mode
 
 
-def _rwep_generate_order_by(request, **kwargs):
+def _rwep_generate_order_by(request, primary_mode, **kwargs):
 
     #
     # TODO: https://stackoverflow.com/questions/5235209/django-order-by-position-ignoring-null  # NOQA
@@ -113,14 +114,23 @@ def _rwep_generate_order_by(request, **kwargs):
 
     def check_order_by(value):
         if value in (u'item__date_published', u'item__date_created',
-                     u'name', 'id', ):
+                     u'name', 'id', 'date_read', ):
             return
 
         raise NotImplementedError('order_by needs love!')
 
-    default_order_by = (u'-item__date_published', u'-item__date_created', )
+    user = request.user
+    mode, negated = primary_mode
 
-    if request.user.is_staff_or_superuser_and_enabled:
+    if mode == 'is_read' and negated:
+        # When displaying the user reading history,
+        # order by inverse chronological read date.
+        default_order_by = (u'-date_read', )
+
+    else:
+        default_order_by = (u'-item__date_published', u'-item__date_created', )
+
+    if user.is_staff_or_superuser_and_enabled:
         order_by = request.GET.get('order_by', None)
 
         if order_by:
@@ -163,6 +173,9 @@ def _rwep_ajax_update_counters(kwargs, query_kwargs,
 
     elif query_kwargs.get('is_read', None) is False:
         attr_name = u'unread_items_count'
+
+    # the read_items_count is composite
+    # of total - unread, it's not updated.
 
     if attr_name:
         if subscription:
@@ -279,7 +292,7 @@ def read_with_endless_pagination(request, **kwargs):
 
     (query_kwargs,
      primary_mode) = _rwep_generate_query_kwargs(request, **kwargs)
-    order_by       = _rwep_generate_order_by(request, **kwargs)
+    order_by       = _rwep_generate_order_by(request, primary_mode, **kwargs)
     user           = request.user
 
     # —————————————————————————————————————————————————————— Search preparation
