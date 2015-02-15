@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-02-15 13:36+0100\n"
-"PO-Revision-Date: 2015-02-15 13:41+0009\n"
+"PO-Revision-Date: 2015-02-15 22:37+0009\n"
 "Last-Translator: Olivier Cortes <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -5390,7 +5390,7 @@ msgstr "Elle s'applique à :"
 
 #: templates/chaineditem/list-create.html:65
 msgid "Of which language(s):"
-msgstr ""
+msgstr "Dans quelle(s) langue(s) :"
 
 #: templates/chaineditem/list-create.html:81
 msgid "Item"
@@ -5398,7 +5398,7 @@ msgstr "Élément"
 
 #: templates/chaineditem/list-create.html:82
 msgid "Active in this chain?"
-msgstr ""
+msgstr "Actif dans cette chaîne ?"
 
 #: templates/chaineditem/list-create.html:83
 msgid "Parameters"
@@ -5406,7 +5406,7 @@ msgstr "Paramètres ?"
 
 #: templates/chaineditem/list-create.html:92
 msgid "Run order"
-msgstr ""
+msgstr "Ordre d'exécution"
 
 #: templates/chaineditem/list-create.html:93 templates/history/list.html:55
 #: templates/mailaccount/list-create.html:54
@@ -5428,6 +5428,8 @@ msgid ""
 "This processor is globally inactive. You should re-activate it in the "
 "processors section before beiing able to use it here."
 msgstr ""
+"Ce processeur est inactif au niveau global. Vous devez le réactiver dans la "
+"section processeurs avant de pouvoir l'utiliser dans cette chaîne."
 
 #: templates/chaineditem/list-create.html:132
 #, fuzzy
@@ -5955,7 +5957,7 @@ msgstr "Catégories"
 
 #: templates/processingchain/list-create.html:53
 msgid "Used by"
-msgstr ""
+msgstr "Utilisé par"
 
 #: templates/processingchain/list-create.html:55
 #: templates/status/rabbitmq.html:15
@@ -5966,7 +5968,7 @@ msgstr "Éléments"
 #: templates/processor/list-create.html:65
 #, python-format
 msgid "created by %(user)s"
-msgstr ""
+msgstr "Créé par %(user)s"
 
 #: templates/processingchain/list-create.html:92
 msgid "Nothing yet"
@@ -6196,6 +6198,8 @@ msgid ""
 "Note: ESC and click-outside are disabled to prevent you from loosing work "
 "while editing."
 msgstr ""
+"Note : ESC et le click-en-dehors sont désactivés pour vous éviter de fermer "
+"la fenêtre d'édition sans avoir sauvegardé votre travail."
 
 #: templates/snippets/edit_field/result.html:6
 #, fuzzy, python-format
@@ -6875,14 +6879,14 @@ msgid "Open original article in a new window/tab"
 msgstr "Ouvrir l'article original dans une nouvelle fenêtre/onglet."
 
 #: templates/snippets/read/read-meta-async.html:96
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "\n"
 "              read %(read_date_delta)s ago\n"
 "          "
 msgstr ""
 "\n"
-" Ou alors <a href=\"%(read_url)s\">lire des nouvelles fraîches</a> ?"
+"​​ lu il y a %(read_date_delta)s"
 
 #: templates/snippets/read/read-meta-async.html:114
 #: templates/snippets/read/read-meta-async.html:121
@@ -6972,15 +6976,15 @@ msgstr "tous"
 
 #: templates/snippets/read/staff-information.html:10
 msgid "Fixes"
-msgstr ""
+msgstr "Corrections"
 
 #: templates/snippets/read/staff-information.html:25
 msgid "Item is considered good to be displayed by the engine"
-msgstr ""
+msgstr "L'élément est considéré bon à afficher par le moteur"
 
 #: templates/snippets/read/staff-information.html:29
 msgid "bad"
-msgstr ""
+msgstr "mauvais"
 
 #: templates/snippets/read/staff-information.html:36
 msgid "absolute"
@@ -6988,7 +6992,7 @@ msgstr "absolu(e)"
 
 #: templates/snippets/read/staff-information.html:44
 msgid "unresolved yet"
-msgstr ""
+msgstr "non résolu"
 
 #: templates/snippets/read/staff-information.html:52
 msgid "orphaned"
@@ -6996,11 +7000,11 @@ msgstr "orphelin"
 
 #: templates/snippets/read/staff-information.html:59
 msgid "Original data has been processed"
-msgstr ""
+msgstr "Les données d'origine ont été traitées"
 
 #: templates/snippets/read/staff-information.html:63
 msgid "Original data not yet processed"
-msgstr ""
+msgstr "Les données d'origine n'ont pas encore été traitées"
 
 #: templates/snippets/read/staff-information.html:68
 #, fuzzy
@@ -7018,7 +7022,7 @@ msgstr "lu ?"
 
 #: templates/snippets/read/staff-information.html:96
 msgid "article versions in history"
-msgstr ""
+msgstr "version historisées de l'article"
 
 #: templates/snippets/read/staff-information.html:110
 #, fuzzy
@@ -7429,15 +7433,15 @@ msgstr "Envoyer"
 
 #: templates/snippets/toolbars/filter/active.html:2
 msgid "Show active/open only"
-msgstr ""
+msgstr "Afficher les actifs/ouverts seulement"
 
 #: templates/snippets/toolbars/filter/active.html:3
 msgid "Show inactive/closed only"
-msgstr ""
+msgstr "Afficher les inactifs/fermés seulement"
 
 #: templates/snippets/toolbars/filter/dupes.html:2
 msgid "Show masters only (not duplicates)"
-msgstr ""
+msgstr "Afficher seulement les originaux (non-dupliqués)"
 
 #: templates/snippets/toolbars/filter/dupes.html:3
 #, fuzzy
@@ -7747,6 +7751,8 @@ msgid ""
 "\t\t\t\t\t\t    Feed created %(delta)s ago.\n"
 "\t\t\t\t\t\t"
 msgstr ""
+"\n"
+"Flux créé il y a %(delta)s."
 
 #: templates/staff/feed/list-create.html:110
 #, python-format
@@ -7755,6 +7761,8 @@ msgid ""
 "\t\t\t\t\t\t    Feed closed %(delta)s ago.\n"
 "\t\t\t\t\t\t"
 msgstr ""
+"\n"
+"Flux fermé il y a %(delta)s."
 
 #: templates/staff/feed/list-create.html:154
 msgid ""
@@ -7797,7 +7805,7 @@ msgstr[1] ""
 
 #: templates/staff/website/list-create.html:45
 msgid "Img."
-msgstr ""
+msgstr "Img."
 
 #: templates/staff/website/list-create.html:46
 #, fuzzy
@@ -7816,7 +7824,7 @@ msgstr "Description :"
 
 #: templates/staff/website/list-create.html:82
 msgid "—"
-msgstr ""
+msgstr "—"
 
 #: templates/staff/website/list-create.html:98
 #, fuzzy
@@ -7825,7 +7833,7 @@ msgstr "Éditer les exigences du processeur"
 
 #: templates/staff/website/list-create.html:98
 msgid "Create processing parameters for this web site"
-msgstr ""
+msgstr "Créer des paramètres de traitement pour ce site web"
 
 #: templates/staff/website/list-create.html:107
 #, fuzzy
@@ -7857,11 +7865,11 @@ msgstr ""
 
 #: templates/staff/website/toolbar.html:5
 msgid "Filter web sites that have some processing parameters set"
-msgstr ""
+msgstr "Afficher les sites web qui ont des paramètres de traitement"
 
 #: templates/staff/website/toolbar.html:8
 msgid "Filter web sites that have a custom processing chain set"
-msgstr ""
+msgstr "Afficher les sites web qui ont une chaine de traitement personnalisée"
 
 #: templates/status/celery.html:4
 #, fuzzy
@@ -8009,12 +8017,12 @@ msgstr "tuples totaux"
 #: templates/status/postgresql.html:54
 #, python-format
 msgid "data size (%% of all data)"
-msgstr ""
+msgstr "taille des données (%% de la taille totale)"
 
 #: templates/status/postgresql.html:55
 #, python-format
 msgid "index size (%% of all indices)"
-msgstr ""
+msgstr "taille des index (%% des index totaux)"
 
 #: templates/status/postgresql.html:56
 #, python-format
@@ -8039,7 +8047,7 @@ msgstr "Mémoire"
 
 #: templates/status/redis.html:6
 msgid "TO BE IMPLEMENTED…"
-msgstr ""
+msgstr "À VENIR…"
 
 #: templates/status/system.html:5
 msgid "Web server information"
@@ -8090,7 +8098,7 @@ msgstr "Gestion"
 
 #: templates/status/system.html:113
 msgid "External tools"
-msgstr ""
+msgstr "Outils externes"
 
 #: templates/status/system.html:120
 msgid "Workers management"
@@ -8102,11 +8110,11 @@ msgstr "Statistiques"
 
 #: templates/status/system.html:152
 msgid "Web app. caches"
-msgstr ""
+msgstr "Caches de l'appli. web"
 
 #: templates/status/system.html:159
 msgid "Clear templates"
-msgstr ""
+msgstr "Vider les templates"
 
 #: templates/status/system.html:168
 #, fuzzy
@@ -8121,6 +8129,8 @@ msgstr "Lecture globale de tout les modèles"
 #: templates/status/system.html:186
 msgid "NOTE: your instance could be sluggish while caches reconstruct slowly"
 msgstr ""
+"Note : votre instance pourrait être fortement ralentie le temps que les "
+"caches soient reconstruits."
 
 #: templates/status/system.html:187
 #, fuzzy
@@ -8557,11 +8567,13 @@ msgid ""
 "Could not import url “<code>{0}</code>”. Check your latest history entry to "
 "know why."
 msgstr ""
+"Impossible d'importer l'URL « <code>{0}</code> ». Regardez votre historique "
+"récent pour savoir pourquoi."
 
 #: views/admin_commands.py:87
 #, python-brace-format
 msgid "{0} is already empty."
-msgstr ""
+msgstr "{0} est déjà vide."
 
 #: views/admin_commands.py:98
 #, fuzzy, python-format, python-brace-format
@@ -8570,7 +8582,7 @@ msgstr "Élément importé depuis {0}"
 
 #: views/admin_commands.py:130
 msgid "Cleared models cache (no detail available)."
-msgstr ""
+msgstr "Cache des modèles vidé (pas de détail disponible)."
 
 #: views/feed.py:71
 #, python-brace-format
