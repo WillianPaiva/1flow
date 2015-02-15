@@ -229,8 +229,13 @@ class ContentItem(models.Model):
 
         self.image_url = None
 
-        # Revert the excerpt to what it was at `post_create()` time.
-        self.excerpt = self.history.last().excerpt
+        try:
+            # Revert the excerpt to what it was at `post_create()` time.
+            self.excerpt = self.history.last().excerpt
+
+        except AttributeError:
+            # Happens when ContentItem instance has no history (yet).
+            pass
 
         self.content = None
         self.content_type = None
