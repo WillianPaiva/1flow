@@ -87,6 +87,16 @@
         <span class="no-date">{% trans "no date" %}</span>
 
       {% endif %}
+
+    {% if read.date_read %}
+      <br />
+      <small class="read_date very-muted" title="{{ read.date_read }}"
+          data-toggle="tooltip">
+          {% blocktrans with read_date_delta=read.date_read|naturaldelta %}
+              read {{ read_date_delta }} ago
+          {% endblocktrans %}
+      </small>
+    {% endif %}
     </h4>
 
     {% if article.authors.exists %}

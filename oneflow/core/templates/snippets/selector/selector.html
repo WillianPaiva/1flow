@@ -22,7 +22,8 @@
                     <li class="muted not-ready" {% feature_not_ready %}>
                         {% trans "Sent Articles" %}</li>
 
-                    <li>{% reading_list_with_count user 'read_all' %}</li>
+                    <li>{% reading_list_with_count user 'read_read' %}</li>
+                    {# <li>{% reading_list_with_count user 'read_all' %}</li> #}
                 </ul>
             </div>
         </div>
