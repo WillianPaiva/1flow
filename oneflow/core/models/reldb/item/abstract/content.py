@@ -229,8 +229,13 @@ class ContentItem(models.Model):
 
         self.image_url = None
 
-        # Revert the excerpt to what it was at `post_create()` time.
-        self.excerpt = self.history.last().excerpt
+        try:
+            # Revert the excerpt to what it was at `post_create()` time.
+            self.excerpt = self.history.last().excerpt
+
+        except AttributeError:
+            # Happens when ContentItem instance has no history (yet).
+            pass
 
         self.content = None
         self.content_type = None
@@ -238,7 +243,8 @@ class ContentItem(models.Model):
         self.word_count = None
 
         if commit:
-            self.save()
+            # We are reseting, don't waste a version.
+            self.save_without_historical_record()
 
     def processing_must_abort(self, force=False, commit=True):
         """ Return True if processing of current instance must be aborted.

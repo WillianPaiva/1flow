@@ -300,10 +300,12 @@ class Article(BaseItem, UrlItem, ContentItem):
                 klass.reset(self, force=force, commit=False)
 
             except:
-                pass
+                LOGGER.exception('%s %s: could not reset %s class.',
+                                 self._meta.verbose_name, self.id, klass)
 
         if commit:
-            self.save()
+            # We are reseting, don't waste a version.
+            self.save_without_historical_record()
 
     @classmethod
     def create_article(cls, title, url, feeds, **kwargs):
@@ -548,6 +550,17 @@ def article_pre_save(instance, **kwargs):
 
     if not article.slug:
         article.slug = slugify(article.name)
+
+    if settings.DEBUG:
+        if getattr(instance, 'skip_history_when_saving', False):
+            LOGGER.info(u'%s %s: SAVE without history.',
+                        instance._meta.verbose_name,
+                        instance.id)
+
+        else:
+            LOGGER.info(u'%s %s: SAVE WITH HISTORY.',
+                        instance._meta.verbose_name,
+                        instance.id)
 
 
 def article_post_save(instance, **kwargs):
