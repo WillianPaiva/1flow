@@ -242,7 +242,9 @@ def toggle(request, klass, oid, key):
             date_attr = 'date_' + key[3:]
 
             if hasattr(obj, date_attr):
-                setattr(obj, date_attr, now())
+                # LOGGER.info(u'%s %s: set %s to NOW.',
+                #             obj._meta.verbose_name, obj.id, date_attr)
+                setattr(obj, date_attr, now() if new_value else None)
 
         try:
             getattr(obj, key + '_changed')()
