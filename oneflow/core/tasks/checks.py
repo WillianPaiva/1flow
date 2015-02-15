@@ -122,27 +122,62 @@ def global_feeds_checker():
                     if len(feed.errors)
                     else u'(no error recorded)')
 
-    dtnow        = now()
-    limit_days   = config.FEED_CLOSED_WARN_LIMIT
-    closed_limit = dtnow - timedelta(days=limit_days)
+    def pretty_print_feed_list(feed_list):
+
+        return '\n\n'.join(
+            pretty_print_feed(feed)
+            for feed in feed_list
+        )
+
+    dtnow         = now()
+    limit_days    = config.FEED_CLOSED_WARN_LIMIT
+    closed_limit  = dtnow - timedelta(days=limit_days)
+    closed_tested = 0
+    reopened_list = []
+
+    # ———————————————————————————————— See if old closed feeds can be reopened.
+
+    old_closed_feeds = BaseFeed.objects.filter(is_active=False).filter(
+        date_closed__lt=closed_limit)
+
+    for feed in old_closed_feeds:
+        # check all closed feeds monthly, on their closing date anniversary.
+        if feed.date_closed.day == dtnow.day:
+            if feed.check_old_closed():
+                reopened_list.append(feed)
+            closed_tested += 1
+
+    # ——————————————————————————————————————————— Report recently closed feeds.
 
     recently_closed_feeds = BaseFeed.objects.filter(is_active=False).filter(
         Q(date_closed=None) | Q(date_closed__gte=closed_limit))
 
     if not recently_closed_feeds.exists():
-        LOGGER.info('No feed was closed in the last %s days.', limit_days)
+        LOGGER.info('No feed was closed in the last %s days, %s already '
+                    u'closed checked for eventual back-to-life, of which '
+                    u'%s were reopened.', limit_days, closed_tested,
+                    len(reopened_list))
         return
 
     count = recently_closed_feeds.count()
 
     mail_managers(_(u'Reminder: {0} feed(s) closed in last '
-                  u'{1} day(s)').format(count, limit_days),
-                  _(u"\n\nHere is the list, dates (if any), and reasons "
-                    u"(if any) of closing:\n\n{feed_list}\n\nYou can manually "
-                    u"reopen any of them from the admin interface.\n\n").format(
-                        feed_list='\n\n'.join(
-                            pretty_print_feed(feed)
-                            for feed in recently_closed_feeds)))
+                    u'{1} day(s), {2} automatically reopened').format(
+                        count, limit_days, len(reopened_list)),
+                  _(u"""
+Here is the list, dates (if any), and reasons (if any) of closing:
+
+{feed_list}
+
+You can manually reopen any of them from the admin interface.
+
+%s closed feeds were tested to see if they came back to life,
+out of which %s were reopened:
+
+{reopened_list}
+
+""").format(feed_list=pretty_print_feed_list(recently_closed_feeds),
+            reopened_list=pretty_print_feed_list(reopened_list)))
 
     start_time = pytime.time()
 

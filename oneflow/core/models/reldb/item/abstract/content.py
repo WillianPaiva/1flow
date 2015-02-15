@@ -228,7 +228,10 @@ class ContentItem(models.Model):
             return
 
         self.image_url = None
-        self.excerpt = None
+
+        # Revert the excerpt to what it was at `post_create()` time.
+        self.excerpt = self.history.last().excerpt
+
         self.content = None
         self.content_type = None
         self.content_error = None
