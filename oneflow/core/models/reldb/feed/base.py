@@ -542,6 +542,59 @@ class BaseFeed(six.with_metaclass(BaseFeedMeta,
                        self._meta.verbose_name,
                        self.id, self.closed_reason)
 
+    def check_old_closed(self):
+        """ Try to reopen a feed, let it closed if it fails a refresh. """
+
+        if self.is_active:
+            LOGGER.warning(u'%s %s: already active, check aborted.',
+                           self._meta.verbose_name, self.id)
+            return
+
+        old_reason = self.closed_reason
+        old_date   = self.date_closed
+        old_errors = self.errors
+
+        # intentionally not kept and overwriten
+        # during current exectution. See below.
+        # old_fetch = self.date_last_fetch
+
+        # Don't commit, this will avoid save(),
+        # and thus the feed beiing picked up
+        # accidentally by the global refresher task.
+        self.reopen(commit=False)
+
+        # put back all errors, so that one more
+        # suffices to re-close the feed immediately.
+        self.errors = old_errors
+
+        # Refresh here (not in a task), to keep control
+        # on the commit=False and not write anything in
+        # the DB while not sure of the reopenable status.
+        # Use force to avoid interval throttling.
+        self.refresh(force=True, commit=False)
+
+        # Reopened or not, date_last_fetch was updated.
+        # This is intended to manually verify the feed
+        # is checked/refreshed every month.
+
+        # A failing refresh would have called close(),
+        # or at least error() that would have closed
+        # in turn because errors count was already max.
+        if self.is_active:
+            LOGGER.info(u'%s %s: brought back to life.',
+                        self._meta.verbose_name, self.id)
+            self.save()
+            return True
+
+        # Refresh failed. Keep the feed closed
+        # with original reasons/errors.
+        self.closed_reason = old_reason
+        self.date_closed = old_date
+        self.errors = old_errors
+        self.save()
+
+        return False
+
     def error(self, message, commit=True, last_fetch=False):
         """ Take note of an error.
 
