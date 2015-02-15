@@ -53,7 +53,7 @@ class StaffWebSiteListCreateView(mixins.ListCreateViewMixin,
         if filter_param is None:
             return qs
 
-        filters = filter_param.split()
+        filters = filter_param.strip().split()
 
         filters_fields = {
             'open': ('is_active', True),
@@ -77,6 +77,20 @@ class StaffWebSiteListCreateView(mixins.ListCreateViewMixin,
 
             elif a_filter.startswith(u'id:'):
                 params = {'id__in': a_filter[3:].split(u',')}
+
+            elif a_filter.startswith(u'has:'):
+                if u'chain' in a_filter:
+                    qs = qs.exclude(processing_chain=None)
+
+                elif u'param' in a_filter:
+                    qs = qs.exclude(processing_parameters=None)
+
+            elif a_filter.startswith(u'no:') or a_filter.startswith(u'hasnot:'):
+                if u'chain' in a_filter:
+                    params = {'processing_chain': None}
+
+                elif u'param' in a_filter:
+                    params = {'processing_parameters': None}
 
             elif a_filter.startswith(u'not:') \
                     or a_filter.startswith(u'isnot:'):

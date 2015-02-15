@@ -20,10 +20,11 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 """
 
 import logging
+import operator
 
 from sparks.django.views import mixins
 
-# from django.db.models import Q
+from django.db.models import Q
 from django.views import generic
 from django.core.urlresolvers import reverse_lazy
 
@@ -62,11 +63,15 @@ class ProcessorListCreateView(mixins.ListCreateViewMixin,
         if filter_param is None:
             return qs
 
-        filters = filter_param.split()
+        filters = filter_param.split(u' ')
+
+        LOGGER.info(u'%s', filters)
 
         filters_fields = {
             'active': ('is_active', True),
+            'open': ('is_active', True),
             'inactive': ('is_active', False),
+            'closed': ('is_active', False),
         }
 
         for a_filter in filters:
@@ -83,6 +88,20 @@ class ProcessorListCreateView(mixins.ListCreateViewMixin,
                     filter_name = a_filter.split(':', 1)[1]
                     field_name, field_value = filters_fields[filter_name]
                     params = {field_name: field_value}
+
+            elif a_filter.startswith(u'cat:') \
+                    or a_filter.startswith(u'categ:') \
+                    or a_filter.startswith(u'category:'):
+
+                qs = qs.filter(
+                    reduce(
+                        operator.or_,
+                        (
+                            Q(categories__slug__icontains=x)
+                            for x in a_filter.split(u':', 1)[1].split(',')
+                        )
+                    )
+                )
 
             elif a_filter.startswith(u'not:') \
                     or a_filter.startswith(u'isnot:'):
