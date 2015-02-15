@@ -1,3 +1,16 @@
+{% comment %}
+
+  HEADS UP: integrating USER or READ related attributes completely
+            anihilates the cache.
+
+            And anything delta-related (eg. “ …from now, … ago”)
+            anihilates it too.
+
+            The things we can put here are limited,
+            else we should get rid of the cache for this part.
+
+{% endcomment %}
+
 <div class="article-meta article-meta-row clicker-muter-constrainer"
     data-toggle-id="{{ article.id }}">
 
@@ -60,6 +73,18 @@
         {% endif %}
 
         {% comment %}
+
+        {% if read.date_read %}
+        —&nbsp;
+        <span class="read_date">
+            <span class="muted" title="{{ read.date_read }}"
+                date-toggle="tooltip">
+                {% blocktrans with read_date_delta=read.date_read|naturaldelta %}
+                    read {{ read_date_delta }} ago
+                {% endblocktrans %}
+            </span>
+        </span>
+        {% endif %}
 
         {% if read.tags.exists %}
 
