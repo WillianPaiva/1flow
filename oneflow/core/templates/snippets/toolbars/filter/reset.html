@@ -1,7 +1,15 @@
+{% if not in_group %}
 	<div class="btn-group">
+
+{% endif %}
 		<a href="?"
 				title="{% trans "Reset filters to default" %}"
-				class="btn btn-default btn-sm popover-top">
+				data-toggle="tooltip"
+				class="btn btn-default btn-sm popover-top"
+				style="{{ margin_fix|yesno:'margin-left: -1px,' }}">
 			{% core_icon "remove" False %}
 		</a>
+{% if not in_group %}
 	</div>
+
+{% endif %}

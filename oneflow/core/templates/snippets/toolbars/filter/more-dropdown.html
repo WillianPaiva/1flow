@@ -1,0 +1,25 @@
+    <a class="btn btn-sm btn-default"
+        	data-toggle="dropdown"
+        	aria-expanded="false">
+        <span class="popover-top"
+                data-toggle="tooltip"
+                title="{% trans "More filters" %}">
+    	    {% core_icon 'ellipsis-horizontal' False %}
+        </span>
+    </a>
+
+    <ul class="dropdown-menu" role="menu">
+
+    {% if active %}
+        {% include "snippets/toolbars/filter/active.html" with in_list=True %}
+    {% endif %}
+
+    {% if active and dupes %}
+        <li class="divider"></li>
+    {% endif %}
+
+    {% if dupes %}
+        {% include "snippets/toolbars/filter/dupes.html" with in_list=True %}
+    {% endif %}
+
+    </ul>

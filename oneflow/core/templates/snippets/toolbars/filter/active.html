@@ -1,0 +1,32 @@
+
+{% trans "Show active/open only" as show_active %}
+{% trans "Show inactive/closed only" as show_inactive %}
+{% if in_list %}
+	<li>
+		<a href="?filter=is:active">
+			{% core_icon "refresh" False %}&nbsp;{{ show_active }}
+		</a>
+	</li>
+	<li>
+		<a href="?filter=not:active">
+			{% core_icon "off" False %}&nbsp;{{ show_inactive }}
+		</a>
+	</li>
+
+{% else %}
+	<div class="btn-group">
+		<a href="?filter=is:active"
+				data-toggle="tooltip"
+				title="{{ show_active }}"
+				class="btn btn-default btn-sm popover-top">
+			{% core_icon "refresh" False %}
+		</a>
+
+		<a href="?filter=not:active"
+				data-toggle="tooltip"
+				title="{{ show_inactive }}"
+				class="btn btn-default btn-sm popover-top">
+			{% core_icon "off" False %}</a>
+	</div>
+
+{% endif %}

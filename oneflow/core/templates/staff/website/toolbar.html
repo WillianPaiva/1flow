@@ -1,6 +1,19 @@
 
 	{% include "snippets/toolbars/filter/form.html" %}
-	{% include "snippets/toolbars/filter/dupes.html" %}
-	{% include "snippets/toolbars/filter/reset.html" %}
+
+	<div class="btn-group">
+	{% trans "Filter web sites that have some processing parameters set" as filter_title %}
+	{% include "snippets/toolbars/filter/generic-button.html" with icon='cog' title=filter_title filter='has:processing_parameters' %}
+
+	{% trans "Filter web sites that have a custom processing chain set" as filter_title %}
+	{% include "snippets/toolbars/filter/generic-button.html" with icon='random' title=filter_title filter='has:processing_chain' %}
+	</div>
+
+<div class="btn-group" role="group">
+
+	{% include "snippets/toolbars/filter/more-dropdown.html" with dupes=True %}
+	{% include "snippets/toolbars/filter/reset.html" with in_group=True margin_fix=True %}
+
+</div>
 
 	{# {% include "snippets/toolbars/add-new.html" %} #}
