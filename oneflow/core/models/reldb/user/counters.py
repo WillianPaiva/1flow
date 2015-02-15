@@ -177,6 +177,12 @@ class UserCounters(models.Model):
         default=usercounters_bookmarked_items_count_default,
         set_default=True, min_value=0)
 
+    @property
+    def read_items_count(self):
+        """ Return all items count minus unread items count. """
+
+        return self.all_items_count - self.unread_items_count
+
     # ————————————————————————————————————————— Watch attributes Redis counters
 
     fact_items_count = IntRedisDescriptor(

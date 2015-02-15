@@ -52,6 +52,10 @@
                     <li>{% container_reading_list_with_count 'read_starred' 'folder' folder 'starred' _('starred') %}</li>
                 {% endif %}
 
+                {% if folder.read_items_count %}
+                    <li>{% container_reading_list_with_count 'read_read' 'folder' folder 'read' _('read history') %}</li>
+                {% endif %}
+
                 {% if current_mode != "all" %}
                     <li>{% container_reading_list_with_count 'read_all' 'folder' folder 'all' _('all')  %}</li>
                 {% endif %}
@@ -81,6 +85,10 @@
 
                 {% if current_mode != "is_starred" %}
                     <li>{% container_reading_list_with_count 'read_starred' 'feed' subscription 'starred' _('starred') %}</li>
+                {% endif %}
+
+                {% if subscription.read_items_count %}
+                    <li>{% container_reading_list_with_count 'read_read' 'feed' subscription 'read' _('read history') %}</li>
                 {% endif %}
 
                 {% if current_mode != "all" %}

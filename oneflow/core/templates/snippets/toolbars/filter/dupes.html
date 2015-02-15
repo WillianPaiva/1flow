@@ -1,11 +1,33 @@
+
+{% trans "Show masters only (not duplicates)" as show_masters %}
+{% trans "Show duplicates only (not masters)" as show_duplicates %}
+{% if in_list %}
+	<li>
+		<a href="?filter=not:dupe">
+			{% core_icon "thumbs-up" False %}&nbsp;{{ show_masters }}
+		</a>
+	</li>
+	<li>
+		<a href="?filter=is:dupe">
+			{% core_icon "copy" False %}&nbsp;{{ show_duplicates }}
+		</a>
+	</li>
+
+{% else %}
 	<div class="btn-group">
 		<a href="?filter=not:dupe"
-				title="{% trans "Show masters only (not duplicates)" %}"
+				data-toggle="tooltip"
+				title="{{ show_masters }}"
 				class="btn btn-default btn-sm popover-top">
 			{% core_icon "thumbs-up" False %}
 		</a>
+
 		<a href="?filter=is:dupe"
-				title="{% trans "Show duplicates only (not masters)" %}"
+				data-toggle="tooltip"
+				title="{{ show_duplicates }}"
 				class="btn btn-default btn-sm popover-top">
 			{% core_icon "copy" False %}</a>
 	</div>
+
+{% endif %}
+

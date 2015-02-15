@@ -240,7 +240,7 @@ READ_STATUS_DATA = {
         'list_url':      _(ur'^read/read/$'),
         'do_title':      _(u'Mark as read'),
         'list_headers':  (_(u'%(count)s read article'),
-                          _(u'%(count)s read articles')),
+                          _(u'%(count)s read articles (by reverse read date)')),
         'undo_title':    _(u'Mark as unread'),
         'do_label':      _(u'Mark read'),
         'undo_label':    _(u'Mark unread'),

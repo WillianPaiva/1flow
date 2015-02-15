@@ -13,11 +13,11 @@
 
 	<div class="btn-group" style="margin-left: 25px;">
 	<a href="?filter=type:rss"
-		class="btn btn-default btn-xs">{% core_icon "RssAtomFeed" False %}</a>
+		class="btn btn-default btn-sm">{% core_icon "RssAtomFeed" False %}</a>
 	<a href="?filter=type:twitter"
-		class="btn btn-default btn-xs">{% core_icon "TwitterFeed" False %}</a>
+		class="btn btn-default btn-sm">{% core_icon "TwitterFeed" False %}</a>
 	<a href="?filter=type:mail"
-		class="btn btn-default btn-xs">{% core_icon "MailFeed" False %}</a>
+		class="btn btn-default btn-sm">{% core_icon "MailFeed" False %}</a>
 
 		{% comment %}
 			<button id="form-collapser" class="btn btn-primary">{% trans "Add new" False %}</button>
@@ -25,13 +25,14 @@
 		{% endcomment %}
 	</div>
 
+<div class="btn-group" role="group">
+
+	{% include "snippets/toolbars/filter/more-dropdown.html" with dupes=True active=True %}
+	{% include "snippets/toolbars/filter/reset.html" with in_group=True margin_fix=True %}
+
+</div>
+
 	<div class="btn-group">
-	<a href="?filter=is:closed"
-		class="btn btn-default btn-xs">{% core_icon "off" False %}</a>
-	<a href="?filter=is:open"
-		class="btn btn-default btn-xs">{% core_icon "refresh" False %}</a>
-	<a href="?filter="
-		class="btn btn-default btn-xs">{% core_icon "remove" False %}</a>
 
 		{% comment %}
 			<button id="form-collapser" class="btn btn-primary">{% trans "Add new" %}</button>

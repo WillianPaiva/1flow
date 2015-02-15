@@ -1,6 +1,13 @@
 
 	{% include "snippets/toolbars/filter/form.html" %}
-	{% include "snippets/toolbars/filter/dupes.html" %}
-	{% include "snippets/toolbars/filter/reset.html" %}
+
+<div class="btn-group" role="group">
+
+	{% include "snippets/toolbars/filter/active.html" with in_group=True %}
+
+	{% include "snippets/toolbars/filter/more-dropdown.html" with dupes=True %}
+	{% include "snippets/toolbars/filter/reset.html" with in_group=True margin_fix=True %}
+
+</div>
 
 	{% include "snippets/toolbars/add-new.html" %}

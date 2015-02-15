@@ -1,0 +1,14 @@
+{% if group %}
+	<div class="btn-group">
+{% endif %}
+
+		<a href="?filter={{ filter }}"
+				title="{{ filter_title }}"
+				data-toggle="tooltip"
+				class="btn btn-default btn-sm popover-top">
+			{% core_icon icon False %}
+		</a>
+
+{% if group %}
+	</div>
+{% endif %}
