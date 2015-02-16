@@ -314,7 +314,7 @@ class BaseItem(PolymorphicModel,
         """
 
         try:
-            return self.feeds.all()[0]
+            return self.feeds.all().first()
 
         except IndexError:
             return None
@@ -602,11 +602,14 @@ class BaseItem(PolymorphicModel,
 
             bad_reads = self.bad_reads.all()
 
+            if not bad_reads.exists():
+                return
+
             if verbose:
                 LOGGER.info(u'Article %s activating %s bad reads…',
                             self, bad_reads.count())
 
-            for read in bad_reads:
+            for read in bad_reads.iterator():
                 try:
                     if extended_check:
                         read.check_subscriptions()
