@@ -181,7 +181,7 @@ class MailFeed(BaseFeed):
 
         return False
 
-    def refresh_feed_internal(self, force=False):
+    def refresh_feed_internal(self, verbose=True, force=False, commit=True):
         """ Refresh a mail feed. """
 
         LOGGER.info(u'Refreshing mail feed %s…', self)
