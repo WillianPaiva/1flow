@@ -11,7 +11,7 @@
 
         <ul class="list-unstyled">
           {% if not article.date_published %}
-            <li>{% inplace_edit 'article.date_published' %}</li>
+            <li><span class="muted">{% trans "Date published: " %}</span>{% inplace_edit 'article.date_published' %}</li>
           {% endif %}
         </ul>
 
@@ -94,29 +94,88 @@
         <li>{% core_label reads 'default' %}</li>
 
         {% captureas histories %}<span data-toggle="tooltip" title="{% trans "article versions in history" %}">{% core_icon 'archive' %} {{ article.history.count }}</span>{% endcaptureas %}
-        <li>{% core_label histories 'default' %}
+        <li>{% core_label histories 'default' %}</li>
+      </ul>
 
-        <ul>
-            {% for history in article.history.reverse %}
-              {% if history.content %}
-                <li>#{{ forloop.counter }}:
+      <ul class="list-unstyled">
+        {% for history in article.history.reverse %}
+          {% if history.content %}
+            <li>#{{ forloop.counter }}:
+
+              {% if history.excerpt %}
+                <a id="edit-history-excerpt-{{ history.history_id }}"
+                    href="{% url 'edit_field' klass='HistoricalArticle' oid=history.history_id form_class='HistoricalArticleEditExcerptForm' %}"
+                    data-toggle="modal" data-target="#"
+                    data-tooltip="tooltip"
+                    title="{% trans "Edit version content" %}"
+                    class="btn btn-xs btn-default centered popover-top">
+                  {% trans "excerpt" %} {% core_icon 'edit' False %}
+                </a> ({{ history.excerpt|length|naturalsize }})
+
+              {% else %}
+                <a class="btn btn-xs btn-danger"
+                  data-toggle="tooltip"
+                  title="{% trans "NO excerpt in this version" %}"
+                  href="#">{% core_icon 'eye-close' False %}</a>
+
+              {% endif %}
+
+            &nbsp;
 
             <a id="edit-history-content-{{ history.history_id }}"
-                  href="{% url 'edit_field' klass='HistoricalArticle' oid=history.history_id form_class='HistoricalArticleEditContentForm' %}"
-                  data-toggle="modal" data-target="#"
-                  data-tooltip="tooltip"
-                  title="{% trans "Edit version content" %}"
-                  class="btn btn-xs btn-default centered popover-top">
-                  {{ CONTENT_TYPES|symlookup:history.content_type }}
-                {% core_icon 'edit' False %}</a> ({{ history.content|length|naturalsize }})
+                href="{% url 'edit_field' klass='HistoricalArticle' oid=history.history_id form_class='HistoricalArticleEditContentForm' %}"
+                data-toggle="modal" data-target="#"
+                data-tooltip="tooltip"
+                title="{% trans "Edit version content" %}"
+                class="btn btn-xs btn-default centered popover-top">
+              {{ CONTENT_TYPES|symlookup:history.content_type }}
+              {% core_icon 'edit' False %}
+            </a> ({{ history.content|length|naturalsize }})
+          </li>
 
-              </li>
+          {% endif %}
+        {% endfor %}
+
+        <li>{% trans "cur.: " %}
+
+              {% if article.excerpt %}
+                <a id="edit-article-excerpt-{{ article.id }}"
+                    href="{% url 'edit_field' klass='Article' oid=article.id form_class='ArticleEditExcerptForm' %}"
+                    data-toggle="modal" data-target="#"
+                    data-tooltip="tooltip"
+                    title="{% trans "Edit current excerpt" %}"
+                    class="btn btn-xs btn-default centered popover-top">
+                  {% trans "excerpt" %} {% core_icon 'edit' False %}
+                </a> ({{ article.excerpt|length|naturalsize }})
+
+              {% else %}
+                <a class="btn btn-xs btn-danger"
+                  data-toggle="tooltip"
+                  title="{% trans "NO excerpt in current version" %}"
+                  href="#">{% core_icon 'eye-close' False %}</a>
+
               {% endif %}
-            {% endfor %}
+              &nbsp;
+              {% if article.content %}
+                <a id="edit-article-content-{{ article.id }}"
+                    href="{% url 'edit_field' klass='Article' oid=article.id form_class='ArticleEditContentForm' %}"
+                    data-toggle="modal" data-target="#"
+                    data-tooltip="tooltip"
+                    title="{% trans "Edit current content" %}"
+                    class="btn btn-xs btn-default centered popover-top">
+                  {{ CONTENT_TYPES|symlookup:article.content_type }}
+                  {% core_icon 'edit' False %}
+                </a> ({{ article.content|length|naturalsize }})
 
-        </ul>
+              {% else %}
+                <a class="btn btn-xs btn-danger"
+                  data-toggle="tooltip"
+                  title="{% trans "NO content in this version" %}"
+                href="#">{% core_icon 'remove' False %}</a>
+
+              {% endif %}
+
         </li>
-
       </ul>
 
       <div class="spacer10"></div>
