@@ -435,26 +435,39 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
 
             try:
                 with transaction.atomic():
-                    # This will run accepts() automatically.
-                    processor.process(
-                        instance,
-                        # parameters must be a dict(); if not
-                        # set in the chained item, it can be
-                        # None, which can crash process code.
-                        parameters=parameters,
-                        verbose=verbose,
-                        force=force,
-                        commit=commit
-                    )
+                    try:
+                        # This will run accepts() automatically.
+                        processor.process(
+                            instance,
+                            # parameters must be a dict(); if not
+                            # set in the chained item, it can be
+                            # None, which can crash process code.
+                            parameters=parameters,
+                            verbose=verbose,
+                            force=force,
+                            commit=commit
+                        )
 
-            except InstanceNotAcceptedException:
-                continue
+                    except InstanceNotAcceptedException:
+                        # Don't make transaction.atomic() fail for that.
+                        continue
+
+                    except StopProcessingException:
+                        # Don't make transaction.atomic() fail for
+                        # that, it would wipe what was already done.
+                        LOGGER.info(u'%s [run]: stopping processing of '
+                                    u'%s %s after %s, on explicit stop '
+                                    u'request.',
+                                    self, instance._meta.verbose_name,
+                                    instance.id, processor)
+                        break
 
             except SoftTimeLimitExceeded as e:
                 LOGGER.error(u'%s: runtime took too long for %s #%s, '
-                             u'stopped while running %s.', self,
-                             instance._meta.verbose_name, instance.id,
-                             processor)
+                             u'stopped while running %s (transaction '
+                             u'was rolled back, instance left intact).',
+                             self, instance._meta.verbose_name,
+                             instance.id, processor)
 
                 # NOTE: we record the chained item, not the processor itself,
                 # else we don't know in which chain the processing failed.
@@ -464,16 +477,11 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
                 all_went_ok = False
                 break
 
-            except StopProcessingException:
-                LOGGER.info(u'%s [run]: stopping processing %s %s after %s '
-                            u'upon explicit stop request by processor.',
-                            self, instance._meta.verbose_name,
-                            instance.id, processor)
-                break
-
             except Exception as e:
-                LOGGER.exception(u'%s [run]: processing %s %s with %s failed',
-                                 self, instance._meta.verbose_name,
+                LOGGER.exception(u'%s [run]: processing %s %s with %s '
+                                 u'failed (transaction was rolled back, '
+                                 u'instance left intact).', self,
+                                 instance._meta.verbose_name,
                                  instance.id, processor)
 
                 # See previous comment about same call to save_error().
