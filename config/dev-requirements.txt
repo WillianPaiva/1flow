@@ -13,10 +13,12 @@ django-haystack-panel==0.2.1
 django-debug-toolbar==1.2
 flake8==2.0
 guppy==0.1.10
-ipython==2.3
+ipython==2.4
+jsonschema==2.4
 line-profiler==1.0b3
 paramiko==1.15.1
 pip-tools==0.3.4
 sqlparse==0.1.9
 Werkzeug==0.9.4
+terminado==0.4
 pygraphviz==1.2
