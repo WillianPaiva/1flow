@@ -412,14 +412,20 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
                 instance.processing_parameters
             )
 
-            for category in processor.categories.all():
-                if not parameters.get('process_{0}'.format(category.slug),
-                                      True):
-                    if verbose:
-                        LOGGER.warning(u'%s [run]: skipped processor %s at '
-                                       u'pos. %s, bypassed by parameters.',
-                                       self, processor, item.position)
-                    continue
+            if isinstance(processor, Processor):
+                # NOTE: Skipping if `process_category=False` is only valid for
+                # processors. We cannot skip chains, because even if they are
+                # tagged with category X, some of their processors can still
+                # process other things. And BTW, the chain itself will not
+                # alter the instance, only processors will.
+                for category in processor.categories.all():
+                    if not parameters.get('process_{0}'.format(category.slug),
+                                          True):
+                        if verbose:
+                            LOGGER.warning(u'%s [run]: skipped processor %s at '
+                                           u'pos. %s, bypassed by parameters.',
+                                           self, processor, item.position)
+                        continue
 
             if verbose and settings.DEBUG:
                 LOGGER.debug(u'%s [run]: running %s at pos. %s, verbose=%s, '
