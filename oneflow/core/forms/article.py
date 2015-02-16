@@ -78,7 +78,7 @@ class ArticleEditExcerptForm(DynamicModeEditForm):
     def __init__(self, *args, **kwargs):
         """ Hello pep257. You know I love you. """
 
-        super(ArticleEditContentForm, self).__init__(*args, **kwargs)
+        super(ArticleEditExcerptForm, self).__init__(*args, **kwargs)
 
         self.set_editor_field_widget(
             'excerpt',
@@ -116,7 +116,7 @@ class HistoricalArticleEditExcerptForm(DynamicModeEditForm):
     def __init__(self, *args, **kwargs):
         """ Hello pep257. You know I love you. """
 
-        super(HistoricalArticleEditContentForm, self).__init__(*args, **kwargs)
+        super(HistoricalArticleEditExcerptForm, self).__init__(*args, **kwargs)
 
         self.set_editor_field_widget(
             'excerpt',
