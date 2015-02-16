@@ -830,12 +830,16 @@ LOGGING = {
 
 # ————————————————————————————————————————————————————————————————————— iPython
 
+if 'shell_plus' in sys.argv:
+    os.environ['PYTHONPATH'] = BASE_ROOT + ':.'
+
 # For django-extensions ipython notebook
 IPYTHON_ARGUMENTS = [
     # must stay here.
-    '--ext', 'django_extensions.management.notebook_extension',
-
-    "--NotebookApp.ip='*'",
+    # '--ext', 'django_extensions.management.notebook_extension',
+    '--InteractiveShellApp.extra_extension=django_extensions.management.notebook_extension',
+    '--NotebookApp.ip="*"',
     '--NotebookApp.open_browser=False',
+    '--NotebookApp.notebook_dir={0}/shell_ipynb'.format(BASE_ROOT),
     # '--debug',
 ]
