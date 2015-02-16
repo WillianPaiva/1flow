@@ -22,7 +22,7 @@ import json
 # import uuid
 import logging
 
-# from statsd import statsd
+from statsd import statsd
 # from constance import config
 from transmeta import TransMeta
 # from json_field import JSONField
@@ -46,8 +46,9 @@ from ..language import Language
 
 from ..common import DjangoUser as User  # ORIGINS,
 
-from category import ProcessorCategory
-from exceptions import (
+from .category import ProcessorCategory
+from .processor import Processor
+from .exceptions import (
     InstanceNotAcceptedException,
     StopProcessingException,
     NeverProcessException,
@@ -346,8 +347,11 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
 
         return chain_must_abort
 
-    def instance_error(self, instance, processor, exception):
-        """ create a processing error on an instance for a processor. """
+    def record_instance_error(self, instance, processor, exception):
+        """ create a processing error on an instance for a processor.
+
+        .. note:: this will update statsd appropriately.
+        """
 
         try:
             instance.processing_errors.create(
@@ -360,6 +364,59 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
                              u'on %s %s with %s (exc. was: %s)', self,
                              instance._meta.verbose_name, instance.id,
                              processor, unicode(exception))
+
+        else:
+            self.update_statsd_errors_count(processor, instance, 1)
+
+    def update_statsd_errors_count(self, processor, instance, delta_value):
+        """ Send statsd delta_value for workflow processor categories. """
+
+        # We don't report stats errors for chains, only processors.
+        # For chains this would mean too much false-positive stats,
+        # they can have too many categories.
+        if isinstance(processor.item, Processor):
+
+            workflow_categories = processor.item.categories.exclude(
+                # Sorry for this too-bare selector.
+                # It's the simplest way for now.
+                slug__contains=u'-')
+
+            if workflow_categories.exists():
+                # Graphite will complain (or ignore)
+                # if there are spaces in the name.
+                plural_name = slugify(
+                    instance._meta.verbose_name_plural.lower())
+
+                with statsd.pipeline() as spipe:
+                    for category in workflow_categories.all():
+                        spipe.gauge(
+                            '{0}.counts.{1}_errors'.format(
+                                plural_name,
+                                category.slug),
+                            delta_value, delta=True)
+
+    def clear_previous_errors(self, instance, processors, verbose=True):
+        """ clear all instance errors related to some processors.
+
+        .. note:: this will update statsd appropriately.
+        """
+
+        # This should select only temporary errors, because definitive
+        # ones have a `chain` field but no `processor`.
+        previous_errors = instance.processing_errors.filter(
+            processor__in=processors)
+
+        if previous_errors.exists():
+            errors_count = previous_errors.count()
+
+            for processor in processors:
+                self.update_statsd_errors_count(processor, instance, -1)
+
+            previous_errors.delete()
+
+            if verbose:
+                LOGGER.info(u'%s: cleared now-obsolete previous %s '
+                            u'error(s).', self, errors_count)
 
     def run(self, instance, verbose=True, force=False, commit=True):
         """ Run the processing chain on a given instance.
@@ -412,14 +469,20 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
                 instance.processing_parameters
             )
 
-            for category in processor.categories.all():
-                if not parameters.get('process_{0}'.format(category.slug),
-                                      True):
-                    if verbose:
-                        LOGGER.warning(u'%s [run]: skipped processor %s at '
-                                       u'pos. %s, bypassed by parameters.',
-                                       self, processor, item.position)
-                    continue
+            if isinstance(processor, Processor):
+                # NOTE: Skipping if `process_category=False` is only valid for
+                # processors. We cannot skip chains, because even if they are
+                # tagged with category X, some of their processors can still
+                # process other things. And BTW, the chain itself will not
+                # alter the instance, only processors will.
+                for category in processor.categories.all():
+                    if not parameters.get('process_{0}'.format(category.slug),
+                                          True):
+                        if verbose:
+                            LOGGER.warning(u'%s [run]: skipped processor %s at '
+                                           u'pos. %s, bypassed by parameters.',
+                                           self, processor, item.position)
+                        continue
 
             if verbose and settings.DEBUG:
                 LOGGER.debug(u'%s [run]: running %s at pos. %s, verbose=%s, '
@@ -429,67 +492,63 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
 
             try:
                 with transaction.atomic():
-                    # This will run accepts() automatically.
-                    processor.process(
-                        instance,
-                        # parameters must be a dict(); if not
-                        # set in the chained item, it can be
-                        # None, which can crash process code.
-                        parameters=parameters,
-                        verbose=verbose,
-                        force=force,
-                        commit=commit
-                    )
+                    try:
+                        # This will run accepts() automatically.
+                        processor.process(
+                            instance,
+                            # parameters must be a dict(); if not
+                            # set in the chained item, it can be
+                            # None, which can crash process code.
+                            parameters=parameters,
+                            verbose=verbose,
+                            force=force,
+                            commit=commit
+                        )
 
-            except InstanceNotAcceptedException:
-                continue
+                    except InstanceNotAcceptedException:
+                        # Don't make transaction.atomic() fail for that.
+                        continue
+
+                    except StopProcessingException:
+                        # Don't make transaction.atomic() fail for
+                        # that, it would wipe what was already done.
+                        LOGGER.info(u'%s [run]: stopping processing of '
+                                    u'%s %s after %s, on explicit stop '
+                                    u'request.',
+                                    self, instance._meta.verbose_name,
+                                    instance.id, processor)
+                        break
 
             except SoftTimeLimitExceeded as e:
                 LOGGER.error(u'%s: runtime took too long for %s #%s, '
-                             u'stopped while running %s.', self,
-                             instance._meta.verbose_name, instance.id,
-                             processor)
+                             u'stopped while running %s (transaction '
+                             u'was rolled back, instance left intact).',
+                             self, instance._meta.verbose_name,
+                             instance.id, processor)
 
                 # NOTE: we record the chained item, not the processor itself,
                 # else we don't know in which chain the processing failed.
                 # Only the processor is not sufficient, because we don't know
                 # what happened before it in the chain.
-                self.instance_error(instance, item, e)
+                self.record_instance_error(instance, item, e)
                 all_went_ok = False
                 break
 
-            except StopProcessingException:
-                LOGGER.info(u'%s [run]: stopping processing %s %s after %s '
-                            u'upon explicit stop request by processor.',
-                            self, instance._meta.verbose_name,
-                            instance.id, processor)
-                break
-
             except Exception as e:
-                LOGGER.exception(u'%s [run]: processing %s %s with %s failed',
-                                 self, instance._meta.verbose_name,
+                LOGGER.exception(u'%s [run]: processing %s %s with %s '
+                                 u'failed (transaction was rolled back, '
+                                 u'instance left intact).', self,
+                                 instance._meta.verbose_name,
                                  instance.id, processor)
 
                 # See previous comment about same call to save_error().
-                self.instance_error(instance, item, e)
+                self.record_instance_error(instance, item, e)
                 all_went_ok = False
                 break
 
         if all_went_ok:
 
-            # This should select only temporary errors, because definitive
-            # ones have a `chain` field but no `processor`.
-            previous_errors = instance.processing_errors.filter(
-                processor__in=processors)
-
-            if previous_errors.exists():
-                errors_count = previous_errors.count()
-
-                previous_errors.delete()
-
-                if verbose:
-                    LOGGER.info(u'%s: cleared now-obsolete previous %s '
-                                u'error(s).', self, errors_count)
+            self.clear_previous_errors(instance, processors, verbose=verbose)
 
         if verbose:
             LOGGER.info(u'%s [run]: processed %s %s.', self,

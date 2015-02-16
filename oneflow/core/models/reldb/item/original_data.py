@@ -185,6 +185,9 @@ def BaseItem_add_original_data_method(self, name, value, launch_task=False,
     responsibility of the caller (or the programmer) to do it somewhere.
     """
 
+    # self_name = self._meta.verbose_name
+    self_id = self.id
+
     try:
         od = self.original_data
 
@@ -206,10 +209,10 @@ def BaseItem_add_original_data_method(self, name, value, launch_task=False,
             the_task = globals()['baseitem_postprocess_original_data_task']
 
             if apply_now:
-                the_task.apply((self.id, ))
+                the_task.apply((self_id, ))
 
             else:
-                the_task.delay(self.id)
+                the_task.delay(self_id)
 
     return od
 
@@ -238,9 +241,12 @@ def BaseItem_postprocess_original_data_method(self, force=False,
                                               commit=True, first_run=True):
     """ Generic method for original data post_processing. """
 
+    self_name = self._meta.verbose_name
+    self_id = self.id
+
     if self.duplicate_of_id:
         LOGGER.warning(u'Not post-processing original data of duplicate '
-                       u'%s #%s.', self._meta.model.__name__, self.id)
+                       u'%s %s.', self_name, self_id)
         return
         # raise OriginalDataStopProcessingException
 
@@ -254,8 +260,8 @@ def BaseItem_postprocess_original_data_method(self, force=False,
     meth = methods_table.get(self.origin, None)
 
     if meth is None:
-        LOGGER.warning(u'No method to post-process origin type %s of '
-                       u'item %s.', self.origin, self)
+        LOGGER.warning(u'%s %s: no method to post-process origin type %s.',
+                       self_name, self_id, self.origin)
         return
 
     try:
@@ -276,24 +282,27 @@ def BaseItem_postprocess_original_data_method(self, force=False,
             raise RuntimeError(u'Running postprocess_original_data() should '
                                u'not happen twice automatically.')
     except:
-        LOGGER.exception(u'Exception while post-processing '
-                         u'original data for %s', self)
+        LOGGER.exception(u'%s %s: cxception while post-processing %s '
+                         u'original data', self_name, self_id, self.origin)
     else:
-        LOGGER.info(u'Post-processed original data for %s.', self)
+        LOGGER.info(u'%s %s: post-processed %s original data.',
+                    self_name, self_id, self.origin)
 
 
 def BaseItem_postprocess_guess_original_data_method(self, force=False,
                                                     commit=True):
 
-    need_save = False
-
+    need_save  = False
+    self_name  = self._meta.verbose_name
+    self_id    = self.id
     old_origin = self.origin
 
     try:
         original_data = self.original_data
 
     except:
-        LOGGER.warning(u'Created original data for item %s.', self)
+        LOGGER.warning(u'%s %s: created original data on the fly.',
+                       self_name, self_id)
         original_data = OriginalData(item=self)
         original_data.save()
         return
@@ -315,12 +324,12 @@ def BaseItem_postprocess_guess_original_data_method(self, force=False,
             self.save()
 
         if old_origin is None:
-            LOGGER.warning(u'Found origin type %s for item %s which had '
-                           u'none before.', self.origin, self)
+            LOGGER.warning(u'%s %s: discovered origin type %s, none before.',
+                           self_name, self_id, self.origin)
 
         else:
-            LOGGER.warning(u'Switched origin from %s to %s for item %s.',
-                           old_origin, self.origin, self)
+            LOGGER.warning(u'%s %s: switched origin from %s to %s.',
+                           self_name, self_id, old_origin, self.origin)
 
         raise OriginalDataReprocessException()
 
@@ -447,6 +456,9 @@ def BaseItem_postprocess_google_reader_data_method(self, force=False,
 def BaseItem_postprocess_twitter_data_method(self, force=True, commit=True):
     """ Post-process the original tweet to make our tweet richer. """
 
+    self_name = self._meta.verbose_name
+    self_id = self.id
+
     if not isinstance(self, Tweet):
 
         # In case a double origin is found (eg. Twitter then RSS), this
@@ -459,8 +471,7 @@ def BaseItem_postprocess_twitter_data_method(self, force=True, commit=True):
         # have to stop here. We are a web article coming from a Tweet, we
         # have no original data anyway, nothing to process.
         LOGGER.warning(u'Not post-processing twitter original data of '
-                       u'non-tweet %s #%s.',
-                       self._meta.model.__name__, self.id)
+                       u'non-tweet %s %s.', self_name, self_id)
         raise OriginalDataIncompatibleException
 
     if self.original_data.twitter_processed and not force:
@@ -471,7 +482,8 @@ def BaseItem_postprocess_twitter_data_method(self, force=True, commit=True):
 
     if json_tweet:
 
-        LOGGER.debug(u'Post-processing Twitter data for %s…', self)
+        LOGGER.debug(u'%s %s: post-processing Twitter data…',
+                     self_name, self_id)
 
         language = Language.get_by_code(json_tweet['lang'])
 
@@ -507,7 +519,8 @@ def BaseItem_postprocess_twitter_data_method(self, force=True, commit=True):
             self.tags.add(*tags)
 
     else:
-        LOGGER.warning(u'Original data for %s is empty!', self)
+        LOGGER.warning(u'%s %s: %s original data is empty!',
+                       self_name, self_id, self.origin)
 
     self.original_data.twitter_processed = True
     self.original_data.save()

@@ -32,7 +32,12 @@ from .read import ReadShareForm  # NOQA
 
 from .website import WebSiteEditProcessingParametersForm  # NOQA
 
-from .article import HistoricalArticleEditContentForm  # NOQA
+from .article import (  # NOQA
+    ArticleEditExcerptForm,
+    ArticleEditContentForm,
+    HistoricalArticleEditExcerptForm,
+    HistoricalArticleEditContentForm,
+)
 
 # —————————————————————————————————————————————————————————————————————— E-mail
 

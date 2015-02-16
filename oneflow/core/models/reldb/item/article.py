@@ -551,16 +551,15 @@ def article_pre_save(instance, **kwargs):
     if not article.slug:
         article.slug = slugify(article.name)
 
-    if settings.DEBUG:
-        if getattr(instance, 'skip_history_when_saving', False):
-            LOGGER.info(u'%s %s: SAVE without history.',
-                        instance._meta.verbose_name,
-                        instance.id)
-
-        else:
-            LOGGER.info(u'%s %s: SAVE WITH HISTORY.',
-                        instance._meta.verbose_name,
-                        instance.id)
+    # if settings.DEBUG:
+    #     if getattr(instance, 'skip_history_when_saving', False):
+    #         LOGGER.info(u'%s %s: SAVE without history.',
+    #                     instance._meta.verbose_name,
+    #                     instance.id)
+    #     else:
+    #         LOGGER.info(u'%s %s: SAVE WITH HISTORY.',
+    #                     instance._meta.verbose_name,
+    #                     instance.id)
 
 
 def article_post_save(instance, **kwargs):

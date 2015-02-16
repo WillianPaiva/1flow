@@ -544,7 +544,7 @@ def edit_field(request, klass, oid, form_class):
                          klass)
         return HttpResponseTemporaryServerError()
 
-    if 'history_id' in (x.name for x in HistoricalArticle._meta.fields):
+    if 'history_id' in (x.name for x in obj_class._meta.fields):
         obj = get_object_or_404(obj_class, history_id=oid)
 
     else:

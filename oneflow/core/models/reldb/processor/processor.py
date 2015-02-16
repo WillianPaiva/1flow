@@ -48,7 +48,11 @@ from ..language import Language
 # from oneflow.base.utils.http import split_url
 
 from ..common import DjangoUser as User  # ORIGINS,
-from exceptions import ProcessorSecurityException, InstanceNotAcceptedException
+from exceptions import (
+    StopProcessingException,
+    ProcessorSecurityException,
+    InstanceNotAcceptedException,
+)
 from category import ProcessorCategory
 
 LOGGER = logging.getLogger(__name__)
@@ -348,8 +352,14 @@ data.result = processor_function({2})
         try:
             result = self._internal_exec(self.accept_code,
                                          instance, **kwargs)
-        except:
-            LOGGER.error(u'%s: exception while running accepts() code.', self)
+
+        except StopProcessingException:
+            # Don't bother sentry with this.
+            raise
+
+        except Exception, e:
+            LOGGER.error(u'%s: %s raised while running accepts() code.',
+                         self, e.__class__.__name__)
             raise
 
         if verbose:
@@ -388,9 +398,14 @@ data.result = processor_function({2})
             try:
                 result = self._internal_exec(self.process_code,
                                              instance, **kwargs)
-            except:
-                LOGGER.error(u'%s: exception while running process() code.',
-                             self)
+
+            except StopProcessingException:
+                # Don't bother sentry with this.
+                raise
+
+            except Exception, e:
+                LOGGER.error(u'%s: %s raised while running process() code.',
+                             self, e.__class__.__name__)
                 raise
 
             if verbose:

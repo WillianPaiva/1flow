@@ -404,7 +404,7 @@ class TwitterFeed(BaseFeed):
 
         return False
 
-    def refresh_feed_internal(self, force=False):
+    def refresh_feed_internal(self, verbose=True, force=False, commit=True):
         """ Refresh a twitter feed. """
 
         LOGGER.info(u'Refreshing Twitter feed %s…', self)

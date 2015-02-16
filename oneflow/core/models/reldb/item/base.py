@@ -314,7 +314,7 @@ class BaseItem(PolymorphicModel,
         """
 
         try:
-            return self.feeds.all()[0]
+            return self.feeds.all().first()
 
         except IndexError:
             return None
@@ -602,11 +602,15 @@ class BaseItem(PolymorphicModel,
 
             bad_reads = self.bad_reads.all()
 
-            if verbose:
-                LOGGER.info(u'Article %s activating %s bad reads…',
-                            self, bad_reads.count())
+            if not bad_reads.exists():
+                return
 
-            for read in bad_reads:
+            if verbose:
+                LOGGER.info(u'%s %s: activating %s bad reads…',
+                            self._meta.verbose_name, self.id,
+                            bad_reads.count())
+
+            for read in bad_reads.iterator():
                 try:
                     if extended_check:
                         read.check_subscriptions()
@@ -620,13 +624,14 @@ class BaseItem(PolymorphicModel,
                     # if some of them have dangling subscriptions references.
                     # But this is harmless, because they will be corrected
                     # later in the global check.
-                    LOGGER.exception(u'Activation failed for Read #%s from '
-                                     u'Article #%s.', read.id, self.id)
+                    LOGGER.exception(u'%s %s: read %s activation failed.',
+                                     self._meta.verbose_name, self.id, read.id)
 
         else:
             if verbose:
-                LOGGER.warning(u'Will not activate reads of bad article %s',
-                               self)
+                LOGGER.warning(u'%s %s: currently BAD, aborting reads '
+                               u'activation.', self._meta.verbose_name,
+                               self.id)
 
 
 # ——————————————————————————————————————————————————————————————————————— Tasks

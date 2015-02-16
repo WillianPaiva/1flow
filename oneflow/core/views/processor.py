@@ -65,7 +65,7 @@ class ProcessorListCreateView(mixins.ListCreateViewMixin,
 
         filters = filter_param.split(u' ')
 
-        LOGGER.info(u'%s', filters)
+        # LOGGER.info(u'processor view filters: %s', filters)
 
         filters_fields = {
             'active': ('is_active', True),
@@ -114,6 +114,16 @@ class ProcessorListCreateView(mixins.ListCreateViewMixin,
                     filter_name = a_filter.split(':', 1)[1]
                     field_name, field_value = filters_fields[filter_name]
                     params = {field_name: not field_value}
+
+            elif a_filter.startswith(u'grep:'):
+                grep_text = a_filter.split(u':', 1)[1]
+
+                qs = qs.filter(
+                    Q(requirements__icontains=grep_text)
+                    | Q(parameters__icontains=grep_text)
+                    | Q(accept_code__icontains=grep_text)
+                    | Q(process_code__icontains=grep_text)
+                )
 
             else:
                 params = {'name__icontains': a_filter}
