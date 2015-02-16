@@ -242,9 +242,9 @@ def production():
     env.branch = 'develop'
 
     env.sparks_options = {
-        'shell_arguments': {
-            'command_post_args': "--NotebookApp.ip='*'",
-        },
+        # 'shell_arguments': {
+        #     'command_post_args': "--NotebookApp.ip='*'",
+        # },
 
         'worker_information': {
             'worker_mongo': (
