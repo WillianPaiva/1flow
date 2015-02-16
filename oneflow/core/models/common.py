@@ -57,6 +57,8 @@ CONTENT_TYPES = NamedTupleChoices(
     # The next/future one (supports footnotes and cool stuff).
     ('MULTIMD', 4, _(u'MultiMarkdown')),
 
+    ('CLEANED_HTML', 9, _(u'Cleaned HTML')),
+
     # Other types, which will probably go into dedicated models.
     ('IMAGE', 100, _(u'Image')),
     ('VIDEO', 200, _(u'Video')),
