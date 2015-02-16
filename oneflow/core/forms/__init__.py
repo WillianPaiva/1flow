@@ -32,6 +32,8 @@ from .read import ReadShareForm  # NOQA
 
 from .website import WebSiteEditProcessingParametersForm  # NOQA
 
+from .article import HistoricalArticleEditContentForm  # NOQA
+
 # —————————————————————————————————————————————————————————————————————— E-mail
 
 from mailaccount import MailAccountForm  # NOQA

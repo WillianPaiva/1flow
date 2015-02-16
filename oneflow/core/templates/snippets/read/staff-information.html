@@ -94,7 +94,28 @@
         <li>{% core_label reads 'default' %}</li>
 
         {% captureas histories %}<span data-toggle="tooltip" title="{% trans "article versions in history" %}">{% core_icon 'archive' %} {{ article.history.count }}</span>{% endcaptureas %}
-        <li>{% core_label histories 'default' %}</li>
+        <li>{% core_label histories 'default' %}
+
+        <ul>
+            {% for history in article.history.reverse %}
+              {% if history.content %}
+                <li>#{{ forloop.counter }}:
+
+            <a id="edit-history-content-{{ history.history_id }}"
+                  href="{% url 'edit_field' klass='HistoricalArticle' oid=history.history_id form_class='HistoricalArticleEditContentForm' %}"
+                  data-toggle="modal" data-target="#"
+                  data-tooltip="tooltip"
+                  title="{% trans "Edit version content" %}"
+                  class="btn btn-xs btn-default centered popover-top">
+                  {{ CONTENT_TYPES|symlookup:history.content_type }}
+                {% core_icon 'edit' False %}</a> ({{ history.content|length|naturalsize }})
+
+              </li>
+              {% endif %}
+            {% endfor %}
+
+        </ul>
+        </li>
 
       </ul>
 

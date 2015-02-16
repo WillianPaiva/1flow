@@ -59,6 +59,7 @@ from ..models import (  # NOQA
     Processor,
     ChainedItem,
     WebSite,
+    HistoricalArticle,
     IMPORT_STATUS,
     CONTENT_TYPES_FINAL,
 )
@@ -543,7 +544,11 @@ def edit_field(request, klass, oid, form_class):
                          klass)
         return HttpResponseTemporaryServerError()
 
-    obj = get_object_or_404(obj_class, id=oid)
+    if 'history_id' in (x.name for x in HistoricalArticle._meta.fields):
+        obj = get_object_or_404(obj_class, history_id=oid)
+
+    else:
+        obj = get_object_or_404(obj_class, id=oid)
 
     try:
         if obj.user != request.user \
