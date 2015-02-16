@@ -65,7 +65,7 @@ class ProcessorListCreateView(mixins.ListCreateViewMixin,
 
         filters = filter_param.split(u' ')
 
-        LOGGER.info(u'%s', filters)
+        # LOGGER.info(u'processor view filters: %s', filters)
 
         filters_fields = {
             'active': ('is_active', True),
