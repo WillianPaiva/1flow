@@ -30,35 +30,117 @@ from django import forms
 # from django.utils.translation import ugettext as _
 from codemirror import CodeMirrorTextarea
 
-from ..models import HistoricalArticle, CONTENT_TYPES
+from ..models import Article, HistoricalArticle, CONTENT_TYPES
 
 
 LOGGER = logging.getLogger(__name__)
 
 
-class HistoricalArticleEditContentForm(forms.ModelForm):
+class DynamicModeEditForm(forms.ModelForm):
 
-    """ Edit an article history content. """
+    """ a common form for all subsequent classes. """
 
     # Catched in the edit_field modal, avoid ESC/click-outside.
     prevent_accidental_close = True
+
+    def set_editor_field_widget(self, field_name, mode):
+        """ Create a field widget and set attributes accordingly. """
+
+        self.fields[field_name].widget = CodeMirrorTextarea(
+            mode=mode,
+            addon_js=settings.CODEMIRROR_ADDONS_JS,
+            addon_css=settings.CODEMIRROR_ADDONS_CSS,
+            keymap=settings.CODEMIRROR_KEYMAP,
+        )
+
+    def test_html_content(self, content):
+        """ Return True if content is likely to contain HTML. """
+
+        return (
+            u'<' in content
+            and u'>' in content
+            and u'</' in content
+        )
+
+    def test_content_type_html(self, content_type):
+        """ Return True if content_type is HTML or cleaned HTML. """
+
+        return content_type in (
+            CONTENT_TYPES.HTML,
+            CONTENT_TYPES.CLEANED_HTML,
+        )
+
+
+class ArticleEditExcerptForm(DynamicModeEditForm):
+
+    """ Edit an article excerpt. """
+
+    def __init__(self, *args, **kwargs):
+        """ Hello pep257. You know I love you. """
+
+        super(ArticleEditContentForm, self).__init__(*args, **kwargs)
+
+        self.set_editor_field_widget(
+            'excerpt',
+            'html' if self.test_html_content(self.instance.excerpt)
+            else 'markdown')
+
+    class Meta:
+        model = Article
+        fields = ('excerpt', )
+
+
+class ArticleEditContentForm(DynamicModeEditForm):
+
+    """ Edit an article content. """
+
+    def __init__(self, *args, **kwargs):
+        """ Hello pep257. You know I love you. """
+
+        super(ArticleEditContentForm, self).__init__(*args, **kwargs)
+
+        self.set_editor_field_widget(
+            'content',
+            'html' if self.test_content_type_html(self.instance.content_type)
+            else 'markdown')
+
+    class Meta:
+        model = Article
+        fields = ('content', )
+
+
+class HistoricalArticleEditExcerptForm(DynamicModeEditForm):
+
+    """ Edit an article history excerpt. """
 
     def __init__(self, *args, **kwargs):
         """ Hello pep257. You know I love you. """
 
         super(HistoricalArticleEditContentForm, self).__init__(*args, **kwargs)
 
-        mode = (
-            'html' if self.instance.content_type == CONTENT_TYPES.HTML
-            else 'markdown'
-        )
+        self.set_editor_field_widget(
+            'excerpt',
+            'html' if self.test_html_content(self.instance.excerpt)
+            else 'markdown')
 
-        self.fields['content'].widget = CodeMirrorTextarea(
-            mode=mode,
-            addon_js=settings.CODEMIRROR_ADDONS_JS,
-            addon_css=settings.CODEMIRROR_ADDONS_CSS,
-            keymap=settings.CODEMIRROR_KEYMAP,
-        )
+    class Meta:
+        model = HistoricalArticle
+        fields = ('excerpt', )
+
+
+class HistoricalArticleEditContentForm(DynamicModeEditForm):
+
+    """ Edit an article history content. """
+
+    def __init__(self, *args, **kwargs):
+        """ Hello pep257. You know I love you. """
+
+        super(HistoricalArticleEditContentForm, self).__init__(*args, **kwargs)
+
+        self.set_editor_field_widget(
+            'content',
+            'html' if self.test_content_type_html(self.instance.content_type)
+            else 'markdown')
 
     class Meta:
         model = HistoricalArticle
