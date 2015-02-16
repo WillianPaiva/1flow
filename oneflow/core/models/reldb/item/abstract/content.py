@@ -22,15 +22,10 @@
 import logging
 
 import re
-import gc
 import mistune
 import requests
-import strainer
 import html2text
-import newspaper
-import breadability.readable
 
-from bs4 import BeautifulSoup
 from statsd import statsd
 from constance import config
 from markdown_deux import markdown as mk2_markdown
@@ -44,7 +39,6 @@ from markdown_deux import markdown as mk2_markdown
 # from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.utils.text import slugify
 
 # from oneflow.base.utils import register_task_method
 from oneflow.base.utils.http import clean_url
@@ -61,7 +55,6 @@ from ...common import (
     CONTENT_TYPES,
     CONTENT_TYPES_FINAL,
     CONTENT_PREPARSING_NEEDS_GHOST,
-    ORIGINS,
     REQUEST_BASE_HEADERS,
 )
 from ...website import WebSite
@@ -497,72 +490,6 @@ class ContentItem(models.Model):
 
     # ————————————————————————————————————————————————————————— Content related
 
-    def extract_and_set_title(self, content=None, force=False, commit=True):
-        """ Try to extract title from the HTML content, and set the article
-            title from there. """
-
-        if self.origin == ORIGINS.WRITING:
-            raise RuntimeError(u'Calling extract_and_set_title() '
-                               u'on written items is nonsense!')
-
-        # Article can now be imported from various origins.
-        # Eg. Twitter entities include articles URLs that we
-        # fetch from the internet like any other WEBIMPORT item.
-
-        if self.origin in (ORIGINS.FEEDPARSER,
-                           ORIGINS.GOOGLE_READER) and not force:
-            LOGGER.info(u'Skipped title extraction on non-imported item '
-                        u'#%s (use `force=True`).', self.id)
-            return
-
-        if self.name and not self.name.endswith(self.url):
-            # In normal conditions (RSS/Atom feeds), the title has already
-            # been set by the fetcher task, from the feed. No need to do the
-            # work twice.
-            #
-            # NOTE: this will probably change with twitter and other social
-            # related imports, thus we'll have to rework the conditions.
-            LOGGER.error(u'NO WAY I will overwrite already-set name of '
-                         u'item #%s, even with `force=True`.', self.id)
-            return
-
-        if content is None:
-            if self.content_type == CONTENT_TYPES.HTML:
-                content = self.content
-
-            else:
-                # Sadly, we have to reget/reparse the content.
-                # Hopefully, this is only used in extreme cases,
-                # and not the common one.
-                try:
-                    content, encoding = self.prepare_content_text(url=self.url)
-
-                except:
-                    LOGGER.exception(u'Could not extract title of %s #%s',
-                                     self._meta.verbose_name, self.id)
-
-        old_title = self.name
-
-        try:
-            self.name = BeautifulSoup(content).find(
-                'title').contents[0].strip()
-
-        except:
-            LOGGER.exception(u'Could not extract title of %s #%s',
-                             self._meta.verbose_name, self.id)
-
-        else:
-            LOGGER.info(u'Changed title of %s #%s from “%s” to “%s”.',
-                        self._meta.verbose_name, self.id,
-                        old_title, self.name)
-
-            self.slug = slugify(self.name)
-
-        if commit:
-            self.save()
-
-        return content
-
     def prepare_content_text(self, url=None):
         """ :param:`url` should be sinfon the case of multipage content. """
 
@@ -602,196 +529,6 @@ class ContentItem(models.Model):
         raise NotTextHtmlException(u"Content is not text/html "
                                    u"but %s." % content_type,
                                    response=response)
-
-    def fetch_content_text_one_page(self, url=None):
-        """ Internal function. Please do not call.
-            Use :meth:`fetch_content_text` instead. """
-
-        content, encoding = self.prepare_content_text(url=url)
-
-        if not encoding:
-            LOGGER.warning(u'Could not properly detect encoding for '
-                           u'%s #%s, using utf-8 as fallback.',
-                           self._meta.verbose_name, self.id)
-            encoding = 'utf-8'
-
-        if config.ARTICLE_FETCHING_DEBUG:
-            try:
-                raise NotImplementedError(
-                    'Review encode/decode for multi-parsers.')
-
-                LOGGER.info(u'————————— #%s HTML %s > %s —————————'
-                            u'\n%s\n'
-                            u'————————— end #%s HTML —————————',
-                            self.id, content.__class__.__name__, encoding,
-                            content.decode(encoding), self.id)
-            except:
-                LOGGER.exception(u'Could not log source HTML content of '
-                                 u'article %s.', self)
-
-        self.extract_and_set_title(content, commit=False)
-
-        successfully_parsed = False
-
-        for parser in ('lxml', 'html5lib', ):
-
-            STRAINER_EXTRACTOR = strainer.Strainer(parser=parser,
-                                                   add_score=True)
-
-            # Strainer is bogus, it logs everything on 'root'
-            # logger, we cannot disable it selectively. Doomed.
-            logging.disable(logging.WARNING)
-
-            try:
-                content = STRAINER_EXTRACTOR.feed(content, encoding=encoding)
-                successfully_parsed = True
-
-            except:
-                logging.disable(logging.NOTSET)
-                LOGGER.exception(u'Strainer extraction [parser=%s] '
-                                 u'failed for %s #%s', parser,
-                                 self._meta.verbose_name, self.id)
-            else:
-                logging.disable(logging.NOTSET)
-
-            del STRAINER_EXTRACTOR
-            gc.collect()
-
-            if successfully_parsed:
-                break
-
-        if not successfully_parsed:
-
-            # Breadability logs too much, too.
-            logging.disable(logging.WARNING)
-
-            try:
-                breadability_article = breadability.readable.Article(
-                    content, url=self.url)
-                content = breadability_article.readable
-                successfully_parsed = True
-
-            except:
-                logging.disable(logging.NOTSET)
-                LOGGER.exception(u'Breadability extraction failed for '
-                                 u'%s #%s', self._meta.verbose_name, self.id)
-            else:
-                logging.disable(logging.NOTSET)
-
-        if not successfully_parsed:
-            newspaper_article = newspaper.Article(url=self.url)
-            newspaper_article.download()
-            # newspaper_article.parse()
-            content = newspaper_article.html
-
-        # TODO: remove noscript blocks ?
-        #
-        # TODO: remove ads (after noscript because they
-        #       seem to be buried down in them)
-        #       eg. <noscript><a href="http://ad.doubleclick.net/jump/clickz.us/ # NOQA
-        #       media/media-buying;page=article;artid=2280150;topcat=media;
-        #       cat=media-buying;static=;sect=site;tag=measurement;pos=txt1;
-        #       tile=8;sz=2x1;ord=123456789?" target="_blank"><img alt=""
-        #       src="http://ad.doubleclick.net/ad/clickz.us/media/media-buying; # NOQA
-        #       page=article;artid=2280150;topcat=media;cat=media-buying;
-        #       static=;sect=site;tag=measurement;pos=txt1;tile=8;sz=2x1;
-        #       ord=123456789?"/></a></noscript>
-
-        if config.ARTICLE_FETCHING_DEBUG:
-            try:
-                raise NotImplementedError(
-                    'Review encode/decode for multi-parsers.')
-
-                LOGGER.info(u'————————— #%s CLEANED %s > %s —————————'
-                            u'\n%s\n'
-                            u'————————— end #%s CLEANED —————————',
-                            self.id, content.__class__.__name__, encoding,
-                            content.decode(encoding), self.id)
-            except:
-                LOGGER.exception(u'Could not log cleaned HTML content of '
-                                 u'article %s.', self)
-
-        return content, encoding
-
-    def fetch_content_text(self, force=False, commit=True):
-
-        if config.ARTICLE_FETCHING_TEXT_DISABLED:
-            LOGGER.info(u'Article text fetching disabled in configuration.')
-            return
-
-        if self.content_type in (None, CONTENT_TYPES.NONE):
-
-            LOGGER.info(u'Parsing text content for %s #%s…',
-                        self._meta.verbose_name, self.id)
-
-            if self.likely_multipage_content():
-                # If everything goes well, 'content' should be an utf-8
-                # encoded strings. See the non-paginated version for details.
-                content    = u''
-                next_link  = self.url
-                pages      = 0
-
-                while next_link is not None:
-                    pages       += 1
-                    current_page, encoding = \
-                        self.fetch_content_text_one_page(next_link)
-                    content     += str(current_page)
-                    next_link    = self.get_next_page_link(current_page)
-
-                    if next_link:
-                        self.pages_urls.append(next_link)
-
-                LOGGER.info(u'Fetched %s page(s) for %s #%s.', pages,
-                            self._meta.verbose_name, self.id)
-
-            else:
-                # first: http://www.crummy.com/software/BeautifulSoup/bs4/doc/#non-pretty-printing # NOQA
-                # then: InvalidStringData: strings in documents must be valid UTF-8 (MongoEngine says) # NOQA
-                content, encoding = self.fetch_content_text_one_page()
-
-                if type(content) == type(u''):
-                    # A modern too already did the job.
-                    self.content = content
-
-                else:
-                    # Strainer gives us a non-unicode boo-boo.
-                    try:
-                        self.content = content.decode(
-                            eventual_encoding=encoding)
-
-                    except TypeError:
-                        # Oops, data doesn't come from strainer…
-                        self.content = content.decode(encoding=encoding)
-
-            self.content_type = CONTENT_TYPES.HTML
-
-            if self.content_error:
-                statsd.gauge('articles.counts.content_errors', -1, delta=True)
-                self.content_error = None
-
-            if commit:
-                self.save()
-
-            with statsd.pipeline() as spipe:
-                spipe.gauge('articles.counts.empty', -1, delta=True)
-                spipe.gauge('articles.counts.html', 1, delta=True)
-
-        #
-        # TODO: parse HTML links to find other 1flow articles and convert
-        # the URLs to the versions we have in database. Thus, clicking on
-        # these links should immediately display the 1flow version, from
-        # where the user will be able to get to the public website if he
-        # wants. NOTE: this is just the easy part of this idea ;-)
-        #
-
-        #
-        # TODO: HTML word count here, before markdown ?
-        #
-
-        self.convert_to_markdown(force=force, commit=commit)
-
-        LOGGER.info(u'Done parsing content for %s #%s.',
-                    self._meta.verbose_name, self.id)
 
     # —————————————————————————————————————————————————————————————— Conversion
 
