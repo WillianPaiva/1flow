@@ -375,7 +375,8 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
                 LOGGER.info(u'%s: cleared now-obsolete previous %s '
                             u'error(s).', self, errors_count)
 
-    def process(self, instance, verbose=True, force=False, commit=True):
+    def process(self, instance, verbose=True, force=False,
+                commit=True, parameters=None):
         """ Run the processing chain on a given instance.
 
         The chain takes care of input types, argument passing and exceptions.
@@ -424,7 +425,7 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
                                    u'pos. %s.', self, processor, item.position)
                 continue
 
-            parameters = combine_dicts(
+            parameters = parameters or combine_dicts(
                 item.parameters or {},
 
                 # As documented in combine_dicts, the instance parameters
