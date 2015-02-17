@@ -252,6 +252,23 @@ READ_STATUS_DATA = {
         'undo_icon':     pgettext_lazy(u'awesome-font icon name', u'check'),
     },
 
+    'is_auto_read': {
+        'list_name':     pgettext_lazy(u'past participle, plural',
+                                       u'marked read automatically'),
+        'view_name':     u'auto_read',
+        'list_url':      _(ur'^read/auto_read/$'),
+        'do_title':      _(u'Mark as read without recording you read it'),
+        'list_headers':  (_(u'%(count)s article marked read automatically'),
+                          _(u'%(count)s articles marked read automatically')),
+        'undo_title':    _(u'Mark as unread'),
+        'do_label':      _(u'Mark auto-read'),
+        'undo_label':    _(u'Mark unread'),
+        'status_label':  pgettext_lazy(u'adjective', u'auto-read'),
+        'do_icon':       pgettext_lazy(u'awesome-font icon name',
+                                       u'check-empty'),
+        'undo_icon':     pgettext_lazy(u'awesome-font icon name', u'check'),
+    },
+
     'is_starred': {
         'list_name':     _(u'starred'),
         'view_name':     u'starred',
