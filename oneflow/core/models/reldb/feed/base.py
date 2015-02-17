@@ -1052,7 +1052,7 @@ def basefeed_export_content_classmethod(cls, since, until=None,
                 folders=folders).filter(
                     feed__is_active=True).values_list(
                         'feed_id', flat=True)
-        ).select_related('items', 'tags')
+        ).prefetch_related('tags')
 
     active_feeds_count = active_feeds.count()
 
