@@ -512,7 +512,11 @@ def export_content(request, **kwargs):
 
             content = {
                 'result': 'ERR',
-                'sentry_id': request.sentry['id'],
+
+                # ID is unavailable if the exception
+                # happens in the low-level WSGI.
+                'sentry_id': getattr(request, 'sentry',
+                                     {'id': 'unavailable'})['id'],
                 'data': unicode(e),
             }
 
