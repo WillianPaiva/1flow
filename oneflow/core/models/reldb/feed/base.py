@@ -1079,7 +1079,7 @@ def basefeed_export_content_classmethod(cls, since, until=None,
 
         if isinstance(feed, TwitterFeed):
             new_items = feed.good_items.tweet()
-            related_fields.append('entities', 'entities__language',
+            related_fields.extend('entities', 'entities__language',
                                   'entities__authors', 'entities__tags', )
 
         else:
