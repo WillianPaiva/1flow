@@ -26,7 +26,14 @@
   {% endif %}
 
   {% read_action article 'is_bookmarked' with_text %}
-  {% read_action article 'is_read' with_text %}
+
+  {% if side_actions %}
+    {% read_action article 'is_read' with_text %}
+
+  {% else %}
+    {% read_action article 'is_auto_read' with_text %}
+
+  {% endif %}
 
   {% if end_actions or side_actions %}
 
