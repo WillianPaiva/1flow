@@ -436,8 +436,12 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
                            force=force, commit=commit):
             return
 
+        # We cannot filter directly on item__is_active=True
+        # because of the generic relation. Too bad.
         processors = self.chained_items.filter(
-            is_active=True).order_by('position')
+            is_active=True).order_by('position').prefetch_related(
+            'item', 'item_categories'
+        )
 
         for item in processors:
 
@@ -475,8 +479,9 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
                 # tagged with category X, some of their processors can still
                 # process other things. And BTW, the chain itself will not
                 # alter the instance, only processors will.
-                for category in processor.categories.all():
-                    if not parameters.get('process_{0}'.format(category.slug),
+                for category_slug in processor.categories.all().values_list(
+                        'slug', flat=True):
+                    if not parameters.get('process_{0}'.format(category_slug),
                                           True):
                         if verbose:
                             LOGGER.warning(u'%s [run]: skipped processor %s at '
