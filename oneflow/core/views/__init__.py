@@ -508,8 +508,7 @@ def export_content(request, **kwargs):
             }
 
         except Exception as e:
-            LOGGER.exception(u'Could not export content',
-                             extra={'request': request})
+            LOGGER.exception(u'Could not export content')
 
             content = {
                 'result': 'ERR',
