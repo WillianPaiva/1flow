@@ -69,7 +69,7 @@ class Command(BaseCommand):
         total_count = 0
         failed_count = 0
 
-        for article in articles:
+        for article in articles.iterator():
             url_absolute = article.url_absolute
             is_orphaned = article.is_orphaned
 
@@ -88,16 +88,16 @@ class Command(BaseCommand):
                 article.process(verbose=test)
 
             except:
-                LOGGER.exception(u'Could not fetch article %s', article)
+                LOGGER.exception(u'Could not reparse article %s', article)
                 failed_count += 1
 
             else:
-                LOGGER.info(u'Succesfully fetched %s.', article)
+                LOGGER.info(u'Succesfully reparsed %s.', article)
                 total_count += 1
 
         if test:
             LOGGER.info(u'Article content: \n\n%s', article.content)
 
         else:
-            LOGGER.info(u'Re-fetched %s articles from %s (failed: %s).',
+            LOGGER.info(u'Re-parsed %s articles from %s (failed: %s).',
                         total_count, website, failed_count)
