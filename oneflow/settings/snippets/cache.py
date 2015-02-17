@@ -76,7 +76,8 @@ CACHEOPS = {
     # for 30 minutes. This includes request.user or
     # post.author access, where Post.author is a foreign
     # key to auth.User.
-    'auth.user': {'ops': 'get', 'timeout': CACHE_ONE_DAY},
+    'auth.user': {'ops': 'get', 'timeout': CACHE_ONE_WEEK},
+    'core.usercounters': {'ops': 'all', 'timeout': CACHE_ONE_WEEK},
 
     # Automatically cache all gets and queryset fetches
     # to other django.contrib.auth and oneflow.base models
@@ -91,11 +92,14 @@ CACHEOPS = {
     'core.processor': {'ops': 'all', 'timeout': CACHE_ONE_DAY},
     'core.processingchain': {'ops': 'all', 'timeout': CACHE_ONE_DAY},
     'core.chaineditem': {'ops': 'all', 'timeout': CACHE_ONE_DAY},
+    'core.processorcategory': {'ops': 'all', 'timeout': CACHE_ONE_WEEK},
 
     'core.language': {'ops': 'all', 'timeout': CACHE_ONE_WEEK},
     'core.simpletag': {'ops': 'all', 'timeout': CACHE_ONE_WEEK},
     'core.website': {'ops': 'all', 'timeout': CACHE_ONE_WEEK},
     'core.author': {'ops': 'all', 'timeout': CACHE_ONE_WEEK},
+
+    'core.folder': {'ops': 'all', 'timeout': CACHE_ONE_DAY},
 
     'core.basefeed': {'ops': 'all', 'timeout': CACHE_ONE_HOUR},
     'core.rssatomfeed': {'ops': 'all', 'timeout': CACHE_ONE_HOUR},
