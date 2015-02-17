@@ -1057,7 +1057,7 @@ def basefeed_export_content_classmethod(cls, since, until=None,
     active_feeds_count = active_feeds.count()
 
     exported_websites = {}
-    exported_feeds = []
+    exported_feeds_count = 0
     total_exported_items_count = 0
 
     if active_feeds_count:
@@ -1152,17 +1152,17 @@ def basefeed_export_content_classmethod(cls, since, until=None,
         if exported_website:
             exported_feed['website'] = exported_website
 
-        exported_feeds.append(exported_feed)
+        yield exported_feed
+
+        exported_feeds_count += 1
 
         LOGGER.info(u'%s items exported in feed %s.',
                     exported_items_count, feed)
 
-    exported_feeds_count = len(exported_feeds)
-
     LOGGER.info(u'%s feeds and %s total items exported.',
                 exported_feeds_count, total_exported_items_count)
 
-    return exported_feeds
+    # return exported_feeds
 
 setattr(BaseFeed, 'export_content',
         classmethod(basefeed_export_content_classmethod))
