@@ -1075,11 +1075,12 @@ def basefeed_export_content_classmethod(cls, since, until=None,
 
     for feed in active_feeds:
 
-        related_fields = ['language', 'author', 'tags', ]
+        related_fields = ['language', 'authors', 'tags', ]
 
         if isinstance(feed, TwitterFeed):
             new_items = feed.good_items.tweet()
-            related_fields.append('entities')
+            related_fields.append('entities', 'entities__language',
+                                  'entities__authors', 'entities__tags', )
 
         else:
             new_items = feed.good_items
@@ -1095,7 +1096,7 @@ def basefeed_export_content_classmethod(cls, since, until=None,
             new_items = new_items.filter(
                 date_published__lt=until)
 
-        new_items.select_related(*related_fields)
+        new_items.prefetch_related(*related_fields)
 
         new_items_count = new_items.count()
 
@@ -1104,11 +1105,11 @@ def basefeed_export_content_classmethod(cls, since, until=None,
 
         exported_items = []
 
-        for item in new_items:
+        for item in new_items.iterator():
             exported_items.append(export_one_item(item))
 
             if hasattr(item, 'entities'):
-                for entity in item.entities.all():
+                for entity in item.entities.all().iterator():
                     exported_items.append(export_one_item(entity,
                                                           related_to=item))
 
