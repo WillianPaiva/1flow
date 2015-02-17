@@ -425,25 +425,6 @@ class BaseItem(PolymorphicModel,
 
         """
 
-        # HEADS UP: this test is already run by the processing
-        #           chain run() method. No need to do it twice.
-        #
-        #           Doing it here would seem logical and would
-        #           mimic the processor.process() method.
-        #
-        #           But doing it in the chain is much more
-        #           legitimate as the chain is in charge of error
-        #           handling, and notably the translation of
-        #           NeverProcessException into a definitive
-        #           ProcessingError.
-        #
-        # if self.processing_must_abort(verbose=verbose,
-        #                               force=force,
-        #                               commit=commit):
-        #     return
-
-        # try:
-
         processing_chain = self.get_processing_chain()
 
         if processing_chain is None:
@@ -451,36 +432,8 @@ class BaseItem(PolymorphicModel,
                                   force=force, commit=commit)
 
         else:
-            processing_chain.run(self, verbose=verbose,
-                                 force=force, commit=commit)
-
-        # TODO: forward any exception to subclasses, for them to handle
-        #       them individually, depending on the exception type, if
-        #       needed.
-
-        # except NotTextHtmlException as e:
-        #     statsd.gauge('articles.counts.content_errors', 1, delta=True)
-        #     self.content_error = str(e)
-        #     self.save()
-        #     LOGGER.error(u'No text/html to extract in article %s.', self)
-        #     return
-
-        # except requests.ConnectionError as e:
-        #     statsd.gauge('articles.counts.content_errors', 1, delta=True)
-        #     self.content_error = str(e)
-        #     self.save()
-        #     LOGGER.error(u'Connection failed while fetching %s #%s.',
-        #                  self._meta.verbose_name, self.id)
-        #     return
-
-        # except Exception as e:
-        #     # TODO: except urllib2.error: retry with longer delay.
-        #     statsd.gauge('articles.counts.content_errors', 1, delta=True)
-        #     self.content_error = str(e)
-        #     self.save()
-        #     LOGGER.exception(u'Extraction failed for %s #%s.',
-        #                      self._meta.verbose_name, self.id)
-        #     return
+            processing_chain.process(self, verbose=verbose,
+                                     force=force, commit=commit)
 
         self.activate_reads(verbose=verbose)
 
