@@ -19,6 +19,8 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
+import json
+from bson import json_util
 import logging
 
 from django.http import (
@@ -26,7 +28,8 @@ from django.http import (
     HttpResponseBadRequest,
     HttpResponseForbidden,
     HttpResponseRedirect,
-    HttpResponse
+    HttpResponse,
+    StreamingHttpResponse,
 )
 from django.core.urlresolvers import reverse
 from django.conf import settings
@@ -35,7 +38,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.template import add_to_builtins
 from django.utils.translation import ugettext_lazy as _
 
-from sparks.django.http import JsonResponse, human_user_agent
+from sparks.django.http import human_user_agent  # , JsonResponse
 from sparks.django.utils import HttpResponseTemporaryServerError
 
 from oneflow.base.utils.dateutils import now
@@ -501,30 +504,63 @@ def export_content(request, **kwargs):
 
     if format == 'json':
 
-        try:
-            content = {
-                'result': 'OK',
-                'data': BaseFeed.export_content(since, until, folder=folder),
-            }
+        def content_generator():
 
-        except Exception as e:
-            LOGGER.exception(u'Could not export content')
+            pretty_print = human_user_agent(request)
+            new_lines = u'\n' if pretty_print else u''
+            indentation = u'  ' if pretty_print else u''
 
-            content = {
-                'result': 'ERR',
+            yield u'{{{0}{1}"data":{0}{1}{1}[{0}'.format(new_lines,
+                                                         indentation)
+
+            data_chunked = 0
+
+            try:
+                for chunk in BaseFeed.export_content(since, until,
+                                                     folder=folder):
+
+                    # With JSON util, we overcome the now-traditional
+                    # "datetime is not JSON serializable" error.
+                    yield u'{1}{1}{1}{2},{0}'.format(
+                        new_lines,
+                        indentation,
+                        json.dumps(
+                            chunk,
+                            default=json_util.default,
+                            indent=2
+                            if pretty_print else None,
+
+                            separators=(',', ': ')
+                            if pretty_print else (',', ':'),
+                        )
+                    )
+
+                    data_chunked += 1
+
+            except Exception as e:
+                LOGGER.exception(u'Could not export content')
 
                 # ID is unavailable if the exception
                 # happens in the low-level WSGI.
-                'sentry_id': getattr(request, 'sentry',
-                                     {'id': 'unavailable'})['id'],
-                'data': unicode(e),
-            }
+                yield u'{1}{1}],{0}{1}{1}"sentry_id": "{2}",{0}'.format(
+                    new_lines, indentation,
+                    getattr(request, 'sentry', {'id': 'unavailable'})['id'])
 
-        if human_user_agent(request):
-            return JsonResponse(content, indent=2)
+                yield u'{1}{1}"exception": "{2}",{0}'.format(
+                    new_lines, indentation, unicode(e))
 
-        return JsonResponse(content)
+                yield u'{1}{1}"result": "ERR"{0}}}'.format(new_lines,
+                                                           indentation)
 
+            else:
+                yield u'{1}{1}],{0}{1}{1}"result": "OK"{0}}}'.format(
+                    new_lines, indentation)
+
+        response = StreamingHttpResponse(content_generator(),
+                                         content_type="application/json")
+
+        response['Content-Disposition'] = 'attachment; filename="export.json"'
+        return response
     else:
         return HttpResponseBadRequest(u'Unknown format “%s”' % format)
 
