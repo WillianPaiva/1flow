@@ -1052,12 +1052,12 @@ def basefeed_export_content_classmethod(cls, since, until=None,
                 folders=folders).filter(
                     feed__is_active=True).values_list(
                         'feed_id', flat=True)
-        ).select_related('items', 'tags')
+        ).prefetch_related('tags')
 
     active_feeds_count = active_feeds.count()
 
     exported_websites = {}
-    exported_feeds = []
+    exported_feeds_count = 0
     total_exported_items_count = 0
 
     if active_feeds_count:
@@ -1075,11 +1075,12 @@ def basefeed_export_content_classmethod(cls, since, until=None,
 
     for feed in active_feeds:
 
-        related_fields = ['language', 'author', 'tags', ]
+        related_fields = ['language', 'authors', 'tags', ]
 
         if isinstance(feed, TwitterFeed):
             new_items = feed.good_items.tweet()
-            related_fields.append('entities')
+            related_fields.extend(['entities', 'entities__language',
+                                  'entities__authors', 'entities__tags', ])
 
         else:
             new_items = feed.good_items
@@ -1095,7 +1096,7 @@ def basefeed_export_content_classmethod(cls, since, until=None,
             new_items = new_items.filter(
                 date_published__lt=until)
 
-        new_items.select_related(*related_fields)
+        new_items.prefetch_related(*related_fields)
 
         new_items_count = new_items.count()
 
@@ -1104,11 +1105,11 @@ def basefeed_export_content_classmethod(cls, since, until=None,
 
         exported_items = []
 
-        for item in new_items:
+        for item in new_items.iterator():
             exported_items.append(export_one_item(item))
 
             if hasattr(item, 'entities'):
-                for entity in item.entities.all():
+                for entity in item.entities.all().iterator():
                     exported_items.append(export_one_item(entity,
                                                           related_to=item))
 
@@ -1151,17 +1152,17 @@ def basefeed_export_content_classmethod(cls, since, until=None,
         if exported_website:
             exported_feed['website'] = exported_website
 
-        exported_feeds.append(exported_feed)
+        yield exported_feed
+
+        exported_feeds_count += 1
 
         LOGGER.info(u'%s items exported in feed %s.',
                     exported_items_count, feed)
 
-    exported_feeds_count = len(exported_feeds)
-
     LOGGER.info(u'%s feeds and %s total items exported.',
                 exported_feeds_count, total_exported_items_count)
 
-    return exported_feeds
+    # return exported_feeds
 
 setattr(BaseFeed, 'export_content',
         classmethod(basefeed_export_content_classmethod))
