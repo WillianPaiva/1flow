@@ -247,49 +247,6 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
 
         return False
 
-    def process(self, instance, **kwargs):
-        """ Mimic the processor.process() method, but for a chain.
-
-        This method is different from the :meth:`run`() method because
-        it doesn't include error and transaction management. These are
-        implemented at the root-calling chain level (the one which executes
-        :meth:`run`()); the current chain called with :meth:`process`() is
-        seen as a blackbox and as only one transaction as a whole.
-
-        In the case of chains with depth levels > 2, still only the calling
-        one has transaction management. This could be seen as a feature or
-        as a missing feature. We can still change things if there is a use
-        case. for now, simplicity is the rule.
-        """
-
-        verbose = kwargs.get('verbose', True)
-
-        if verbose and settings.DEBUG:
-            LOGGER.debug(u'%s [process]: processing %s %s…', self,
-                         instance._meta.verbose_name, instance.id)
-
-        # See run() for implementation informations.
-        for item in self.chained_items.filter(
-                is_active=True).order_by('position'):
-
-            processor = item.item
-
-            if not processor.is_active:
-                if verbose:
-                    LOGGER.warning(u'%s [process]: skipped inactive %s at '
-                                   u'pos. %s.', self, processor, item.position)
-                continue
-
-            try:
-                processor.process(instance, **kwargs)
-
-            except InstanceNotAcceptedException:
-                continue
-
-        if verbose:
-            LOGGER.info(u'%s [process]: ran %s %s through our processors.',
-                        self, instance._meta.verbose_name, instance.id)
-
     def must_abort(self, instance, verbose=True, force=False, commit=True):
         """ Return True if the current chain must not run.
 
@@ -418,12 +375,15 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
                 LOGGER.info(u'%s: cleared now-obsolete previous %s '
                             u'error(s).', self, errors_count)
 
-    def run(self, instance, verbose=True, force=False, commit=True):
+    def process(self, instance, verbose=True, force=False, commit=True):
         """ Run the processing chain on a given instance.
 
-        The chain will itself do nothing except taking care of input types,
-        argument passing and exceptions. The processors will do the dirty
-        work and update the instance if it's in their attribution.
+        The chain takes care of input types, argument passing and exceptions.
+        Its processors will do the dirty work and update the instance if it's
+        in their attribution.
+
+        The chain process() methods has transaction management, at every
+        depth level (chains running chains running chains…).
         """
 
         if verbose and settings.DEBUG:
@@ -436,8 +396,12 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
                            force=force, commit=commit):
             return
 
+        # We cannot filter directly on item__is_active=True
+        # because of the generic relation. Too bad.
         processors = self.chained_items.filter(
-            is_active=True).order_by('position')
+            is_active=True).order_by('position').prefetch_related(
+            'item', 'item_categories'
+        )
 
         for item in processors:
 
@@ -475,8 +439,9 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
                 # tagged with category X, some of their processors can still
                 # process other things. And BTW, the chain itself will not
                 # alter the instance, only processors will.
-                for category in processor.categories.all():
-                    if not parameters.get('process_{0}'.format(category.slug),
+                for category_slug in processor.categories.all().values_list(
+                        'slug', flat=True):
+                    if not parameters.get('process_{0}'.format(category_slug),
                                           True):
                         if verbose:
                             LOGGER.warning(u'%s [run]: skipped processor %s at '
@@ -602,7 +567,7 @@ def run_processing_chains(instance, verbose=True, force=False, commit=True):
     """
 
     for chain in ProcessingChain.for_model(instance._meta.model):
-        chain.run(instance, verbose=verbose, force=force, commit=commit)
+        chain.process(instance, verbose=verbose, force=force, commit=commit)
 
 
 def get_default_processing_chain_for(model):
