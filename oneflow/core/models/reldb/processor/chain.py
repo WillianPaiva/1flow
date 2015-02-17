@@ -400,7 +400,7 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
         # because of the generic relation. Too bad.
         processors = self.chained_items.filter(
             is_active=True).order_by('position').prefetch_related(
-            'item', 'item_categories'
+            'item', 'item__categories'
         )
 
         for item in processors:
