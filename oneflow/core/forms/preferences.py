@@ -59,6 +59,7 @@ class ReadPreferencesForm(forms.ModelForm):
             'bookmarked_marks_unread',
             'reading_speed',
             'auto_mark_read_delay',
+            'mark_auto_read_hide_delay',
             'read_switches_to_fullscreen',
             'show_bottom_navbar',
         )
