@@ -171,13 +171,17 @@ Here is the list, dates (if any), and reasons (if any) of closing:
 
 You can manually reopen any of them from the admin interface.
 
-%s closed feeds were tested to see if they came back to life,
-out of which %s were reopened:
+{closed_tested} closed feeds were tested to see if they came back to life,
+out of which {reopened_count} were reopened:
 
 {reopened_list}
 
-""").format(feed_list=pretty_print_feed_list(recently_closed_feeds),
-            reopened_list=pretty_print_feed_list(reopened_list)))
+""").format(
+        feed_list=pretty_print_feed_list(recently_closed_feeds),
+        closed_tested=closed_tested,
+        reopened_count=len(reopened_list),
+        reopened_list=pretty_print_feed_list(reopened_list)),
+    )
 
     start_time = pytime.time()
 
