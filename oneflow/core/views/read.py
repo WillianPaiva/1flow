@@ -103,6 +103,12 @@ def _rwep_generate_query_kwargs(request, **kwargs):
 
         query_kwargs[parameter] = checked_value
 
+    if primary_mode == ('is_read', True):
+        # The reading history MUST avoid the auto_read, else it is too
+        # much visually polluted by items the user didn't want to read,
+        # but marked “read without history“ (in fact, auto-read).
+        query_kwargs['is_auto_read'] = False
+
     return query_kwargs, primary_mode
 
 
