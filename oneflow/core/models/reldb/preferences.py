@@ -147,6 +147,14 @@ READING_SPEED_CHOICES = (
     (1000, _(u'around 1000 wpm (really?)')),
 )
 
+MARK_AUTO_READ_HIDE_DELAY_CHOICES = (
+    (0, _(u'Keeps it in the list, but greyed out (default)')),
+    (100, _(u'Hides it immediately')),
+    (4500, _(u'Hides it after 4.5 seconds')),
+    (15000, _(u'Hides it after 15 seconds')),
+    (60000, _(u'Hides it after 1 minute')),
+)
+
 
 def read_default_reading_speed():
 
@@ -222,6 +230,19 @@ class ReadPreferences(ModelDiffMixin):
                     u'list will be automatically marked as read if it is not.'),
         default=4500, blank=True,
         choices=AUTO_MARK_READ_DELAY_CHOICES)
+
+    mark_auto_read_hide_delay = models.IntegerField(
+        verbose_name=_(u'Marking an item “read without history”'),
+        help_text=_(u'When you mark an item “read without history”, eg. you '
+                    u'just want to forget it, the item will be greyed out '
+                    u'in the reading list, and can either stay here, be '
+                    u'hidden immediately, or with a custom delay. The '
+                    u'delay eventually allows you to mark it back unread '
+                    u'or to read later, for example. In case you hide it, '
+                    u'you can still find it back in the “all” reading list, '
+                    u'where it will always be present, but greyed out.'),
+        default=0, blank=True,
+        choices=MARK_AUTO_READ_HIDE_DELAY_CHOICES)
 
     read_switches_to_fullscreen = models.BooleanField(
         verbose_name=_(u'Switch to full-screen while reading'),

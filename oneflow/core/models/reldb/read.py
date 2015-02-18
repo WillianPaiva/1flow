@@ -658,18 +658,8 @@ class Read(AbstractTaggedModel):
         self.update_cached_descriptors(operation='-' if self.is_read else '+',
                                        update_only=['unread'])
 
-    def is_auto_read_changed(self):
-        """ triggered from the view, thus by the user.
-
-        Toggles is_read too.
-        """
-
-        # If the user marks auto_read, mark read.
-        # If he marks non auto_read,  mark unread too.
-        self.is_read = self.is_auto_read
-        self.date_read = self.date_auto_read
-
-        self.is_read_changed()
+    # Note: is_auto_read_changed() is run
+    # client-side for UI update consistency.
 
     def is_starred_changed(self):
 

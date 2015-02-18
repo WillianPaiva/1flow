@@ -103,6 +103,12 @@ def _rwep_generate_query_kwargs(request, **kwargs):
 
         query_kwargs[parameter] = checked_value
 
+    if primary_mode == ('is_read', True):
+        # The reading history MUST avoid the auto_read, else it is too
+        # much visually polluted by items the user didn't want to read,
+        # but marked “read without history“ (in fact, auto-read).
+        query_kwargs['is_auto_read'] = False
+
     return query_kwargs, primary_mode
 
 
@@ -455,6 +461,7 @@ def read_with_endless_pagination(request, **kwargs):
         u'subscription': subscription,
         u'folder': folder,
         u'current_mode': primary_mode[0],
+        u'mode_negated': primary_mode[1],
         u'search': search,
         # 'user' is already there, via a context processor.
 
