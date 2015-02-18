@@ -2,6 +2,7 @@
 //'use strict';
 
 var read_actions_messages = {};
+var auto_vanish_auto_read_timers = {};
 
 function mark_something(article_id, mark_what, mark_inverse, send_notify, message, callback) {
 
@@ -89,6 +90,7 @@ function post_mark_triggers(article_id, attr_name, send_notify) {
 
     var $article      = $("#" + article_id);
     var is_bookmarked = $article.hasClass('is_bookmarked');
+    var is_auto_read  = $article.hasClass('is_auto_read');
     var is_starred    = $article.hasClass('is_starred');
     var is_archived   = $article.hasClass('is_archived');
 
@@ -142,6 +144,37 @@ function post_mark_triggers(article_id, attr_name, send_notify) {
         if (preferences.starred_marks_archived) {
             if (is_starred && !is_archived) {
                 mark_something(article_id, 'is_archived', false, send_notify);
+            }
+        }
+
+    } else if (attr_name == 'is_auto_read') {
+
+        // preferences.auto_vanish_auto_read
+        if (1) {
+
+            if (is_auto_read) {
+
+                auto_vanish_auto_read_timers[article_id] = setTimeout(function(){
+
+                    $article.addClass('vanished');
+
+                    setTimeout(function() {
+                        $article.addClass('hide');
+                    }, 600);
+
+                    delete auto_vanish_auto_read_timers[article_id];
+
+                }, 10000);
+
+            } else {
+                try {
+
+                    clearTimeout(auto_vanish_auto_read_timers[article_id]);
+                    delete auto_vanish_auto_read_timers[article_id];
+
+                } catch (err) {
+                    console.error(err);
+                }
             }
         }
 

@@ -285,6 +285,34 @@
     }
 }
 
+// HEADS UP: must come *after* the previous for correct visual result.
+// Eg. is_auto_read takes precedences, even if .not_is_read is still present.
+// this is a limitation of the JS handling. Server side the read will be
+// marked both "is_read" and "is_auto_read". Client side only "is_auto_read",
+// but it suffices to display it correctly, and at next page refresh the item
+// will be cleared from the list because it's also "read" too.
+.read-list-item.is_auto_read {
+
+    @include single-transition(opacity, 0.5s, ease-out, 0.3s);
+    opacity: 0.33;
+
+    .article-title {
+        font-weight: 300;
+    }
+}
+
+.read-list-item.not_is_auto_read {
+    @include single-transition(opacity, 0.5s, ease-out, 0.3s);
+    opacity: 1.0;
+}
+
+.read-list-item.vanished {
+    @include single-transition(opacity, 0.5s, ease-out, 0.3s);
+    //@include single-transition(height, 0.5s, ease-out, 0.3s);
+    opacity: 0.0;
+    //height: 0;
+}
+
 .read-list-item.is_read.not_is_bookmarked.not_is_starred {
     .article-title,
     .article-meta .meta {
