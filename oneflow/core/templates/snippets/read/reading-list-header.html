@@ -34,13 +34,13 @@
           <li class="dropdown">
             <button type="button" data-toggle="dropdown" data-target="#"
                 class="btn btn-default navbar-btn btn-xs dropdown-toggle">
-              <i class="icon-exchange"></i>
+              <i class="icon-exchange"></i> {# {{ current_mode }} + {{ mode_negated }} #}
             </button>
             <ul class="dropdown-menu" role="menu">
 
               {% if folder %}
 
-                {% if current_mode != "is_read" %}
+                {% if current_mode != "is_read" or current_mode == "is_read" and mode_negated %}
                     <li>{% container_reading_list_with_count 'read' 'folder' folder 'unread' _('unread') %}</li>
                 {% endif %}
 
@@ -52,7 +52,7 @@
                     <li>{% container_reading_list_with_count 'read_starred' 'folder' folder 'starred' _('starred') %}</li>
                 {% endif %}
 
-                {% if folder.read_items_count %}
+                {% if current_mode != "is_read" or current_mode == "is_read" and not mode_negated %}
                     <li>{% container_reading_list_with_count 'read_read' 'folder' folder 'read' _('read history') %}</li>
                 {% endif %}
 
@@ -75,7 +75,7 @@
 
               {% elif subscription %}
 
-                {% if current_mode != "is_read" %}
+                {% if current_mode != "is_read" or current_mode == "is_read" and mode_negated %}
                     <li>{% container_reading_list_with_count 'read' 'feed' subscription 'unread' _('unread') %}</li>
                 {% endif %}
 
@@ -87,7 +87,7 @@
                     <li>{% container_reading_list_with_count 'read_starred' 'feed' subscription 'starred' _('starred') %}</li>
                 {% endif %}
 
-                {% if subscription.read_items_count %}
+                {% if current_mode != "is_read" or current_mode == "is_read" and not mode_negated %}
                     <li>{% container_reading_list_with_count 'read_read' 'feed' subscription 'read' _('read history') %}</li>
                 {% endif %}
 

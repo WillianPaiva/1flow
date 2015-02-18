@@ -461,6 +461,7 @@ def read_with_endless_pagination(request, **kwargs):
         u'subscription': subscription,
         u'folder': folder,
         u'current_mode': primary_mode[0],
+        u'mode_negated': primary_mode[1],
         u'search': search,
         # 'user' is already there, via a context processor.
 
