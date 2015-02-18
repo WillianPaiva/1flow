@@ -90,11 +90,18 @@ function post_mark_triggers(article_id, attr_name, send_notify) {
 
     var $article      = $("#" + article_id);
     var is_bookmarked = $article.hasClass('is_bookmarked');
+    var is_read       = $article.hasClass('is_read');
     var is_auto_read  = $article.hasClass('is_auto_read');
     var is_starred    = $article.hasClass('is_starred');
     var is_archived   = $article.hasClass('is_archived');
 
     if (attr_name == 'is_bookmarked') {
+
+        // in any case, the auto_read status is cleared,
+        // but no need to notify about that.
+        if(is_bookmarked && is_auto_read) {
+            mark_something(article_id, 'is_auto_read', false, false);
+        }
 
         if (preferences.bookmarked_marks_unread) {
 
@@ -117,9 +124,25 @@ function post_mark_triggers(article_id, attr_name, send_notify) {
             }
         }
 
-    } else if (attr_name == 'is_starred') {
+    } else if (attr_name == 'is_read') {
 
         // console.debug('item ' + article_id + ' starred.');
+
+        // in any case, the auto_read status is cleared,
+        // but no need to notify about that.
+        if(is_read && is_auto_read) {
+            mark_something(article_id, 'is_auto_read', false, false);
+        }
+
+    }  else if (attr_name == 'is_starred') {
+
+        // console.debug('item ' + article_id + ' starred.');
+
+        // in any case, the auto_read status is cleared,
+        // but no need to notify about that.
+        if(is_starred && is_auto_read) {
+            mark_something(article_id, 'is_auto_read', false, false);
+        }
 
         if (preferences.starred_marks_read) {
 
@@ -143,14 +166,22 @@ function post_mark_triggers(article_id, attr_name, send_notify) {
 
         if (preferences.starred_marks_archived) {
             if (is_starred && !is_archived) {
-                mark_something(article_id, 'is_archived', false, send_notify);
+                    mark_something(article_id, 'is_archived', false, send_notify);
             }
         }
 
     } else if (attr_name == 'is_auto_read') {
 
-        // preferences.auto_vanish_auto_read
-        if (1) {
+        if ((is_auto_read && !is_read) || (!is_auto_read && is_read)) {
+            // is_auto_read syncs is_read, but do not trigger a notify.
+            // we toggle only if status is not already synchronized,
+            // else the UI is_read state will display the inverse of
+            // what is stored server-side in the DB.
+            console.log('auto_read syncs read: '+ is_auto_read)
+            mark_something(article_id, 'is_read', is_auto_read, false);
+        }
+
+        if (preferences.mark_auto_read_hide_delay) {
 
             if (is_auto_read) {
 
@@ -164,7 +195,7 @@ function post_mark_triggers(article_id, attr_name, send_notify) {
 
                     delete auto_vanish_auto_read_timers[article_id];
 
-                }, 10000);
+                }, preferences.mark_auto_read_hide_delay);
 
             } else {
                 try {

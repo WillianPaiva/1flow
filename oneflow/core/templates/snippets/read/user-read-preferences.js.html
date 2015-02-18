@@ -5,6 +5,7 @@
 
 var preferences = {
     auto_mark_read_delay:       {{ preferences.read.auto_mark_read_delay }},
+	mark_auto_read_hide_delay: {{ preferences.read.mark_auto_read_hide_delay }},
 
     {# |lower because JS doesn't like Python's booleans at all. #}
     bookmarked_marks_unread:        {{ preferences.read.bookmarked_marks_unread|lower }},
