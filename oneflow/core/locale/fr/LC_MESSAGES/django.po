@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-15 13:36+0100\n"
-"PO-Revision-Date: 2015-02-15 22:37+0009\n"
+"POT-Creation-Date: 2015-02-18 08:48+0100\n"
+"PO-Revision-Date: 2015-02-18 09:09+0009\n"
 "Last-Translator: Olivier Cortes <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -40,7 +40,7 @@ msgctxt "noun, plural"
 msgid "reads"
 msgstr "lectures"
 
-#: admin.old.gri.py:81 models/common.py:254 models/common.py:263
+#: admin.old.gri.py:81 models/common.py:273 models/common.py:282
 #: templates/snippets/read/reading-list-header.html:52
 #: templates/snippets/read/reading-list-header.html:88
 #: templates/snippets/selector/folder.html:91
@@ -461,7 +461,7 @@ msgid "^export/(?P<since>[^/]+)/(?P<until>[^/]+)/(?P<token>\\w{32,32})/?$"
 msgstr ""
 
 #: admin/article.py:39 models/nonrel/article.py:198
-#: models/reldb/item/abstract/content.py:162
+#: models/reldb/item/abstract/content.py:155
 msgid "Content type"
 msgstr "Type de contenu"
 
@@ -493,7 +493,7 @@ msgid "Duplicate of"
 msgstr "Duplicata de"
 
 #: admin/article.py:211 admin/mongo.py:351 models/nonrel/article.py:195
-#: models/reldb/item/abstract/content.py:157
+#: models/reldb/item/abstract/content.py:150
 msgid "Content"
 msgstr "Contenu"
 
@@ -623,7 +623,7 @@ msgstr "Staff ?"
 msgid "Superuser?"
 msgstr "Super-utilisateur ?"
 
-#: admin/mongo.py:456 models/reldb/item/article.py:156
+#: admin/mongo.py:456 models/reldb/item/article.py:151
 msgid "Article"
 msgstr "Article"
 
@@ -658,7 +658,7 @@ msgstr "Actif ?"
 
 #: admin/processor.py:96 models/reldb/website.py:161
 #: models/reldb/feed/base.py:320 models/reldb/processor/category.py:119
-#: models/reldb/processor/chain.py:167 models/reldb/processor/processor.py:187
+#: models/reldb/processor/chain.py:168 models/reldb/processor/processor.py:191
 msgid "Description"
 msgstr "Description"
 
@@ -862,432 +862,468 @@ msgstr "Markdown"
 msgid "MultiMarkdown"
 msgstr "MultiMarkdown"
 
-#: models/common.py:61 models/reldb/folder.py:134 models/reldb/website.py:141
+#: models/common.py:60
+msgid "Cleaned HTML"
+msgstr "HTML nettoyé"
+
+#: models/common.py:63 models/reldb/folder.py:134 models/reldb/website.py:141
 msgid "Image"
 msgstr "Image"
 
-#: models/common.py:62
+#: models/common.py:64
 msgid "Video"
 msgstr "Vidéo"
 
-#: models/common.py:63
+#: models/common.py:65
 msgid "Bookmark"
 msgstr "Marque-page"
 
-#: models/common.py:82
+#: models/common.py:84
 msgid "None or Unknown"
 msgstr "Aucun ou inconnu"
 
-#: models/common.py:83
+#: models/common.py:85
 msgid "Google Reader"
 msgstr "Google Reader"
 
-#: models/common.py:84
+#: models/common.py:86
 msgid "RSS/Atom"
 msgstr "RSS/Atom"
 
-#: models/common.py:85
+#: models/common.py:87
 msgid "User writing"
 msgstr "Écrit utilisateur"
 
-#: models/common.py:86 templates/sources-list.html:49
+#: models/common.py:88 templates/sources-list.html:49
 msgid "Twitter"
 msgstr "Twitter"
 
-#: models/common.py:87
+#: models/common.py:89
 msgid "Web import"
 msgstr "Import web"
 
-#: models/common.py:88 templates/sources-list.html:38
+#: models/common.py:90 templates/sources-list.html:38
 msgid "E-mail"
 msgstr "E-mail"
 
-#: models/common.py:89 templates/sources-list.html:61
+#: models/common.py:91 templates/sources-list.html:61
 msgid "Facebook"
 msgstr "Facebook"
 
-#: models/common.py:90
+#: models/common.py:92
 msgid "Google Plus"
 msgstr "Google Plus"
 
-#: models/common.py:92
+#: models/common.py:94
 msgid "1flow internal origin"
 msgstr "origine interne 1flow"
 
-#: models/common.py:94
+#: models/common.py:96
 msgid "Readability import"
 msgstr "Import Readability"
 
-#: models/common.py:95
+#: models/common.py:97
 msgid "Wallabag import"
 msgstr "Import wallabag"
 
-#: models/common.py:103
+#: models/common.py:105
 msgid "not yet replaced"
 msgstr "pas encore remplacé"
 
-#: models/common.py:106
+#: models/common.py:108
 msgid "Replacing"
 msgstr "en cours de remplacement"
 
-#: models/common.py:110
+#: models/common.py:112
 msgid "Finished (no occurence left)"
 msgstr "Terminé (plus d'occurence restante)"
 
-#: models/common.py:114
+#: models/common.py:116
 msgid "One or more replacing failed"
 msgstr "Un ou plusieurs remplacement(s) a échoué"
 
-#: models/common.py:130 models/nonrel/common.py:51
+#: models/common.py:132 models/nonrel/common.py:51
 #, python-brace-format
 msgid "Imported items of {0}"
 msgstr "Éléments importés de {0}"
 
-#: models/common.py:132
+#: models/common.py:134
 #, python-brace-format
 msgid "Items sent by {0}"
 msgstr "Éléments envoyés par {0}"
 
-#: models/common.py:134
+#: models/common.py:136
 #, python-brace-format
 msgid "Received items of {0}"
 msgstr "Éléments reçus de {0}"
 
-#: models/common.py:136
+#: models/common.py:138
 #, python-brace-format
 msgid "Items written by {0}"
 msgstr "Éléments écrits par {0}"
 
-#: models/common.py:226
+#: models/common.py:228
 #, python-format
 msgid "%(count)s article"
 msgstr "%(count)s article"
 
-#: models/common.py:227
+#: models/common.py:229
 #, python-format
 msgid "%(count)s articles"
 msgstr "%(count)s articles"
 
-#: models/common.py:231
+#: models/common.py:233
 #, python-format
 msgid "%(count)s unread article"
 msgstr "%(count)s article non-lu"
 
-#: models/common.py:232
+#: models/common.py:234
 #, python-format
 msgid "%(count)s unread articles"
 msgstr "%(count)s articles non-lus"
 
-#: models/common.py:238
+#: models/common.py:240
 msgctxt "past participle, plural"
 msgid "read"
 msgstr "lus"
 
-#: models/common.py:240
+#: models/common.py:242
 msgid "^read/read/$"
 msgstr "^lire/lus/$"
 
-#: models/common.py:241
+#: models/common.py:243
 msgid "Mark as read"
 msgstr "Marquer lu"
 
-#: models/common.py:242
+#: models/common.py:244
 #, python-format
 msgid "%(count)s read article"
 msgstr "%(count)s article lu"
 
-#: models/common.py:243
+#: models/common.py:245
 #, python-format
 msgid "%(count)s read articles (by reverse read date)"
 msgstr "%(count)s articles, dans l'ordre inverse où vous les avez lus"
 
-#: models/common.py:244
+#: models/common.py:246 models/common.py:263
 msgid "Mark as unread"
 msgstr "Marquer non-lu"
 
-#: models/common.py:245
+#: models/common.py:247
 msgid "Mark read"
 msgstr "Marquer lu"
 
-#: models/common.py:246
+#: models/common.py:248 models/common.py:265
 msgid "Mark unread"
 msgstr "Marquer non-lu"
 
-#: models/common.py:247 models/nonrel/read.py:339 models/reldb/read.py:351
+#: models/common.py:249 models/nonrel/read.py:339 models/reldb/read.py:351
 msgctxt "adjective"
 msgid "read"
 msgstr "lu"
 
-#: models/common.py:249
+#: models/common.py:251 models/common.py:268
 msgctxt "awesome-font icon name"
 msgid "check-empty"
 msgstr "check-empty"
 
-#: models/common.py:250
+#: models/common.py:252 models/common.py:269
 msgctxt "awesome-font icon name"
 msgid "check"
 msgstr "check"
 
-#: models/common.py:256
+#: models/common.py:257
+msgctxt "past participle, plural"
+msgid "marked read automatically"
+msgstr "marqués lus sans historisation"
+
+#: models/common.py:259
+msgid "^read/auto_read/$"
+msgstr "^lire/lus-automatiquement/$"
+
+#: models/common.py:260
+msgid "Mark as read without recording you read it"
+msgstr "Marquer lu sans enregistrer dans l'historique de lecture"
+
+#: models/common.py:261
+#, python-format
+msgid "%(count)s article marked read automatically"
+msgstr "%(count)s article marqué lu sans historisation"
+
+#: models/common.py:262
+#, python-format
+msgid "%(count)s articles marked read automatically"
+msgstr "%(count)s articles marqués lus sans historisation"
+
+#: models/common.py:264
+msgid "Mark auto-read"
+msgstr "Marquer lu sans historisation"
+
+#: models/common.py:266
+msgctxt "adjective"
+msgid "auto-read"
+msgstr "non-historisé"
+
+#: models/common.py:275
 msgid "^read/starred/$"
 msgstr "^lire/selectionnes/$"
 
-#: models/common.py:257
+#: models/common.py:276
 msgid "Star (add to favorites)"
 msgstr "Sélectionner (ajouter aux favoris)"
 
-#: models/common.py:258
+#: models/common.py:277
 #, python-format
 msgid "%(count)s starred article"
 msgstr "%(count)s article sélectionné"
 
-#: models/common.py:259
+#: models/common.py:278
 #, python-format
 msgid "%(count)s starred articles"
 msgstr "%(count)s articles sélectionnés"
 
-#: models/common.py:260
+#: models/common.py:279
 msgid "Remove from starred/favorites"
 msgstr "Supprimer des favoris"
 
-#: models/common.py:261
+#: models/common.py:280
 msgctxt "verb"
 msgid "Star"
 msgstr "Sélectionner"
 
-#: models/common.py:262
+#: models/common.py:281
 msgid "Unstar"
 msgstr "Désélectionner"
 
-#: models/common.py:265
+#: models/common.py:284
 msgctxt "awesome-font icon name"
 msgid "star-empty"
 msgstr "star-empty"
 
-#: models/common.py:266
+#: models/common.py:285
 msgctxt "awesome-font icon name"
 msgid "star"
 msgstr "star"
 
-#: models/common.py:270 models/common.py:279
+#: models/common.py:289 models/common.py:298
 msgid "archived"
 msgstr "archivé"
 
-#: models/common.py:272
+#: models/common.py:291
 msgid "^read/archived/$"
 msgstr "^lire/archives/$"
 
-#: models/common.py:273 models/common.py:277
+#: models/common.py:292 models/common.py:296
 #: models/reldb/account/common.py:258
 msgid "Archive"
 msgstr "Archiver"
 
-#: models/common.py:274
+#: models/common.py:293
 #, python-format
 msgid "%(count)s article archived"
 msgstr "%(count)s article archivé"
 
-#: models/common.py:275
+#: models/common.py:294
 #, python-format
 msgid "%(count)s articles archived"
 msgstr "%(count)s articles archivés"
 
-#: models/common.py:276 models/common.py:278
+#: models/common.py:295 models/common.py:297
 msgid "Delete"
 msgstr "Supprimer"
 
-#: models/common.py:281
+#: models/common.py:300
 msgctxt "awesome-font icon name"
 msgid "download"
 msgstr "download"
 
-#: models/common.py:283
+#: models/common.py:302
 msgctxt "awesome-font icon name"
 msgid "archive"
 msgstr "archive"
 
-#: models/common.py:287
+#: models/common.py:306
 msgid "later"
 msgstr "plus tard"
 
-#: models/common.py:289
+#: models/common.py:308
 msgid "^read/later/$"
 msgstr "^lire/plus-tard/$"
 
-#: models/common.py:290
+#: models/common.py:309
 msgid "Keep for reading later"
 msgstr "Garder pour lire plus tard"
 
-#: models/common.py:291
+#: models/common.py:310
 #, python-format
 msgid "%(count)s article to read later"
 msgstr "%(count)s article à lire plus tard"
 
-#: models/common.py:292
+#: models/common.py:311
 #, python-format
 msgid "%(count)s articles to read later"
 msgstr "%(count)s articles à lire plus tard"
 
-#: models/common.py:293
+#: models/common.py:312
 msgid "Remove from reading list"
 msgstr "Supprimer de la liste de lecture"
 
-#: models/common.py:294 templates/navbars/read-endless.html:46
+#: models/common.py:313 templates/navbars/read-endless.html:46
 #: templatetags/coretags.py:71
 msgid "Read later"
 msgstr "Lire plus tard"
 
-#: models/common.py:295
+#: models/common.py:314
 msgid "Do not read later"
 msgstr "Ne pas lire plus tard"
 
-#: models/common.py:296
+#: models/common.py:315
 msgid "kept for later"
 msgstr "gardé pour plus tard"
 
-#: models/common.py:298
+#: models/common.py:317
 msgctxt "awesome-font icon name"
 msgid "bookmark-empty"
 msgstr "bookmark-empty"
 
-#: models/common.py:300
+#: models/common.py:319
 msgctxt "awesome-font icon name"
 msgid "bookmark"
 msgstr "bookmark"
 
-#: models/common.py:304
+#: models/common.py:323
 msgid "facts"
 msgstr "faits"
 
-#: models/common.py:306
+#: models/common.py:325
 msgid "^read/facts/$"
 msgstr "^lire/faits/$"
 
-#: models/common.py:307
+#: models/common.py:326
 msgid "Mark as fact / important event"
 msgstr "Marquer comme évènement ou fait marquant"
 
-#: models/common.py:308
+#: models/common.py:327
 #, python-format
 msgid "%(count)s article containing fact(s)"
 msgstr "%(count)s article contenant un(des) fait(s) marquant(s)"
 
-#: models/common.py:309
+#: models/common.py:328
 #, python-format
 msgid "%(count)s articles containing fact(s)"
 msgstr "%(count)s articles contenant un(des) fait(s) marquant(s)"
 
-#: models/common.py:310
+#: models/common.py:329
 msgid "Remove from facts / important events"
 msgstr "Supprimer des faits marquants"
 
-#: models/common.py:311
+#: models/common.py:330
 msgid "This article contains one or more important facts"
 msgstr "Cet article contient un ou plusieurs faits marquants"
 
-#: models/common.py:313
+#: models/common.py:332
 msgid "Mark as fact"
 msgstr "Ajouter aux faits"
 
-#: models/common.py:314
+#: models/common.py:333
 msgid "Unmark fact"
 msgstr "Enlever des faits"
 
-#: models/common.py:315
+#: models/common.py:334
 msgid "fact"
 msgstr "fait"
 
-#: models/common.py:317
+#: models/common.py:336
 msgctxt "awesome-font icon name"
 msgid "circle-blank"
 msgstr "circle-blank"
 
-#: models/common.py:319
+#: models/common.py:338
 msgctxt "awesome-font icon name"
 msgid "bullseye"
 msgstr "bullseye"
 
-#: models/common.py:323
+#: models/common.py:342
 msgid "numbers"
 msgstr "chiffres"
 
-#: models/common.py:325
+#: models/common.py:344
 msgid "^read/numbers/$"
 msgstr "^lire/chiffres/$"
 
-#: models/common.py:326
+#: models/common.py:345
 msgid "Mark as valuable number"
 msgstr "Marquer comme chiffre clef"
 
-#: models/common.py:327
+#: models/common.py:346
 #, python-format
 msgid "%(count)s article containing number(s)"
 msgstr "%(count)s article contenant des chiffres clefs"
 
-#: models/common.py:328
+#: models/common.py:347
 #, python-format
 msgid "%(count)s articles containing number(s)"
 msgstr "%(count)s articles contenant des chiffres clefs"
 
-#: models/common.py:329
+#: models/common.py:348
 msgid "Remove from valuable numbers"
 msgstr "Supprimer des chiffres clefs"
 
-#: models/common.py:330
+#: models/common.py:349
 msgid "This article contains quantified numbers for a watch."
 msgstr "Cet article contient des chiffres clefs ou des données quantifiées."
 
-#: models/common.py:332
+#: models/common.py:351
 msgid "Mark as number"
 msgstr "Ajouter aux chiffres"
 
-#: models/common.py:333
+#: models/common.py:352
 msgid "Unmark number"
 msgstr "Enlever des chiffres"
 
-#: models/common.py:334
+#: models/common.py:353
 msgid "number"
 msgstr "chiffre clef"
 
-#: models/common.py:336 models/common.py:340
+#: models/common.py:355 models/common.py:359
 msgctxt "awesome-font icon name"
 msgid "bar-chart"
 msgstr "bar-chart"
 
-#: models/common.py:338
+#: models/common.py:357
 msgctxt "awesome-font icon name"
 msgid "bar-chart icon-flip-horizontal"
 msgstr "bar-chart icon-flip-horizontal"
 
-#: models/common.py:345 models/common.py:357
+#: models/common.py:364 models/common.py:376
 msgid "analysis"
 msgstr "analyse"
 
-#: models/common.py:347
+#: models/common.py:366
 msgid "^read/analysis/$"
 msgstr "^lire/analyses/$"
 
-#: models/common.py:348
+#: models/common.py:367
 msgid "Mark as analysis / study / research"
 msgstr "Ajouter aux analyses / études / travaux de recherches"
 
-#: models/common.py:349
+#: models/common.py:368
 #, python-format
 msgctxt "singular"
 msgid "%(count)s analysis"
 msgstr "%(count)s analyse"
 
-#: models/common.py:350
+#: models/common.py:369
 #, python-format
 msgctxt "plural"
 msgid "%(count)s analysis"
 msgstr "%(count)s analyses"
 
-#: models/common.py:351
+#: models/common.py:370
 msgid "Unmark analysis / study / research"
 msgstr "Supprimer des analyses / études / travaux de recherches"
 
-#: models/common.py:352
+#: models/common.py:371
 msgid ""
 "This article contains an analysis, an in-depth study or a research "
 "publication."
@@ -1295,340 +1331,340 @@ msgstr ""
 "Cet article contient une analyse, une étude de cas ou une publication de "
 "travaux de recherches."
 
-#: models/common.py:355
+#: models/common.py:374
 msgid "Mark as analysis"
 msgstr "Ajouter aux analyses"
 
-#: models/common.py:356
+#: models/common.py:375
 msgid "Unmark analysis"
 msgstr "Enlever des analyses"
 
-#: models/common.py:359 models/common.py:363
+#: models/common.py:378 models/common.py:382
 msgctxt "awesome-font icon name"
 msgid "beaker"
 msgstr "beaker"
 
-#: models/common.py:361
+#: models/common.py:380
 msgctxt "awesome-font icon name"
 msgid "beaker icon-rotate-90"
 msgstr "beaker icon-rotate-90"
 
-#: models/common.py:367
+#: models/common.py:386
 msgid "quotes"
 msgstr "citations"
 
-#: models/common.py:369
+#: models/common.py:388
 msgid "^read/quotes/$"
 msgstr "^lire/citations/$"
 
-#: models/common.py:370
+#: models/common.py:389
 msgid "Mark as containing quote(s) from people you consider important"
 msgstr ""
 "Marquer comme conteneur de citation(s) de personne(s) considérée(s) "
 "importante(s)"
 
-#: models/common.py:372
+#: models/common.py:391
 #, python-format
 msgid "%(count)s article containing quote(s)"
 msgstr "%(count)s article contenant une(des) citation(s)"
 
-#: models/common.py:373
+#: models/common.py:392
 #, python-format
 msgid "%(count)s articles containing quote(s)"
 msgstr "%(count)s articles contenant une(des) citation(s)"
 
-#: models/common.py:374
+#: models/common.py:393
 msgid "Unmark as containing quotes (people are not famous anymore?)"
 msgstr "Supprimer des citations"
 
-#: models/common.py:376
+#: models/common.py:395
 msgid "This article contains one or more quote from people you care about."
 msgstr ""
 "Cet article contient une ou plusieurs citations de personnes auxquelles vous"
 " tenez."
 
-#: models/common.py:378
+#: models/common.py:397
 msgid "Mark as quote"
 msgstr "Ajouter aux citations"
 
-#: models/common.py:379
+#: models/common.py:398
 msgid "Unmark quote"
 msgstr "Enlever des citations"
 
-#: models/common.py:380
+#: models/common.py:399
 msgctxt "noun"
 msgid "quote"
 msgstr "citation"
 
-#: models/common.py:382 models/common.py:386
+#: models/common.py:401 models/common.py:405
 msgctxt "awesome-font icon name"
 msgid "quote-left icon-flip-vertical"
 msgstr "quote-left icon-flip-vertical"
 
-#: models/common.py:384
+#: models/common.py:403
 msgctxt "awesome-font icon name"
 msgid "quote-right"
 msgstr "quote-right"
 
-#: models/common.py:390 models/common.py:401
+#: models/common.py:409 models/common.py:420
 msgid "prospective"
 msgstr "prospective"
 
-#: models/common.py:392
+#: models/common.py:411
 msgid "^read/prospective/$"
 msgstr "^read/prospectives/$"
 
-#: models/common.py:393
+#: models/common.py:412
 msgid "Mark as prospective-related content"
 msgstr "Marquer comme élément de prospective"
 
-#: models/common.py:394
+#: models/common.py:413
 #, python-format
 msgid "%(count)s prospective article"
 msgstr "%(count)s article de prospective"
 
-#: models/common.py:395
+#: models/common.py:414
 #, python-format
 msgid "%(count)s prospective articles"
 msgstr "%(count)s articles de prospective"
 
-#: models/common.py:396
+#: models/common.py:415
 msgid "Unmark as prospective-related content"
 msgstr "Supprimer des contenus à teneur prospective"
 
-#: models/common.py:397
+#: models/common.py:416
 msgid ""
 "This article contains prospective element(s) or must-remember hypothesis."
 msgstr ""
 "Cet article contient un ou plusieurs éléments de prospective, ou des "
 "hypothèses à retenir."
 
-#: models/common.py:399
+#: models/common.py:418
 msgid "Mark as prospective"
 msgstr "Ajouter aux prospectives"
 
-#: models/common.py:400
+#: models/common.py:419
 msgid "Unmark prospective"
 msgstr "Enlever des prospectives"
 
-#: models/common.py:403 models/common.py:407
+#: models/common.py:422 models/common.py:426
 msgctxt "awesome-font icon name"
 msgid "lightbulb"
 msgstr "lightbulb"
 
-#: models/common.py:405
+#: models/common.py:424
 msgctxt "awesome-font icon name"
 msgid "lightbulb icon-rotate-180"
 msgstr "lightbulb icon-rotate-180"
 
-#: models/common.py:411
+#: models/common.py:430
 msgid "rules"
 msgstr "règlementations"
 
-#: models/common.py:413
+#: models/common.py:432
 msgid "^read/rules/$"
 msgstr "^lire/reglementations/$"
 
-#: models/common.py:414
+#: models/common.py:433
 msgid "Mark as legal/regulations-related content"
 msgstr "Marquer comme point de règlementation ou texte de loi"
 
-#: models/common.py:415
+#: models/common.py:434
 #, python-format
 msgid "%(count)s regulation-related article"
 msgstr "%(count)s article lié à la réglementation"
 
-#: models/common.py:416
+#: models/common.py:435
 #, python-format
 msgid "%(count)s regulation-related articles"
 msgstr "%(count)s articles lié à la réglementation"
 
-#: models/common.py:417
+#: models/common.py:436
 msgid "Unmark as legal content (overriden laws?)"
 msgstr "Supprimer des point de règlementation / lois"
 
-#: models/common.py:418
+#: models/common.py:437
 msgid "This article contains regulations/law/rules element(s)"
 msgstr ""
 "Cet article contient une règlementation, des textes de loi ou des "
 "informations d'ordre juridique."
 
-#: models/common.py:420
+#: models/common.py:439
 msgid "Mark as law/regul."
 msgstr "Ajouter aux règlementations"
 
-#: models/common.py:421
+#: models/common.py:440
 msgid "Unmark law/regul."
 msgstr "Enlever des réglementations"
 
-#: models/common.py:422
+#: models/common.py:441
 msgid "regulations"
 msgstr "réglementation"
 
-#: models/common.py:424 models/common.py:428
+#: models/common.py:443 models/common.py:447
 msgctxt "awesome-font icon name"
 msgid "legal icon-flip-horizontal"
 msgstr "legal icon-flip-horizontal"
 
-#: models/common.py:426
+#: models/common.py:445
 msgctxt "awesome-font icon name"
 msgid "legal icon-rotate-180"
 msgstr "legal icon-rotate-180"
 
-#: models/common.py:432
+#: models/common.py:451
 msgid "best-practices"
 msgstr "best-practices"
 
-#: models/common.py:435
+#: models/common.py:454
 msgid "^read/best-practices/$"
 msgstr "^lire/best-practices/$"
 
-#: models/common.py:436
+#: models/common.py:455
 msgid "Mark as best-practices / state of art content"
 msgstr "Ajouter aux best-practices ou état-de-l'art"
 
-#: models/common.py:438
+#: models/common.py:457
 #, python-format
 msgid "%(count)s best-practices article"
 msgstr "%(count)s article de bonnes pratiques"
 
-#: models/common.py:439
+#: models/common.py:458
 #, python-format
 msgid "%(count)s best-practices articles"
 msgstr "%(count)s articles de bonnes pratiques"
 
-#: models/common.py:440
+#: models/common.py:459
 msgid "Unmark as best-practices / state of art (has it become obsolete?)"
 msgstr "Supprimer des best-practices (c'est devenu obsolète ?)"
 
-#: models/common.py:442
+#: models/common.py:461
 msgid "This article contains best-practices /  state of art element(s)."
 msgstr "Cet article contient des best-practices ou un état de l'art."
 
-#: models/common.py:444
+#: models/common.py:463
 msgid "Mark as best-practice"
 msgstr "Ajouter aux best-practices"
 
-#: models/common.py:445
+#: models/common.py:464
 msgid "Unmark best-practice"
 msgstr "Enlever des best-practices"
 
-#: models/common.py:446
+#: models/common.py:465
 msgctxt "noun"
 msgid "know-how"
 msgstr "bonne pratique"
 
-#: models/common.py:448 models/common.py:452
+#: models/common.py:467 models/common.py:471
 msgctxt "awesome-font icon name"
 msgid "trophy"
 msgstr "trophy"
 
-#: models/common.py:450
+#: models/common.py:469
 msgctxt "awesome-font icon name"
 msgid "trophy icon-flip-vertical"
 msgstr "trophy icon-flip-vertical"
 
-#: models/common.py:456
+#: models/common.py:475
 msgid "knowlegde"
 msgstr "savoirs"
 
-#: models/common.py:458
+#: models/common.py:477
 msgid "^read/knowledge/$"
 msgstr "^lire/savoirs/$"
 
-#: models/common.py:459
+#: models/common.py:478
 msgid "Mark as a valuable piece of knowlegde for your brain or life"
 msgstr "Marquer comme une pièce de valeur pour votre cerveau ou votre vie"
 
-#: models/common.py:461
+#: models/common.py:480
 #, python-format
 msgid "%(count)s knowledge article"
 msgstr "%(count)s élément de savoir"
 
-#: models/common.py:462
+#: models/common.py:481
 #, python-format
 msgid "%(count)s knowledge articles"
 msgstr "%(count)s éléments de savoir"
 
-#: models/common.py:463
+#: models/common.py:482
 msgid "Unmark as neuronal-exciting element(s)"
 msgstr "Supprimer des éléments excitateurs de neurones"
 
-#: models/common.py:465
+#: models/common.py:484
 msgid "This article contains a valuable piece of knowlegde."
 msgstr ""
 "Cet article contient un élément de savoir ou une connaissance important(e)"
 
-#: models/common.py:467
+#: models/common.py:486
 msgid "Mark as Knowledge"
 msgstr "Ajouter aux savoirs"
 
-#: models/common.py:468
+#: models/common.py:487
 msgid "Unmark knowlegde"
 msgstr "Enlever des savoirs"
 
-#: models/common.py:469
+#: models/common.py:488
 msgid "knowledge"
 msgstr "savoir"
 
-#: models/common.py:470 models/common.py:473
+#: models/common.py:489 models/common.py:492
 msgctxt "awesome-font icon name"
 msgid "globe"
 msgstr "globe"
 
-#: models/common.py:472
+#: models/common.py:491
 msgctxt "awesome-font icon name"
 msgid "globe icon-rotate-180"
 msgstr "globe icon-rotate-180"
 
-#: models/common.py:477
+#: models/common.py:496
 msgid "funbox"
 msgstr "funbox"
 
-#: models/common.py:479
+#: models/common.py:498
 msgid "^read/fun/$"
 msgstr "^lire/drole/$"
 
-#: models/common.py:480
+#: models/common.py:499
 msgid "Mark as being fun. Are you sure?"
 msgstr "Marquer comme drôle. Ça l'est vraiment ??"
 
-#: models/common.py:481
+#: models/common.py:500
 #, python-format
 msgid "%(count)s fun article"
 msgstr "%(count)s histoire drôle"
 
-#: models/common.py:482
+#: models/common.py:501
 #, python-format
 msgid "%(count)s fun articles"
 msgstr "%(count)s histoires drôles"
 
-#: models/common.py:483
+#: models/common.py:502
 msgid "Not fun anymore, sadly."
 msgstr "C'est plus drôle du tout. Je vais pleurer."
 
-#: models/common.py:484
+#: models/common.py:503
 msgid "OMG, this thing is sooooooooo fun! LMAO!"
 msgstr "Ce truc est trop poilant !!! Je me bidonne comme un dingue !"
 
-#: models/common.py:485
+#: models/common.py:504
 msgid "Mark as fun"
 msgstr "Mettre un peu d'humour"
 
-#: models/common.py:486
+#: models/common.py:505
 msgid "Mark as boring"
 msgstr "Supprimer des blagues"
 
-#: models/common.py:487
+#: models/common.py:506
 msgid "fun"
 msgstr "drôle"
 
-#: models/common.py:488 models/common.py:490
+#: models/common.py:507 models/common.py:509
 msgctxt "awesome-font icon name"
 msgid "smile"
 msgstr "smile"
 
-#: models/common.py:489
+#: models/common.py:508
 msgctxt "awesome-font icon name"
 msgid "frown"
 msgstr "frown"
@@ -1696,7 +1732,7 @@ msgstr ""
 "pour un autre raison."
 
 #: models/nonrel/article.py:156 models/reldb/feed/combinedrule.py:77
-#: models/reldb/item/abstract/content.py:171
+#: models/reldb/item/abstract/content.py:164
 msgid "Word count"
 msgstr "Nombre de mots"
 
@@ -1753,19 +1789,19 @@ msgstr "gauche-à-droite"
 msgid "Right-to-Left"
 msgstr "droite-à-gauche"
 
-#: models/nonrel/article.py:188 models/reldb/item/abstract/content.py:147
+#: models/nonrel/article.py:188 models/reldb/item/abstract/content.py:140
 msgid "image URL"
 msgstr "URL de l'image"
 
-#: models/nonrel/article.py:190 models/reldb/item/abstract/content.py:152
+#: models/nonrel/article.py:190 models/reldb/item/abstract/content.py:145
 msgid "Excerpt"
 msgstr "Extrait"
 
-#: models/nonrel/article.py:191 models/reldb/item/abstract/content.py:154
+#: models/nonrel/article.py:191 models/reldb/item/abstract/content.py:147
 msgid "Small excerpt of content, if applicable."
 msgstr "Court résumé de l'article, s'il existe."
 
-#: models/nonrel/article.py:196 models/reldb/item/abstract/content.py:159
+#: models/nonrel/article.py:196 models/reldb/item/abstract/content.py:152
 msgid "Article content"
 msgstr "Contenu de l'article"
 
@@ -1773,7 +1809,7 @@ msgstr "Contenu de l'article"
 msgid "Type of article content (text, image…)"
 msgstr "Type de contenu d'article (texte, image…)"
 
-#: models/nonrel/article.py:201 models/reldb/item/abstract/content.py:167
+#: models/nonrel/article.py:201 models/reldb/item/abstract/content.py:160
 msgid "Error"
 msgstr "Erreur"
 
@@ -1802,7 +1838,7 @@ msgstr ""
 "ont des URLs différentes (une peut être raccourcie, l'autre non), celles-ci "
 "pointent vers la même destination finale sur le web."
 
-#: models/nonrel/article.py:261 models/reldb/item/article.py:178
+#: models/nonrel/article.py:261 models/reldb/item/article.py:173
 #, python-brace-format
 msgid "{0} (#{1}) from {2}"
 msgstr "{0} (#{1}) from {2}"
@@ -1901,8 +1937,8 @@ msgstr ""
 #: models/nonrel/website.py:61 models/reldb/folder.py:123
 #: models/reldb/tag.py:60 models/reldb/website.py:110
 #: models/reldb/account/base.py:143 models/reldb/feed/base.py:249
-#: models/reldb/processor/category.py:86 models/reldb/processor/chain.py:120
-#: models/reldb/processor/processor.py:121
+#: models/reldb/processor/category.py:86 models/reldb/processor/chain.py:121
+#: models/reldb/processor/processor.py:125
 msgid "slug"
 msgstr "slug"
 
@@ -2077,8 +2113,8 @@ msgstr "Élément importé depuis {0}"
 #: models/nonrel/folder.py:85 models/nonrel/subscription.py:120
 #: models/reldb/author.py:59 models/reldb/folder.py:122
 #: models/reldb/subscription.py:157 models/reldb/item/base.py:217
-#: models/reldb/processor/category.py:81 models/reldb/processor/chain.py:115
-#: models/reldb/processor/processor.py:116
+#: models/reldb/processor/category.py:81 models/reldb/processor/chain.py:116
+#: models/reldb/processor/processor.py:120
 #: templates/processingchain/list-create.html:49
 #: templates/processor/list-create.html:49 templates/status/rabbitmq.html:14
 msgid "Name"
@@ -2864,7 +2900,7 @@ msgstr "identité non-confirmée"
 #: models/reldb/author.py:102 models/reldb/feed/base.py:242
 #: models/reldb/feed/combined.py:41 models/reldb/feed/common.py:160
 #: models/reldb/item/base.py:220 models/reldb/processor/category.py:92
-#: models/reldb/processor/chain.py:127 models/reldb/processor/processor.py:129
+#: models/reldb/processor/chain.py:128 models/reldb/processor/processor.py:133
 #: models/reldb/sync/node.py:84
 msgid "Creator"
 msgstr "Créateur"
@@ -3220,9 +3256,8 @@ msgid ""
 msgstr ""
 
 #: models/reldb/website.py:134
-#, fuzzy
 msgid "When the web site was added to the 1flow database."
-msgstr "Date à laquelle le flux a été ajouté dans la base 1flow."
+msgstr "Date à laquelle le site web a été ajouté dans la base 1flow."
 
 #: models/reldb/website.py:137 models/reldb/item/base.py:237
 #: models/reldb/processor/error.py:84
@@ -3230,9 +3265,8 @@ msgid "Date updated"
 msgstr "Date de mise à jour"
 
 #: models/reldb/website.py:138
-#, fuzzy
 msgid "When the web site was updated."
-msgstr "Date à laquelle l'article a été mis à jour."
+msgstr "Date à laquelle le site web a été mis à jour."
 
 #: models/reldb/website.py:143 models/reldb/account/base.py:181
 msgid ""
@@ -3249,13 +3283,13 @@ msgstr ""
 "hébergée en dehors de 1flow."
 
 #: models/reldb/website.py:155 models/reldb/feed/base.py:314
-#: models/reldb/processor/category.py:115 models/reldb/processor/chain.py:161
-#: models/reldb/processor/processor.py:183
+#: models/reldb/processor/category.py:115 models/reldb/processor/chain.py:162
+#: models/reldb/processor/processor.py:187
 msgid "Short description"
 msgstr "Description courte"
 
 #: models/reldb/website.py:156 models/reldb/feed/base.py:315
-#: models/reldb/processor/chain.py:162
+#: models/reldb/processor/chain.py:163
 msgid ""
 "Public short description of the feed, for auto-completer listing. Markdown "
 "text."
@@ -3264,7 +3298,7 @@ msgstr ""
 "Markdown."
 
 #: models/reldb/website.py:162 models/reldb/feed/base.py:321
-#: models/reldb/processor/chain.py:168
+#: models/reldb/processor/chain.py:169
 msgid "Public description of the feed. Markdown text."
 msgstr ""
 "Description publique du flux en langue française. Apparaîtra dans le "
@@ -3272,9 +3306,8 @@ msgstr ""
 
 #: models/reldb/website.py:170 models/reldb/processor/chaineditem.py:115
 #: templates/staff/website/list-create.html:49
-#, fuzzy
 msgid "Processing parameters"
-msgstr "Erreurs de traitement"
+msgstr "Paramètres de traitement"
 
 #: models/reldb/website.py:171
 msgid ""
@@ -3528,7 +3561,7 @@ msgstr "Timeline Twitter pour @{0}"
 #: models/reldb/account/twitter.py:358
 #, python-brace-format
 msgid "Subscribed you to @{0}'s Twitter timeline."
-msgstr ""
+msgstr "Vous avez été abonné(e) à la timeline Twitter de @{0}'s."
 
 #: models/reldb/account/twitter.py:396
 #, python-brace-format
@@ -3538,7 +3571,7 @@ msgstr "Liste {0} de {1}"
 #: models/reldb/account/twitter.py:506
 #, python-brace-format
 msgid "Subscribed you to {0} Twitter list(s): {1}."
-msgstr ""
+msgstr "Vous êtes abonné(e) aux listes Twitter de {0} : {1}."
 
 #: models/reldb/account/twitter.py:521
 #, python-brace-format
@@ -4146,15 +4179,15 @@ msgstr ""
 "/smtp-headers (en anglais), vous y trouverez une liste d'en-têtes valides. "
 "Ça ne serait pas juste une faute de frappe ?"
 
-#: models/reldb/item/article.py:157
+#: models/reldb/item/article.py:152
 msgid "Articles"
 msgstr "Articles"
 
-#: models/reldb/item/article.py:166
+#: models/reldb/item/article.py:161
 msgid "Version description"
 msgstr "Description de version"
 
-#: models/reldb/item/article.py:167
+#: models/reldb/item/article.py:162
 msgid ""
 "Set by content processors or author to know with which processor chain this "
 "version was produced. Can be a code or a processor chain ID/slug to help "
@@ -4170,21 +4203,17 @@ msgid "Base items"
 msgstr "Éléments de base"
 
 #: models/reldb/item/base.py:227
-#, fuzzy
 msgid "This item cannot be shared freely inside or outside the platform."
 msgstr ""
-"Cet article vient d'un abonnement payant et ne peut pas être partagé "
-"librement à travers la plateforme."
+"Cet élément ne peut pas être partagé librement à travers la plateforme."
 
 #: models/reldb/item/base.py:234
-#, fuzzy
 msgid "When the item was added to the 1flow database."
-msgstr "Date à laquelle le flux a été ajouté dans la base 1flow."
+msgstr "Date à laquelle l'élément a été ajouté dans la base 1flow."
 
 #: models/reldb/item/base.py:238
-#, fuzzy
 msgid "When the item was updated."
-msgstr "Date à laquelle l'article a été mis à jour."
+msgstr "Date à laquelle l'élément a été mis à jour."
 
 #: models/reldb/item/base.py:243
 msgid "When the item was put online."
@@ -4244,19 +4273,19 @@ msgstr "mentions"
 msgid "{0} ({1}, {2})"
 msgstr "{0} ({1}, {2})"
 
-#: models/reldb/item/abstract/content.py:144
+#: models/reldb/item/abstract/content.py:137
 msgid "Content item"
 msgstr "Élément avec du contenu"
 
-#: models/reldb/item/abstract/content.py:145
+#: models/reldb/item/abstract/content.py:138
 msgid "Content items"
 msgstr "Éléments avec du contenu"
 
-#: models/reldb/item/abstract/content.py:164
+#: models/reldb/item/abstract/content.py:157
 msgid "Type of article content (HTML, Markdown…)"
 msgstr "Type de contenu d'article (texte, image…)"
 
-#: models/reldb/item/abstract/content.py:169
+#: models/reldb/item/abstract/content.py:162
 msgid "Error when fetching content."
 msgstr "Erreur pendant la récupération du contenu."
 
@@ -4293,21 +4322,20 @@ msgid "Comments feed URL"
 msgstr "URL de flux de commentaires"
 
 #: models/reldb/processor/category.py:75
-#, fuzzy
 msgid "Processor category"
-msgstr "Catégorie de processeur"
+msgstr "Catégorie de traitement"
 
 #: models/reldb/processor/category.py:76
 msgid "Processor categories"
 msgstr "Catégories de traitement"
 
 #: models/reldb/processor/category.py:98
-#: models/reldb/processor/processor.py:136
+#: models/reldb/processor/processor.py:140
 msgid "Maintainer"
 msgstr "Mainteneur"
 
 #: models/reldb/processor/category.py:109
-#: models/reldb/processor/processor.py:167
+#: models/reldb/processor/processor.py:171
 msgid "Source address"
 msgstr "Adresse de la source"
 
@@ -4316,35 +4344,35 @@ msgid ""
 "The category home on the web, if any. A web URL, or a github short address."
 msgstr ""
 
-#: models/reldb/processor/chain.py:107
+#: models/reldb/processor/chain.py:108
 #: templates/staff/website/list-create.html:50
 msgid "Processing chain"
 msgstr "Chaîne de traitement"
 
-#: models/reldb/processor/chain.py:108
+#: models/reldb/processor/chain.py:109
 #: templates/processingchain/list-create.html:4
 #: templates/processingchain/list-create.html:34
 #: templates/snippets/navbar/staff-config-menu.html:35
 msgid "Processing chains"
 msgstr "Chaînes de traitement"
 
-#: models/reldb/processor/chain.py:136 models/reldb/processor/processor.py:152
+#: models/reldb/processor/chain.py:137 models/reldb/processor/processor.py:156
 msgid ""
 "The language(s) in which this processor can process content. Let empty "
 "(None/null) for any language or if not relevant."
 msgstr ""
 
-#: models/reldb/processor/chain.py:144
+#: models/reldb/processor/chain.py:145
 msgid ""
 "Any relevant categories. Helps reducing resources consumtion when looking up"
 " processing chains, and also helps staff members find chains to manage."
 msgstr ""
 
-#: models/reldb/processor/chain.py:154
+#: models/reldb/processor/chain.py:155
 msgid "Applies on"
 msgstr "S'applique à"
 
-#: models/reldb/processor/chain.py:156
+#: models/reldb/processor/chain.py:157
 msgid ""
 "On which 1flow models can this chain run ? Not selecting any is like "
 "selecting all."
@@ -4414,40 +4442,39 @@ msgid ""
 "Specific parameters for this chained item AND this instance. Can be none."
 msgstr ""
 
-#: models/reldb/processor/processor.py:110
+#: models/reldb/processor/processor.py:114
 msgid "Processor"
 msgstr "Processeur"
 
-#: models/reldb/processor/processor.py:111
+#: models/reldb/processor/processor.py:115
 #: templates/processor/list-create.html:4
 #: templates/processor/list-create.html:34
 #: templates/snippets/navbar/staff-config-menu.html:40
 msgid "Processors"
 msgstr "Processeurs"
 
-#: models/reldb/processor/processor.py:145
+#: models/reldb/processor/processor.py:149
 msgid ""
 "Any relevant categories. Helps reducing resources consumtion when looking up"
 " processors, and also helps staff members find processors to manage."
 msgstr ""
 
-#: models/reldb/processor/processor.py:160
+#: models/reldb/processor/processor.py:164
 msgid ""
 "Indicates whether this processor is globally active or not, despite its "
 "active status in processor chains (this field takes precedence)."
 msgstr ""
 
-#: models/reldb/processor/processor.py:168
+#: models/reldb/processor/processor.py:172
 msgid ""
 "The processor home on the web, if any. A web URL, or a github short address."
 msgstr ""
 
-#: models/reldb/processor/processor.py:173
-#, fuzzy
+#: models/reldb/processor/processor.py:177
 msgid "Processor parameters"
-msgstr "Catégories de traitement"
+msgstr "Paramètres de traitement"
 
-#: models/reldb/processor/processor.py:174
+#: models/reldb/processor/processor.py:178
 msgid ""
 "Parameters accepted by this processor, in YAML format (see "
 "http://en.wikipedia.org/wiki/YAML for details). Can be left empty if none. "
@@ -4455,11 +4482,11 @@ msgid ""
 "maintainers to setup specific parameters for website-dedicated chains."
 msgstr ""
 
-#: models/reldb/processor/processor.py:190
+#: models/reldb/processor/processor.py:194
 msgid "Requirements"
 msgstr "Exigences"
 
-#: models/reldb/processor/processor.py:191
+#: models/reldb/processor/processor.py:195
 msgid ""
 "PIP-compatible requirements. Can be empty. See "
 "https://github.com/1flow/1flow/wiki/Processors for details."
@@ -4468,17 +4495,17 @@ msgstr ""
 "https://github.com/1flow/1flow/wiki/Processors (en anglais) pour plus de "
 "détails."
 
-#: models/reldb/processor/processor.py:196
+#: models/reldb/processor/processor.py:200
 msgid "Accept source code"
 msgstr "Code source d'acceptation"
 
-#: models/reldb/processor/processor.py:197
-#: models/reldb/processor/processor.py:203
+#: models/reldb/processor/processor.py:201
+#: models/reldb/processor/processor.py:207
 msgid "See https://github.com/1flow/1flow/wiki/Processors for details."
 msgstr ""
 "Lisez https://github.com/1flow/1flow/wiki/Processors pour plus de détails."
 
-#: models/reldb/processor/processor.py:202
+#: models/reldb/processor/processor.py:206
 msgid "Processing source code"
 msgstr "Code source de traitement"
 
@@ -4515,9 +4542,8 @@ msgid "Access (token exchange)"
 msgstr "Accès simple (échange de jetons)"
 
 #: models/reldb/sync/common.py:57
-#, fuzzy
 msgid "Statistics read"
-msgstr "Statistiques système"
+msgstr "Lecture des statistiques"
 
 #: models/reldb/sync/common.py:60
 msgid "Fine-grained model read"
@@ -4540,9 +4566,8 @@ msgid "Idle"
 msgstr "Oisif"
 
 #: models/reldb/sync/common.py:77
-#, fuzzy
 msgid "Synchronizing"
-msgstr "Synchroniser les contacts"
+msgstr "Synchronisation"
 
 #: models/reldb/sync/common.py:81
 msgid "Incompatible synchronization strategies"
@@ -4761,14 +4786,13 @@ msgid "Token"
 msgstr "Jeton"
 
 #: models/reldb/user/counters.py:140
-#, fuzzy
 msgid "User counters"
-msgstr "Imports utilisateur"
+msgstr "Compteurs d'un utilisateur"
 
 #: models/reldb/user/counters.py:141
 #, fuzzy
 msgid "Users counters"
-msgstr "Imports utilisateur"
+msgstr "Compteurs d'utilisateurs"
 
 #: models/reldb/user/counters.py:150
 msgid "This field is here just for the model to be created by south/django."
@@ -4813,14 +4837,12 @@ msgid "Internal feeds for user {0})"
 msgstr ""
 
 #: models/reldb/user/subscriptions.py:51
-#, fuzzy
 msgid "User subscriptions"
 msgstr "Abonnements utilisateur"
 
 #: models/reldb/user/subscriptions.py:52
-#, fuzzy
 msgid "Users subscriptions"
-msgstr "Abonnements utilisateurs"
+msgstr "Abonnements d'utilisateurs"
 
 #: models/reldb/user/subscriptions.py:61
 msgid "Web import subscription"
@@ -4854,7 +4876,7 @@ msgid ""
 msgstr "Rappel : {0} flux fermé(s) ce(s) {1} dernier(s) jour(s)"
 
 #: tasks/checks.py:167
-#, fuzzy, python-format, python-brace-format
+#, fuzzy, python-brace-format
 msgid ""
 "\n"
 "Here is the list, dates (if any), and reasons (if any) of closing:\n"
@@ -4863,18 +4885,23 @@ msgid ""
 "\n"
 "You can manually reopen any of them from the admin interface.\n"
 "\n"
-"%s closed feeds were tested to see if they came back to life,\n"
-"out of which %s were reopened:\n"
+"{closed_tested} closed feeds were tested to see if they came back to life,\n"
+"out of which {reopened_count} were reopened:\n"
 "\n"
 "{reopened_list}\n"
 "\n"
 msgstr ""
 "\n"
-"Voici la liste, les dates (s'il y en a) et les raisons (quand il y en a) de fermeture :\n"
+"Here is the list, dates (if any), and reasons (if any) of closing:\n"
 "\n"
 "{feed_list}\n"
 "\n"
-"Vous pouvez manuellement ré-ouvrir n'importe lequel de ces flux directement depuis l'interface d'administration de 1flow.\n"
+"You can manually reopen any of them from the admin interface.\n"
+"\n"
+"{closed_tested} closed feeds were tested to see if they came back to life,\n"
+"out of which {reopened_count} were reopened:\n"
+"\n"
+"{reopened_list}\n"
 
 #: tasks/mongo.py:69 tasks/refresh.py:75
 msgid "Forcing all feed refresh…"
@@ -5345,9 +5372,9 @@ msgid "Save"
 msgstr "Enregistrer"
 
 #: templates/chaineditem/list-create.html:4
-#, fuzzy, python-format
+#, python-format
 msgid "Rules for %(chain_name)s"
-msgstr "Règles pour %(feed_name)s"
+msgstr "Règles pour %(chain_name)s"
 
 #: templates/chaineditem/list-create.html:19
 #, python-format
@@ -5432,19 +5459,16 @@ msgstr ""
 "section processeurs avant de pouvoir l'utiliser dans cette chaîne."
 
 #: templates/chaineditem/list-create.html:132
-#, fuzzy
 msgid "Edit parameters for this processor in this chain"
-msgstr "Merci de saisir les paramètres pour une nouvelle chaîne de traitement"
+msgstr "Éditer les paramètres de ce processeur dans cette chaîne"
 
 #: templates/chaineditem/list-create.html:132
-#, fuzzy
 msgid "Create specific parameters for this processor in this chain"
-msgstr "Merci de saisir les paramètres pour une nouvelle chaîne de traitement"
+msgstr "Créer des paramètres spécifiques pour ce processeur dans cette chaîne"
 
 #: templates/chaineditem/list-create.html:141
-#, fuzzy
 msgid "Processor has no parameter"
-msgstr "Catégorie de processeur"
+msgstr "Ce processeur n'a aucun paramètre"
 
 #: templates/chaineditem/list-create.html:176
 #, python-format
@@ -6027,9 +6051,8 @@ msgid "Edit processor requirements"
 msgstr "Éditer les exigences du processeur"
 
 #: templates/processor/list-create.html:93
-#, fuzzy
 msgid "Edit processor parameters"
-msgstr "Éditer les exigences du processeur"
+msgstr "Éditer les paramètres du processeur"
 
 #: templates/processor/list-create.html:102
 msgid "Edit processor accept code"
@@ -6474,6 +6497,7 @@ msgid "Marked read."
 msgstr "Marqué lu."
 
 #: templates/snippets/read/actions-messages.js.html:28
+#: templates/snippets/read/actions-messages.js.html:34
 msgid "Marked unread."
 msgstr "Marqué non-lu."
 
@@ -6482,146 +6506,154 @@ msgid "Nothing open to mark as read/unread"
 msgstr "Rien d'ouvert à marquer lu/non-lu"
 
 #: templates/snippets/read/actions-messages.js.html:33
+msgid "Marked read without recording it."
+msgstr "Marqué lu sans l'enregistrer dans votre historique"
+
+#: templates/snippets/read/actions-messages.js.html:35
+msgid "Nothing open to mark as auto-read/unread"
+msgstr "Rien d'ouvert à marquer lu/non-lu sans historisation"
+
+#: templates/snippets/read/actions-messages.js.html:39
 msgid "Marked starred."
 msgstr "Sélectionné."
 
-#: templates/snippets/read/actions-messages.js.html:34
+#: templates/snippets/read/actions-messages.js.html:40
 msgid "Marked unstarred."
 msgstr "Désélectionné."
 
-#: templates/snippets/read/actions-messages.js.html:35
+#: templates/snippets/read/actions-messages.js.html:41
 msgid "Nothing open to star/unstar"
 msgstr "Rien d'ouvert à sélectionner/désélectionner"
 
-#: templates/snippets/read/actions-messages.js.html:39
+#: templates/snippets/read/actions-messages.js.html:45
 msgid "Archived permanently."
 msgstr "Archivé de manière permanente."
 
-#: templates/snippets/read/actions-messages.js.html:40
+#: templates/snippets/read/actions-messages.js.html:46
 msgid "Removed from your archive."
 msgstr "Supprimé de vos archives."
 
-#: templates/snippets/read/actions-messages.js.html:41
+#: templates/snippets/read/actions-messages.js.html:47
 msgid "Nothing open to archive"
 msgstr "Rien d'ouvert à archiver"
 
-#: templates/snippets/read/actions-messages.js.html:45
+#: templates/snippets/read/actions-messages.js.html:51
 msgid "Added to your reading list."
 msgstr "Ajouté à votre liste de lecture."
 
-#: templates/snippets/read/actions-messages.js.html:46
+#: templates/snippets/read/actions-messages.js.html:52
 msgid "Removed from your reading list."
 msgstr "Supprimé de votre liste de lecture."
 
-#: templates/snippets/read/actions-messages.js.html:47
+#: templates/snippets/read/actions-messages.js.html:53
 msgid "Nothing open to mark/unmark for later"
 msgstr "Rien d'ouvert à marquer (ou pas) pour plus tard"
 
-#: templates/snippets/read/actions-messages.js.html:51
+#: templates/snippets/read/actions-messages.js.html:57
 msgid "Marked as fact/event."
 msgstr "Ajouté aux faits marquants"
 
-#: templates/snippets/read/actions-messages.js.html:52
+#: templates/snippets/read/actions-messages.js.html:58
 msgid "Unmarked as fact/event."
 msgstr "Supprimé des faits marquants."
 
-#: templates/snippets/read/actions-messages.js.html:53
+#: templates/snippets/read/actions-messages.js.html:59
 msgid "Nothing open to mark as fact/event"
 msgstr "Rien d'ouvert à ajouter aux fait marquant."
 
-#: templates/snippets/read/actions-messages.js.html:57
+#: templates/snippets/read/actions-messages.js.html:63
 msgid "Marked as numbers/financial content."
 msgstr "Ajouté aux chiffres clefs."
 
-#: templates/snippets/read/actions-messages.js.html:58
+#: templates/snippets/read/actions-messages.js.html:64
 msgid "Unmarked as numbers/financial content."
 msgstr "Supprimé des chiffres clefs."
 
-#: templates/snippets/read/actions-messages.js.html:59
+#: templates/snippets/read/actions-messages.js.html:65
 msgid "Nothing open to mark as numbers/financial content."
 msgstr "Rien d'ouvert à marquer comme chiffre-clef / donnée quantifiée."
 
-#: templates/snippets/read/actions-messages.js.html:63
+#: templates/snippets/read/actions-messages.js.html:69
 msgid "Marked as analysis/study/research content."
 msgstr "Ajouté aux analyses / travaux de recherches."
 
-#: templates/snippets/read/actions-messages.js.html:64
+#: templates/snippets/read/actions-messages.js.html:70
 msgid "Unmarked as analysis/study/research content."
 msgstr "Supprimé des analyses / travaux de recherches."
 
-#: templates/snippets/read/actions-messages.js.html:65
+#: templates/snippets/read/actions-messages.js.html:71
 msgid "Nothing open to mark as analysis/study/research content."
 msgstr "Rien d'ouvert à ajouter aux analyses / travaux de recherches."
 
-#: templates/snippets/read/actions-messages.js.html:69
+#: templates/snippets/read/actions-messages.js.html:75
 msgid "Marked as prospective-related content."
 msgstr "Marquer comme élément de prospective."
 
-#: templates/snippets/read/actions-messages.js.html:70
+#: templates/snippets/read/actions-messages.js.html:76
 msgid "Unarked as prospective-related content."
 msgstr "Supprimer des éléments de prospective."
 
-#: templates/snippets/read/actions-messages.js.html:71
+#: templates/snippets/read/actions-messages.js.html:77
 msgid "Nothing open to mark as prospective-related content"
 msgstr "Rien d'ouvert à ajouter aux prospectives."
 
-#: templates/snippets/read/actions-messages.js.html:75
+#: templates/snippets/read/actions-messages.js.html:81
 msgid "Marked as law/regulations/rules."
 msgstr "Marqué comme règlementation / texte de loi."
 
-#: templates/snippets/read/actions-messages.js.html:76
+#: templates/snippets/read/actions-messages.js.html:82
 msgid "Unmarked as low/regulations/rules."
 msgstr "Supprimé des règlementations / textes de loi."
 
-#: templates/snippets/read/actions-messages.js.html:77
+#: templates/snippets/read/actions-messages.js.html:83
 msgid "Nothing open to mark as law/regulations"
 msgstr "Rien d'ouvert à ajouter aux contenus légaux / réglementaires."
 
-#: templates/snippets/read/actions-messages.js.html:81
+#: templates/snippets/read/actions-messages.js.html:87
 msgid "Marked as know-how/best-practice."
 msgstr "Ajouté aux best-practices / états de l'art"
 
-#: templates/snippets/read/actions-messages.js.html:82
+#: templates/snippets/read/actions-messages.js.html:88
 msgid "Unmarked as know-how/best-practice."
 msgstr "Supprimé des best-practices / états de l'art"
 
-#: templates/snippets/read/actions-messages.js.html:83
+#: templates/snippets/read/actions-messages.js.html:89
 msgid "Nothing open to mark asknow-how/best-practice"
 msgstr "Rien d'ouvert à marquer comme best-practice / état de l'art."
 
-#: templates/snippets/read/actions-messages.js.html:87
+#: templates/snippets/read/actions-messages.js.html:93
 msgid "Marked as quote."
 msgstr "Ajouté aux citations."
 
-#: templates/snippets/read/actions-messages.js.html:88
+#: templates/snippets/read/actions-messages.js.html:94
 msgid "Not a quote anymore."
 msgstr "Supprimé des citations."
 
-#: templates/snippets/read/actions-messages.js.html:89
+#: templates/snippets/read/actions-messages.js.html:95
 msgid "Nothing open to quote"
 msgstr "Rien d'ouvert à ajouter aux citations"
 
-#: templates/snippets/read/actions-messages.js.html:93
+#: templates/snippets/read/actions-messages.js.html:99
 msgid "Marked as general knowledge."
 msgstr "Ajouté aux savoirs / connaissances d'ordre général."
 
-#: templates/snippets/read/actions-messages.js.html:94
+#: templates/snippets/read/actions-messages.js.html:100
 msgid "Not a knowledge element anymore."
 msgstr "Supprimé des savoirs / connaissances d'ordre général."
 
-#: templates/snippets/read/actions-messages.js.html:95
+#: templates/snippets/read/actions-messages.js.html:101
 msgid "Nothing open to mark as general knowledge"
 msgstr "Rien d'ouvert à ajouter aux savoirs / connaissances générales."
 
-#: templates/snippets/read/actions-messages.js.html:99
+#: templates/snippets/read/actions-messages.js.html:105
 msgid "Marked as fun. LMAO."
 msgstr "Je l'ai ajouté au blagues, et je me bidonne."
 
-#: templates/snippets/read/actions-messages.js.html:100
+#: templates/snippets/read/actions-messages.js.html:106
 msgid "Not fun anymore. I'm crying."
 msgstr "Plus drôle du tout.  QUE JE SUIS MALHEUREUUUUUX !!!"
 
-#: templates/snippets/read/actions-messages.js.html:101
+#: templates/snippets/read/actions-messages.js.html:107
 msgid "Nothing open to mark as fun. That's not fun."
 msgstr "Rien d'ouvert à ajouter aux blagues. C'EST PAS DRÔLE !!"
 
@@ -6754,11 +6786,11 @@ msgstr "Afficher sur le site d'origine"
 msgid "Read original"
 msgstr "Voir l'original"
 
-#: templates/snippets/read/read-actions.html:55
+#: templates/snippets/read/read-actions.html:62
 msgid "Assign or remove watch-related attributes"
 msgstr "Assigner ou supprimer des attributs de veille"
 
-#: templates/snippets/read/read-actions.html:59
+#: templates/snippets/read/read-actions.html:66
 msgid "Watch"
 msgstr "Veille"
 
@@ -6978,6 +7010,10 @@ msgstr "tous"
 msgid "Fixes"
 msgstr "Corrections"
 
+#: templates/snippets/read/staff-information.html:14
+msgid "Date published: "
+msgstr "Date de publication :"
+
 #: templates/snippets/read/staff-information.html:25
 msgid "Item is considered good to be displayed by the engine"
 msgstr "L'élément est considéré bon à afficher par le moteur"
@@ -7007,27 +7043,90 @@ msgid "Original data not yet processed"
 msgstr "Les données d'origine n'ont pas encore été traitées"
 
 #: templates/snippets/read/staff-information.html:68
-#, fuzzy
 msgid "No original data recorded"
-msgstr "Données d'origine"
+msgstr "Pas de données d'origine enregistrées"
 
 #: templates/snippets/read/staff-information.html:88
 msgid "not fetched yet"
 msgstr "pas encore récupéré"
 
 #: templates/snippets/read/staff-information.html:93
-#, fuzzy
 msgid "user reads"
-msgstr "lu ?"
+msgstr "lectures utilisateur"
 
 #: templates/snippets/read/staff-information.html:96
 msgid "article versions in history"
 msgstr "version historisées de l'article"
 
-#: templates/snippets/read/staff-information.html:110
-#, fuzzy
+#: templates/snippets/read/staff-information.html:103
+msgid "version"
+msgstr "version"
+
+#: templates/snippets/read/staff-information.html:108
+#, python-format
+msgid ""
+"\n"
+"                  Edit version excerpt (%(size)s)\n"
+"                "
+msgstr ""
+"\n"
+"Éditer le résumé de cette version (%(size)s)"
+
+#: templates/snippets/read/staff-information.html:125
+msgid "NO excerpt in this version"
+msgstr "PAS de résumé pour cette version"
+
+#: templates/snippets/read/staff-information.html:135
+#, python-format
+msgid ""
+"\n"
+"                  Edit version content (%(size)s)\n"
+"                "
+msgstr ""
+"\n"
+"Éditer le contenu de cette version (%(size)s)"
+
+#: templates/snippets/read/staff-information.html:153
+msgid "NO content in this version"
+msgstr "PAS de contenu dans cette version"
+
+#: templates/snippets/read/staff-information.html:162
+msgid "current: "
+msgstr "en cours :"
+
+#: templates/snippets/read/staff-information.html:167
+#, python-format
+msgid ""
+"\n"
+"                    Edit current excerpt (%(size)s)\n"
+"                  "
+msgstr ""
+"\n"
+"Éditer le résumé courant (%(size)s)"
+
+#: templates/snippets/read/staff-information.html:184
+msgid "NO excerpt in current version"
+msgstr "PAS de résumé dans la version active"
+
+#: templates/snippets/read/staff-information.html:192
+#, python-format
+msgid ""
+"\n"
+"                    Edit current content (%(size)s)\n"
+"                  "
+msgstr ""
+"\n"
+"Éditer le contenu courant (%(size)s)"
+
+#: templates/snippets/read/staff-information.html:210
+msgid "NO content in current version"
+msgstr "PAS de contenu dans la version active"
+
+#: templates/snippets/read/staff-information.html:227
 msgid "Go to websites management to change the processing chain"
-msgstr "Merci de saisir les paramètres pour une nouvelle chaîne de traitement"
+msgstr ""
+"Aller à l'administration de ce site web pour changer la chaîne ou les "
+"paramètres de traitement"
 
 #: templates/snippets/selector/add-subscription-bookmarklets.html:4
 #: templates/snippets/selector/add-subscription-bookmarklets.html:5
@@ -7444,10 +7543,8 @@ msgid "Show masters only (not duplicates)"
 msgstr "Afficher seulement les originaux (non-dupliqués)"
 
 #: templates/snippets/toolbars/filter/dupes.html:3
-#, fuzzy
 msgid "Show duplicates only (not masters)"
-msgstr ""
-"Afficher les articles dupliqués/orphelins et les autres données transitoires"
+msgstr "Afficher seulement les dupliqués"
 
 #: templates/snippets/toolbars/filter/form.html:16
 msgid ""
@@ -7462,9 +7559,8 @@ msgid "Filter…"
 msgstr "Filtrer…"
 
 #: templates/snippets/toolbars/filter/more-dropdown.html:6
-#, fuzzy
 msgid "More filters"
-msgstr "Favoriteurs"
+msgstr "Plus de filtres"
 
 #: templates/snippets/toolbars/filter/reset.html:6
 msgid "Reset filters to default"
@@ -7808,9 +7904,8 @@ msgid "Img."
 msgstr "Img."
 
 #: templates/staff/website/list-create.html:46
-#, fuzzy
 msgid "Name (description)"
-msgstr "pas de description !"
+msgstr "Nom (description)"
 
 #: templates/staff/website/list-create.html:47
 #: templates/syncnode/list-create.html:86
@@ -7818,7 +7913,6 @@ msgid "URI"
 msgstr "URI"
 
 #: templates/staff/website/list-create.html:81
-#, fuzzy
 msgid "Description: "
 msgstr "Description :"
 
@@ -7827,23 +7921,20 @@ msgid "—"
 msgstr "—"
 
 #: templates/staff/website/list-create.html:98
-#, fuzzy
 msgid "Edit processing parameters"
-msgstr "Éditer les exigences du processeur"
+msgstr "Éditer les paramètres du processeur"
 
 #: templates/staff/website/list-create.html:98
 msgid "Create processing parameters for this web site"
 msgstr "Créer des paramètres de traitement pour ce site web"
 
 #: templates/staff/website/list-create.html:107
-#, fuzzy
 msgid "Processing chain has no parameter"
-msgstr "Chaînes de traitement"
+msgstr "La chaîne de traitement n'a pas de paramètre"
 
 #: templates/staff/website/list-create.html:112
-#, fuzzy
 msgid "default"
-msgstr "directive du flux"
+msgstr "par défaut"
 
 #: templates/staff/website/list-create.html:139
 msgid ""
@@ -7872,9 +7963,8 @@ msgid "Filter web sites that have a custom processing chain set"
 msgstr "Afficher les sites web qui ont une chaine de traitement personnalisée"
 
 #: templates/status/celery.html:4
-#, fuzzy
 msgid "Registered tasks"
-msgstr "Enregistré(e) :"
+msgstr "Tâches enregistrées"
 
 #: templates/status/index.html:3
 msgid "Instance status and statistics"
@@ -7998,13 +8088,13 @@ msgid "username:"
 msgstr "Identifiant :"
 
 #: templates/status/postgresql.html:24
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "data size (including indices)<br /><span class='muted'>(%% of occupied "
 "space)</span>"
 msgstr ""
-"taille des index<br /><span class='muted'>(%% de la taille des "
-"données)</span>"
+"taille des données (index inclus)<br /><span class='muted'>(%% de l'espace "
+"occupé)</span>"
 
 #: templates/status/postgresql.html:25
 msgid "relations"
@@ -8092,9 +8182,8 @@ msgid "Used space on %(mntpt)s: %(percent)s%% (%(value)s)"
 msgstr "Espace utilisé sur %(mntpt)s : %(percent)s%% (%(value)s)"
 
 #: templates/status/system.html:105
-#, fuzzy
 msgid "Management tools"
-msgstr "Gestion"
+msgstr "Outils de gestion"
 
 #: templates/status/system.html:113
 msgid "External tools"
@@ -8117,14 +8206,12 @@ msgid "Clear templates"
 msgstr "Vider les templates"
 
 #: templates/status/system.html:168
-#, fuzzy
 msgid "Clear views"
-msgstr "Effacer"
+msgstr "Nettoyer les vues"
 
 #: templates/status/system.html:177
-#, fuzzy
 msgid "Clear models"
-msgstr "Lecture globale de tout les modèles"
+msgstr "Nettoyer les modèles"
 
 #: templates/status/system.html:186
 msgid "NOTE: your instance could be sluggish while caches reconstruct slowly"
@@ -8133,9 +8220,8 @@ msgstr ""
 "caches soient reconstruits."
 
 #: templates/status/system.html:187
-#, fuzzy
 msgid "Clear all"
-msgstr "Effacer"
+msgstr "Nettoyer tous"
 
 #: templates/syncnode/list-create.html:18
 #, python-format
@@ -8395,9 +8481,9 @@ msgid "Read history"
 msgstr "Historique de lecture"
 
 #: templatetags/coretags.py:69
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "You have read {0} articles"
-msgstr "Vous avez {0} articles tordants"
+msgstr "Vous avez lu {0} éléments"
 
 #: templatetags/coretags.py:72
 #, python-brace-format
@@ -8561,7 +8647,7 @@ msgstr ""
 "Connectivité du compte non testée. Merci d'attendre quelques secondes, puis "
 "rechargez la page."
 
-#: views/__init__.py:317
+#: views/__init__.py:321
 #, python-brace-format
 msgid ""
 "Could not import url “<code>{0}</code>”. Check your latest history entry to "
