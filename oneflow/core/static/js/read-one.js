@@ -128,10 +128,24 @@ function post_mark_triggers(article_id, attr_name, send_notify) {
 
         // console.debug('item ' + article_id + ' starred.');
 
-        // in any case, the auto_read status is cleared,
-        // but no need to notify about that.
-        if(is_read && is_auto_read) {
-            mark_something(article_id, 'is_auto_read', false, false);
+        // In any case, when marking read, the is_auto_read status is cleared.
+        // NOTE: there could be a conflict (or loop) if everything was handled
+        // from the triggers. Here we are in the post_mark_triggers(), thus
+        // there will be no loop because the post_mark_triggers() do not
+        // trigger, they just run complementary actions. If at anytime they
+        // trigger things instead of beiing just post-triggers, there will be
+        // a problem.
+        if(is_read) {
+
+            if(is_auto_read) {
+                mark_something(article_id, 'is_auto_read', false, false);
+
+            } else if (is_bookmarked) {
+                // an article marked read implies it not meant to be read
+                // later anymore. This could probably go into a preference,
+                // but I find this pretty straightforward to understand.
+                mark_something(article_id, 'is_bookmarked', false, false);
+            }
         }
 
     }  else if (attr_name == 'is_starred') {
