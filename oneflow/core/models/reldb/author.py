@@ -31,10 +31,8 @@ from django.utils.translation import ugettext_lazy as _
 
 # from oneflow.base.utils import register_task_method
 
-from ..common import ORIGINS
-
 from common import DjangoUser as User
-from website import WebSite, SOCIAL_WEBSITES
+from website import WebSite
 
 LOGGER = logging.getLogger(__name__)
 
@@ -119,7 +117,7 @@ class Author(models.Model):
     def __unicode__(self):
         """ pep257, YOU BORING ME. """
 
-        if self.website == SOCIAL_WEBSITES[ORIGINS.TWITTER]:
+        if u'twitter' in self.website.url:
             # Verified icons: ∗ⓥ⊛◆◈✌✓✔
             return u'{0}{1} (@{2}) #{3}'.format(
                 self.name,
@@ -288,7 +286,7 @@ class Author(models.Model):
         #     u'verified': False
         # }
 
-        twitter_ws = SOCIAL_WEBSITES[ORIGINS.TWITTER]
+        twitter_ws = WebSite.get_from_url(u'https://twitter.com')
 
         username = twitter_user.get('screen_name', twitter_user['id_str'])
 

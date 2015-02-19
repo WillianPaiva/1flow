@@ -28,7 +28,7 @@ from json_field import JSONField
 from yamlfield.fields import YAMLField
 from cacheops import cached
 
-from django.db import models, ProgrammingError
+from django.db import models  # , ProgrammingError
 from django.db.models.signals import post_save, pre_save, pre_delete
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
@@ -39,7 +39,7 @@ from sparks.django.models.mixins import DiffMixin
 from duplicate import AbstractDuplicateAwareModel
 from oneflow.base.utils.http import split_url
 
-from ..common import ORIGINS
+# from ..common import ORIGINS
 
 from processor import ProcessingChain
 
@@ -48,7 +48,6 @@ LOGGER = logging.getLogger(__name__)
 
 __all__ = [
     'WebSite',
-    'SOCIAL_WEBSITES',
 ]
 
 
@@ -271,17 +270,3 @@ def website_pre_delete(instance, **kwargs):
 pre_save.connect(website_pre_save, sender=WebSite)
 post_save.connect(website_post_save, sender=WebSite)
 pre_delete.connect(website_pre_delete, sender=WebSite)
-
-
-# ————————————————————————————————————————————————————————————— Exported things
-
-
-try:
-    # Having these objects handy doesn't costs and avoids a DB lookup
-    # when creating a bunch of authors.
-    SOCIAL_WEBSITES = {
-        ORIGINS.TWITTER: WebSite.get_from_url('https://twitter.com/'),
-    }
-except ProgrammingError:
-    # WebSite schema changed and we are running a South/Django migration…
-    pass
