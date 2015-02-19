@@ -215,7 +215,7 @@ class WebSite(six.with_metaclass(WebSiteMeta, MPTTModel,
 
         base_url = '%s://%s' % (proto, host_and_port)
 
-        @cached(timeout=10 * 60, extra=base_url)
+        @cached(timeout=60 * 60, extra=base_url)
         def _get_website_from_url(base_url):
 
             try:
@@ -228,7 +228,11 @@ class WebSite(six.with_metaclass(WebSiteMeta, MPTTModel,
 
             return website
 
-        return _get_website_from_url(base_url)
+        try:
+            return _get_website_from_url(base_url)
+
+        except TypeError:
+            return None
 
 
 # ————————————————————————————————————————————————————————————————————— Signals
