@@ -38,7 +38,6 @@ from oneflow.base.utils.dateutils import now, datetime
 
 from ..common import ORIGINS, CONTENT_TYPES
 from ..author import Author
-from ..website import SOCIAL_WEBSITES
 
 from base import (
     BaseItemQuerySet,
@@ -214,8 +213,7 @@ class Tweet(BaseItem):
         except:
             username = u'UNKNOWN'
 
-        return u'{0}/{1}/status/{2}'.format(
-            SOCIAL_WEBSITES[ORIGINS.TWITTER].url,
+        return u'http://twitter.com/{1}/status/{2}'.format(
             username,
             self.tweet_id)
 
