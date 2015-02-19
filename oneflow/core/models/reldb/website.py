@@ -26,6 +26,7 @@ from constance import config
 from transmeta import TransMeta
 from json_field import JSONField
 from yamlfield.fields import YAMLField
+from cacheops import cached
 
 from django.db import models, ProgrammingError
 from django.db.models.signals import post_save, pre_save, pre_delete
@@ -204,6 +205,7 @@ class WebSite(six.with_metaclass(WebSiteMeta, MPTTModel,
             duplication.
 
         """
+
         try:
             proto, host_and_port, remaining = split_url(url)
 
@@ -213,15 +215,20 @@ class WebSite(six.with_metaclass(WebSiteMeta, MPTTModel,
 
         base_url = '%s://%s' % (proto, host_and_port)
 
-        try:
-            website, _ = WebSite.objects.get_or_create(url=base_url)
+        @cached(timeout=10 * 60, extra=base_url)
+        def _get_website_from_url(base_url):
 
-        except:
-            LOGGER.exception('Could not get or create website from url '
-                             u'“%s” (via original “%s”)', base_url, url)
-            return None
+            try:
+                website, _ = WebSite.objects.get_or_create(url=base_url)
 
-        return website
+            except:
+                LOGGER.exception('Could not get or create website from url '
+                                 u'“%s” (via original “%s”)', base_url, url)
+                return None
+
+            return website
+
+        return _get_website_from_url(base_url)
 
 
 # ————————————————————————————————————————————————————————————————————— Signals
