@@ -212,8 +212,13 @@ function post_mark_triggers(article_id, attr_name, send_notify) {
     } else if ( _.indexOf(watch_attributes_names, attr_name) >= 0 ) {
         // the read was marked with a watch attribute (any of them)
 
+        // marking with a read attribute clears the is_auto_read state.
+        if ($article.hasClass(attr_name) && is_auto_read) {
+            mark_something(article_id, 'is_auto_read', false, false);
+        }
+
         if (preferences.watch_attributes_mark_archived) {
-            if ( $article.hasClass(attr_name) && !is_archived ) {
+            if ($article.hasClass(attr_name) && !is_archived) {
                 mark_something(article_id, 'is_archived', false, send_notify);
             }
         }
