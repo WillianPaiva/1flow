@@ -44,6 +44,13 @@ CONSTANCE_CONFIG = {
 
     # ————————————————————————————————————————————————————————————— Staff stuff
 
+    'PROCESSING_FINE_GRAINED_TRANSACTIONS': (
+        False, ugettext(u'Use transactions at all levels of processing chains.'
+                        u'Activating this could allow processors to get '
+                        u'farther during items processing. Beware that '
+                        u'enabling this could hammer your database with a '
+                        u'huge lot of transactions. Disabled by default.')),
+
     'STAFF_HAS_FULL_ACCESS': (False, ugettext(u'Allow staff to have full '
                               u'access to anything. We use this mostly for '
                               u'debugging purposes, but this can be dangerous '

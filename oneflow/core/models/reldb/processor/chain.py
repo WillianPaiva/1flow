@@ -23,7 +23,7 @@ import json
 import logging
 
 from statsd import statsd
-# from constance import config
+from constance import config
 from transmeta import TransMeta
 # from json_field import JSONField
 from celery.exceptions import SoftTimeLimitExceeded
@@ -68,6 +68,27 @@ __all__ = [
 
 
 # ————————————————————————————————————————————————————————————— Class & related
+
+
+class AtomicOrNot(transaction.Atomic):
+
+    """ """
+
+    def __init__(self, real_transaction=False, using=None, savepoint=True):
+
+        self.real_transaction = real_transaction
+
+        transaction.Atomic.__init__(self, using, savepoint)
+
+    def __enter__(self, *args, **kwargs):
+
+        if self.real_transaction:
+            return transaction.Atomic.__enter__(self, *args, **kwargs)
+
+    def __exit__(self, *args, **kwargs):
+
+        if self.real_transaction:
+            return transaction.Atomic.__exit__(self, *args, **kwargs)
 
 
 class ProcessingChainManager(models.Manager):
@@ -397,6 +418,8 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
                            force=force, commit=commit):
             return
 
+        fine_grained_transactions = config.PROCESSING_FINE_GRAINED_TRANSACTIONS
+
         # We cannot filter directly on item__is_active=True
         # because of the generic relation. Too bad.
         processors = self.chained_items.filter(
@@ -431,8 +454,14 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
                 # As documented in combine_dicts, the instance parameters
                 # will take precedence and overwrite the processor ones
                 # because they are in second position. This is a cascade.
-                instance.processing_parameters
+                instance.processing_parameters,
             )
+
+            if 'transactions_depth_level' in parameters:
+                parameters['transactions_depth_level'] += 1
+
+            else:
+                parameters['transactions_depth_level'] = 0
 
             if isinstance(processor, Processor):
                 # NOTE: Skipping if `process_category=False` is only valid for
@@ -457,7 +486,7 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
                              verbose, force, commit)
 
             try:
-                with transaction.atomic():
+                with AtomicOrNot(real_transaction=fine_grained_transactions):
                     try:
                         # This will run accepts() automatically.
                         processor.process(
