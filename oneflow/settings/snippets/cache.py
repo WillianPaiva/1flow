@@ -89,6 +89,8 @@ CACHEOPS = {
     # 'all' is just an alias for ('get', 'fetch', 'count', 'exists')
     'auth.permission': {'ops': 'all', 'timeout': CACHE_ONE_DAY},
 
+    'contenttypes.contenttype': {'ops': 'all', 'timeout': CACHE_ONE_WEEK},
+
     'core.processor': {'ops': 'all', 'timeout': CACHE_ONE_DAY},
     'core.processingchain': {'ops': 'all', 'timeout': CACHE_ONE_DAY},
     'core.chaineditem': {'ops': 'all', 'timeout': CACHE_ONE_DAY},
