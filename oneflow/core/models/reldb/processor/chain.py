@@ -27,6 +27,7 @@ from constance import config
 from transmeta import TransMeta
 # from json_field import JSONField
 from celery.exceptions import SoftTimeLimitExceeded
+from cacheops import cached
 
 # from simple_history.models import HistoricalRecords
 
@@ -418,6 +419,11 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
                            force=force, commit=commit):
             return
 
+        @cached(timeout=60 * 60)
+        def _processor_categories_slugs(processor):
+
+            return processor.categories.all().values_list('slug', flat=True)
+
         fine_grained_transactions = config.PROCESSING_FINE_GRAINED_TRANSACTIONS
 
         # We cannot filter directly on item__is_active=True
@@ -469,9 +475,8 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
                 # tagged with category X, some of their processors can still
                 # process other things. And BTW, the chain itself will not
                 # alter the instance, only processors will.
-                for category_slug in processor.categories.all().values_list(
-                        'slug', flat=True):
-                    if not parameters.get('process_{0}'.format(category_slug),
+                for category in _processor_categories_slugs(processor):
+                    if not parameters.get('process_{0}'.format(category),
                                           True):
                         if verbose:
                             LOGGER.warning(u'%s [run]: skipped processor %s at '
