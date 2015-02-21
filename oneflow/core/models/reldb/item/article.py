@@ -302,6 +302,25 @@ class Article(BaseItem, UrlItem, ContentItem):
             # We are reseting, don't waste a version.
             self.save_without_historical_record()
 
+    def reprocess(self, verbose=True):
+        """ A shortcut to reset()/process() without the need to absolutize. """
+
+        url_absolute = self.url_absolute
+        is_orphaned = self.is_orphaned
+
+        redo = not url_absolute
+
+        self.reset(force=True)
+
+        if redo:
+            self.absolutize_url()
+
+        else:
+            self.url_absolute = url_absolute
+            self.is_orphaned = is_orphaned
+
+        self.process(verbose=verbose)
+
     @classmethod
     def create_article(cls, title, url, feeds, **kwargs):
         """ Returns ``True`` if article created, ``False`` if a pure duplicate
