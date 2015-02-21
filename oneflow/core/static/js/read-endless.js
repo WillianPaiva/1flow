@@ -74,9 +74,16 @@ function read_setup(parent) {
     // console.debug('read setup bindings');
    //debug_notify('read_setup(' + parent + ')');
 
+    // not needed with the meta *mobile-web-app-capable stuff.
+    //window.scrollTo(0,1);
+
     $(".article-content p").find('img').parent().addClass('img-legend');
 
-    if(!Modernizr.touch) {
+    // HEADS UP: this makes read-items totally
+    //           unresponsive on touch devices.
+    //           I think it's mostly useless, anyway.
+    //if(!Modernizr.touch) {
+
         find_start(parent, 'content-toggle').on('click', function(ev){
 
             var target   = $(this).data('toggle-id'),
@@ -92,7 +99,8 @@ function read_setup(parent) {
         });
 
         find_start(parent, 'slide-togglable').on('tripleclick', eventually_toggle);
-    }
+
+    //}
 }
 
 function read_init(){
