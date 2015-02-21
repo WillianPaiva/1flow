@@ -829,7 +829,7 @@ if (Modernizr.touch) {
             $this.animate({marginLeft: 0}, 150);
         });
 
-        toggle_status(null, $this.attr('id'), "is_read", false);
+        toggle_status(null, $this.attr('id'), "is_auto_read", false);
 
         return false;
     });
