@@ -70,22 +70,9 @@ class Command(BaseCommand):
         failed_count = 0
 
         for article in articles.iterator():
-            url_absolute = article.url_absolute
-            is_orphaned = article.is_orphaned
-
-            redo = not url_absolute
 
             try:
-                article.reset(force=True)
-
-                if redo:
-                    article.absolutize_url()
-
-                else:
-                    article.url_absolute = url_absolute
-                    article.is_orphaned = is_orphaned
-
-                article.process(verbose=test)
+                article.reprocess(verbose=test)
 
             except:
                 LOGGER.exception(u'Could not reparse article %s', article)
