@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-18 08:48+0100\n"
-"PO-Revision-Date: 2015-02-18 09:09+0009\n"
+"POT-Creation-Date: 2015-02-23 09:47+0100\n"
+"PO-Revision-Date: 2015-02-23 09:51+0009\n"
 "Last-Translator: Olivier Cortes <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -658,7 +658,7 @@ msgstr "Actif ?"
 
 #: admin/processor.py:96 models/reldb/website.py:161
 #: models/reldb/feed/base.py:320 models/reldb/processor/category.py:119
-#: models/reldb/processor/chain.py:168 models/reldb/processor/processor.py:191
+#: models/reldb/processor/chain.py:190 models/reldb/processor/processor.py:191
 msgid "Description"
 msgstr "Description"
 
@@ -1863,7 +1863,7 @@ msgstr "Source inconnue"
 msgid "Multiple sources ({0} feeds)"
 msgstr "Sources multiples ({0} flux)"
 
-#: models/nonrel/author.py:60 models/reldb/author.py:72
+#: models/nonrel/author.py:60 models/reldb/author.py:70
 msgid ""
 "When trying to guess authors, we have only a \"fullname\" equivalent. We "
 "need to store it for future comparisons in case firstname and lastname get "
@@ -1874,7 +1874,7 @@ msgstr ""
 "cas où les noms / prénoms auraient été modifiés manuellement après la "
 "création de l'auteur."
 
-#: models/nonrel/author.py:66 models/reldb/author.py:95
+#: models/nonrel/author.py:66 models/reldb/author.py:93
 msgid ""
 "Set to True when the author has been found from its origin_name and not via "
 "email; because origin_name can be duplicated, but not emails."
@@ -1887,7 +1887,7 @@ msgstr ""
 msgid "Link an internet author to a 1flow user."
 msgstr "Lier un auteur internet à un utilisateur 1flow."
 
-#: models/nonrel/author.py:80 models/reldb/author.py:131
+#: models/nonrel/author.py:80 models/reldb/author.py:129
 msgid " (unsure)"
 msgstr "(non confirmé)"
 
@@ -1937,7 +1937,7 @@ msgstr ""
 #: models/nonrel/website.py:61 models/reldb/folder.py:123
 #: models/reldb/tag.py:60 models/reldb/website.py:110
 #: models/reldb/account/base.py:143 models/reldb/feed/base.py:249
-#: models/reldb/processor/category.py:86 models/reldb/processor/chain.py:121
+#: models/reldb/processor/category.py:86 models/reldb/processor/chain.py:143
 #: models/reldb/processor/processor.py:125
 msgid "slug"
 msgstr "slug"
@@ -2105,15 +2105,15 @@ msgid "comments on"
 msgstr "commentaires sur "
 
 #: models/nonrel/feed.py:774 models/reldb/item/article.py:92
-#: models/reldb/item/tweet.py:89
+#: models/reldb/item/tweet.py:88
 #, python-brace-format
 msgid "Imported item from {0}"
 msgstr "Élément importé depuis {0}"
 
 #: models/nonrel/folder.py:85 models/nonrel/subscription.py:120
-#: models/reldb/author.py:59 models/reldb/folder.py:122
+#: models/reldb/author.py:57 models/reldb/folder.py:122
 #: models/reldb/subscription.py:157 models/reldb/item/base.py:217
-#: models/reldb/processor/category.py:81 models/reldb/processor/chain.py:116
+#: models/reldb/processor/category.py:81 models/reldb/processor/chain.py:138
 #: models/reldb/processor/processor.py:120
 #: templates/processingchain/list-create.html:49
 #: templates/processor/list-create.html:49 templates/status/rabbitmq.html:14
@@ -2217,11 +2217,11 @@ msgstr "environ 800 mpm"
 msgid "around 1000 wpm (really?)"
 msgstr "environ 1000 mpm (vraiment ??)"
 
-#: models/nonrel/preferences.py:81 models/reldb/preferences.py:170
+#: models/nonrel/preferences.py:81 models/reldb/preferences.py:178
 msgid "Starring marks read too"
 msgstr "Sélectionner marque aussi lu"
 
-#: models/nonrel/preferences.py:82 models/reldb/preferences.py:171
+#: models/nonrel/preferences.py:82 models/reldb/preferences.py:179
 msgid ""
 "When you mark an article starred, this will automatically mark it as read "
 "(default: true; we consider you have read it before you decide to like it)."
@@ -2230,11 +2230,11 @@ msgstr ""
 "automatiquement marqué lu. C'est le comportement standard sur 1flow, car "
 "nous considérons qu'il faut avoir lu un article pour l'apprécier."
 
-#: models/nonrel/preferences.py:89 models/reldb/preferences.py:178
+#: models/nonrel/preferences.py:89 models/reldb/preferences.py:186
 msgid "Starring marks archived too"
 msgstr "Sélectionner marque aussi archivé"
 
-#: models/nonrel/preferences.py:90 models/reldb/preferences.py:179
+#: models/nonrel/preferences.py:90 models/reldb/preferences.py:187
 msgid ""
 "When you mark an article starred, this will automatically archive it, if not"
 " already done (default: false)."
@@ -2243,11 +2243,11 @@ msgstr ""
 "automatiquement archivé si ce n'est pas déjà le cas. Par défaut ce n'est pas"
 " le cas."
 
-#: models/nonrel/preferences.py:96 models/reldb/preferences.py:185
+#: models/nonrel/preferences.py:96 models/reldb/preferences.py:193
 msgid "Reading later marks archived too"
 msgstr "Lire plus tard marque aussi archivé"
 
-#: models/nonrel/preferences.py:97 models/reldb/preferences.py:186
+#: models/nonrel/preferences.py:97 models/reldb/preferences.py:194
 msgid ""
 "Marking an article to read later will automatically archive it if not "
 "already done. (default: false)."
@@ -2255,11 +2255,11 @@ msgstr ""
 "Marquer un article à lire plus tard l'archive si ce n'est pas déjà fait. Par"
 " défaut, ce n'est pas le cas."
 
-#: models/nonrel/preferences.py:102 models/reldb/preferences.py:191
+#: models/nonrel/preferences.py:102 models/reldb/preferences.py:199
 msgid "Setting any watch attribute marks archived too"
 msgstr "Marquer avec un attribut de veille archive aussi"
 
-#: models/nonrel/preferences.py:103 models/reldb/preferences.py:192
+#: models/nonrel/preferences.py:103 models/reldb/preferences.py:200
 msgid ""
 "Setting any watch attribute will also mark it archived if not already done. "
 "(default: false)."
@@ -2268,11 +2268,11 @@ msgstr ""
 "sera automatiquement archivé s'il ne l'est pas déjà. Par défaut, ce n'est "
 "pas le cas."
 
-#: models/nonrel/preferences.py:108 models/reldb/preferences.py:197
+#: models/nonrel/preferences.py:108 models/reldb/preferences.py:205
 msgid "Starring unmarks “read later”"
 msgstr "Sélectionner enlève de « lire plus tard »"
 
-#: models/nonrel/preferences.py:109 models/reldb/preferences.py:198
+#: models/nonrel/preferences.py:109 models/reldb/preferences.py:206
 msgid ""
 "When you mark an article starred, this will automatically remove it from the"
 " “read later” list. (default: true; we consider you have read it before you "
@@ -2283,11 +2283,11 @@ msgstr ""
 "considérons que vous l'avez lu pour le sélectionner, il n'est donc plus « à "
 "lire [plus tard] »."
 
-#: models/nonrel/preferences.py:117 models/reldb/preferences.py:206
+#: models/nonrel/preferences.py:117 models/reldb/preferences.py:214
 msgid "Reading later marks unread"
 msgstr "Lire plus tard marque non-lu"
 
-#: models/nonrel/preferences.py:118 models/reldb/preferences.py:207
+#: models/nonrel/preferences.py:118 models/reldb/preferences.py:215
 msgid ""
 "Marking an article to read later marks it as unread. As a consequence, "
 "articles to read later are counted in unread when this setting is enabled "
@@ -2297,11 +2297,11 @@ msgstr ""
 "les articles à lire plus tard sont comptés dans les non-lus quand cette "
 "préférence est activée (ce qui est le cas par défaut)."
 
-#: models/nonrel/preferences.py:124 models/reldb/preferences.py:213
+#: models/nonrel/preferences.py:124 models/reldb/preferences.py:221
 msgid "Average reading speed"
 msgstr "Vitesse moyenne de lecture"
 
-#: models/nonrel/preferences.py:125 models/reldb/preferences.py:214
+#: models/nonrel/preferences.py:125 models/reldb/preferences.py:222
 msgid ""
 "Set your reading speed for accurate reading time computations on text "
 "content."
@@ -2309,11 +2309,11 @@ msgstr ""
 "Indiquez votre vitesse de lecture moyenne (en « mpm », mots par minute), "
 "pour que les temps de lecture vous soient ajustés."
 
-#: models/nonrel/preferences.py:130 models/reldb/preferences.py:220
+#: models/nonrel/preferences.py:130 models/reldb/preferences.py:228
 msgid "Auto mark-read delay"
 msgstr "Délai de marquage lu automatique"
 
-#: models/nonrel/preferences.py:131 models/reldb/preferences.py:221
+#: models/nonrel/preferences.py:131 models/reldb/preferences.py:229
 msgid ""
 "The delay after which an open article in any reading list will be "
 "automatically marked as read if it is not."
@@ -2321,11 +2321,11 @@ msgstr ""
 "C'est le delai après lequel un article fraîchement ouvert sera marqué comme "
 "lu s'il ne l'est pas déjà."
 
-#: models/nonrel/preferences.py:136 models/reldb/preferences.py:227
+#: models/nonrel/preferences.py:136 models/reldb/preferences.py:248
 msgid "Switch to full-screen while reading"
 msgstr "Basculer en plein écran pendant la lecture"
 
-#: models/nonrel/preferences.py:137 models/reldb/preferences.py:228
+#: models/nonrel/preferences.py:137 models/reldb/preferences.py:249
 msgid ""
 "Automatically hide navigation bars when opening an article for reading "
 "(default: false).<br />When enabled, fullscreen will remain active while you"
@@ -2338,11 +2338,11 @@ msgstr ""
 "Quand elle est activée, le plein-écran reste activé tant que vous passez d'un article à l'autre (via la souris, ou les raccourcis claviers). Les barres de navigation ré-apparaissent lorsque vous fermez l'article ouvert sans en ouvrir d'autre (= vous revenez simplement à la liste).<br />\n"
 "Quelle que soit la valeur de cette préférence, vous pouvez toujours afficher ou cacher les barres de navigation avec le raccourci clavier `shift`+`f`."
 
-#: models/nonrel/preferences.py:149 models/reldb/preferences.py:241
+#: models/nonrel/preferences.py:149 models/reldb/preferences.py:262
 msgid "Show the bottom “jump to” navbar"
 msgstr "Afficher la barre de navigation « Raccourcis »"
 
-#: models/nonrel/preferences.py:150 models/reldb/preferences.py:242
+#: models/nonrel/preferences.py:150 models/reldb/preferences.py:263
 msgid ""
 "When you are in any reading list, either reading articles or just scrolling "
 "the list, you can have a navigation bar at the bottom of the screen, "
@@ -2353,11 +2353,11 @@ msgstr ""
 "Lorsque vous êtes dans une liste de lecture, vous pouvez afficher en bas de l'écran une barre de navigation proposant des raccourcis vers les autres listes de lecture principales, ainsi que le sélecteur. Cette barre est vouée dans l'avenir à offrir des fonctions plus spécifiques au flux ou au dossier courant.<br />\n"
 "<span class=\"muted\">Le comportement par défaut est de ne pas afficher cette barre de navigation.</span>"
 
-#: models/nonrel/preferences.py:163 models/reldb/preferences.py:263
+#: models/nonrel/preferences.py:163 models/reldb/preferences.py:284
 msgid "Feed names show unread count"
 msgstr "Les noms de flux affichent le nombre de non-lus"
 
-#: models/nonrel/preferences.py:164 models/reldb/preferences.py:264
+#: models/nonrel/preferences.py:164 models/reldb/preferences.py:285
 msgid ""
 "Activate this if you want to see the articles unread count in parenthesis "
 "near the feed titles."
@@ -2365,11 +2365,11 @@ msgstr ""
 "Activez cette option si vous voulez voir le nombre d'articles non-lus entre "
 "parenthèses à côté des noms de flux."
 
-#: models/nonrel/preferences.py:169 models/reldb/preferences.py:269
+#: models/nonrel/preferences.py:169 models/reldb/preferences.py:290
 msgid "Reading lists show unread count"
 msgstr "Les listes de lecture affichent le nombre d'éléments"
 
-#: models/nonrel/preferences.py:170 models/reldb/preferences.py:270
+#: models/nonrel/preferences.py:170 models/reldb/preferences.py:291
 msgid ""
 "Each reading list is appended the number of articles marked as being part of"
 " it."
@@ -2377,11 +2377,11 @@ msgstr ""
 "Chaque nom de liste de lecture affichera le nombre total d'articles qu'elle "
 "contient entre parenthèses."
 
-#: models/nonrel/preferences.py:175 models/reldb/preferences.py:275
+#: models/nonrel/preferences.py:175 models/reldb/preferences.py:296
 msgid "Folders show unread count"
 msgstr "Les dossiers affichent le nombre de non-lus"
 
-#: models/nonrel/preferences.py:176 models/reldb/preferences.py:276
+#: models/nonrel/preferences.py:176 models/reldb/preferences.py:297
 msgid ""
 "Each folder is appended the sum of unread articles of each of its subfolders"
 " and subscriptions."
@@ -2389,11 +2389,11 @@ msgstr ""
 "Chaque dossier sera suffixé du nombre total d'articles non-lus dans tous ses"
 " sous-dossiers et ses abonnements."
 
-#: models/nonrel/preferences.py:181 models/reldb/preferences.py:281
+#: models/nonrel/preferences.py:181 models/reldb/preferences.py:302
 msgid "folders can hold three levels of subfolders"
 msgstr "les dossiers peuvent avoir trois sous-niveaux de sous-dossiers"
 
-#: models/nonrel/preferences.py:182 models/reldb/preferences.py:282
+#: models/nonrel/preferences.py:182 models/reldb/preferences.py:303
 msgid ""
 "Folders have one level of subfolders in normal conditions. With this "
 "setting, you can push the limit to three (which makes a total classifying "
@@ -2408,11 +2408,11 @@ msgstr ""
 " lire. Un écran plus peut aider dans certains cas. Un hélicoptère, moins ; "
 "mais c'est sacrément cool si vous en avez un !</span>"
 
-#: models/nonrel/preferences.py:192 models/reldb/preferences.py:292
+#: models/nonrel/preferences.py:192 models/reldb/preferences.py:313
 msgid "Subscriptions can be attached to multiple folders"
 msgstr "Les abonnements peuvent être rattachées à plusieurs dossiers"
 
-#: models/nonrel/preferences.py:193 models/reldb/preferences.py:293
+#: models/nonrel/preferences.py:193 models/reldb/preferences.py:314
 msgid ""
 "In normal conditions, a given subscription can be attached to only one "
 "folder. With this settings, you can make any subscription show in multiple "
@@ -2422,11 +2422,11 @@ msgstr ""
 "fois dans le sélecteur de sources. Avec cette option, vous pouvez le faire "
 "apparaître à plusieurs endroits."
 
-#: models/nonrel/preferences.py:199 models/reldb/preferences.py:299
+#: models/nonrel/preferences.py:199 models/reldb/preferences.py:320
 msgid "Show closed streams"
 msgstr "Afficher les flux fermés"
 
-#: models/nonrel/preferences.py:200 models/reldb/preferences.py:300
+#: models/nonrel/preferences.py:200 models/reldb/preferences.py:321
 msgid ""
 "Display streams that have been closed by the system but to which you are "
 "still subscribed. As there will never be new content in them, it is safe to "
@@ -2440,11 +2440,11 @@ msgstr ""
 "ces flux sont toujours accessibles dans les listes de lectures globales "
 "ainsi que celles des dossiers dans lesquels ces flux sont contenus."
 
-#: models/nonrel/preferences.py:215 models/reldb/preferences.py:321
+#: models/nonrel/preferences.py:215 models/reldb/preferences.py:342
 msgid "Super powers enabled"
 msgstr "Super-pouvoirs activés"
 
-#: models/nonrel/preferences.py:216 models/reldb/preferences.py:322
+#: models/nonrel/preferences.py:216 models/reldb/preferences.py:343
 msgid ""
 "Globaly enable or not every bit of staff/superuser features in the 1flow "
 "interface. If disabled, only the <strong>MAINTENANCE_MODE</strong> label in "
@@ -2459,12 +2459,12 @@ msgstr ""
 "par la suite.<br /><span class=\"muted\">Valeur par défaut : les super-"
 "pouvoirs sont activés.</span>"
 
-#: models/nonrel/preferences.py:225 models/reldb/preferences.py:331
+#: models/nonrel/preferences.py:225 models/reldb/preferences.py:352
 msgid "Show duplicates, orphaned and other transient data"
 msgstr ""
 "Afficher les articles dupliqués/orphelins et les autres données transitoires"
 
-#: models/nonrel/preferences.py:226 models/reldb/preferences.py:332
+#: models/nonrel/preferences.py:226 models/reldb/preferences.py:353
 msgid ""
 "<strong>Warning</strong>: this breaks keyboard shortcut navigation whenever "
 "the first bad article is encountered.<br /><span class=\"muted\">Default: "
@@ -2475,11 +2475,11 @@ msgstr ""
 "article rencontré.<br /><span class=\"muted\">Valeur par défaut : "
 "désactivé.</span>"
 
-#: models/nonrel/preferences.py:233 models/reldb/preferences.py:339
+#: models/nonrel/preferences.py:233 models/reldb/preferences.py:360
 msgid "Selector shows admin links"
 msgstr "Afficher les liens pour les admins dans le sélecteur"
 
-#: models/nonrel/preferences.py:234 models/reldb/preferences.py:340
+#: models/nonrel/preferences.py:234 models/reldb/preferences.py:361
 msgid ""
 "Automatically link to the admin from the selector whenever "
 "folder/subscription has missing data.<br /><span class=\"muted\">Default: "
@@ -2489,11 +2489,11 @@ msgstr ""
 "sélecteur quand un dossier / abonnement est incomplet.<br /><span "
 "class=\"muted\">Valeur par défaut : activé.</span>"
 
-#: models/nonrel/preferences.py:240 models/reldb/preferences.py:346
+#: models/nonrel/preferences.py:240 models/reldb/preferences.py:367
 msgid "Landing page does not redirect to webapp"
 msgstr "La landing page ne redirige pas automatiquement vers l'appli web"
 
-#: models/nonrel/preferences.py:241 models/reldb/preferences.py:347
+#: models/nonrel/preferences.py:241 models/reldb/preferences.py:368
 msgid ""
 "As a staff member, you can have access to the landing page for testing / "
 "check purposes even if you are logged in, whereas standard logged in users "
@@ -2516,47 +2516,47 @@ msgstr ""
 "texte archivés par les utilisateurs, à des fins de tests/vérification de "
 "conversion. MERCI DE NE PAS ACTIVER EN CONDITIONS NORMALES."
 
-#: models/nonrel/preferences.py:261 models/reldb/preferences.py:367
+#: models/nonrel/preferences.py:261 models/reldb/preferences.py:388
 msgid "Default share message"
 msgstr "Message de partage par défaut."
 
-#: models/nonrel/preferences.py:265 models/reldb/preferences.py:372
+#: models/nonrel/preferences.py:265 models/reldb/preferences.py:393
 msgid "Reading list"
 msgstr "Liste de lecture"
 
-#: models/nonrel/preferences.py:266 models/reldb/preferences.py:373
+#: models/nonrel/preferences.py:266 models/reldb/preferences.py:394
 msgid "Tiled News"
 msgstr "News en tuiles"
 
-#: models/nonrel/preferences.py:271 models/reldb/preferences.py:378
+#: models/nonrel/preferences.py:271 models/reldb/preferences.py:399
 msgid "Unread articles"
 msgstr "Articles non-lus"
 
-#: models/nonrel/preferences.py:272 models/reldb/preferences.py:379
+#: models/nonrel/preferences.py:272 models/reldb/preferences.py:400
 msgid "Source selector"
 msgstr "Sélecteur de source"
 
-#: models/nonrel/preferences.py:273 models/reldb/preferences.py:380
+#: models/nonrel/preferences.py:273 models/reldb/preferences.py:401
 msgid "Read later list"
 msgstr "Liste à lire plus tard"
 
-#: models/nonrel/preferences.py:274 models/reldb/preferences.py:381
+#: models/nonrel/preferences.py:274 models/reldb/preferences.py:402
 msgid "Imported items"
 msgstr "Éléments importés"
 
-#: models/nonrel/preferences.py:275 models/reldb/preferences.py:382
+#: models/nonrel/preferences.py:275 models/reldb/preferences.py:403
 msgid "Starred items"
 msgstr "Éléments sélectionnés"
 
-#: models/nonrel/preferences.py:286 models/reldb/preferences.py:402
+#: models/nonrel/preferences.py:286 models/reldb/preferences.py:423
 msgid "How the user wants his 1flow home to appear"
 msgstr "Comment l'utilisateur veut voir sa home page"
 
-#: models/nonrel/preferences.py:291 models/reldb/preferences.py:406
+#: models/nonrel/preferences.py:291 models/reldb/preferences.py:427
 msgid "I want to play with my life"
 msgstr "Je veux jouer avec ma vie"
 
-#: models/nonrel/preferences.py:292 models/reldb/preferences.py:407
+#: models/nonrel/preferences.py:292 models/reldb/preferences.py:428
 msgid ""
 "With this setting, you will be able to tune the 1flow interface a lot more. "
 "<strong>But BEWARE:</strong> you will gain access to features which are not "
@@ -2573,11 +2573,11 @@ msgstr ""
 "défaut, c'est désactivé : nous voulons que votre expérience utilisateur soit"
 " agréable et fluide.</span>"
 
-#: models/nonrel/preferences.py:301 models/reldb/preferences.py:418
+#: models/nonrel/preferences.py:301 models/reldb/preferences.py:439
 msgid "Clicking <code>Read</code> displays:"
 msgstr "Cliquer sur <code>Lecture</code> affiche :"
 
-#: models/nonrel/preferences.py:304 models/reldb/preferences.py:419
+#: models/nonrel/preferences.py:304 models/reldb/preferences.py:440
 msgid ""
 "Define what 1flow will display when you click on the <code>Read</code> link "
 "in the top navbar of the interface. <br /><span class=\"muted\">Default: "
@@ -2588,11 +2588,11 @@ msgstr ""
 "/><span class=\"muted\">Le comportement standard est d'afficher le "
 "<strong>sélecteur de sources</strong>.</span>"
 
-#: models/nonrel/preferences.py:312 models/reldb/preferences.py:427
+#: models/nonrel/preferences.py:312 models/reldb/preferences.py:448
 msgid "Activate experimental features"
 msgstr "Activer les fonctionnalités expérimentales"
 
-#: models/nonrel/preferences.py:315 models/reldb/preferences.py:428
+#: models/nonrel/preferences.py:315 models/reldb/preferences.py:449
 msgid ""
 "Activate features that are currently under development, beiing tested or "
 "privately deployed. USE AT YOUR OWN RISK!"
@@ -2846,46 +2846,46 @@ msgstr ""
 msgid "(dupe of #%s)"
 msgstr "(duplicata de #%s)"
 
-#: models/reldb/author.py:53
+#: models/reldb/author.py:51
 msgid "Author"
 msgstr "Auteur"
 
-#: models/reldb/author.py:54 models/reldb/item/base.py:247
+#: models/reldb/author.py:52 models/reldb/item/base.py:247
 msgid "Authors"
 msgstr "Auteurs"
 
-#: models/reldb/author.py:63
+#: models/reldb/author.py:61
 msgid "Username (nick)"
 msgstr "Nom d'utilisateur (pseudo)"
 
-#: models/reldb/author.py:66 models/reldb/website.py:86
+#: models/reldb/author.py:64 models/reldb/website.py:86
 #: models/reldb/feed/rssatom.py:361
 msgid "Web site"
 msgstr "Site web"
 
-#: models/reldb/author.py:67
+#: models/reldb/author.py:65
 msgid "Web site where this author was discovered."
 msgstr "Site web où cet auteur a été découvert"
 
-#: models/reldb/author.py:71
+#: models/reldb/author.py:69
 msgid "name at original discover"
 msgstr "nom lors de la découverte"
 
-#: models/reldb/author.py:79
+#: models/reldb/author.py:77
 msgid "Numerical ID"
 msgstr "Identifiant numérique"
 
-#: models/reldb/author.py:81
+#: models/reldb/author.py:79
 msgid "ID on the original website, where available (eg. on social networks)."
 msgstr ""
 "Identifiant sur le site d'origine, quand disponible (par ex. sur les réseaux"
 " sociaux)"
 
-#: models/reldb/author.py:86
+#: models/reldb/author.py:84
 msgid "Alphanumeric ID"
 msgstr "Identifiant alpha-numérique"
 
-#: models/reldb/author.py:88
+#: models/reldb/author.py:86
 msgid ""
 "ID on the original website (as characters), where available (eg. on social "
 "networks which do not offer integer IDs)."
@@ -2893,31 +2893,31 @@ msgstr ""
 "Identifiant sur le site d'origine (chaîne de texte), quand disponible (par "
 "ex. sur les réseaux sociaux)"
 
-#: models/reldb/author.py:94
+#: models/reldb/author.py:92
 msgid "unsure identity"
 msgstr "identité non-confirmée"
 
-#: models/reldb/author.py:102 models/reldb/feed/base.py:242
+#: models/reldb/author.py:100 models/reldb/feed/base.py:242
 #: models/reldb/feed/combined.py:41 models/reldb/feed/common.py:160
 #: models/reldb/item/base.py:220 models/reldb/processor/category.py:92
-#: models/reldb/processor/chain.py:128 models/reldb/processor/processor.py:133
+#: models/reldb/processor/chain.py:150 models/reldb/processor/processor.py:133
 #: models/reldb/sync/node.py:84
 msgid "Creator"
 msgstr "Créateur"
 
-#: models/reldb/author.py:106
+#: models/reldb/author.py:104
 msgid "1flow accounts"
 msgstr "comptes 1flow"
 
-#: models/reldb/author.py:107
+#: models/reldb/author.py:105
 msgid "1flow accounts linked to this author"
 msgstr "Compte 1flow local lié à cet auteur "
 
-#: models/reldb/author.py:111
+#: models/reldb/author.py:109
 msgid "Other identities"
 msgstr "Autres identités"
 
-#: models/reldb/author.py:112
+#: models/reldb/author.py:110
 msgid "Other authors elsewhere that are really the same person."
 msgstr "Autres auteurs ailleurs qui sont la même personne"
 
@@ -3079,6 +3079,40 @@ msgstr "Ensembles de préférences"
 #, python-brace-format
 msgid "Preferences for user {0}"
 msgstr "Préférences de l'utilisateur {0}"
+
+#: models/reldb/preferences.py:151
+msgid "Keeps it in the list, but greyed out (default)"
+msgstr "Le garde dans la liste, mais grisé (comportement d'usine)"
+
+#: models/reldb/preferences.py:152
+msgid "Hides it immediately"
+msgstr "Le cache immédiatement"
+
+#: models/reldb/preferences.py:153
+msgid "Hides it after 4.5 seconds"
+msgstr "Le cache après 4,5 secondes"
+
+#: models/reldb/preferences.py:154
+msgid "Hides it after 15 seconds"
+msgstr "Le cache après 15 secondes"
+
+#: models/reldb/preferences.py:155
+msgid "Hides it after 1 minute"
+msgstr "Le cache après une minute"
+
+#: models/reldb/preferences.py:235
+msgid "Marking an item “read without history”"
+msgstr "Marquer un élément « lu sans enregistrement dans l'historique »"
+
+#: models/reldb/preferences.py:236
+msgid ""
+"When you mark an item “read without history”, eg. you just want to forget "
+"it, the item will be greyed out in the reading list, and can either stay "
+"here, be hidden immediately, or with a custom delay. The delay eventually "
+"allows you to mark it back unread or to read later, for example. In case you"
+" hide it, you can still find it back in the “all” reading list, where it "
+"will always be present, but greyed out."
+msgstr ""
 
 #: models/reldb/read.py:73
 msgid "Custom (user defined)"
@@ -3283,13 +3317,13 @@ msgstr ""
 "hébergée en dehors de 1flow."
 
 #: models/reldb/website.py:155 models/reldb/feed/base.py:314
-#: models/reldb/processor/category.py:115 models/reldb/processor/chain.py:162
+#: models/reldb/processor/category.py:115 models/reldb/processor/chain.py:184
 #: models/reldb/processor/processor.py:187
 msgid "Short description"
 msgstr "Description courte"
 
 #: models/reldb/website.py:156 models/reldb/feed/base.py:315
-#: models/reldb/processor/chain.py:163
+#: models/reldb/processor/chain.py:185
 msgid ""
 "Public short description of the feed, for auto-completer listing. Markdown "
 "text."
@@ -3298,7 +3332,7 @@ msgstr ""
 "Markdown."
 
 #: models/reldb/website.py:162 models/reldb/feed/base.py:321
-#: models/reldb/processor/chain.py:169
+#: models/reldb/processor/chain.py:191
 msgid "Public description of the feed. Markdown text."
 msgstr ""
 "Description publique du flux en langue française. Apparaîtra dans le "
@@ -4240,35 +4274,35 @@ msgstr "{0} (#{1}){2}"
 msgid "Original data"
 msgstr "Données d'origine"
 
-#: models/reldb/item/tweet.py:146
+#: models/reldb/item/tweet.py:145
 msgid "Tweet"
 msgstr "Tweet"
 
-#: models/reldb/item/tweet.py:147
+#: models/reldb/item/tweet.py:146
 msgid "Tweets"
 msgstr "Tweets"
 
-#: models/reldb/item/tweet.py:152
+#: models/reldb/item/tweet.py:151
 msgid "Tweet ID"
 msgstr "Identifiant du Tweet"
 
-#: models/reldb/item/tweet.py:157
+#: models/reldb/item/tweet.py:156
 msgid "deleted from timeline"
 msgstr "supprimé de la timeline"
 
-#: models/reldb/item/tweet.py:164
+#: models/reldb/item/tweet.py:163
 msgid "Entities fetched?"
 msgstr "Entités récupérées ?"
 
-#: models/reldb/item/tweet.py:172
+#: models/reldb/item/tweet.py:171
 msgid "Entities"
 msgstr "Entités"
 
-#: models/reldb/item/tweet.py:178
+#: models/reldb/item/tweet.py:177
 msgid "mentions"
 msgstr "mentions"
 
-#: models/reldb/item/tweet.py:195
+#: models/reldb/item/tweet.py:194
 #, python-brace-format
 msgid "{0} ({1}, {2})"
 msgstr "{0} ({1}, {2})"
@@ -4344,35 +4378,35 @@ msgid ""
 "The category home on the web, if any. A web URL, or a github short address."
 msgstr ""
 
-#: models/reldb/processor/chain.py:108
+#: models/reldb/processor/chain.py:130
 #: templates/staff/website/list-create.html:50
 msgid "Processing chain"
 msgstr "Chaîne de traitement"
 
-#: models/reldb/processor/chain.py:109
+#: models/reldb/processor/chain.py:131
 #: templates/processingchain/list-create.html:4
 #: templates/processingchain/list-create.html:34
 #: templates/snippets/navbar/staff-config-menu.html:35
 msgid "Processing chains"
 msgstr "Chaînes de traitement"
 
-#: models/reldb/processor/chain.py:137 models/reldb/processor/processor.py:156
+#: models/reldb/processor/chain.py:159 models/reldb/processor/processor.py:156
 msgid ""
 "The language(s) in which this processor can process content. Let empty "
 "(None/null) for any language or if not relevant."
 msgstr ""
 
-#: models/reldb/processor/chain.py:145
+#: models/reldb/processor/chain.py:167
 msgid ""
 "Any relevant categories. Helps reducing resources consumtion when looking up"
 " processing chains, and also helps staff members find chains to manage."
 msgstr ""
 
-#: models/reldb/processor/chain.py:155
+#: models/reldb/processor/chain.py:177
 msgid "Applies on"
 msgstr "S'applique à"
 
-#: models/reldb/processor/chain.py:157
+#: models/reldb/processor/chain.py:179
 msgid ""
 "On which 1flow models can this chain run ? Not selecting any is like "
 "selecting all."
@@ -4870,10 +4904,12 @@ msgid "Forcing statsd gauges synchronization…"
 msgstr ""
 
 #: tasks/checks.py:164
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid ""
 "Reminder: {0} feed(s) closed in last {1} day(s), {2} automatically reopened"
-msgstr "Rappel : {0} flux fermé(s) ce(s) {1} dernier(s) jour(s)"
+msgstr ""
+"Rappel : {0} flux fermé(s) ce(s) {1} dernier(s) jour(s), {2} automatiquement"
+" ré-ouvert(s)"
 
 #: tasks/checks.py:167
 #, fuzzy, python-brace-format
@@ -6383,7 +6419,7 @@ msgid "Experimental features"
 msgstr "Fonctionnalités expérimentales"
 
 #: templates/snippets/preferences/advanced.html:23
-#: templates/snippets/preferences/read.html:48
+#: templates/snippets/preferences/read.html:49
 #: templates/snippets/preferences/selector.html:35
 msgid "Important notice:"
 msgstr "Note importante :"
@@ -6402,23 +6438,23 @@ msgstr ""
 msgid "“Read” navbar link"
 msgstr "Lien de navigation « Lecture »"
 
-#: templates/snippets/preferences/read.html:13
+#: templates/snippets/preferences/read.html:14
 msgid "Comfort"
 msgstr "Confort"
 
-#: templates/snippets/preferences/read.html:21
+#: templates/snippets/preferences/read.html:22
 msgid "Keeping for later"
 msgstr "Lecture différée"
 
-#: templates/snippets/preferences/read.html:27
+#: templates/snippets/preferences/read.html:28
 msgid "Starring articles"
 msgstr "Articles sélectionnés"
 
-#: templates/snippets/preferences/read.html:34
+#: templates/snippets/preferences/read.html:35
 msgid "Archiving articles"
 msgstr "Archivage des articles"
 
-#: templates/snippets/preferences/read.html:36
+#: templates/snippets/preferences/read.html:37
 msgid ""
 "\n"
 "    Archiving is what keep your content accessible over time, whatever happens on the internet.\n"
@@ -6427,7 +6463,7 @@ msgstr ""
 "\n"
 "L'archivage est ce qui vous permet de garder votre contenu accessible dans le temps, quelque soit ce qui se passe sur internet."
 
-#: templates/snippets/preferences/read.html:48
+#: templates/snippets/preferences/read.html:49
 msgid ""
 "\n"
 "If you have any reading list open in another browser tab, you need to reload them for changes to take effect.\n"
@@ -8189,37 +8225,41 @@ msgstr "Outils de gestion"
 msgid "External tools"
 msgstr "Outils externes"
 
-#: templates/status/system.html:120
+#: templates/status/system.html:121
 msgid "Workers management"
-msgstr "Gestion des exécuteurs de tâches"
+msgstr "Exécuteurs de tâches"
 
-#: templates/status/system.html:133
+#: templates/status/system.html:132
 msgid "Statistics"
 msgstr "Statistiques"
 
-#: templates/status/system.html:152
+#: templates/status/system.html:143
+msgid "Interactive shell"
+msgstr "Commandes intéractives"
+
+#: templates/status/system.html:161
 msgid "Web app. caches"
 msgstr "Caches de l'appli. web"
 
-#: templates/status/system.html:159
+#: templates/status/system.html:170
 msgid "Clear templates"
 msgstr "Vider les templates"
 
-#: templates/status/system.html:168
+#: templates/status/system.html:179
 msgid "Clear views"
 msgstr "Nettoyer les vues"
 
-#: templates/status/system.html:177
+#: templates/status/system.html:188
 msgid "Clear models"
 msgstr "Nettoyer les modèles"
 
-#: templates/status/system.html:186
+#: templates/status/system.html:197
 msgid "NOTE: your instance could be sluggish while caches reconstruct slowly"
 msgstr ""
 "Note : votre instance pourrait être fortement ralentie le temps que les "
 "caches soient reconstruits."
 
-#: templates/status/system.html:187
+#: templates/status/system.html:198
 msgid "Clear all"
 msgstr "Nettoyer tous"
 
@@ -8782,21 +8822,21 @@ msgstr "Import #{0} relancé avec succès."
 msgid "Preferences updated."
 msgstr "Préférences mises à jour."
 
-#: views/read.py:272
+#: views/read.py:278
 #, python-format
 msgid " (%(count)s subscription)"
 msgid_plural " (%(count)s subscriptions)"
 msgstr[0] " (%(count)s abonnement)"
 msgstr[1] " (%(count)s abonnements)"
 
-#: views/read.py:280
+#: views/read.py:286
 #, python-format
 msgid "In your <span class=\"hide\">%(count)s</span> subscription"
 msgid_plural "In your %(count)s subscriptions"
 msgstr[0] "Dans votre <span class=\"hide\">%(count)s</span> abonnement"
 msgstr[1] "Dans vos %(count)s abonnements"
 
-#: views/read.py:333 views/read.py:357
+#: views/read.py:339 views/read.py:363
 msgid ""
 "As administrator, you are accessing the feed of another user. USE WITH "
 "CAUTION."
@@ -8804,28 +8844,28 @@ msgstr ""
 "Vous accédez au flux d'un autre utilisateur en tant qu'administrateur. "
 "AGISSEZ AVEC PRUDENCE."
 
-#: views/read.py:504
+#: views/read.py:511
 msgid "no item"
 msgstr "aucun élément"
 
-#: views/read.py:587
+#: views/read.py:594
 #, python-brace-format
 msgid "{1} shared <em>{0}</em> with you."
 msgstr "{1} a partagé <em>{0}</em> avec vous."
 
-#: views/read.py:590
+#: views/read.py:597
 #, python-brace-format
 msgid "Recorded <em>{0}</em> as shared by {1} in your inbox."
 msgstr ""
 "<em>{0}</em> a été enregistré dans votre boîte de réception, comme partagé "
 "par {1}."
 
-#: views/read.py:632
+#: views/read.py:639
 #, python-brace-format
 msgid "Share article with <code>{0}</code> failed: {1}"
 msgstr "Le partage de l'article avec <code>{0}</code> a échoué : {1}"
 
-#: views/read.py:638
+#: views/read.py:645
 #, python-brace-format
 msgid "Successfully shared <em>{0}</em> with {1} persons"
 msgstr "L'article <em>{0}</em> a été partagé avec {1} personne(s)"

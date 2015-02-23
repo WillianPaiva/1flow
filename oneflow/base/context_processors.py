@@ -34,6 +34,7 @@ def oneflow_version(request):
         'FULL_VERSION': full_version(),
         'FLOWER_URL': os.environ.get('ONEFLOW_FLOWER_URL', None),
         'STATS_URL': os.environ.get('ONEFLOW_STATS_URL', None),
+        'SHELL_URL': os.environ.get('ONEFLOW_SHELL_URL', None),
     }
 
 
