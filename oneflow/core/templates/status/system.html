@@ -109,33 +109,31 @@
 	<div class="spacer15"></div>
 	<div class="row">
 
-		<div class="col-sm-2 right">
+		<div class="col-sm-3 right">
 			<h4>{% trans "External tools" %}</h4>
 		</div>
 
+		<div class="col-sm-9">
+
 	  {% if FLOWER_URL %}
 
-			<div class="col-sm-4">
 	      <a href="{{ FLOWER_URL }}" class="btn btn-info centered">
 	        {% trans "Workers management" %}&nbsp;
 	        <span class="very-muted">
 	          {% core_icon 'external-link' %}
 	        </span>
 	      </a>
-			</div>
 
 	  {% endif %}
 
 	  {% if STATS_URL %}
 
-			<div class="col-sm-4">
 	      <a href="{{ STATS_URL }}" class="btn btn-info centered">
 	        {% trans "Statistics" %}&nbsp;
 	        <span class="very-muted">
 	          {% core_icon 'external-link' %}
 	        </span>
 	      </a>
-			</div>
 
 	  {% endif %}
 
@@ -159,45 +157,47 @@
 <div class="spacer15 clearfix"></div>
 <div class="row">
 
-	<div class="col-sm-2 right">
+	<div class="col-sm-3 right">
 			<h4>{% trans "Web app. caches" %}</h4>
 	</div>
 
-	<div class="col-sm-2">
-		<form data-async data-target="#clear_templates_cache_result"
-		  	action="{% url 'admin_command' command='clear_templates_cache' %}">
-			<input type="submit" class="btn btn-warning"
-		    value="{% trans "Clear templates" %}" />
-		</form>
-		<span id="clear_templates_cache_result"></span>
-	</div>
+	<div class="col-sm-9">
 
-	<div class="col-sm-2">
-	  <form data-async data-target="#clear_views_cache_result"
-	      action="{% url 'admin_command' command='clear_views_cache' %}">
-	    <input type="submit" class="btn btn-warning"
-	        value="{% trans "Clear views" %}" />
-	  </form>
-	  <span id="clear_views_cache_result"></span>
-	</div>
+		<div class="pull-left" style="margin-right: 3px;">
+			<form data-async data-target="#clear_templates_cache_result"
+			  	action="{% url 'admin_command' command='clear_templates_cache' %}">
+				<input type="submit" class="btn btn-warning"
+			    value="{% trans "Clear templates" %}" />
+			</form>
+			<span id="clear_templates_cache_result"></span>
+		</div>
 
-	<div class="col-sm-2">
-	  <form data-async data-target="#clear_models_cache_result"
-	      action="{% url 'admin_command' command='clear_models_cache' %}">
-	    <input type="submit" class="btn btn-warning"
-	        value="{% trans "Clear models" %}" />
-	  </form>
-	  <span id="clear_models_cache_result"></span>
-	</div>
+		<div class="pull-left" style="margin-right: 3px;">
+		  <form data-async data-target="#clear_views_cache_result"
+		      action="{% url 'admin_command' command='clear_views_cache' %}">
+		    <input type="submit" class="btn btn-warning"
+		        value="{% trans "Clear views" %}" />
+		  </form>
+		  <span id="clear_views_cache_result"></span>
+		</div>
 
-	<div class="col-sm-2">
-	  <form data-async data-target="#clear_all_caches_result"
-	      action="{% url 'admin_command' command='clear_all_caches' %}">
-	    <input type="submit" class="btn btn-danger" data-toggle="tooltip"
-	        title="{% trans "NOTE: your instance could be sluggish while caches reconstruct slowly" %}"
-	        value="{% trans "Clear all" %}" />
-	  </form>
-	  <span id="clear_all_caches_result"></span>
-	</div>
+		<div class="pull-left" style="margin-right: 3px;">
+		  <form data-async data-target="#clear_models_cache_result"
+		      action="{% url 'admin_command' command='clear_models_cache' %}">
+		    <input type="submit" class="btn btn-warning"
+		        value="{% trans "Clear models" %}" />
+		  </form>
+		  <span id="clear_models_cache_result"></span>
+		</div>
 
+		<div class="pull-left" style="margin-right: 3px;">
+		  <form data-async data-target="#clear_all_caches_result"
+		      action="{% url 'admin_command' command='clear_all_caches' %}">
+		    <input type="submit" class="btn btn-danger" data-toggle="tooltip"
+		        title="{% trans "NOTE: your instance could be sluggish while caches reconstruct slowly" %}"
+		        value="{% trans "Clear all" %}" />
+		  </form>
+		  <span id="clear_all_caches_result"></span>
+		</div>
+	</div>
 </div>
