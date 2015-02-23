@@ -104,7 +104,7 @@
 <div class="spacer15"></div>
 <h2>{% trans "Management tools" %}</h2>
 
-{% if FLOWER_URL or STATS_URL %}
+{% if FLOWER_URL or STATS_URL or SHELL_URL %}
 
 	<div class="spacer15"></div>
 	<div class="row">
@@ -139,6 +139,17 @@
 
 	  {% endif %}
 
+	  {% if SHELL_URL %}
+
+	      <a href="{{ SHELL_URL }}" class="btn btn-info centered">
+	        {% trans "Interactive shell" %}&nbsp;
+	        <span class="very-muted">
+	          {% core_icon 'external-link' %}
+	        </span>
+	      </a>
+
+	  {% endif %}
+	  </div>
 	</div>
 
 {% endif %}
