@@ -26,7 +26,7 @@ from constance import config
 from transmeta import TransMeta
 from json_field import JSONField
 from yamlfield.fields import YAMLField
-from cacheops import cached
+from cacheops import cached_as
 
 from django.db import models  # , ProgrammingError
 from django.db.models.signals import post_save, pre_save, pre_delete
@@ -214,7 +214,7 @@ class WebSite(six.with_metaclass(WebSiteMeta, MPTTModel,
 
         base_url = '%s://%s' % (proto, host_and_port)
 
-        @cached(timeout=60 * 60, extra=base_url)
+        @cached_as(WebSite, timeout=3600, extra=base_url)
         def _get_website_from_url(base_url):
 
             try:
