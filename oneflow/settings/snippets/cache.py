@@ -19,14 +19,18 @@ License along with 1flow.  If not, see http://www.gnu.org/licenses/
 
 """
 
+# Don't get any fallback, we *need* to have this configured in `.env`.
 REDIS_CACHE_DB = os.environ.get('REDIS_CACHE_DB')
 
 CACHE_HOST, CACHE_PORT, CACHE_DB_NUM = REDIS_CACHE_DB.split(':', 3)
 
 CACHES = {
     'default': {
-        'BACKEND': 'redis_cache.cache.RedisCache',
-        # Don't set any fallback, we *need* to have this configured in `.env`.
+
+        # This uses redis_cache internally.
+        # see https://pypi.python.org/pypi/python-redis-lock
+        'BACKEND': 'redis_lock.django_cache.RedisCache',
+
         'LOCATION': REDIS_CACHE_DB,
 
         # This is the default timeout, reasonably sane to
@@ -44,7 +48,7 @@ CACHES = {
         }
     },
     'sessions': {
-        'BACKEND': 'redis_cache.cache.RedisCache',
+        'BACKEND': 'django_redis.cache.RedisCache',
         # Don't set any fallback, we *need* to have this configured in `.env`.
         'LOCATION': os.environ.get('REDIS_SESSIONS_DB'),
 
