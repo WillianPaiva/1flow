@@ -1156,7 +1156,7 @@
     ], 
     "name": "Fill item content from excerpt", 
     "short_description_en": "", 
-    "parameters": "{'force_content_type': {'help_en': \"u'Set this to a valid content type. Usual values includes \\\\u201chtml\\\\u201d (most used) and \\\\u201cmarkdown\\\\u201d.'\", 'required': 'if use_excerpt_as_content is true', 'type': 'string', 'default_en': 'none'}, 'use_excerpt_as_content': {\"item excerpt will be duplicated into its content field. Setting this parameter requires setting \\\\u201cforce_content_type\\\\u201d too.'\": 'None', 'help_en': \"u'if true\", 'required': False, 'type': 'boolean', 'default_en': 'false; .'}}", 
+    "parameters": "{'force_content_type': {'help_en': \"u'Set this to a valid content type. Usual values includes \\\\u201chtml\\\\u201d (most used) and \\\\u201cmarkdown\\\\u201d.'\", 'required': 'if use_excerpt_as_content is true', 'type': 'string', 'default_en': 'none'}, 'use_excerpt_as_content': {'type': 'boolean', 'help_en': \"u'if true\", 'required': False, \"item excerpt will be duplicated into its content field. Setting this parameter requires setting \\\\u201cforce_content_type\\\\u201d too.'\": 'None', 'default_en': 'false; .'}}", 
     "level": 0, 
     "duplicate_status": null, 
     "process_code": "\r\nprepare_parameters = parameters.get('prepare', {})\r\n\r\nCONTENT_TYPES = models.CONTENT_TYPES\r\n\r\ninstance_name = instance._meta.verbose_name\r\ninstance_id = instance.id\r\n\r\nif prepare_parameters.get('use_excerpt_as_content', False):\r\n\r\n    force_content_type = prepare_parameters.get('force_content_type', None)\r\n\r\n    if force_content_type is None:\r\n        LOGGER.warning(u'excerpt_as_content: force_content_type is None, '\r\n                       u'aborting on %s %s.', isntance_name, instance_id)\r\n        return\r\n\r\n    if force_content_type.isdigit():\r\n        force_content_type = CONTENT_TYPES.index(int(force_content_type))\r\n\r\n    else:\r\n        force_content_type = force_content_type.upper()\r\n\r\n        try:\r\n            force_content_type = getattr(CONTENT_TYPES, force_content_type)\r\n\r\n        except AttributeError:\r\n            LOGGER.warning(u'excerpt_as_content: unknown content type %s, '\r\n                           u'aborting on %s %s.', force_content_type, \r\n                           isntance_name, instance_id)\r\n\r\n    # content_was_none = instance.content is None\r\n\r\n    instance.content = instance.excerpt\r\n    instance.content_type = force_content_type\r\n\r\n    if verbose:\r\n        LOGGER.info(u'excerpt_as_content: duplicated excerpt as %s content '\r\n                    u'for %s %s.', CONTENT_TYPES.symbolic(force_content_type),\r\n                    isntance_name, instance_id)\r\n\r\n    if commit:\r\n        #if content_was_none:\r\n        #    instance.save_without_historical_record()\r\n        #else:\r\n        # Worth a version.\r\n        instance.save()"
@@ -1192,7 +1192,7 @@
     ], 
     "name": "Fill item content from excerpt", 
     "short_description_en": "", 
-    "parameters": "{'force_content_type': {'help_en': \"u'Set this to a valid content type. Usual values includes \\\\u201chtml\\\\u201d (most used) and \\\\u201cmarkdown\\\\u201d.'\", 'required': 'if use_excerpt_as_content is true', 'type': 'string', 'default_en': 'none'}, 'use_excerpt_as_content': {\"item excerpt will be duplicated into its content field. Setting this parameter requires setting \\\\u201cforce_content_type\\\\u201d too.'\": 'None', 'help_en': \"u'if true\", 'required': False, 'type': 'boolean', 'default_en': 'false; .'}}", 
+    "parameters": "{'force_content_type': {'help_en': \"u'Set this to a valid content type. Usual values includes \\\\u201chtml\\\\u201d (most used) and \\\\u201cmarkdown\\\\u201d.'\", 'required': 'if use_excerpt_as_content is true', 'type': 'string', 'default_en': 'none'}, 'use_excerpt_as_content': {'type': 'boolean', 'help_en': \"u'if true\", 'required': False, \"item excerpt will be duplicated into its content field. Setting this parameter requires setting \\\\u201cforce_content_type\\\\u201d too.'\": 'None', 'default_en': 'false; .'}}", 
     "level": 0, 
     "duplicate_status": null, 
     "process_code": "\r\nprepare_parameters = parameters.get('prepare', {})\r\n\r\nCONTENT_TYPES = models.CONTENT_TYPES\r\n\r\ninstance_name = instance._meta.verbose_name\r\ninstance_id = instance.id\r\n\r\nif prepare_parameters.get('use_excerpt_as_content', False):\r\n\r\n    force_content_type = prepare_parameters.get('force_content_type', None)\r\n\r\n    if force_content_type is None:\r\n        LOGGER.warning(u'excerpt_as_content: force_content_type is None, '\r\n                       u'aborting on %s %s.', isntance_name, instance_id)\r\n        return\r\n\r\n    if force_content_type.isdigit():\r\n        force_content_type = CONTENT_TYPES.index(int(force_content_type))\r\n\r\n    else:\r\n        force_content_type = force_content_type.upper()\r\n\r\n        try:\r\n            force_content_type = getattr(CONTENT_TYPES, force_content_type)\r\n\r\n        except AttributeError:\r\n            LOGGER.warning(u'excerpt_as_content: unknown content type %s, '\r\n                           u'aborting on %s %s.', force_content_type, \r\n                           isntance_name, instance_id)\r\n\r\n    # content_was_none = instance.content is None\r\n\r\n    instance.content = instance.excerpt\r\n    instance.content_type = force_content_type\r\n\r\n    if verbose:\r\n        LOGGER.info(u'excerpt_as_content: duplicated excerpt as %s content '\r\n                    u'for %s %s.', CONTENT_TYPES.symbolic(force_content_type),\r\n                    isntance_name, instance_id)\r\n\r\n    if commit:\r\n        #if content_was_none:\r\n        #    instance.save_without_historical_record()\r\n        #else:\r\n        # Worth a version.\r\n        instance.save()"
@@ -1340,6 +1340,117 @@
     "level": 0, 
     "duplicate_status": null, 
     "process_code": "# legacy HTML cleaner processor\r\n\r\nimport gc\r\nimport logging\r\nimport strainer\r\nimport newspaper\r\nfrom breadability import readable\r\n\r\ninstance_name = instance._meta.verbose_name\r\ninstance_id = instance.id\r\nsuccessfully_parsed = False\r\n\r\n#\r\n# NOTE: now that the downloader processor ensures unicode is written,\r\n#       after having eventually forced the encoding with a parameter,\r\n#       we don't have any mean to get back the original encoding, it\r\n#       was lost when the downloader finished. BUT now we can be sure\r\n#       that our own content is utf-8. If strainer failed to return\r\n#       a unicode string, at least should it be utf-8 encoded if it \r\n#       didn't ruin the contents.\r\n#\r\n#       Thus, we deliberately force it to utf-8.\r\n#\r\nencoding = 'utf-8'\r\ncontent = instance.content\r\n\r\nfor parser in ('lxml', 'html5lib', ):\r\n\r\n    STRAINER_EXTRACTOR = strainer.Strainer(parser=parser,\r\n                                           add_score=True)\r\n\r\n    # Strainer is bogus, it logs everything on 'root'\r\n    # logger, we cannot disable it selectively. Doomed.\r\n    logging.disable(logging.WARNING)\r\n\r\n    try:\r\n        # strainer expects an str, not unicode.\r\n        content = STRAINER_EXTRACTOR.feed(content.encode(encoding), \r\n                                          encoding=encoding)\r\n\r\n    except:\r\n        logging.disable(logging.NOTSET)\r\n        LOGGER.exception(u'multi-engine-automatic-cleaner: strainer '\r\n                         u'extraction [parser=%s] failed for %s %s', \r\n                         parser, instance_name, instance_id)\r\n    else:\r\n        successfully_parsed = True\r\n        logging.disable(logging.NOTSET)\r\n\r\n    del STRAINER_EXTRACTOR\r\n    gc.collect()\r\n\r\n    if successfully_parsed:\r\n        break\r\n\r\nif not successfully_parsed:\r\n\r\n    # Breadability logs too much, too.\r\n    logging.disable(logging.WARNING)\r\n\r\n    try:\r\n        breadability_article = readable.Article(\r\n            content, url=instance.url)\r\n        content = breadability_article.readable\r\n\r\n    except:\r\n        logging.disable(logging.NOTSET)\r\n        LOGGER.exception(u'multi-engine-automatic-cleaner: breadability '\r\n                         u'extraction failed for %s %s', \r\n                         instance_name, instance_id)\r\n    else:\r\n        successfully_parsed = True\r\n        logging.disable(logging.NOTSET)\r\n\r\nif not successfully_parsed:\r\n\r\n    try:\r\n        newspaper_article = newspaper.Article(url=instance.url)\r\n        newspaper_article.download()\r\n\r\n        # NOT HERE. NOT THE POINT.\r\n        # newspaper_article.parse()\r\n\r\n    except:\r\n            LOGGER.exception(u'multi-engine-automatic-cleaner: newspaper '\r\n                             u'extraction failed for %s %s', \r\n                             instance_name, instance_id)\r\n\r\n    else:\r\n        if newspaper_article.html.strip() != u'':\r\n            content = newspaper_article.html\r\n            successfully_parsed = True\r\n\r\nif not successfully_parsed:\r\n    LOGGER.error(u'multi-engine-automatic-cleaner: all cleaning methods '\r\n                 u'failed on %s %s, letting things in place.',\r\n                 instance_name, instance_id)\r\n    return\r\n\r\nif type(content) == type(unicode()):\r\n    # A modern tool already did the job.\r\n    instance.content = content\r\n\r\nelse:\r\n    # Strainer gives us a non-unicode boo-boo.\r\n    try:\r\n        instance.content = content.decode(\r\n            eventual_encoding=encoding)\r\n\r\n    except TypeError:\r\n        # Oops, data doesn't come from strainer\u2026\r\n        instance.content = content.decode(encoding=encoding)\r\n\r\ninstance.content_type = models.CONTENT_TYPES.CLEANED_HTML\r\n\r\n# The processing errors related to content are cleared by the chain run()\r\n# method. The next 3 lines should be obsolete one day, thus protected by\r\n# try/except block to not make the processor crash when the field is \r\n# removed from database.\r\ntry: \r\n    if instance.content_error:\r\n        statsd.gauge('articles.counts.content_errors', -1, delta=True)\r\n        instance.content_error = None\r\n\r\nexcept:\r\n    LOGGER.exception(u'multi-engine-automatic-cleaner: time to remove '\r\n                     u'the instance.content_error block?')\r\n\r\nif commit:\r\n    # This is worth a version in history to \r\n    # keep the non-cleaned content in case.\r\n    instance.save()\r\n\r\nwith statsd.pipeline() as spipe:\r\n    spipe.gauge('articles.counts.html', -1, delta=True)\r\n    spipe.gauge('articles.counts.cleaned', 1, delta=True)"
+  }
+},
+{
+  "pk": 19, 
+  "model": "core.processor", 
+  "fields": {
+    "rght": 2, 
+    "maintainer": null, 
+    "duplicate_of": null, 
+    "lft": 1, 
+    "description_fr": "", 
+    "requirements": "-e git+https://github.com/saffsd/langid.py.git@master#egg=langid\r\n", 
+    "short_description_nt": "", 
+    "accept_code": "\r\nreturn (\r\n  \t(\r\n        # don't try to detect a language if instance has already \r\n        # one, because this can be an expensive process.\r\n        instance.language_id is None\r\n\r\n        # or if forced to do so.\r\n        or\r\n\r\n        force\r\n    ) \r\n    and\r\n  \r\n    instance.content_type == models.CONTENT_TYPES.MARKDOWN\r\n  \r\n    and\r\n  \r\n  \t# We need a minimum words number to detect a language. \r\n    # 7 words is a perfectly arbitrary number for the job.\r\n    len(instance.content.split(None, 6)) > 6\r\n)", 
+    "description_nt": "", 
+    "languages": [], 
+    "tree_id": 13, 
+    "short_description_fr": "", 
+    "source_address": "", 
+    "parent": null, 
+    "is_active": true, 
+    "description_en": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "slug": "1fs-language-detector", 
+    "categories": [
+      1, 
+      2, 
+      4
+    ], 
+    "name": "Language detector", 
+    "short_description_en": "", 
+    "parameters": null, 
+    "level": 0, 
+    "duplicate_status": null, 
+    "process_code": "\r\nimport langid\r\n\r\ninstance_name = instance._meta.verbose_name\r\ninstance_id = instance.id\r\n\r\ntry:\r\n    language, probability = langid.classify(instance.content)\r\n\r\nexcept:\r\n    LOGGER.exception(u'Exception while detecting language of %s %s',\r\n                     instance_name, instance_id)\r\n    return\r\n\r\nif language:\r\n    if probability > 0.8:\r\n        instance.language = models.Language.get_by_code(language)\r\n\r\n        if verbose:\r\n            LOGGER.info(u'language-detector: set %s %s language to %s '\r\n                        u'(confidence: %s).', instance_name, instance_id,\r\n                        instance.language, probability)\r\n\r\n        if commit:\r\n            instance.save()\r\n\r\n    else:\r\n        LOGGER.warning(u'language-detector: Confidence too low (%s) to set '\r\n        \t\t\t   u'a language on %s %s based on its content.', \r\n        \t\t\t   probability, instance_name, instance_id)\r\n\r\nelse:\r\n    LOGGER.warning(u'language-detector: No language detected in %s %s '\r\n                   u'content.', instance_name, instance_id)"
+  }
+},
+{
+  "pk": 19, 
+  "model": "core.processor", 
+  "fields": {
+    "rght": 2, 
+    "maintainer": null, 
+    "duplicate_of": null, 
+    "lft": 1, 
+    "description_fr": "", 
+    "requirements": "-e git+https://github.com/saffsd/langid.py.git@master#egg=langid\r\n", 
+    "short_description_nt": "", 
+    "accept_code": "\r\nreturn (\r\n  \t(\r\n        # don't try to detect a language if instance has already \r\n        # one, because this can be an expensive process.\r\n        instance.language_id is None\r\n\r\n        # or if forced to do so.\r\n        or\r\n\r\n        force\r\n    ) \r\n    and\r\n  \r\n    instance.content_type == models.CONTENT_TYPES.MARKDOWN\r\n  \r\n    and\r\n  \r\n  \t# We need a minimum words number to detect a language. \r\n    # 7 words is a perfectly arbitrary number for the job.\r\n    len(instance.content.split(None, 6)) > 6\r\n)", 
+    "description_nt": "", 
+    "languages": [], 
+    "tree_id": 13, 
+    "short_description_fr": "", 
+    "source_address": "", 
+    "parent": null, 
+    "is_active": true, 
+    "description_en": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "slug": "1fs-language-detector", 
+    "categories": [
+      1, 
+      2, 
+      4
+    ], 
+    "name": "Language detector", 
+    "short_description_en": "", 
+    "parameters": null, 
+    "level": 0, 
+    "duplicate_status": null, 
+    "process_code": "\r\nimport langid\r\n\r\ninstance_name = instance._meta.verbose_name\r\ninstance_id = instance.id\r\n\r\ntry:\r\n    language, probability = langid.classify(instance.content)\r\n\r\nexcept:\r\n    LOGGER.exception(u'Exception while detecting language of %s %s',\r\n                     instance_name, instance_id)\r\n    return\r\n\r\nif language:\r\n    if probability > 0.8:\r\n        instance.language = models.Language.get_by_code(language)\r\n\r\n        if verbose:\r\n            LOGGER.info(u'language-detector: set %s %s language to %s '\r\n                        u'(confidence: %s).', instance_name, instance_id,\r\n                        instance.language, probability)\r\n\r\n        if commit:\r\n            instance.save()\r\n\r\n    else:\r\n        LOGGER.warning(u'language-detector: Confidence too low (%s) to set '\r\n        \t\t\t   u'a language on %s %s based on its content.', \r\n        \t\t\t   probability, instance_name, instance_id)\r\n\r\nelse:\r\n    LOGGER.warning(u'language-detector: No language detected in %s %s '\r\n                   u'content.', instance_name, instance_id)"
+  }
+},
+{
+  "pk": 19, 
+  "model": "core.processor", 
+  "fields": {
+    "rght": 2, 
+    "maintainer": null, 
+    "duplicate_of": null, 
+    "lft": 1, 
+    "description_fr": "", 
+    "requirements": "-e git+https://github.com/saffsd/langid.py.git@master#egg=langid\r\n", 
+    "short_description_nt": "", 
+    "accept_code": "\r\nreturn (\r\n  \t(\r\n        # don't try to detect a language if instance has already \r\n        # one, because this can be an expensive process.\r\n        instance.language_id is None\r\n\r\n        # or if forced to do so.\r\n        or\r\n\r\n        force\r\n    ) \r\n    and\r\n  \r\n    instance.content_type == models.CONTENT_TYPES.MARKDOWN\r\n  \r\n    and\r\n  \r\n  \t# We need a minimum words number to detect a language. \r\n    # 7 words is a perfectly arbitrary number for the job.\r\n    len(instance.content.split(None, 6)) > 6\r\n)", 
+    "description_nt": "", 
+    "languages": [], 
+    "tree_id": 13, 
+    "short_description_fr": "", 
+    "source_address": "", 
+    "parent": null, 
+    "is_active": true, 
+    "description_en": "", 
+    "user": [
+      "karmak23"
+    ], 
+    "slug": "1fs-language-detector", 
+    "categories": [
+      1, 
+      2, 
+      4
+    ], 
+    "name": "Language detector", 
+    "short_description_en": "", 
+    "parameters": null, 
+    "level": 0, 
+    "duplicate_status": null, 
+    "process_code": "\r\nimport langid\r\n\r\ninstance_name = instance._meta.verbose_name\r\ninstance_id = instance.id\r\n\r\ntry:\r\n    language, probability = langid.classify(instance.content)\r\n\r\nexcept:\r\n    LOGGER.exception(u'Exception while detecting language of %s %s',\r\n                     instance_name, instance_id)\r\n    return\r\n\r\nif language:\r\n    if probability > 0.8:\r\n        instance.language = models.Language.get_by_code(language)\r\n\r\n        if verbose:\r\n            LOGGER.info(u'language-detector: set %s %s language to %s '\r\n                        u'(confidence: %s).', instance_name, instance_id,\r\n                        instance.language, probability)\r\n\r\n        if commit:\r\n            instance.save()\r\n\r\n    else:\r\n        LOGGER.warning(u'language-detector: Confidence too low (%s) to set '\r\n        \t\t\t   u'a language on %s %s based on its content.', \r\n        \t\t\t   probability, instance_name, instance_id)\r\n\r\nelse:\r\n    LOGGER.warning(u'language-detector: No language detected in %s %s '\r\n                   u'content.', instance_name, instance_id)"
   }
 },
 {
@@ -2346,6 +2457,28 @@
     "notes_nt": "", 
     "item_id": 3, 
     "position": 6, 
+    "notes_en": ""
+  }
+},
+{
+  "pk": 19, 
+  "model": "core.chaineditem", 
+  "fields": {
+    "chain": [
+      "1fs-legacy-article-parsers"
+    ], 
+    "parameters": null, 
+    "notes_fr": "", 
+    "is_active": true, 
+    "check_error": null, 
+    "item_type": [
+      "core", 
+      "processor"
+    ], 
+    "is_valid": true, 
+    "notes_nt": "", 
+    "item_id": 19, 
+    "position": 7, 
     "notes_en": ""
   }
 },
