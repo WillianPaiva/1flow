@@ -72,14 +72,17 @@
 		{% for basefeed in basefeed_list %}
 			<tr>
 				<td>
-					{% if feed.url %}
-						{{ feed.url }}<br />
-					{% endif %}
-					<span class="pull-right">
-						<a href="# {#{% url 'staff_items_list_create' basefeed.pk %}#}"
-						class="btn btn-primary btn-xs">
-							{% core_icon 'BaseItem' %}
-						</a>
+					<span class="pull-right very-muted"
+							data-toggle="tooltip"
+							title="{{ feed.id }}">
+						{% core_icon 'info-sign' %}
+
+						{% comment %}
+							<a href="#{#{% url 'staff_items_list_create' basefeed.pk %}#}"
+							class="btn btn-primary btn-xs">
+								{% core_icon 'BaseItem' %}
+							</a>
+						{% endcomment %}
 					</span>
 
 					{% inplace_edit 'basefeed.name' %}
@@ -122,7 +125,17 @@
 				</td>
 
 				<td>{{ basefeed.is_restricted }}</td>
-				<td>{% core_feed_type basefeed %}</td>
+				<td>
+					{% if basefeed.url %}
+						<a href="{{ basefeed.url }}" target="_blank">
+					{% endif %}
+
+					{% core_feed_type basefeed %}
+
+					{% if basefeed.url %}
+						</a>
+					{% endif %}
+				</td>
 				<td>{{ basefeed.fetch_interval|naturaldelta }}</td>
 
 				<td class="right">{{ basefeed.good_items.count }}</td>
