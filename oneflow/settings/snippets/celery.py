@@ -221,7 +221,6 @@ CELERYBEAT_SCHEDULE = {
         }
     },
 
-
     'reprocess-failed-articles-pass1': {
         'task': 'oneflow.core.tasks.reprocess_failed_articles',
         'schedule': crontab(minute='33'),
