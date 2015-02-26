@@ -40,6 +40,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from sparks.django.http import human_user_agent  # , JsonResponse
 from sparks.django.utils import HttpResponseTemporaryServerError
+from sparks.foundations.utils import lookahead
 
 from oneflow.base.utils.dateutils import now
 from oneflow.base.utils.decorators import token_protected
@@ -516,12 +517,18 @@ def export_content(request, **kwargs):
             data_chunked = 0
 
             try:
-                for chunk in BaseFeed.export_content(since, until,
-                                                     folder=folder):
+                for chunk, last in lookahead(BaseFeed.export_content(
+                                             since, until, folder=folder)):
+
+                    if last:
+                        format_string = u'{1}{1}{1}{2}{0}'
+
+                    else:
+                        format_string = u'{1}{1}{1}{2},{0}'
 
                     # With JSON util, we overcome the now-traditional
                     # "datetime is not JSON serializable" error.
-                    yield u'{1}{1}{1}{2},{0}'.format(
+                    yield format_string.format(
                         new_lines,
                         indentation,
                         json.dumps(
@@ -549,8 +556,8 @@ def export_content(request, **kwargs):
                 yield u'{1}{1}"exception": "{2}",{0}'.format(
                     new_lines, indentation, unicode(e))
 
-                yield u'{1}{1}"result": "ERR"{0}}}'.format(new_lines,
-                                                           indentation)
+                yield u'{1}{1}"result": "ERR"{0}}}'.format(
+                    new_lines, indentation)
 
             else:
                 yield u'{1}{1}],{0}{1}{1}"result": "OK"{0}}}'.format(
