@@ -58,6 +58,11 @@ CONSTANCE_CONFIG = {
                               u'disabling this does not prevent any malicious '
                               u'code which bypasses this configuration flag.')),
 
+    '404_USES_NOTFOUND_ORG': (
+        False, ugettext(
+            u'Display the lost children photos from http://notfound.org/ '
+            u'on the 404 page.')),
+
     # ————————————————————————————————————————————————————————— Plain documents
 
     'DOCUMENTS_ARCHIVING_DISABLED': (False, ugettext(u'Set this to True to '

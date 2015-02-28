@@ -10,4 +10,14 @@
     <p><code>{{ request.path }}</code></p>
     <p>{{ _('In fact, we asked Google and Bing and they do not know anything about it either. Perhaps you should ask a greek Oracle®?')}}</p>
     <p>{{ _("Just joking. They won't know more than the others. Just go back <a href='/'>Home</a>.") }}</p>
+
+    {% if config.404_USES_NOT_FOUND_ORG %}
+
+	<iframe src="http://notfound-static.fwebservices.be/404/index.html?&amp;key=84cc1789d11c2a8a9a6d74284fac0356"
+		width="100%" height="650" frameborder="0"></iframe>
+
+    {% endif %}
+
+
+
 {% endblock error_content %}
