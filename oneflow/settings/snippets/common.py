@@ -753,6 +753,8 @@ logging.getLogger('oauthlib').setLevel(
     logging.ERROR if DEBUG else logging.CRITICAL)
 logging.getLogger('requests_oauthlib').setLevel(
     logging.ERROR if DEBUG else logging.CRITICAL)
+logging.getLogger('redis_lock').setLevel(
+    logging.ERROR if DEBUG else logging.CRITICAL)
 
 LOGGING = {
     'version': 1,

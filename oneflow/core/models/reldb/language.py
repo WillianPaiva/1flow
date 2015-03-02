@@ -80,9 +80,11 @@ class Language(MPTTModel, AbstractDuplicateAwareModel):
     def __unicode__(self):
         """ Unicode, pep257. """
 
-        return _(u'{0} (#{1}): {2}, {3}').format(
+        iso_code = self.iso639_1 or self.iso639_2 or self.iso639_3
+
+        return _(u'{0} (ID: {1}) {2}{3}').format(
             self.name, self.id, self.dj_code,
-            self.iso639_1 or self.iso639_2 or self.iso639_3)
+            u', {0}'.format(iso_code) if iso_code else u' (no ISO code)')
 
     # ——————————————————————————————————————————————————————————— Class methods
 

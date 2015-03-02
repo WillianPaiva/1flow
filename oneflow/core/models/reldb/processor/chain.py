@@ -486,9 +486,9 @@ class ProcessingChain(six.with_metaclass(ProcessingChainMeta, MPTTModel,
 
             if verbose and settings.DEBUG:
                 LOGGER.debug(u'%s [run]: running %s at pos. %s, verbose=%s, '
-                             u'force=%s, commit=%s.',
+                             u'force=%s, commit=%s with parameters=%s.',
                              self, processor, item.position,
-                             verbose, force, commit)
+                             verbose, force, commit, parameters)
 
             try:
                 with AtomicOrNot(real_transaction=fine_grained_transactions):

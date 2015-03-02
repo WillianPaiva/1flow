@@ -249,41 +249,45 @@ def production():
         'worker_information': {
             'worker_mongo': (
                 'MongoDB worker (transient)',
-                'high,medium,low'
+                'high,medium,low',
             ),
             'worker_sync': (
                 'Inter-node synchronization worker',
-                'sync,background'
+                'sync,background',
             ),
             'worker_permanent': (
                 'Inter-node synchronization worker',
-                'permanent'
+                'permanent',
             ),
             'worker_net': (
                 'Network-related worker',
-                'swarm,refresh'
+                'swarm,refresh',
             ),
             'worker_default': (
                 'Default celery queue worker',
-                'default,create'
+                'default,create',
             ),
             'worker_articles': (
                 'Articles parsing worker',
-                'fetch'
+                'fetch',
             ),
             'worker_longtasks': (
                 'Long tasks worker',
-                'check,clean'
+                'check,clean',
             ),
         },
 
         'custom_arguments': {
+            'worker_articles': (
+                '--without-heartbeat --without-mingle --without-gossip '
+                '--time-limit 150'),
             '__all__': '--without-heartbeat --without-mingle --without-gossip',
         },
 
         'nice_arguments': {
 
             # Lower priority
+            'worker_articles': '-n 5',
             'worker_mongo': '-n 3',
             'worker_longtasks': '-n 1',
 
@@ -309,13 +313,13 @@ def production():
 
         'autoscale': {                      # queues:
             'worker_mongo':     '144,2',     # 'high,medium,low',
-            'worker_sync':      '16,2',    # 'sync',
             'worker_net':       '32,8',     # 'swarm,refresh',
-            'worker_default':   '16,4',     # 'default,create',
-            'worker_articles':  '64,16',     # 'fetch,background',
+            # 'worker_default':   '16,4',     # 'default,create',
+            # 'worker_sync':      '16,4',    # 'sync,background',
+            # 'worker_articles':  '8,2',      # 'fetch',
             'worker_longtasks': '2,1',      # 'check,clean',
 
-            '__all__': '8,2',
+            '__all__': '16,4',
         },
 
         'max_tasks_per_child': {
@@ -323,7 +327,8 @@ def production():
             # consumes ~500Mb after first run.
             'worker_longtasks': '1',
 
-            'worker_articles': '16',
+            # Clean often to avoid memory leaking.
+            'worker_articles': '32',
 
             '__all__': '128',
         },
@@ -337,7 +342,7 @@ def production():
             # So we have to let them a fair amount of time. If it doesn't
             # acheive the conversion in this time frame, there is probably
             # a more serious problem.
-            'worker_articles': '300',
+            'worker_articles': '120',
 
             # Force Twitter permanent workers to
             # release locks & free resources.
@@ -374,7 +379,9 @@ def production():
             'worker-02.1flow.io',
         ],
         'worker_articles': [
+            # '1flow.io',
             'worker-03.1flow.io',
+            # '10.0.3.111',
         ],
         'worker_longtasks': [
             'worker-04.1flow.io',
