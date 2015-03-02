@@ -37,7 +37,13 @@ from oneflow.base.utils.dateutils import naturaldelta, benchmark
 LOGGER = logging.getLogger(__name__)
 
 
-@task(name='oneflow.core.tasks.reprocess_failed_articles', queue='check')
+EXPIRY_REPROCESS_PASS1 = 3500
+EXPIRY_REPROCESS_PASS2 = 3600 * 23
+EXPIRY_REPROCESS_PASS3 = 3600 * 24 * 6
+
+
+@task(name='oneflow.core.tasks.reprocess_failed_articles',
+      queue='check', expire=EXPIRY_REPROCESS_PASS1)
 def reprocess_failed_articles(failed=None, expiry=None,
                               limit=None, force=False):
     u""" Reprocess articles that failed absolutization.
@@ -52,7 +58,7 @@ def reprocess_failed_articles(failed=None, expiry=None,
 
     if failed is None:
         failed = Article.objects.url_error().created_previous_hour()
-        expiry = 3500
+        expiry = EXPIRY_REPROCESS_PASS1
 
     my_lock = RedisExpiringLock(
         'reprocess_failed_articles_' + str(expiry),
@@ -98,24 +104,25 @@ def reprocess_failed_articles(failed=None, expiry=None,
 
 
 @task(name='oneflow.core.tasks.reprocess_failed_articles_pass2',
-      queue='check')
+      queue='check', expire=EXPIRY_REPROCESS_PASS2)
 def reprocess_failed_articles_pass2(limit=None, force=False):
     """ Run reprocess_failed_articles() on articles from yesterday. """
 
     failed = Article.objects.url_error().created_previous_day()
-    expiry = 3600 * 23
+    expiry = EXPIRY_REPROCESS_PASS2
 
     reprocess_failed_articles(failed=failed, expiry=expiry,
                               limit=limit, force=force)
 
 
 @task(name='oneflow.core.tasks.reprocess_failed_articles_pass3',
-      queue='check')
+      queue='check', expire=int(
+          EXPIRY_REPROCESS_PASS3 - 0.05 * EXPIRY_REPROCESS_PASS3))
 def reprocess_failed_articles_pass3(limit=None, force=False):
     """ Run reprocess_failed_articles() on articles from last week. """
 
     failed = Article.objects.url_error().created_previous_week()
-    expiry = 3600 * 24 * 6
+    expiry = EXPIRY_REPROCESS_PASS3
 
     reprocess_failed_articles(failed=failed, expiry=expiry,
                               limit=limit, force=force)
