@@ -70,7 +70,7 @@ def clean_obsolete_redis_keys():
                 naturaldelta(pytime.time() - start_time))
 
 
-@task(queue='clean')
+@task(queue='clean', expire=3500)
 def synchronize_statsd_gauges(full=False, force=False):
     """ Synchronize all counters to statsd. """
 

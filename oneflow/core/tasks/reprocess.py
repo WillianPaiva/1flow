@@ -60,6 +60,9 @@ def reprocess_failed_articles(failed=None, expiry=None,
         failed = Article.objects.url_error().created_previous_hour()
         expiry = EXPIRY_REPROCESS_PASS1
 
+    # TODO: as the celery tasks expires,
+    # the lock is probably not needed anymore.
+
     my_lock = RedisExpiringLock(
         'reprocess_failed_articles_' + str(expiry),
         expire_time=expiry
